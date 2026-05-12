@@ -4,7 +4,7 @@ import logo from "@/assets/oms-logo.png";
 const COLS = [
   { title: "Watch", items: ["Films", "KidsBibleFlix", "Series", "Trailers"] },
   { title: "Listen", items: ["God's Great Earth Podcast", "Sermons", "Audio Books"] },
-  { title: "Engage", items: ["Events", "Week of Prayer Online", "Resources", "Shop"] },
+  { title: "Engage", items: ["Events", "Week of Prayer Online", "Shop"] },
   { title: "About", items: ["Mission", "Team", "Contact", "Support OMS"] },
 ];
 

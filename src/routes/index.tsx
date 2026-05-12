@@ -7,7 +7,6 @@ import { Directions } from "@/pages/Home/sections/Directions";
 import { FeaturedProjects } from "@/pages/Home/sections/FeaturedProjects";
 import { KidsFlix } from "@/pages/Home/sections/KidsFlix";
 import { Films } from "@/pages/Home/sections/Films";
-import { Newsletter } from "@/pages/Home/sections/Newsletter";
 import { Support } from "@/pages/Home/sections/Support";
 
 export const Route = createFileRoute("/")({
@@ -42,7 +41,6 @@ function Index() {
         <FeaturedProjects />
         <KidsFlix />
         <Films />
-        <Newsletter />
         <Support />
       </main>
       <SiteFooter />
