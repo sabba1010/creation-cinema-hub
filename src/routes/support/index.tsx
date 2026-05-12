@@ -11,15 +11,28 @@ export const Route = createFileRoute("/support/")({
 function SupportPage() {
   const [givingType, setGivingType] = useState<"one-time" | "monthly">("monthly");
   const [amount, setAmount] = useState<string>("50");
+  const [customAmount, setCustomAmount] = useState<string>("");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [donorName, setDonorName] = useState("");
 
   const AMOUNTS = ["10", "25", "50", "100", "250", "Custom"];
 
   const handleDonate = (e: React.FormEvent) => {
     e.preventDefault();
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 5000);
+    const formData = new FormData(e.target as HTMLFormElement);
+    const name = `${formData.get("firstName")} ${formData.get("lastName")}`;
+    setDonorName(name);
+    
+    setIsProcessing(true);
+    // Simulate payment processing
+    setTimeout(() => {
+      setIsProcessing(false);
+      setShowSuccess(true);
+    }, 2000);
   };
+
+  const finalAmount = amount === "Custom" ? customAmount : amount;
 
   return (
     <div className="bg-background min-h-screen flex flex-col">
@@ -73,15 +86,28 @@ function SupportPage() {
 
             <div className="relative p-10 rounded-[2.5rem] bg-card border border-border shadow-2xl overflow-hidden">
               {showSuccess ? (
-                <div className="absolute inset-0 bg-card z-10 flex flex-col items-center justify-center text-center p-8 animate-in fade-in zoom-in duration-500">
+                <div className="absolute inset-0 bg-card z-20 flex flex-col items-center justify-center text-center p-12 animate-in fade-in zoom-in duration-500">
                   <div className="h-20 w-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-6">
                     <CheckCircle2 className="h-10 w-10" />
                   </div>
-                  <h3 className="text-2xl font-display font-medium mb-4">Thank You!</h3>
-                  <p className="text-muted-foreground">Your contribution has been received. A receipt will be sent to your email shortly.</p>
-                  <button onClick={() => setShowSuccess(false)} className="mt-8 text-xs font-bold uppercase tracking-widest text-primary">Make another gift</button>
+                  <h3 className="text-3xl font-display font-medium text-foreground mb-4 italic">Thank You, {donorName.split(' ')[0]}!</h3>
+                  <div className="p-6 rounded-2xl bg-muted/50 w-full mb-8">
+                     <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block mb-2">Your Impact</span>
+                     <div className="text-2xl font-bold text-primary">${finalAmount} {givingType === "monthly" ? "/ Month" : "Once"}</div>
+                  </div>
+                  <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
+                    Your contribution has been received. A receipt will be sent to your email shortly.
+                  </p>
+                  <button onClick={() => setShowSuccess(false)} className="mt-10 text-xs font-bold uppercase tracking-widest text-primary border-b border-primary/20 pb-1 hover:border-primary transition-all">Make another gift</button>
                 </div>
               ) : null}
+
+              {isProcessing && (
+                <div className="absolute inset-0 bg-card/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center animate-in fade-in duration-300">
+                   <div className="h-12 w-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4" />
+                   <span className="text-xs font-bold uppercase tracking-widest text-foreground">Processing Gift...</span>
+                </div>
+              )}
 
               <div className="flex bg-muted rounded-2xl p-1 mb-10">
                 <button 
@@ -98,7 +124,7 @@ function SupportPage() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 mb-10">
+              <div className="grid grid-cols-3 gap-3 mb-6">
                 {AMOUNTS.map((amt) => (
                   <button
                     key={amt}
@@ -110,23 +136,38 @@ function SupportPage() {
                 ))}
               </div>
 
+              {amount === "Custom" && (
+                <div className="mb-10 animate-in slide-in-from-top-4 duration-300">
+                   <div className="relative">
+                      <div className="absolute left-6 top-1/2 -translate-y-1/2 text-muted-foreground font-bold">$</div>
+                      <input 
+                        type="number" 
+                        placeholder="Enter custom amount"
+                        value={customAmount}
+                        onChange={(e) => setCustomAmount(e.target.value)}
+                        className="w-full bg-muted/50 border border-primary/30 rounded-2xl pl-12 pr-6 py-4 font-bold text-lg focus:outline-none focus:border-primary transition-all"
+                      />
+                   </div>
+                </div>
+              )}
+
               <form onSubmit={handleDonate} className="space-y-6">
                 <div className="grid sm:grid-cols-2 gap-4">
                    <div className="space-y-2">
                       <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">First Name</label>
-                      <input required type="text" className="w-full bg-muted/50 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40" />
+                      <input name="firstName" required type="text" className="w-full bg-muted/50 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40" />
                    </div>
                    <div className="space-y-2">
                       <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Last Name</label>
-                      <input required type="text" className="w-full bg-muted/50 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40" />
+                      <input name="lastName" required type="text" className="w-full bg-muted/50 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40" />
                    </div>
                 </div>
                 <div className="space-y-2">
                    <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Email Address</label>
-                   <input required type="email" className="w-full bg-muted/50 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40" />
+                   <input name="email" required type="email" className="w-full bg-muted/50 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40" />
                 </div>
-                <button type="submit" className="w-full py-5 rounded-2xl bg-primary text-primary-foreground font-bold text-sm uppercase tracking-widest shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3">
-                   Complete Donation <ArrowRight className="h-4 w-4" />
+                <button type="submit" disabled={isProcessing} className="w-full py-5 rounded-2xl bg-primary text-primary-foreground font-bold text-sm uppercase tracking-widest shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3">
+                   {isProcessing ? "Processing..." : `Complete ${amount === 'Custom' ? '' : '$' + finalAmount} Donation`} <ArrowRight className="h-4 w-4" />
                 </button>
                 <div className="flex items-center justify-center gap-2 text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
                    <ShieldCheck className="h-3 w-3 text-emerald-500" /> Secure SSL Encrypted

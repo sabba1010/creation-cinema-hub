@@ -7,7 +7,7 @@ const NAV_GROUPS = [
   {
     label: "WATCH",
     links: [
-      { label: "Movies", href: "https://adventistmovies.com/" },
+      { label: "Movies", href: "/films" },
       { label: "KidsBibleFlix", href: "https://kidsbibleflix.com/" },
       { label: "Week of Prayer Online", href: "/prayer" },
     ]
