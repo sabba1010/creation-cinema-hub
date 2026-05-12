@@ -36,10 +36,10 @@ function Index() {
       <SiteHeader />
       <main>
         <Hero />
-        <MediaHub />
-        <Directions />
+        {/* <MediaHub /> */}
+        {/* <Directions /> */}
         <FeaturedProjects />
-        <KidsFlix />
+        {/* <KidsFlix /> */}
         <Films />
         <Support />
       </main>

@@ -59,72 +59,82 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden lg:flex items-center gap-4">
-          {NAV_GROUPS.map((group) => (
-            <div 
-              key={group.label} 
-              className="relative group/nav"
-              onMouseEnter={() => setActiveGroup(group.label)}
-              onMouseLeave={() => setActiveGroup(null)}
-            >
-              {group.links ? (
-                <>
-                  <button className="flex items-center gap-1.5 px-4 py-2 text-[11px] font-bold tracking-[0.2em] text-[#faf7ee]/70 hover:text-[#faf7ee] transition-colors">
-                    {group.label}
-                  </button>
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 translate-y-2 pointer-events-none group-hover/nav:opacity-100 group-hover/nav:translate-y-0 group-hover/nav:pointer-events-auto transition-all duration-300">
-                    <div className="bg-forest-deep border border-cream/10 rounded-2xl p-3 shadow-2xl min-w-[200px]">
-                      {group.links.map((link) => {
-                        const isExternal = link.href.startsWith("http");
-                        return isExternal ? (
-                          <a
-                            key={link.label}
-                            href={link.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block px-4 py-3 text-[11px] font-bold tracking-widest text-[#faf7ee]/60 hover:text-gold hover:bg-white/5 rounded-xl transition-all"
-                          >
-                            {link.label}
-                          </a>
-                        ) : (
-                          <Link
-                            key={link.label}
-                            to={link.href}
-                            className="block px-4 py-3 text-[11px] font-bold tracking-widest text-[#faf7ee]/60 hover:text-gold hover:bg-white/5 rounded-xl transition-all"
-                          >
-                            {link.label}
-                          </Link>
-                        );
-                      })}
+          {NAV_GROUPS.map((group) => {
+            const isGroupActive = group.links?.some(link => location.pathname.startsWith(link.href)) || 
+                                 (group.href && location.pathname.startsWith(group.href));
+            
+            return (
+              <div 
+                key={group.label} 
+                className="relative group/nav"
+                onMouseEnter={() => setActiveGroup(group.label)}
+                onMouseLeave={() => setActiveGroup(null)}
+              >
+                {group.links ? (
+                  <>
+                    <button className={`flex flex-col items-center gap-0.5 px-4 py-2 text-[11px] font-bold tracking-[0.2em] transition-all ${isGroupActive ? "text-gold" : "text-[#faf7ee]/70 hover:text-[#faf7ee]"}`}>
+                      {group.label}
+                      {isGroupActive && <div className="h-0.5 w-4 bg-gold rounded-full" />}
+                    </button>
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 translate-y-2 pointer-events-none group-hover/nav:opacity-100 group-hover/nav:translate-y-0 group-hover/nav:pointer-events-auto transition-all duration-300">
+                      <div className="bg-forest-deep border border-cream/10 rounded-2xl p-3 shadow-2xl min-w-[200px]">
+                        {group.links.map((link) => {
+                          const isLinkActive = location.pathname.startsWith(link.href);
+                          const isExternal = link.href.startsWith("http");
+                          return isExternal ? (
+                            <a
+                              key={link.label}
+                              href={link.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`block px-4 py-3 text-[11px] font-bold tracking-widest rounded-xl transition-all ${isLinkActive ? "text-gold bg-white/5" : "text-[#faf7ee]/60 hover:text-gold hover:bg-white/5"}`}
+                            >
+                              {link.label}
+                            </a>
+                          ) : (
+                            <Link
+                              key={link.label}
+                              to={link.href}
+                              className={`block px-4 py-3 text-[11px] font-bold tracking-widest rounded-xl transition-all ${isLinkActive ? "text-gold bg-white/5" : "text-[#faf7ee]/60 hover:text-gold hover:bg-white/5"}`}
+                            >
+                              {link.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                </>
-              ) : (
-                (() => {
-                  const isExternal = group.href?.startsWith("http");
-                  return isExternal ? (
-                    <a
-                      href={group.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-4 py-2 text-[11px] font-bold tracking-[0.2em] text-[#faf7ee]/70 hover:text-[#faf7ee] transition-colors"
-                    >
-                      {group.label}
-                    </a>
-                  ) : (
-                    <Link
-                      to={group.href!}
-                      className="px-4 py-2 text-[11px] font-bold tracking-[0.2em] text-[#faf7ee]/70 hover:text-[#faf7ee] transition-colors"
-                    >
-                      {group.label}
-                    </Link>
-                  );
-                })()
-              )}
-            </div>
-          ))}
+                  </>
+                ) : (
+                  (() => {
+                    const isExternal = group.href?.startsWith("http");
+                    const isActive = group.href && location.pathname.startsWith(group.href);
+                    return isExternal ? (
+                      <a
+                        href={group.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`flex flex-col items-center gap-0.5 px-4 py-2 text-[11px] font-bold tracking-[0.2em] transition-all ${isActive ? "text-gold" : "text-[#faf7ee]/70 hover:text-[#faf7ee]"}`}
+                      >
+                        {group.label}
+                        {isActive && <div className="h-0.5 w-4 bg-gold rounded-full" />}
+                      </a>
+                    ) : (
+                      <Link
+                        to={group.href!}
+                        className={`flex flex-col items-center gap-0.5 px-4 py-2 text-[11px] font-bold tracking-[0.2em] transition-all ${isActive ? "text-gold" : "text-[#faf7ee]/70 hover:text-[#faf7ee]"}`}
+                      >
+                        {group.label}
+                        {isActive && <div className="h-0.5 w-4 bg-gold rounded-full" />}
+                      </Link>
+                    );
+                  })()
+                )}
+              </div>
+            );
+          })}
           <Link 
             to="/support" 
-            className="ml-4 px-6 py-2.5 rounded-full bg-gold text-forest-deep text-[10px] font-bold tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-lg"
+            className={`ml-4 px-6 py-2.5 rounded-full text-[10px] font-bold tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-lg ${location.pathname.startsWith('/support') ? "bg-[#faf7ee] text-forest-deep" : "bg-gold text-forest-deep"}`}
           >
             SUPPORT
           </Link>
