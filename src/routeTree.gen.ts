@@ -24,6 +24,7 @@ import { Route as PrayerIndexRouteImport } from './routes/prayer/index'
 import { Route as PodcastIndexRouteImport } from './routes/podcast/index'
 import { Route as KidsIndexRouteImport } from './routes/kids/index'
 import { Route as FilmsIndexRouteImport } from './routes/films/index'
+import { Route as ContactIndexRouteImport } from './routes/contact/index'
 import { Route as BooksIndexRouteImport } from './routes/books/index'
 import { Route as ShopProductIdRouteImport } from './routes/shop/$productId'
 import { Route as ResourcesResourceIdRouteImport } from './routes/resources/$resourceId'
@@ -113,6 +114,11 @@ const FilmsIndexRoute = FilmsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => FilmsRoute,
+} as any)
+const ContactIndexRoute = ContactIndexRouteImport.update({
+  id: '/contact/',
+  path: '/contact/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const BooksIndexRoute = BooksIndexRouteImport.update({
   id: '/',
@@ -207,6 +213,7 @@ export interface FileRoutesByFullPath {
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/books/': typeof BooksIndexRoute
+  '/contact/': typeof ContactIndexRoute
   '/films/': typeof FilmsIndexRoute
   '/kids/': typeof KidsIndexRoute
   '/podcast/': typeof PodcastIndexRoute
@@ -232,6 +239,7 @@ export interface FileRoutesByTo {
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/books': typeof BooksIndexRoute
+  '/contact': typeof ContactIndexRoute
   '/films': typeof FilmsIndexRoute
   '/kids': typeof KidsIndexRoute
   '/podcast': typeof PodcastIndexRoute
@@ -264,6 +272,7 @@ export interface FileRoutesById {
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/books/': typeof BooksIndexRoute
+  '/contact/': typeof ContactIndexRoute
   '/films/': typeof FilmsIndexRoute
   '/kids/': typeof KidsIndexRoute
   '/podcast/': typeof PodcastIndexRoute
@@ -297,6 +306,7 @@ export interface FileRouteTypes {
     | '/resources/$resourceId'
     | '/shop/$productId'
     | '/books/'
+    | '/contact/'
     | '/films/'
     | '/kids/'
     | '/podcast/'
@@ -322,6 +332,7 @@ export interface FileRouteTypes {
     | '/resources/$resourceId'
     | '/shop/$productId'
     | '/books'
+    | '/contact'
     | '/films'
     | '/kids'
     | '/podcast'
@@ -353,6 +364,7 @@ export interface FileRouteTypes {
     | '/resources/$resourceId'
     | '/shop/$productId'
     | '/books/'
+    | '/contact/'
     | '/films/'
     | '/kids/'
     | '/podcast/'
@@ -376,6 +388,7 @@ export interface RootRouteChildren {
   KidsSubscribeRoute: typeof KidsSubscribeRoute
   KidsTopicsRoute: typeof KidsTopicsRoute
   KidsWatchRoute: typeof KidsWatchRoute
+  ContactIndexRoute: typeof ContactIndexRoute
   KidsIndexRoute: typeof KidsIndexRoute
   SupportIndexRoute: typeof SupportIndexRoute
 }
@@ -486,6 +499,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/films/'
       preLoaderRoute: typeof FilmsIndexRouteImport
       parentRoute: typeof FilmsRoute
+    }
+    '/contact/': {
+      id: '/contact/'
+      path: '/contact'
+      fullPath: '/contact/'
+      preLoaderRoute: typeof ContactIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/books/': {
       id: '/books/'
@@ -683,6 +703,7 @@ const rootRouteChildren: RootRouteChildren = {
   KidsSubscribeRoute: KidsSubscribeRoute,
   KidsTopicsRoute: KidsTopicsRoute,
   KidsWatchRoute: KidsWatchRoute,
+  ContactIndexRoute: ContactIndexRoute,
   KidsIndexRoute: KidsIndexRoute,
   SupportIndexRoute: SupportIndexRoute,
 }

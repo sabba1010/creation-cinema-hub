@@ -13,6 +13,7 @@ const NAV = [
   { label: "SHOP", href: "/shop" },
   { label: "SUPPORT", href: "/support" },
   { label: "KIDSFLIX", href: "/kids" },
+  { label: "CONTACT", href: "/contact" },
 ];
 
 export function SiteHeader() {
