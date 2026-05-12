@@ -14,8 +14,11 @@ import { Route as PodcastRouteImport } from './routes/podcast'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as BooksRouteImport } from './routes/books'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PrayerIndexRouteImport } from './routes/prayer/index'
 import { Route as PodcastIndexRouteImport } from './routes/podcast/index'
 import { Route as BooksIndexRouteImport } from './routes/books/index'
+import { Route as PrayerVideoRouteImport } from './routes/prayer/video'
+import { Route as PrayerDashboardRouteImport } from './routes/prayer/dashboard'
 import { Route as BooksBookIdRouteImport } from './routes/books/$bookId'
 import { Route as PodcastSeasonSeasonIdRouteImport } from './routes/podcast/season/$seasonId'
 
@@ -44,6 +47,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrayerIndexRoute = PrayerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PrayerRoute,
+} as any)
 const PodcastIndexRoute = PodcastIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -53,6 +61,16 @@ const BooksIndexRoute = BooksIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => BooksRoute,
+} as any)
+const PrayerVideoRoute = PrayerVideoRouteImport.update({
+  id: '/video',
+  path: '/video',
+  getParentRoute: () => PrayerRoute,
+} as any)
+const PrayerDashboardRoute = PrayerDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => PrayerRoute,
 } as any)
 const BooksBookIdRoute = BooksBookIdRouteImport.update({
   id: '/$bookId',
@@ -70,19 +88,24 @@ export interface FileRoutesByFullPath {
   '/books': typeof BooksRouteWithChildren
   '/events': typeof EventsRoute
   '/podcast': typeof PodcastRouteWithChildren
-  '/prayer': typeof PrayerRoute
+  '/prayer': typeof PrayerRouteWithChildren
   '/books/$bookId': typeof BooksBookIdRoute
+  '/prayer/dashboard': typeof PrayerDashboardRoute
+  '/prayer/video': typeof PrayerVideoRoute
   '/books/': typeof BooksIndexRoute
   '/podcast/': typeof PodcastIndexRoute
+  '/prayer/': typeof PrayerIndexRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/events': typeof EventsRoute
-  '/prayer': typeof PrayerRoute
   '/books/$bookId': typeof BooksBookIdRoute
+  '/prayer/dashboard': typeof PrayerDashboardRoute
+  '/prayer/video': typeof PrayerVideoRoute
   '/books': typeof BooksIndexRoute
   '/podcast': typeof PodcastIndexRoute
+  '/prayer': typeof PrayerIndexRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
 }
 export interface FileRoutesById {
@@ -91,10 +114,13 @@ export interface FileRoutesById {
   '/books': typeof BooksRouteWithChildren
   '/events': typeof EventsRoute
   '/podcast': typeof PodcastRouteWithChildren
-  '/prayer': typeof PrayerRoute
+  '/prayer': typeof PrayerRouteWithChildren
   '/books/$bookId': typeof BooksBookIdRoute
+  '/prayer/dashboard': typeof PrayerDashboardRoute
+  '/prayer/video': typeof PrayerVideoRoute
   '/books/': typeof BooksIndexRoute
   '/podcast/': typeof PodcastIndexRoute
+  '/prayer/': typeof PrayerIndexRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
 }
 export interface FileRouteTypes {
@@ -106,17 +132,22 @@ export interface FileRouteTypes {
     | '/podcast'
     | '/prayer'
     | '/books/$bookId'
+    | '/prayer/dashboard'
+    | '/prayer/video'
     | '/books/'
     | '/podcast/'
+    | '/prayer/'
     | '/podcast/season/$seasonId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/events'
-    | '/prayer'
     | '/books/$bookId'
+    | '/prayer/dashboard'
+    | '/prayer/video'
     | '/books'
     | '/podcast'
+    | '/prayer'
     | '/podcast/season/$seasonId'
   id:
     | '__root__'
@@ -126,8 +157,11 @@ export interface FileRouteTypes {
     | '/podcast'
     | '/prayer'
     | '/books/$bookId'
+    | '/prayer/dashboard'
+    | '/prayer/video'
     | '/books/'
     | '/podcast/'
+    | '/prayer/'
     | '/podcast/season/$seasonId'
   fileRoutesById: FileRoutesById
 }
@@ -136,7 +170,7 @@ export interface RootRouteChildren {
   BooksRoute: typeof BooksRouteWithChildren
   EventsRoute: typeof EventsRoute
   PodcastRoute: typeof PodcastRouteWithChildren
-  PrayerRoute: typeof PrayerRoute
+  PrayerRoute: typeof PrayerRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -176,6 +210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/prayer/': {
+      id: '/prayer/'
+      path: '/'
+      fullPath: '/prayer/'
+      preLoaderRoute: typeof PrayerIndexRouteImport
+      parentRoute: typeof PrayerRoute
+    }
     '/podcast/': {
       id: '/podcast/'
       path: '/'
@@ -189,6 +230,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/books/'
       preLoaderRoute: typeof BooksIndexRouteImport
       parentRoute: typeof BooksRoute
+    }
+    '/prayer/video': {
+      id: '/prayer/video'
+      path: '/video'
+      fullPath: '/prayer/video'
+      preLoaderRoute: typeof PrayerVideoRouteImport
+      parentRoute: typeof PrayerRoute
+    }
+    '/prayer/dashboard': {
+      id: '/prayer/dashboard'
+      path: '/dashboard'
+      fullPath: '/prayer/dashboard'
+      preLoaderRoute: typeof PrayerDashboardRouteImport
+      parentRoute: typeof PrayerRoute
     }
     '/books/$bookId': {
       id: '/books/$bookId'
@@ -232,12 +287,27 @@ const PodcastRouteChildren: PodcastRouteChildren = {
 const PodcastRouteWithChildren =
   PodcastRoute._addFileChildren(PodcastRouteChildren)
 
+interface PrayerRouteChildren {
+  PrayerDashboardRoute: typeof PrayerDashboardRoute
+  PrayerVideoRoute: typeof PrayerVideoRoute
+  PrayerIndexRoute: typeof PrayerIndexRoute
+}
+
+const PrayerRouteChildren: PrayerRouteChildren = {
+  PrayerDashboardRoute: PrayerDashboardRoute,
+  PrayerVideoRoute: PrayerVideoRoute,
+  PrayerIndexRoute: PrayerIndexRoute,
+}
+
+const PrayerRouteWithChildren =
+  PrayerRoute._addFileChildren(PrayerRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BooksRoute: BooksRouteWithChildren,
   EventsRoute: EventsRoute,
   PodcastRoute: PodcastRouteWithChildren,
-  PrayerRoute: PrayerRoute,
+  PrayerRoute: PrayerRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
