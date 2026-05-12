@@ -8,6 +8,7 @@ const NAV = [
   { label: "EVENTS", href: "/events" },
   { label: "BOOKS", href: "/books" },
   { label: "PRAYER", href: "/prayer" },
+  { label: "RESOURCES", href: "/resources" },
 ];
 
 export function SiteHeader() {
