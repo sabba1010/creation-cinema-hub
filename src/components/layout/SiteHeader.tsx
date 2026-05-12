@@ -6,6 +6,7 @@ import logo from "@/assets/oms-logo.png";
 const NAV = [
   { label: "PODCAST", href: "/podcast" },
   { label: "EVENTS", href: "/events" },
+  { label: "BOOKS", href: "/books" },
 ];
 
 export function SiteHeader() {

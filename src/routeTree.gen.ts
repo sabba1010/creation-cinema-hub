@@ -9,12 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PrayerRouteImport } from './routes/prayer'
 import { Route as PodcastRouteImport } from './routes/podcast'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as BooksRouteImport } from './routes/books'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PodcastIndexRouteImport } from './routes/podcast/index'
+import { Route as BooksIndexRouteImport } from './routes/books/index'
+import { Route as BooksBookIdRouteImport } from './routes/books/$bookId'
 import { Route as PodcastSeasonSeasonIdRouteImport } from './routes/podcast/season/$seasonId'
 
+const PrayerRoute = PrayerRouteImport.update({
+  id: '/prayer',
+  path: '/prayer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PodcastRoute = PodcastRouteImport.update({
   id: '/podcast',
   path: '/podcast',
@@ -23,6 +32,11 @@ const PodcastRoute = PodcastRouteImport.update({
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BooksRoute = BooksRouteImport.update({
+  id: '/books',
+  path: '/books',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -35,6 +49,16 @@ const PodcastIndexRoute = PodcastIndexRouteImport.update({
   path: '/',
   getParentRoute: () => PodcastRoute,
 } as any)
+const BooksIndexRoute = BooksIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BooksRoute,
+} as any)
+const BooksBookIdRoute = BooksBookIdRouteImport.update({
+  id: '/$bookId',
+  path: '/$bookId',
+  getParentRoute: () => BooksRoute,
+} as any)
 const PodcastSeasonSeasonIdRoute = PodcastSeasonSeasonIdRouteImport.update({
   id: '/season/$seasonId',
   path: '/season/$seasonId',
@@ -43,22 +67,33 @@ const PodcastSeasonSeasonIdRoute = PodcastSeasonSeasonIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/books': typeof BooksRouteWithChildren
   '/events': typeof EventsRoute
   '/podcast': typeof PodcastRouteWithChildren
+  '/prayer': typeof PrayerRoute
+  '/books/$bookId': typeof BooksBookIdRoute
+  '/books/': typeof BooksIndexRoute
   '/podcast/': typeof PodcastIndexRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/events': typeof EventsRoute
+  '/prayer': typeof PrayerRoute
+  '/books/$bookId': typeof BooksBookIdRoute
+  '/books': typeof BooksIndexRoute
   '/podcast': typeof PodcastIndexRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/books': typeof BooksRouteWithChildren
   '/events': typeof EventsRoute
   '/podcast': typeof PodcastRouteWithChildren
+  '/prayer': typeof PrayerRoute
+  '/books/$bookId': typeof BooksBookIdRoute
+  '/books/': typeof BooksIndexRoute
   '/podcast/': typeof PodcastIndexRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
 }
@@ -66,29 +101,53 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/books'
     | '/events'
     | '/podcast'
+    | '/prayer'
+    | '/books/$bookId'
+    | '/books/'
     | '/podcast/'
     | '/podcast/season/$seasonId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/events' | '/podcast' | '/podcast/season/$seasonId'
+  to:
+    | '/'
+    | '/events'
+    | '/prayer'
+    | '/books/$bookId'
+    | '/books'
+    | '/podcast'
+    | '/podcast/season/$seasonId'
   id:
     | '__root__'
     | '/'
+    | '/books'
     | '/events'
     | '/podcast'
+    | '/prayer'
+    | '/books/$bookId'
+    | '/books/'
     | '/podcast/'
     | '/podcast/season/$seasonId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BooksRoute: typeof BooksRouteWithChildren
   EventsRoute: typeof EventsRoute
   PodcastRoute: typeof PodcastRouteWithChildren
+  PrayerRoute: typeof PrayerRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/prayer': {
+      id: '/prayer'
+      path: '/prayer'
+      fullPath: '/prayer'
+      preLoaderRoute: typeof PrayerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/podcast': {
       id: '/podcast'
       path: '/podcast'
@@ -101,6 +160,13 @@ declare module '@tanstack/react-router' {
       path: '/events'
       fullPath: '/events'
       preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/books': {
+      id: '/books'
+      path: '/books'
+      fullPath: '/books'
+      preLoaderRoute: typeof BooksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -117,6 +183,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PodcastIndexRouteImport
       parentRoute: typeof PodcastRoute
     }
+    '/books/': {
+      id: '/books/'
+      path: '/'
+      fullPath: '/books/'
+      preLoaderRoute: typeof BooksIndexRouteImport
+      parentRoute: typeof BooksRoute
+    }
+    '/books/$bookId': {
+      id: '/books/$bookId'
+      path: '/$bookId'
+      fullPath: '/books/$bookId'
+      preLoaderRoute: typeof BooksBookIdRouteImport
+      parentRoute: typeof BooksRoute
+    }
     '/podcast/season/$seasonId': {
       id: '/podcast/season/$seasonId'
       path: '/season/$seasonId'
@@ -126,6 +206,18 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface BooksRouteChildren {
+  BooksBookIdRoute: typeof BooksBookIdRoute
+  BooksIndexRoute: typeof BooksIndexRoute
+}
+
+const BooksRouteChildren: BooksRouteChildren = {
+  BooksBookIdRoute: BooksBookIdRoute,
+  BooksIndexRoute: BooksIndexRoute,
+}
+
+const BooksRouteWithChildren = BooksRoute._addFileChildren(BooksRouteChildren)
 
 interface PodcastRouteChildren {
   PodcastIndexRoute: typeof PodcastIndexRoute
@@ -142,8 +234,10 @@ const PodcastRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BooksRoute: BooksRouteWithChildren,
   EventsRoute: EventsRoute,
   PodcastRoute: PodcastRouteWithChildren,
+  PrayerRoute: PrayerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
