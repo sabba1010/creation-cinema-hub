@@ -59,7 +59,7 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-2">
           <button aria-label="Search" className="hidden sm:grid h-10 w-10 place-items-center rounded-full text-cream/85 hover:bg-cream/10 hover:text-cream transition">
-            <Search className="h-4.5 w-4.5" strokeWidth={2} />
+            <Search className="h-4 w-4" strokeWidth={2} />
           </button>
           <button aria-label="Account" className="hidden sm:flex items-center gap-2 rounded-full border border-cream/25 px-4 py-2 text-sm font-medium text-cream/90 hover:border-gold hover:text-gold transition">
             <User className="h-4 w-4" /> Sign in
