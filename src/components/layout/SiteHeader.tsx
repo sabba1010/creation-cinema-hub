@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { Search, User, Menu, X } from "lucide-react";
+import { Search, User, Menu, X, ShoppingBag } from "lucide-react";
 import logo from "@/assets/oms-logo.png";
 
 const NAV_GROUPS = [
@@ -144,9 +144,26 @@ export function SiteHeader() {
           <button aria-label="Search" className="text-[#faf7ee]/80 hover:text-[#faf7ee] transition">
             <Search className="h-5 w-5" strokeWidth={2.5} />
           </button>
-          <button aria-label="Account" className="hidden sm:block text-[#faf7ee]/80 hover:text-[#faf7ee] transition">
+          
+          <Link 
+            to="/cart" 
+            aria-label="Cart" 
+            className="relative text-[#faf7ee]/80 hover:text-[#faf7ee] transition group"
+          >
+            <ShoppingBag className="h-5 w-5" strokeWidth={2.5} />
+            <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-gold text-forest-deep text-[8px] font-black flex items-center justify-center border-2 border-forest-deep group-hover:scale-110 transition-transform">
+              2
+            </span>
+          </Link>
+
+          <Link 
+            to="/profile" 
+            aria-label="Account" 
+            className="hidden sm:block text-[#faf7ee]/80 hover:text-[#faf7ee] transition"
+          >
             <User className="h-6 w-6" strokeWidth={2} />
-          </button>
+          </Link>
+
           <button onClick={() => setOpen((s) => !s)} aria-label="Menu" className="lg:hidden text-[#faf7ee]">
             {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>

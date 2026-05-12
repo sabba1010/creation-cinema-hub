@@ -11,10 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ResourcesRouteImport } from './routes/resources'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrayerRouteImport } from './routes/prayer'
 import { Route as PodcastRouteImport } from './routes/podcast'
 import { Route as FilmsRouteImport } from './routes/films'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as CartRouteImport } from './routes/cart'
 import { Route as BooksRouteImport } from './routes/books'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SupportIndexRouteImport } from './routes/support/index'
@@ -50,6 +52,11 @@ const ResourcesRoute = ResourcesRouteImport.update({
   path: '/resources',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrayerRoute = PrayerRouteImport.update({
   id: '/prayer',
   path: '/prayer',
@@ -68,6 +75,11 @@ const FilmsRoute = FilmsRouteImport.update({
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BooksRoute = BooksRouteImport.update({
@@ -194,10 +206,12 @@ const PodcastSeasonSeasonIdRoute = PodcastSeasonSeasonIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/books': typeof BooksRouteWithChildren
+  '/cart': typeof CartRoute
   '/events': typeof EventsRoute
   '/films': typeof FilmsRouteWithChildren
   '/podcast': typeof PodcastRouteWithChildren
   '/prayer': typeof PrayerRouteWithChildren
+  '/profile': typeof ProfileRoute
   '/resources': typeof ResourcesRouteWithChildren
   '/shop': typeof ShopRouteWithChildren
   '/books/$bookId': typeof BooksBookIdRoute
@@ -225,7 +239,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cart': typeof CartRoute
   '/events': typeof EventsRoute
+  '/profile': typeof ProfileRoute
   '/books/$bookId': typeof BooksBookIdRoute
   '/films/$filmId': typeof FilmsFilmIdRoute
   '/films/trailer': typeof FilmsTrailerRoute
@@ -253,10 +269,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/books': typeof BooksRouteWithChildren
+  '/cart': typeof CartRoute
   '/events': typeof EventsRoute
   '/films': typeof FilmsRouteWithChildren
   '/podcast': typeof PodcastRouteWithChildren
   '/prayer': typeof PrayerRouteWithChildren
+  '/profile': typeof ProfileRoute
   '/resources': typeof ResourcesRouteWithChildren
   '/shop': typeof ShopRouteWithChildren
   '/books/$bookId': typeof BooksBookIdRoute
@@ -287,10 +305,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/books'
+    | '/cart'
     | '/events'
     | '/films'
     | '/podcast'
     | '/prayer'
+    | '/profile'
     | '/resources'
     | '/shop'
     | '/books/$bookId'
@@ -318,7 +338,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/cart'
     | '/events'
+    | '/profile'
     | '/books/$bookId'
     | '/films/$filmId'
     | '/films/trailer'
@@ -345,10 +367,12 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/books'
+    | '/cart'
     | '/events'
     | '/films'
     | '/podcast'
     | '/prayer'
+    | '/profile'
     | '/resources'
     | '/shop'
     | '/books/$bookId'
@@ -378,10 +402,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BooksRoute: typeof BooksRouteWithChildren
+  CartRoute: typeof CartRoute
   EventsRoute: typeof EventsRoute
   FilmsRoute: typeof FilmsRouteWithChildren
   PodcastRoute: typeof PodcastRouteWithChildren
   PrayerRoute: typeof PrayerRouteWithChildren
+  ProfileRoute: typeof ProfileRoute
   ResourcesRoute: typeof ResourcesRouteWithChildren
   ShopRoute: typeof ShopRouteWithChildren
   KidsSeriesRoute: typeof KidsSeriesRoute
@@ -407,6 +433,13 @@ declare module '@tanstack/react-router' {
       path: '/resources'
       fullPath: '/resources'
       preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/prayer': {
@@ -435,6 +468,13 @@ declare module '@tanstack/react-router' {
       path: '/events'
       fullPath: '/events'
       preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/books': {
@@ -693,10 +733,12 @@ const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BooksRoute: BooksRouteWithChildren,
+  CartRoute: CartRoute,
   EventsRoute: EventsRoute,
   FilmsRoute: FilmsRouteWithChildren,
   PodcastRoute: PodcastRouteWithChildren,
   PrayerRoute: PrayerRouteWithChildren,
+  ProfileRoute: ProfileRoute,
   ResourcesRoute: ResourcesRouteWithChildren,
   ShopRoute: ShopRouteWithChildren,
   KidsSeriesRoute: KidsSeriesRoute,
