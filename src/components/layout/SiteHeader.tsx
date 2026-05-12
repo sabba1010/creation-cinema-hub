@@ -8,11 +8,11 @@ const NAV_GROUPS = [
     label: "WATCH",
     links: [
       { label: "Movies", href: "/films" },
-      { label: "KidsBibleFlix", href: "https://kidsbibleflix.com/" },
+      { label: "KidsBibleFlix", href: "/kids" },
       { label: "Week of Prayer Online", href: "/prayer" },
     ]
   },
-  { label: "PODCAST", href: "https://godsgreatearth.com/" },
+  { label: "PODCAST", href: "/podcast" },
   {
     label: "RESOURCES",
     links: [
@@ -23,8 +23,7 @@ const NAV_GROUPS = [
   {
     label: "CONNECT",
     links: [
-      { label: "Events", href: "https://thecreationcase.com/" },
-      { label: "About Us", href: "https://onemustardseed.com/team" },
+      { label: "Events", href: "/events" },
       { label: "Contact", href: "/contact" },
     ]
   },
