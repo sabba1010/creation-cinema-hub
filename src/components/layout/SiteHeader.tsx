@@ -11,6 +11,8 @@ const NAV = [
   { label: "PRAYER", href: "/prayer" },
   { label: "RESOURCES", href: "/resources" },
   { label: "SHOP", href: "/shop" },
+  { label: "SUPPORT", href: "/support" },
+  { label: "KIDSFLIX", href: "/kids" },
 ];
 
 export function SiteHeader() {

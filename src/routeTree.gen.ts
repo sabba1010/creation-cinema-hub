@@ -17,16 +17,22 @@ import { Route as FilmsRouteImport } from './routes/films'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as BooksRouteImport } from './routes/books'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SupportIndexRouteImport } from './routes/support/index'
 import { Route as ShopIndexRouteImport } from './routes/shop/index'
 import { Route as ResourcesIndexRouteImport } from './routes/resources/index'
 import { Route as PrayerIndexRouteImport } from './routes/prayer/index'
 import { Route as PodcastIndexRouteImport } from './routes/podcast/index'
+import { Route as KidsIndexRouteImport } from './routes/kids/index'
 import { Route as FilmsIndexRouteImport } from './routes/films/index'
 import { Route as BooksIndexRouteImport } from './routes/books/index'
 import { Route as ShopProductIdRouteImport } from './routes/shop/$productId'
 import { Route as ResourcesResourceIdRouteImport } from './routes/resources/$resourceId'
 import { Route as PrayerVideoRouteImport } from './routes/prayer/video'
 import { Route as PrayerDashboardRouteImport } from './routes/prayer/dashboard'
+import { Route as KidsWatchRouteImport } from './routes/kids/watch'
+import { Route as KidsTopicsRouteImport } from './routes/kids/topics'
+import { Route as KidsSubscribeRouteImport } from './routes/kids/subscribe'
+import { Route as KidsSeriesRouteImport } from './routes/kids/series'
 import { Route as FilmsWatchRouteImport } from './routes/films/watch'
 import { Route as FilmsTrailerRouteImport } from './routes/films/trailer'
 import { Route as FilmsFilmIdRouteImport } from './routes/films/$filmId'
@@ -73,6 +79,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SupportIndexRoute = SupportIndexRouteImport.update({
+  id: '/support/',
+  path: '/support/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopIndexRoute = ShopIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -92,6 +103,11 @@ const PodcastIndexRoute = PodcastIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PodcastRoute,
+} as any)
+const KidsIndexRoute = KidsIndexRouteImport.update({
+  id: '/kids/',
+  path: '/kids/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const FilmsIndexRoute = FilmsIndexRouteImport.update({
   id: '/',
@@ -122,6 +138,26 @@ const PrayerDashboardRoute = PrayerDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => PrayerRoute,
+} as any)
+const KidsWatchRoute = KidsWatchRouteImport.update({
+  id: '/kids/watch',
+  path: '/kids/watch',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KidsTopicsRoute = KidsTopicsRouteImport.update({
+  id: '/kids/topics',
+  path: '/kids/topics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KidsSubscribeRoute = KidsSubscribeRouteImport.update({
+  id: '/kids/subscribe',
+  path: '/kids/subscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KidsSeriesRoute = KidsSeriesRouteImport.update({
+  id: '/kids/series',
+  path: '/kids/series',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const FilmsWatchRoute = FilmsWatchRouteImport.update({
   id: '/watch',
@@ -162,16 +198,22 @@ export interface FileRoutesByFullPath {
   '/films/$filmId': typeof FilmsFilmIdRoute
   '/films/trailer': typeof FilmsTrailerRoute
   '/films/watch': typeof FilmsWatchRoute
+  '/kids/series': typeof KidsSeriesRoute
+  '/kids/subscribe': typeof KidsSubscribeRoute
+  '/kids/topics': typeof KidsTopicsRoute
+  '/kids/watch': typeof KidsWatchRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/books/': typeof BooksIndexRoute
   '/films/': typeof FilmsIndexRoute
+  '/kids/': typeof KidsIndexRoute
   '/podcast/': typeof PodcastIndexRoute
   '/prayer/': typeof PrayerIndexRoute
   '/resources/': typeof ResourcesIndexRoute
   '/shop/': typeof ShopIndexRoute
+  '/support/': typeof SupportIndexRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
 }
 export interface FileRoutesByTo {
@@ -181,16 +223,22 @@ export interface FileRoutesByTo {
   '/films/$filmId': typeof FilmsFilmIdRoute
   '/films/trailer': typeof FilmsTrailerRoute
   '/films/watch': typeof FilmsWatchRoute
+  '/kids/series': typeof KidsSeriesRoute
+  '/kids/subscribe': typeof KidsSubscribeRoute
+  '/kids/topics': typeof KidsTopicsRoute
+  '/kids/watch': typeof KidsWatchRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/books': typeof BooksIndexRoute
   '/films': typeof FilmsIndexRoute
+  '/kids': typeof KidsIndexRoute
   '/podcast': typeof PodcastIndexRoute
   '/prayer': typeof PrayerIndexRoute
   '/resources': typeof ResourcesIndexRoute
   '/shop': typeof ShopIndexRoute
+  '/support': typeof SupportIndexRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
 }
 export interface FileRoutesById {
@@ -207,16 +255,22 @@ export interface FileRoutesById {
   '/films/$filmId': typeof FilmsFilmIdRoute
   '/films/trailer': typeof FilmsTrailerRoute
   '/films/watch': typeof FilmsWatchRoute
+  '/kids/series': typeof KidsSeriesRoute
+  '/kids/subscribe': typeof KidsSubscribeRoute
+  '/kids/topics': typeof KidsTopicsRoute
+  '/kids/watch': typeof KidsWatchRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/books/': typeof BooksIndexRoute
   '/films/': typeof FilmsIndexRoute
+  '/kids/': typeof KidsIndexRoute
   '/podcast/': typeof PodcastIndexRoute
   '/prayer/': typeof PrayerIndexRoute
   '/resources/': typeof ResourcesIndexRoute
   '/shop/': typeof ShopIndexRoute
+  '/support/': typeof SupportIndexRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
 }
 export interface FileRouteTypes {
@@ -234,16 +288,22 @@ export interface FileRouteTypes {
     | '/films/$filmId'
     | '/films/trailer'
     | '/films/watch'
+    | '/kids/series'
+    | '/kids/subscribe'
+    | '/kids/topics'
+    | '/kids/watch'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
     | '/shop/$productId'
     | '/books/'
     | '/films/'
+    | '/kids/'
     | '/podcast/'
     | '/prayer/'
     | '/resources/'
     | '/shop/'
+    | '/support/'
     | '/podcast/season/$seasonId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -253,16 +313,22 @@ export interface FileRouteTypes {
     | '/films/$filmId'
     | '/films/trailer'
     | '/films/watch'
+    | '/kids/series'
+    | '/kids/subscribe'
+    | '/kids/topics'
+    | '/kids/watch'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
     | '/shop/$productId'
     | '/books'
     | '/films'
+    | '/kids'
     | '/podcast'
     | '/prayer'
     | '/resources'
     | '/shop'
+    | '/support'
     | '/podcast/season/$seasonId'
   id:
     | '__root__'
@@ -278,16 +344,22 @@ export interface FileRouteTypes {
     | '/films/$filmId'
     | '/films/trailer'
     | '/films/watch'
+    | '/kids/series'
+    | '/kids/subscribe'
+    | '/kids/topics'
+    | '/kids/watch'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
     | '/shop/$productId'
     | '/books/'
     | '/films/'
+    | '/kids/'
     | '/podcast/'
     | '/prayer/'
     | '/resources/'
     | '/shop/'
+    | '/support/'
     | '/podcast/season/$seasonId'
   fileRoutesById: FileRoutesById
 }
@@ -300,6 +372,12 @@ export interface RootRouteChildren {
   PrayerRoute: typeof PrayerRouteWithChildren
   ResourcesRoute: typeof ResourcesRouteWithChildren
   ShopRoute: typeof ShopRouteWithChildren
+  KidsSeriesRoute: typeof KidsSeriesRoute
+  KidsSubscribeRoute: typeof KidsSubscribeRoute
+  KidsTopicsRoute: typeof KidsTopicsRoute
+  KidsWatchRoute: typeof KidsWatchRoute
+  KidsIndexRoute: typeof KidsIndexRoute
+  SupportIndexRoute: typeof SupportIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -360,6 +438,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/support/': {
+      id: '/support/'
+      path: '/support'
+      fullPath: '/support/'
+      preLoaderRoute: typeof SupportIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop/': {
       id: '/shop/'
       path: '/'
@@ -387,6 +472,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/podcast/'
       preLoaderRoute: typeof PodcastIndexRouteImport
       parentRoute: typeof PodcastRoute
+    }
+    '/kids/': {
+      id: '/kids/'
+      path: '/kids'
+      fullPath: '/kids/'
+      preLoaderRoute: typeof KidsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/films/': {
       id: '/films/'
@@ -429,6 +521,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/prayer/dashboard'
       preLoaderRoute: typeof PrayerDashboardRouteImport
       parentRoute: typeof PrayerRoute
+    }
+    '/kids/watch': {
+      id: '/kids/watch'
+      path: '/kids/watch'
+      fullPath: '/kids/watch'
+      preLoaderRoute: typeof KidsWatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kids/topics': {
+      id: '/kids/topics'
+      path: '/kids/topics'
+      fullPath: '/kids/topics'
+      preLoaderRoute: typeof KidsTopicsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kids/subscribe': {
+      id: '/kids/subscribe'
+      path: '/kids/subscribe'
+      fullPath: '/kids/subscribe'
+      preLoaderRoute: typeof KidsSubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kids/series': {
+      id: '/kids/series'
+      path: '/kids/series'
+      fullPath: '/kids/series'
+      preLoaderRoute: typeof KidsSeriesRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/films/watch': {
       id: '/films/watch'
@@ -559,6 +679,12 @@ const rootRouteChildren: RootRouteChildren = {
   PrayerRoute: PrayerRouteWithChildren,
   ResourcesRoute: ResourcesRouteWithChildren,
   ShopRoute: ShopRouteWithChildren,
+  KidsSeriesRoute: KidsSeriesRoute,
+  KidsSubscribeRoute: KidsSubscribeRoute,
+  KidsTopicsRoute: KidsTopicsRoute,
+  KidsWatchRoute: KidsWatchRoute,
+  KidsIndexRoute: KidsIndexRoute,
+  SupportIndexRoute: SupportIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
