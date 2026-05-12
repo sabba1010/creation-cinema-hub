@@ -9,9 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PodcastRouteImport } from './routes/podcast'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PodcastIndexRouteImport } from './routes/podcast/index'
+import { Route as PodcastSeasonSeasonIdRouteImport } from './routes/podcast/season/$seasonId'
 
+const PodcastRoute = PodcastRouteImport.update({
+  id: '/podcast',
+  path: '/podcast',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
@@ -22,35 +30,72 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PodcastIndexRoute = PodcastIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PodcastRoute,
+} as any)
+const PodcastSeasonSeasonIdRoute = PodcastSeasonSeasonIdRouteImport.update({
+  id: '/season/$seasonId',
+  path: '/season/$seasonId',
+  getParentRoute: () => PodcastRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/events': typeof EventsRoute
+  '/podcast': typeof PodcastRouteWithChildren
+  '/podcast/': typeof PodcastIndexRoute
+  '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/events': typeof EventsRoute
+  '/podcast': typeof PodcastIndexRoute
+  '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/events': typeof EventsRoute
+  '/podcast': typeof PodcastRouteWithChildren
+  '/podcast/': typeof PodcastIndexRoute
+  '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/events'
+  fullPaths:
+    | '/'
+    | '/events'
+    | '/podcast'
+    | '/podcast/'
+    | '/podcast/season/$seasonId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/events'
-  id: '__root__' | '/' | '/events'
+  to: '/' | '/events' | '/podcast' | '/podcast/season/$seasonId'
+  id:
+    | '__root__'
+    | '/'
+    | '/events'
+    | '/podcast'
+    | '/podcast/'
+    | '/podcast/season/$seasonId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EventsRoute: typeof EventsRoute
+  PodcastRoute: typeof PodcastRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/podcast': {
+      id: '/podcast'
+      path: '/podcast'
+      fullPath: '/podcast'
+      preLoaderRoute: typeof PodcastRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/events': {
       id: '/events'
       path: '/events'
@@ -65,12 +110,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/podcast/': {
+      id: '/podcast/'
+      path: '/'
+      fullPath: '/podcast/'
+      preLoaderRoute: typeof PodcastIndexRouteImport
+      parentRoute: typeof PodcastRoute
+    }
+    '/podcast/season/$seasonId': {
+      id: '/podcast/season/$seasonId'
+      path: '/season/$seasonId'
+      fullPath: '/podcast/season/$seasonId'
+      preLoaderRoute: typeof PodcastSeasonSeasonIdRouteImport
+      parentRoute: typeof PodcastRoute
+    }
   }
 }
+
+interface PodcastRouteChildren {
+  PodcastIndexRoute: typeof PodcastIndexRoute
+  PodcastSeasonSeasonIdRoute: typeof PodcastSeasonSeasonIdRoute
+}
+
+const PodcastRouteChildren: PodcastRouteChildren = {
+  PodcastIndexRoute: PodcastIndexRoute,
+  PodcastSeasonSeasonIdRoute: PodcastSeasonSeasonIdRoute,
+}
+
+const PodcastRouteWithChildren =
+  PodcastRoute._addFileChildren(PodcastRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EventsRoute: EventsRoute,
+  PodcastRoute: PodcastRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

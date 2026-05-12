@@ -1,20 +1,18 @@
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Search, User, Menu, X } from "lucide-react";
 import logo from "@/assets/oms-logo.png";
 
 const NAV = [
-  { label: "WATCH", href: "#watch" },
-  { label: "LISTEN", href: "#listen" },
-  { label: "EXPLORE", href: "#projects" },
+  { label: "PODCAST", href: "/podcast" },
   { label: "EVENTS", href: "/events" },
-  { label: "SHOP", href: "#shop" },
-  { label: "SUPPORT", href: "#support" },
 ];
 
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const location = useLocation();
+  const isHome = location.pathname === "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -25,15 +23,14 @@ export function SiteHeader() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-forest-deep/90 backdrop-blur-xl shadow-elevated"
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${!isHome || scrolled
+          ? "bg-forest-deep/95 backdrop-blur-xl shadow-elevated border-b border-cream/5"
           : "bg-transparent"
-      }`}
+        }`}
     >
       <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
         <Link to="/" className="flex items-center gap-3 group">
-          <img src={logo} alt="OMS Logo" width={48} height={48} className="h-10 w-10 sm:h-11 sm:w-11" />
+          {/* <img src={logo} alt="OMS Logo" width={48} height={48} className="h-10 w-10 sm:h-11 sm:w-11" /> */}
           <span className="font-display text-lg sm:text-xl font-bold tracking-tight text-[#faf7ee] whitespace-nowrap">
             ONE MUSTARD SEED
           </span>
