@@ -13,6 +13,7 @@ import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as PrayerRouteImport } from './routes/prayer'
 import { Route as PodcastRouteImport } from './routes/podcast'
+import { Route as FilmsRouteImport } from './routes/films'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as BooksRouteImport } from './routes/books'
 import { Route as IndexRouteImport } from './routes/index'
@@ -20,11 +21,15 @@ import { Route as ShopIndexRouteImport } from './routes/shop/index'
 import { Route as ResourcesIndexRouteImport } from './routes/resources/index'
 import { Route as PrayerIndexRouteImport } from './routes/prayer/index'
 import { Route as PodcastIndexRouteImport } from './routes/podcast/index'
+import { Route as FilmsIndexRouteImport } from './routes/films/index'
 import { Route as BooksIndexRouteImport } from './routes/books/index'
 import { Route as ShopProductIdRouteImport } from './routes/shop/$productId'
 import { Route as ResourcesResourceIdRouteImport } from './routes/resources/$resourceId'
 import { Route as PrayerVideoRouteImport } from './routes/prayer/video'
 import { Route as PrayerDashboardRouteImport } from './routes/prayer/dashboard'
+import { Route as FilmsWatchRouteImport } from './routes/films/watch'
+import { Route as FilmsTrailerRouteImport } from './routes/films/trailer'
+import { Route as FilmsFilmIdRouteImport } from './routes/films/$filmId'
 import { Route as BooksBookIdRouteImport } from './routes/books/$bookId'
 import { Route as PodcastSeasonSeasonIdRouteImport } from './routes/podcast/season/$seasonId'
 
@@ -46,6 +51,11 @@ const PrayerRoute = PrayerRouteImport.update({
 const PodcastRoute = PodcastRouteImport.update({
   id: '/podcast',
   path: '/podcast',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FilmsRoute = FilmsRouteImport.update({
+  id: '/films',
+  path: '/films',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventsRoute = EventsRouteImport.update({
@@ -83,6 +93,11 @@ const PodcastIndexRoute = PodcastIndexRouteImport.update({
   path: '/',
   getParentRoute: () => PodcastRoute,
 } as any)
+const FilmsIndexRoute = FilmsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => FilmsRoute,
+} as any)
 const BooksIndexRoute = BooksIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -108,6 +123,21 @@ const PrayerDashboardRoute = PrayerDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => PrayerRoute,
 } as any)
+const FilmsWatchRoute = FilmsWatchRouteImport.update({
+  id: '/watch',
+  path: '/watch',
+  getParentRoute: () => FilmsRoute,
+} as any)
+const FilmsTrailerRoute = FilmsTrailerRouteImport.update({
+  id: '/trailer',
+  path: '/trailer',
+  getParentRoute: () => FilmsRoute,
+} as any)
+const FilmsFilmIdRoute = FilmsFilmIdRouteImport.update({
+  id: '/$filmId',
+  path: '/$filmId',
+  getParentRoute: () => FilmsRoute,
+} as any)
 const BooksBookIdRoute = BooksBookIdRouteImport.update({
   id: '/$bookId',
   path: '/$bookId',
@@ -123,16 +153,21 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/books': typeof BooksRouteWithChildren
   '/events': typeof EventsRoute
+  '/films': typeof FilmsRouteWithChildren
   '/podcast': typeof PodcastRouteWithChildren
   '/prayer': typeof PrayerRouteWithChildren
   '/resources': typeof ResourcesRouteWithChildren
   '/shop': typeof ShopRouteWithChildren
   '/books/$bookId': typeof BooksBookIdRoute
+  '/films/$filmId': typeof FilmsFilmIdRoute
+  '/films/trailer': typeof FilmsTrailerRoute
+  '/films/watch': typeof FilmsWatchRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/books/': typeof BooksIndexRoute
+  '/films/': typeof FilmsIndexRoute
   '/podcast/': typeof PodcastIndexRoute
   '/prayer/': typeof PrayerIndexRoute
   '/resources/': typeof ResourcesIndexRoute
@@ -143,11 +178,15 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/events': typeof EventsRoute
   '/books/$bookId': typeof BooksBookIdRoute
+  '/films/$filmId': typeof FilmsFilmIdRoute
+  '/films/trailer': typeof FilmsTrailerRoute
+  '/films/watch': typeof FilmsWatchRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/books': typeof BooksIndexRoute
+  '/films': typeof FilmsIndexRoute
   '/podcast': typeof PodcastIndexRoute
   '/prayer': typeof PrayerIndexRoute
   '/resources': typeof ResourcesIndexRoute
@@ -159,16 +198,21 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/books': typeof BooksRouteWithChildren
   '/events': typeof EventsRoute
+  '/films': typeof FilmsRouteWithChildren
   '/podcast': typeof PodcastRouteWithChildren
   '/prayer': typeof PrayerRouteWithChildren
   '/resources': typeof ResourcesRouteWithChildren
   '/shop': typeof ShopRouteWithChildren
   '/books/$bookId': typeof BooksBookIdRoute
+  '/films/$filmId': typeof FilmsFilmIdRoute
+  '/films/trailer': typeof FilmsTrailerRoute
+  '/films/watch': typeof FilmsWatchRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/books/': typeof BooksIndexRoute
+  '/films/': typeof FilmsIndexRoute
   '/podcast/': typeof PodcastIndexRoute
   '/prayer/': typeof PrayerIndexRoute
   '/resources/': typeof ResourcesIndexRoute
@@ -181,16 +225,21 @@ export interface FileRouteTypes {
     | '/'
     | '/books'
     | '/events'
+    | '/films'
     | '/podcast'
     | '/prayer'
     | '/resources'
     | '/shop'
     | '/books/$bookId'
+    | '/films/$filmId'
+    | '/films/trailer'
+    | '/films/watch'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
     | '/shop/$productId'
     | '/books/'
+    | '/films/'
     | '/podcast/'
     | '/prayer/'
     | '/resources/'
@@ -201,11 +250,15 @@ export interface FileRouteTypes {
     | '/'
     | '/events'
     | '/books/$bookId'
+    | '/films/$filmId'
+    | '/films/trailer'
+    | '/films/watch'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
     | '/shop/$productId'
     | '/books'
+    | '/films'
     | '/podcast'
     | '/prayer'
     | '/resources'
@@ -216,16 +269,21 @@ export interface FileRouteTypes {
     | '/'
     | '/books'
     | '/events'
+    | '/films'
     | '/podcast'
     | '/prayer'
     | '/resources'
     | '/shop'
     | '/books/$bookId'
+    | '/films/$filmId'
+    | '/films/trailer'
+    | '/films/watch'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
     | '/shop/$productId'
     | '/books/'
+    | '/films/'
     | '/podcast/'
     | '/prayer/'
     | '/resources/'
@@ -237,6 +295,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BooksRoute: typeof BooksRouteWithChildren
   EventsRoute: typeof EventsRoute
+  FilmsRoute: typeof FilmsRouteWithChildren
   PodcastRoute: typeof PodcastRouteWithChildren
   PrayerRoute: typeof PrayerRouteWithChildren
   ResourcesRoute: typeof ResourcesRouteWithChildren
@@ -271,6 +330,13 @@ declare module '@tanstack/react-router' {
       path: '/podcast'
       fullPath: '/podcast'
       preLoaderRoute: typeof PodcastRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/films': {
+      id: '/films'
+      path: '/films'
+      fullPath: '/films'
+      preLoaderRoute: typeof FilmsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events': {
@@ -322,6 +388,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PodcastIndexRouteImport
       parentRoute: typeof PodcastRoute
     }
+    '/films/': {
+      id: '/films/'
+      path: '/'
+      fullPath: '/films/'
+      preLoaderRoute: typeof FilmsIndexRouteImport
+      parentRoute: typeof FilmsRoute
+    }
     '/books/': {
       id: '/books/'
       path: '/'
@@ -357,6 +430,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrayerDashboardRouteImport
       parentRoute: typeof PrayerRoute
     }
+    '/films/watch': {
+      id: '/films/watch'
+      path: '/watch'
+      fullPath: '/films/watch'
+      preLoaderRoute: typeof FilmsWatchRouteImport
+      parentRoute: typeof FilmsRoute
+    }
+    '/films/trailer': {
+      id: '/films/trailer'
+      path: '/trailer'
+      fullPath: '/films/trailer'
+      preLoaderRoute: typeof FilmsTrailerRouteImport
+      parentRoute: typeof FilmsRoute
+    }
+    '/films/$filmId': {
+      id: '/films/$filmId'
+      path: '/$filmId'
+      fullPath: '/films/$filmId'
+      preLoaderRoute: typeof FilmsFilmIdRouteImport
+      parentRoute: typeof FilmsRoute
+    }
     '/books/$bookId': {
       id: '/books/$bookId'
       path: '/$bookId'
@@ -385,6 +479,22 @@ const BooksRouteChildren: BooksRouteChildren = {
 }
 
 const BooksRouteWithChildren = BooksRoute._addFileChildren(BooksRouteChildren)
+
+interface FilmsRouteChildren {
+  FilmsFilmIdRoute: typeof FilmsFilmIdRoute
+  FilmsTrailerRoute: typeof FilmsTrailerRoute
+  FilmsWatchRoute: typeof FilmsWatchRoute
+  FilmsIndexRoute: typeof FilmsIndexRoute
+}
+
+const FilmsRouteChildren: FilmsRouteChildren = {
+  FilmsFilmIdRoute: FilmsFilmIdRoute,
+  FilmsTrailerRoute: FilmsTrailerRoute,
+  FilmsWatchRoute: FilmsWatchRoute,
+  FilmsIndexRoute: FilmsIndexRoute,
+}
+
+const FilmsRouteWithChildren = FilmsRoute._addFileChildren(FilmsRouteChildren)
 
 interface PodcastRouteChildren {
   PodcastIndexRoute: typeof PodcastIndexRoute
@@ -444,6 +554,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BooksRoute: BooksRouteWithChildren,
   EventsRoute: EventsRoute,
+  FilmsRoute: FilmsRouteWithChildren,
   PodcastRoute: PodcastRouteWithChildren,
   PrayerRoute: PrayerRouteWithChildren,
   ResourcesRoute: ResourcesRouteWithChildren,

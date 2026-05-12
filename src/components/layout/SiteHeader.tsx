@@ -4,6 +4,7 @@ import { Search, User, Menu, X } from "lucide-react";
 import logo from "@/assets/oms-logo.png";
 
 const NAV = [
+  { label: "FILMS", href: "/films" },
   { label: "PODCAST", href: "/podcast" },
   { label: "EVENTS", href: "/events" },
   { label: "BOOKS", href: "/books" },
