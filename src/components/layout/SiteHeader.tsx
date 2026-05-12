@@ -34,12 +34,10 @@ export function SiteHeader() {
     >
       <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
         <Link to="/" className="flex items-center gap-3 group">
-          <img src={logo} alt="OMS Logo" width={48} height={48} className="h-12 w-12" />
-          <div className="flex flex-col leading-[1.1]">
-            <span className="font-display text-xl font-bold tracking-tight text-foreground sm:text-foreground">ONE</span>
-            <span className="font-display text-xl font-bold tracking-tight text-foreground sm:text-foreground">MUSTARD</span>
-            <span className="font-display text-xl font-bold tracking-tight text-foreground sm:text-foreground">SEED</span>
-          </div>
+          <img src={logo} alt="OMS Logo" width={48} height={48} className="h-10 w-10 sm:h-11 sm:w-11" />
+          <span className="font-display text-lg sm:text-xl font-bold tracking-tight text-[#faf7ee] whitespace-nowrap">
+            ONE MUSTARD SEED
+          </span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-2">
@@ -47,7 +45,7 @@ export function SiteHeader() {
             <a
               key={n.label}
               href={n.href}
-              className="px-4 py-2 text-[13px] font-bold tracking-[0.15em] text-foreground/80 hover:text-foreground transition-colors"
+              className="px-4 py-2 text-[13px] font-bold tracking-[0.15em] text-[#faf7ee]/80 hover:text-[#faf7ee] transition-colors"
             >
               {n.label}
             </a>
@@ -55,13 +53,13 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <button aria-label="Search" className="text-foreground/80 hover:text-foreground transition">
+          <button aria-label="Search" className="text-[#faf7ee]/80 hover:text-[#faf7ee] transition">
             <Search className="h-5 w-5" strokeWidth={2.5} />
           </button>
-          <button aria-label="Account" className="text-foreground/80 hover:text-foreground transition">
+          <button aria-label="Account" className="text-[#faf7ee]/80 hover:text-[#faf7ee] transition">
             <User className="h-6 w-6" strokeWidth={2} />
           </button>
-          <button onClick={() => setOpen((s) => !s)} aria-label="Menu" className="lg:hidden text-foreground">
+          <button onClick={() => setOpen((s) => !s)} aria-label="Menu" className="lg:hidden text-[#faf7ee]">
             {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
