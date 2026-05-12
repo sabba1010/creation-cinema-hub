@@ -7,7 +7,7 @@ const NAV = [
   { label: "WATCH", href: "#watch" },
   { label: "LISTEN", href: "#listen" },
   { label: "EXPLORE", href: "#projects" },
-  { label: "EVENTS", href: "#events" },
+  { label: "EVENTS", href: "/events" },
   { label: "RESOURCES", href: "#resources" },
   { label: "SHOP", href: "#shop" },
   { label: "SUPPORT", href: "#support" },
@@ -41,15 +41,26 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden lg:flex items-center gap-2">
-          {NAV.map((n) => (
-            <a
-              key={n.label}
-              href={n.href}
-              className="px-4 py-2 text-[13px] font-bold tracking-[0.15em] text-[#faf7ee]/80 hover:text-[#faf7ee] transition-colors"
-            >
-              {n.label}
-            </a>
-          ))}
+          {NAV.map((n) => {
+            const isExternal = n.href.startsWith("/");
+            return isExternal ? (
+              <Link
+                key={n.label}
+                to={n.href}
+                className="px-4 py-2 text-[13px] font-bold tracking-[0.15em] text-[#faf7ee]/80 hover:text-[#faf7ee] transition-colors"
+              >
+                {n.label}
+              </Link>
+            ) : (
+              <a
+                key={n.label}
+                href={n.href}
+                className="px-4 py-2 text-[13px] font-bold tracking-[0.15em] text-[#faf7ee]/80 hover:text-[#faf7ee] transition-colors"
+              >
+                {n.label}
+              </a>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-4">
@@ -68,11 +79,28 @@ export function SiteHeader() {
       {open && (
         <div className="lg:hidden border-t border-cream/10 bg-forest-deep/95 backdrop-blur-xl">
           <nav className="mx-auto flex max-w-7xl flex-col px-6 py-4">
-            {NAV.map((n) => (
-              <a key={n.label} href={n.href} onClick={() => setOpen(false)} className="py-3 text-cream/90 border-b border-cream/5 last:border-0 font-bold tracking-widest text-xs">
-                {n.label}
-              </a>
-            ))}
+            {NAV.map((n) => {
+              const isExternal = n.href.startsWith("/");
+              return isExternal ? (
+                <Link
+                  key={n.label}
+                  to={n.href}
+                  onClick={() => setOpen(false)}
+                  className="py-3 text-[#faf7ee]/90 border-b border-cream/5 last:border-0 font-bold tracking-widest text-xs"
+                >
+                  {n.label}
+                </Link>
+              ) : (
+                <a
+                  key={n.label}
+                  href={n.href}
+                  onClick={() => setOpen(false)}
+                  className="py-3 text-[#faf7ee]/90 border-b border-cream/5 last:border-0 font-bold tracking-widest text-xs"
+                >
+                  {n.label}
+                </a>
+              );
+            })}
           </nav>
         </div>
       )}

@@ -5,7 +5,6 @@ import { Hero } from "@/pages/Home/sections/Hero";
 import { MediaHub } from "@/pages/Home/sections/MediaHub";
 import { Directions } from "@/pages/Home/sections/Directions";
 import { FeaturedProjects } from "@/pages/Home/sections/FeaturedProjects";
-import { Events } from "@/pages/Home/sections/Events";
 import { KidsFlix } from "@/pages/Home/sections/KidsFlix";
 import { Films } from "@/pages/Home/sections/Films";
 import { Newsletter } from "@/pages/Home/sections/Newsletter";
@@ -41,7 +40,6 @@ function Index() {
         <MediaHub />
         <Directions />
         <FeaturedProjects />
-        <Events />
         <KidsFlix />
         <Films />
         <Newsletter />
