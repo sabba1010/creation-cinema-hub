@@ -9,22 +9,30 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as PrayerRouteImport } from './routes/prayer'
 import { Route as PodcastRouteImport } from './routes/podcast'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as BooksRouteImport } from './routes/books'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ShopIndexRouteImport } from './routes/shop/index'
 import { Route as ResourcesIndexRouteImport } from './routes/resources/index'
 import { Route as PrayerIndexRouteImport } from './routes/prayer/index'
 import { Route as PodcastIndexRouteImport } from './routes/podcast/index'
 import { Route as BooksIndexRouteImport } from './routes/books/index'
+import { Route as ShopProductIdRouteImport } from './routes/shop/$productId'
 import { Route as ResourcesResourceIdRouteImport } from './routes/resources/$resourceId'
 import { Route as PrayerVideoRouteImport } from './routes/prayer/video'
 import { Route as PrayerDashboardRouteImport } from './routes/prayer/dashboard'
 import { Route as BooksBookIdRouteImport } from './routes/books/$bookId'
 import { Route as PodcastSeasonSeasonIdRouteImport } from './routes/podcast/season/$seasonId'
 
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResourcesRoute = ResourcesRouteImport.update({
   id: '/resources',
   path: '/resources',
@@ -55,6 +63,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShopIndexRoute = ShopIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ShopRoute,
+} as any)
 const ResourcesIndexRoute = ResourcesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -74,6 +87,11 @@ const BooksIndexRoute = BooksIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => BooksRoute,
+} as any)
+const ShopProductIdRoute = ShopProductIdRouteImport.update({
+  id: '/$productId',
+  path: '/$productId',
+  getParentRoute: () => ShopRoute,
 } as any)
 const ResourcesResourceIdRoute = ResourcesResourceIdRouteImport.update({
   id: '/$resourceId',
@@ -108,14 +126,17 @@ export interface FileRoutesByFullPath {
   '/podcast': typeof PodcastRouteWithChildren
   '/prayer': typeof PrayerRouteWithChildren
   '/resources': typeof ResourcesRouteWithChildren
+  '/shop': typeof ShopRouteWithChildren
   '/books/$bookId': typeof BooksBookIdRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
+  '/shop/$productId': typeof ShopProductIdRoute
   '/books/': typeof BooksIndexRoute
   '/podcast/': typeof PodcastIndexRoute
   '/prayer/': typeof PrayerIndexRoute
   '/resources/': typeof ResourcesIndexRoute
+  '/shop/': typeof ShopIndexRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
 }
 export interface FileRoutesByTo {
@@ -125,10 +146,12 @@ export interface FileRoutesByTo {
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
+  '/shop/$productId': typeof ShopProductIdRoute
   '/books': typeof BooksIndexRoute
   '/podcast': typeof PodcastIndexRoute
   '/prayer': typeof PrayerIndexRoute
   '/resources': typeof ResourcesIndexRoute
+  '/shop': typeof ShopIndexRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
 }
 export interface FileRoutesById {
@@ -139,14 +162,17 @@ export interface FileRoutesById {
   '/podcast': typeof PodcastRouteWithChildren
   '/prayer': typeof PrayerRouteWithChildren
   '/resources': typeof ResourcesRouteWithChildren
+  '/shop': typeof ShopRouteWithChildren
   '/books/$bookId': typeof BooksBookIdRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
+  '/shop/$productId': typeof ShopProductIdRoute
   '/books/': typeof BooksIndexRoute
   '/podcast/': typeof PodcastIndexRoute
   '/prayer/': typeof PrayerIndexRoute
   '/resources/': typeof ResourcesIndexRoute
+  '/shop/': typeof ShopIndexRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
 }
 export interface FileRouteTypes {
@@ -158,14 +184,17 @@ export interface FileRouteTypes {
     | '/podcast'
     | '/prayer'
     | '/resources'
+    | '/shop'
     | '/books/$bookId'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
+    | '/shop/$productId'
     | '/books/'
     | '/podcast/'
     | '/prayer/'
     | '/resources/'
+    | '/shop/'
     | '/podcast/season/$seasonId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -175,10 +204,12 @@ export interface FileRouteTypes {
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
+    | '/shop/$productId'
     | '/books'
     | '/podcast'
     | '/prayer'
     | '/resources'
+    | '/shop'
     | '/podcast/season/$seasonId'
   id:
     | '__root__'
@@ -188,14 +219,17 @@ export interface FileRouteTypes {
     | '/podcast'
     | '/prayer'
     | '/resources'
+    | '/shop'
     | '/books/$bookId'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
+    | '/shop/$productId'
     | '/books/'
     | '/podcast/'
     | '/prayer/'
     | '/resources/'
+    | '/shop/'
     | '/podcast/season/$seasonId'
   fileRoutesById: FileRoutesById
 }
@@ -206,10 +240,18 @@ export interface RootRouteChildren {
   PodcastRoute: typeof PodcastRouteWithChildren
   PrayerRoute: typeof PrayerRouteWithChildren
   ResourcesRoute: typeof ResourcesRouteWithChildren
+  ShopRoute: typeof ShopRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/resources': {
       id: '/resources'
       path: '/resources'
@@ -252,6 +294,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shop/': {
+      id: '/shop/'
+      path: '/'
+      fullPath: '/shop/'
+      preLoaderRoute: typeof ShopIndexRouteImport
+      parentRoute: typeof ShopRoute
+    }
     '/resources/': {
       id: '/resources/'
       path: '/'
@@ -279,6 +328,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/books/'
       preLoaderRoute: typeof BooksIndexRouteImport
       parentRoute: typeof BooksRoute
+    }
+    '/shop/$productId': {
+      id: '/shop/$productId'
+      path: '/$productId'
+      fullPath: '/shop/$productId'
+      preLoaderRoute: typeof ShopProductIdRouteImport
+      parentRoute: typeof ShopRoute
     }
     '/resources/$resourceId': {
       id: '/resources/$resourceId'
@@ -372,6 +428,18 @@ const ResourcesRouteWithChildren = ResourcesRoute._addFileChildren(
   ResourcesRouteChildren,
 )
 
+interface ShopRouteChildren {
+  ShopProductIdRoute: typeof ShopProductIdRoute
+  ShopIndexRoute: typeof ShopIndexRoute
+}
+
+const ShopRouteChildren: ShopRouteChildren = {
+  ShopProductIdRoute: ShopProductIdRoute,
+  ShopIndexRoute: ShopIndexRoute,
+}
+
+const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BooksRoute: BooksRouteWithChildren,
@@ -379,6 +447,7 @@ const rootRouteChildren: RootRouteChildren = {
   PodcastRoute: PodcastRouteWithChildren,
   PrayerRoute: PrayerRouteWithChildren,
   ResourcesRoute: ResourcesRouteWithChildren,
+  ShopRoute: ShopRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

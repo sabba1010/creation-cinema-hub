@@ -9,6 +9,7 @@ const NAV = [
   { label: "BOOKS", href: "/books" },
   { label: "PRAYER", href: "/prayer" },
   { label: "RESOURCES", href: "/resources" },
+  { label: "SHOP", href: "/shop" },
 ];
 
 export function SiteHeader() {
