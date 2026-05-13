@@ -60,7 +60,7 @@ const INITIAL_RESOURCES = [
   { id: 1, name: "VBS Summer Kit 2026", type: "Curriculum", format: "ZIP", size: "128 MB", downloads: 450, status: "Public", date: "May 10, 2026" },
   { id: 2, name: "Week of Prayer Study Guide", type: "Study Guides", format: "PDF", size: "4.2 MB", downloads: 1240, status: "Gated", date: "May 12, 2026" },
   { id: 3, name: "Social Media Promo Bundle", type: "Media Kits", format: "ZIP", size: "45 MB", downloads: 890, status: "Public", date: "May 11, 2026" },
-  { id: 4, name: "Kids Coloring Sheets", type: "Promo", format: "PDF", size: "2.1 MB", downloads: 3500, status: "Public", date: "May 08, 2026" },
+  { id: 4, name: "Kids Coloring Sheets", type: "Promo Materials", format: "PDF", size: "2.1 MB", downloads: 3500, status: "Public", date: "May 08, 2026" },
 ];
 
 const INITIAL_LEADS = [
@@ -152,7 +152,7 @@ function ResourceManagement() {
                                <SelectItem value="Curriculum">Curriculum</SelectItem>
                                <SelectItem value="Study Guides">Study Guides</SelectItem>
                                <SelectItem value="Media Kits">Media Kits</SelectItem>
-                               <SelectItem value="Promo">Promo Material</SelectItem>
+                               <SelectItem value="Promo Materials">Promo Materials</SelectItem>
                             </SelectContent>
                          </Select>
                       </div>
