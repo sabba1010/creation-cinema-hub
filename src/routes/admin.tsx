@@ -26,15 +26,8 @@ function AdminLayout() {
   }
 
   if (!isAuthenticated) {
-    return (
-      <AdminLogin 
-        onLogin={() => {
-          setIsAuthenticated(true);
-          // Redirect to the dashboard index route explicitly
-          navigate({ to: "/admin/", replace: true });
-        }} 
-      />
-    );
+    navigate({ to: "/login" });
+    return null;
   }
 
   return (

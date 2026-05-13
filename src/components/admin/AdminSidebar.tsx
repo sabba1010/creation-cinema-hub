@@ -49,7 +49,7 @@ export function AdminSidebar() {
 
   const handleLogout = () => {
     localStorage.removeItem("admin_auth");
-    window.location.href = "/admin";
+    window.location.href = "/login";
   };
 
   return (

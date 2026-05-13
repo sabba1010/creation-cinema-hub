@@ -21,11 +21,18 @@ function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Mock login
+    // Unified login logic
     setTimeout(() => {
-      localStorage.setItem("user_auth", "true");
-      toast.success("Welcome back to One Mustard Seed!");
-      navigate({ to: "/profile" });
+      if (email === "admin@gmail.com" && password === "123456") {
+        localStorage.setItem("admin_auth", "true");
+        toast.success("Welcome to the Admin Portal");
+        navigate({ to: "/admin/" });
+      } else {
+        // Standard user login
+        localStorage.setItem("user_auth", "true");
+        toast.success("Welcome back to One Mustard Seed!");
+        navigate({ to: "/profile" });
+      }
       setIsLoading(false);
     }, 1200);
   };
