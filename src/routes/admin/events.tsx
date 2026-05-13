@@ -11,7 +11,10 @@ import {
   Ticket,
   TicketPercent,
   RefreshCw,
-  Eye
+  Eye,
+  Calendar as CalendarIcon,
+  MapPin,
+  DollarSign
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,12 +37,23 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger,
+  DialogFooter
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/events")({
   component: EventsManagement,
 });
 
-const events = [
+const INITIAL_EVENTS = [
   {
     id: "EVT-001",
     name: "Summer Bible Camp 2026",
@@ -72,8 +86,101 @@ const events = [
   }
 ];
 
+const INITIAL_TICKETS = [
+  { id: "TKT-1001", eventId: "EVT-001", user: "Alice Walker", status: "Paid", checkedIn: false },
+  { id: "TKT-1002", eventId: "EVT-001", user: "Bob Smith", status: "Paid", checkedIn: true },
+  { id: "TKT-1003", eventId: "EVT-001", user: "Charlie Brown", status: "Refunded", checkedIn: false },
+  { id: "TKT-1004", eventId: "EVT-003", user: "Diana Prince", status: "Paid", checkedIn: true },
+];
+
+const INITIAL_PROMOS = [
+  { id: 1, code: "EARLYBIRD", discount: "25%", expiry: "May 20, 2026", status: "Active" },
+  { id: 2, code: "SUMMER25", discount: "15%", expiry: "June 15, 2026", status: "Active" },
+];
+
 function EventsManagement() {
+  const [events, setEvents] = useState(INITIAL_EVENTS);
+  const [tickets, setTickets] = useState(INITIAL_TICKETS);
+  const [promos, setPromos] = useState(INITIAL_PROMOS);
   const [activeTab, setActiveTab] = useState("all-events");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<any>(null);
+  
+  // Form State
+  const [formData, setFormData] = useState({
+    name: "Night of Miracles: Praise Concert",
+    date: "2026-08-22",
+    location: "Symphony Hall, Downtown",
+    price: "35.00",
+    capacity: "450"
+  });
+
+  const [promoForm, setPromoForm] = useState({ code: "", discount: "", expiry: "2026-12-31" });
+
+  const handleCreateEvent = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingEvent) {
+      setEvents(events.map(ev => ev.id === editingEvent.id ? { ...ev, ...formData, price: `$${formData.price}` } : ev));
+      toast.success("Event updated successfully!");
+      setEditingEvent(null);
+    } else {
+      const newEvent = {
+        id: `EVT-${Math.floor(100 + Math.random() * 900)}`,
+        name: formData.name,
+        date: formData.date,
+        location: formData.location,
+        status: "Active",
+        ticketsSold: 0,
+        capacity: parseInt(formData.capacity) || 0,
+        price: `$${formData.price}`
+      };
+      setEvents([newEvent, ...events]);
+      toast.success("Event created successfully!");
+    }
+    setIsDialogOpen(false);
+    setFormData({ name: "Night of Miracles: Praise Concert", date: "2026-08-22", location: "Symphony Hall, Downtown", price: "35.00", capacity: "450" });
+  };
+
+  const handleEditClick = (event: any) => {
+    setEditingEvent(event);
+    setFormData({
+      name: event.name,
+      date: event.date,
+      location: event.location,
+      price: event.price.replace("$", ""),
+      capacity: event.capacity.toString()
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleDeleteEvent = (id: string) => {
+    setEvents(events.filter(e => e.id !== id));
+    toast.error("Event deleted");
+  };
+
+  const handleCheckIn = (ticketId: string) => {
+    setTickets(tickets.map(t => t.id === ticketId ? { ...t, checkedIn: true } : t));
+    toast.success("Attendee checked in!");
+  };
+
+  const handleRefund = (ticketId: string) => {
+    setTickets(tickets.map(t => t.id === ticketId ? { ...t, status: "Refunded" } : t));
+    toast.info("Ticket refunded successfully");
+  };
+
+  const handleAddPromo = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newPromo = {
+      id: Date.now(),
+      code: promoForm.code.toUpperCase(),
+      discount: promoForm.discount + (promoForm.discount.includes("%") ? "" : "%"),
+      expiry: promoForm.expiry,
+      status: "Active"
+    };
+    setPromos([newPromo, ...promos]);
+    setPromoForm({ code: "", discount: "", expiry: "2026-12-31" });
+    toast.success("Promo code added!");
+  };
 
   return (
     <div className="space-y-6 animate-fade-up">
@@ -82,10 +189,106 @@ function EventsManagement() {
           <h1 className="text-3xl font-display font-bold text-foreground">Events Management</h1>
           <p className="text-muted-foreground">Manage your upcoming events, tickets, and check-ins.</p>
         </div>
-        <Button className="bg-forest hover:bg-forest/90 text-white gap-2 h-11 rounded-xl shadow-md transition-all active:scale-95">
-          <Plus className="w-4 h-4" />
-          Create New Event
-        </Button>
+        
+        <Dialog open={isDialogOpen} onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) setEditingEvent(null);
+        }}>
+          <DialogTrigger asChild>
+            <Button className="bg-forest hover:bg-forest/90 text-white gap-2 h-11 rounded-xl shadow-md transition-all active:scale-95">
+              <Plus className="w-4 h-4" />
+              Create New Event
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[500px] rounded-[2rem] border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-display font-bold">
+                {editingEvent ? "Edit Event" : "Create New Event"}
+              </DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleCreateEvent} className="space-y-6 py-4">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Event Name</Label>
+                  <div className="relative">
+                    <CalendarIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                      id="name" 
+                      placeholder="e.g. Summer Bible Camp" 
+                      className="pl-10 h-11 rounded-xl bg-background/50"
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="date">Date</Label>
+                    <Input 
+                      id="date" 
+                      type="text" 
+                      placeholder="July 15, 2026"
+                      className="h-11 rounded-xl bg-background/50"
+                      value={formData.date}
+                      onChange={(e) => setFormData({...formData, date: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="price">Ticket Price</Label>
+                    <div className="relative">
+                      <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        id="price" 
+                        placeholder="25.00" 
+                        className="pl-10 h-11 rounded-xl bg-background/50"
+                        value={formData.price}
+                        onChange={(e) => setFormData({...formData, price: e.target.value})}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="location">Location</Label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                      id="location" 
+                      placeholder="Physical address or Online" 
+                      className="pl-10 h-11 rounded-xl bg-background/50"
+                      value={formData.location}
+                      onChange={(e) => setFormData({...formData, location: e.target.value})}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="capacity">Total Capacity</Label>
+                  <Input 
+                    id="capacity" 
+                    type="number" 
+                    placeholder="200" 
+                    className="h-11 rounded-xl bg-background/50"
+                    value={formData.capacity}
+                    onChange={(e) => setFormData({...formData, capacity: e.target.value})}
+                    required
+                  />
+                </div>
+              </div>
+              <DialogFooter className="pt-4">
+                <Button type="button" variant="ghost" onClick={() => setIsDialogOpen(false)} className="rounded-xl">Cancel</Button>
+                <Button type="submit" className="bg-forest hover:bg-forest/90 rounded-xl px-8 shadow-md">
+                  {editingEvent ? "Save Changes" : "Create Event"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
@@ -162,14 +365,17 @@ function EventsManagement() {
                           <DropdownMenuItem className="rounded-lg gap-2 cursor-pointer">
                             <Eye className="w-4 h-4" /> View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="rounded-lg gap-2 cursor-pointer">
+                          <DropdownMenuItem className="rounded-lg gap-2 cursor-pointer" onClick={() => handleEditClick(event)}>
                             <Edit className="w-4 h-4" /> Edit Event
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="rounded-lg gap-2 cursor-pointer">
+                          <DropdownMenuItem className="rounded-lg gap-2 cursor-pointer" onClick={() => setActiveTab("tickets")}>
                             <Ticket className="w-4 h-4" /> Manage Tickets
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="rounded-lg gap-2 text-destructive focus:text-destructive cursor-pointer">
+                          <DropdownMenuItem 
+                            className="rounded-lg gap-2 text-destructive focus:text-destructive cursor-pointer"
+                            onClick={() => handleDeleteEvent(event.id)}
+                          >
                             <Trash2 className="w-4 h-4" /> Delete Event
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -182,6 +388,51 @@ function EventsManagement() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="tickets" className="space-y-4">
+           <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
+             <Table>
+                <TableHeader className="bg-muted/30">
+                  <TableRow>
+                    <TableHead>Ticket ID</TableHead>
+                    <TableHead>Attendee</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Check-in</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {tickets.map(t => (
+                    <TableRow key={t.id}>
+                      <TableCell className="font-mono text-xs">{t.id}</TableCell>
+                      <TableCell className="font-medium">{t.user}</TableCell>
+                      <TableCell>
+                        <Badge variant={t.status === "Paid" ? "default" : "secondary"}>{t.status}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        {t.checkedIn ? (
+                          <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">Checked In</Badge>
+                        ) : (
+                          <Badge variant="outline">Pending</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-xs text-rose-500 hover:bg-rose-500/10"
+                          onClick={() => handleRefund(t.id)}
+                          disabled={t.status === "Refunded"}
+                        >
+                          Refund
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+             </Table>
+           </Card>
+        </TabsContent>
+
         <TabsContent value="check-in">
            <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card p-12 text-center flex flex-col items-center gap-6">
               <div className="w-24 h-24 bg-forest/10 rounded-3xl flex items-center justify-center shadow-glow animate-pulse">
@@ -190,12 +441,22 @@ function EventsManagement() {
               <div className="space-y-2">
                 <h3 className="text-2xl font-display font-bold">QR Ticket Check-in</h3>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  Scan ticket QR codes to quickly check-in attendees. You can also manually search by name or ticket ID.
+                  Scan ticket QR codes to quickly check-in attendees.
                 </p>
               </div>
-              <div className="flex gap-3">
-                <Button className="bg-forest h-12 px-8 rounded-xl shadow-md">Open Scanner</Button>
-                <Button variant="outline" className="h-12 px-8 rounded-xl border-border/50">Manual Search</Button>
+              <div className="space-y-4 w-full max-w-sm">
+                <div className="font-bold text-sm text-left">Quick Search by Ticket ID:</div>
+                <div className="flex gap-2">
+                   <Input placeholder="TKT-1001" id="checkin-input" />
+                   <Button className="bg-forest" onClick={() => {
+                     const val = (document.getElementById("checkin-input") as HTMLInputElement).value;
+                     if (tickets.find(t => t.id === val)) {
+                       handleCheckIn(val);
+                     } else {
+                       toast.error("Ticket not found");
+                     }
+                   }}>Check-In</Button>
+                </div>
               </div>
            </Card>
         </TabsContent>
@@ -206,21 +467,41 @@ function EventsManagement() {
               <CardHeader>
                 <CardTitle className="text-lg">Create Promo Code</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Code Name</label>
-                  <Input placeholder="SUMMER25" className="bg-muted/20 border-border/50" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Discount Type</label>
-                  <Input placeholder="Percentage (%)" className="bg-muted/20 border-border/50" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Value</label>
-                  <Input placeholder="20" className="bg-muted/20 border-border/50" />
-                </div>
-                <Button className="w-full bg-forest">Generate Code</Button>
-              </CardContent>
+              <form onSubmit={handleAddPromo}>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Code Name</label>
+                    <Input 
+                      placeholder="SUMMER25" 
+                      className="bg-muted/20 border-border/50" 
+                      value={promoForm.code}
+                      onChange={e => setPromoForm({...promoForm, code: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Discount Value (%)</label>
+                    <Input 
+                      placeholder="20" 
+                      className="bg-muted/20 border-border/50"
+                      value={promoForm.discount}
+                      onChange={e => setPromoForm({...promoForm, discount: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Expiry Date</label>
+                    <Input 
+                      type="date"
+                      className="bg-muted/20 border-border/50" 
+                      value={promoForm.expiry}
+                      onChange={e => setPromoForm({...promoForm, expiry: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <Button className="w-full bg-forest">Generate Code</Button>
+                </CardContent>
+              </form>
             </Card>
             <Card className="md:col-span-2 border-border/50 bg-card/50 backdrop-blur-sm">
               <CardHeader>
@@ -231,15 +512,14 @@ function EventsManagement() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {[1, 2].map((i) => (
-                    <div key={i} className="flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/30">
+                  {promos.map((promo) => (
+                    <div key={promo.id} className="flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/30">
                       <div>
-                        <div className="font-bold text-forest">EARLYBIRD</div>
-                        <div className="text-xs text-muted-foreground">25% OFF • Valid until May 20</div>
+                        <div className="font-bold text-forest">{promo.code}</div>
+                        <div className="text-xs text-muted-foreground">{promo.discount} OFF • Valid until {promo.expiry}</div>
                       </div>
                       <div className="flex gap-2">
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0"><Edit className="w-4 h-4" /></Button>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive"><Trash2 className="w-4 h-4" /></Button>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => setPromos(promos.filter(p => p.id !== promo.id))}><Trash2 className="w-4 h-4 text-rose-500" /></Button>
                       </div>
                     </div>
                   ))}
