@@ -39,6 +39,7 @@ import { Route as KidsWatchRouteImport } from './routes/kids/watch'
 import { Route as KidsTopicsRouteImport } from './routes/kids/topics'
 import { Route as KidsSubscribeRouteImport } from './routes/kids/subscribe'
 import { Route as KidsSeriesRouteImport } from './routes/kids/series'
+import { Route as KidsLibraryRouteImport } from './routes/kids/library'
 import { Route as FilmsWatchRouteImport } from './routes/films/watch'
 import { Route as FilmsTrailerRouteImport } from './routes/films/trailer'
 import { Route as FilmsFilmIdRouteImport } from './routes/films/$filmId'
@@ -206,6 +207,11 @@ const KidsSeriesRoute = KidsSeriesRouteImport.update({
   path: '/kids/series',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KidsLibraryRoute = KidsLibraryRouteImport.update({
+  id: '/kids/library',
+  path: '/kids/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FilmsWatchRoute = FilmsWatchRouteImport.update({
   id: '/watch',
   path: '/watch',
@@ -315,6 +321,7 @@ export interface FileRoutesByFullPath {
   '/films/$filmId': typeof FilmsFilmIdRoute
   '/films/trailer': typeof FilmsTrailerRoute
   '/films/watch': typeof FilmsWatchRoute
+  '/kids/library': typeof KidsLibraryRoute
   '/kids/series': typeof KidsSeriesRoute
   '/kids/subscribe': typeof KidsSubscribeRoute
   '/kids/topics': typeof KidsTopicsRoute
@@ -356,6 +363,7 @@ export interface FileRoutesByTo {
   '/films/$filmId': typeof FilmsFilmIdRoute
   '/films/trailer': typeof FilmsTrailerRoute
   '/films/watch': typeof FilmsWatchRoute
+  '/kids/library': typeof KidsLibraryRoute
   '/kids/series': typeof KidsSeriesRoute
   '/kids/subscribe': typeof KidsSubscribeRoute
   '/kids/topics': typeof KidsTopicsRoute
@@ -405,6 +413,7 @@ export interface FileRoutesById {
   '/films/$filmId': typeof FilmsFilmIdRoute
   '/films/trailer': typeof FilmsTrailerRoute
   '/films/watch': typeof FilmsWatchRoute
+  '/kids/library': typeof KidsLibraryRoute
   '/kids/series': typeof KidsSeriesRoute
   '/kids/subscribe': typeof KidsSubscribeRoute
   '/kids/topics': typeof KidsTopicsRoute
@@ -455,6 +464,7 @@ export interface FileRouteTypes {
     | '/films/$filmId'
     | '/films/trailer'
     | '/films/watch'
+    | '/kids/library'
     | '/kids/series'
     | '/kids/subscribe'
     | '/kids/topics'
@@ -496,6 +506,7 @@ export interface FileRouteTypes {
     | '/films/$filmId'
     | '/films/trailer'
     | '/films/watch'
+    | '/kids/library'
     | '/kids/series'
     | '/kids/subscribe'
     | '/kids/topics'
@@ -544,6 +555,7 @@ export interface FileRouteTypes {
     | '/films/$filmId'
     | '/films/trailer'
     | '/films/watch'
+    | '/kids/library'
     | '/kids/series'
     | '/kids/subscribe'
     | '/kids/topics'
@@ -578,6 +590,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   ResourcesRoute: typeof ResourcesRouteWithChildren
   ShopRoute: typeof ShopRouteWithChildren
+  KidsLibraryRoute: typeof KidsLibraryRoute
   KidsSeriesRoute: typeof KidsSeriesRoute
   KidsSubscribeRoute: typeof KidsSubscribeRoute
   KidsTopicsRoute: typeof KidsTopicsRoute
@@ -797,6 +810,13 @@ declare module '@tanstack/react-router' {
       path: '/kids/series'
       fullPath: '/kids/series'
       preLoaderRoute: typeof KidsSeriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kids/library': {
+      id: '/kids/library'
+      path: '/kids/library'
+      fullPath: '/kids/library'
+      preLoaderRoute: typeof KidsLibraryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/films/watch': {
@@ -1041,6 +1061,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   ResourcesRoute: ResourcesRouteWithChildren,
   ShopRoute: ShopRouteWithChildren,
+  KidsLibraryRoute: KidsLibraryRoute,
   KidsSeriesRoute: KidsSeriesRoute,
   KidsSubscribeRoute: KidsSubscribeRoute,
   KidsTopicsRoute: KidsTopicsRoute,

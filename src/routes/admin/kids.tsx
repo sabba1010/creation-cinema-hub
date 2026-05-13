@@ -21,7 +21,10 @@ import {
   Edit,
   CloudUpload,
   UserPlus,
-  Mail
+  Mail,
+  Filter,
+  FileVideo,
+  Mic2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -61,21 +64,29 @@ const INITIAL_SERIES = [
   { id: 4, name: "Bible Buddies", episodes: 24, subscribers: 3500, status: "Active", topic: "Creation", img: "https://images.unsplash.com/photo-1519340241574-211915c54970?w=400&h=200&fit=crop" },
 ];
 
+const INITIAL_TOPICS = [
+  { id: 1, name: "Kindness", icon: Heart, count: 12, status: "Active" },
+  { id: 2, name: "Courage", icon: ShieldCheck, count: 8, status: "Active" },
+  { id: 3, name: "Creation", icon: Sparkles, count: 24, status: "Active" },
+  { id: 4, name: "Worship", icon: Music, count: 15, status: "Active" },
+  { id: 5, name: "Faith", icon: Star, count: 10, status: "Active" },
+];
+
+const INITIAL_CONTENT = [
+  { id: 1, title: "The Lying Lion", type: "Video", series: "Friendly Forest", length: "12:45", views: 1240 },
+  { id: 2, title: "Noah's Song", type: "Audio", series: "Bible Buddies", length: "03:20", views: 890 },
+  { id: 3, title: "Star Gazer 101", type: "Video", series: "Star Sailors", length: "15:00", views: 450 },
+];
+
 const INITIAL_LIFETIME = [
   { id: 1, name: "James Wilson", email: "james.w@example.com", joined: "Jan 12, 2026", source: "Founder Pack" },
   { id: 2, name: "Emma Thompson", email: "emma.t@example.com", joined: "Feb 05, 2026", source: "Promo Code" },
-  { id: 3, name: "Robert Davis", email: "rdavis@example.com", joined: "Mar 20, 2026", source: "Donation Reward" },
-];
-
-const TOPICS = [
-  { name: "Kindness", icon: Heart, color: "text-rose-600" },
-  { name: "Courage", icon: ShieldCheck, color: "text-forest-deep" },
-  { name: "Creation", icon: Sparkles, color: "text-gold" },
-  { name: "Worship", icon: Music, color: "text-earth" },
 ];
 
 function KidsManagement() {
   const [series, setSeries] = useState(INITIAL_SERIES);
+  const [topics, setTopics] = useState(INITIAL_TOPICS);
+  const [content, setContent] = useState(INITIAL_CONTENT);
   const [lifetimeUsers, setLifetimeUsers] = useState(INITIAL_LIFETIME);
   
   // Dialog States
@@ -117,138 +128,38 @@ function KidsManagement() {
     toast.success(`Lifetime access granted to ${grantForm.name}`);
   };
 
-  const handleDeleteSeries = (id: number) => {
-    setSeries(series.filter(s => s.id !== id));
-    toast.error("Series removed");
-  };
-
-  const handleRevokeLifetime = (id: number) => {
-    setLifetimeUsers(lifetimeUsers.filter(u => u.id !== id));
-    toast.error("Lifetime access revoked");
-  };
-
   return (
     <div className="space-y-8 animate-fade-up">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-display font-bold text-foreground">KidsBibleFlix</h1>
-          <p className="text-muted-foreground">Manage kid-safe streaming content, series, and lifetime memberships.</p>
+          <p className="text-muted-foreground">Manage kid-safe streaming content, series, topics, and memberships.</p>
         </div>
         <div className="flex gap-2">
-          <Dialog open={isSeriesDialogOpen} onOpenChange={setIsSeriesDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="h-11 rounded-xl border-border/50 gap-2">
-                <Plus className="w-4 h-4" />
-                New Series
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] rounded-[2.5rem]">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-display font-bold">Create New Series</DialogTitle>
-                <DialogDescription>Add a new show collection to KidsBibleFlix.</DialogDescription>
-              </DialogHeader>
-              <form onSubmit={handleAddSeries} className="space-y-6 py-4">
-                 <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>Series Name</Label>
-                      <Input 
-                        placeholder="e.g. Parable Pals" 
-                        className="h-11 rounded-xl"
-                        value={seriesForm.name}
-                        onChange={e => setSeriesForm({...seriesForm, name: e.target.value})}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Main Topic</Label>
-                      <Select 
-                        value={seriesForm.topic} 
-                        onValueChange={val => setSeriesForm({...seriesForm, topic: val})}
-                      >
-                        <SelectTrigger className="h-11 rounded-xl">
-                          <SelectValue placeholder="Select a topic" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl">
-                          {TOPICS.map(t => (
-                            <SelectItem key={t.name} value={t.name}>{t.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Initial Episode Count</Label>
-                      <Input 
-                        type="number"
-                        className="h-11 rounded-xl"
-                        value={seriesForm.episodes}
-                        onChange={e => setSeriesForm({...seriesForm, episodes: e.target.value})}
-                        required
-                      />
-                    </div>
-                 </div>
-                 <DialogFooter>
-                    <Button type="submit" className="w-full bg-forest h-11 rounded-xl">Create Series</Button>
-                 </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
-
-          <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
-             <DialogTrigger asChild>
-                <Button className="bg-forest h-11 rounded-xl gap-2 shadow-md">
-                  <CloudUpload className="w-4 h-4" />
-                  Upload Episode
-                </Button>
-             </DialogTrigger>
-             <DialogContent className="sm:max-w-[425px] rounded-[2.5rem]">
-                <DialogHeader>
-                  <DialogTitle className="text-2xl font-display font-bold">Upload Content</DialogTitle>
-                </DialogHeader>
-                <div className="py-8 space-y-6">
-                   <div className="border-2 border-dashed border-border rounded-3xl p-12 text-center space-y-4 hover:border-forest/50 hover:bg-forest/5 transition-all cursor-pointer group">
-                      <div className="mx-auto w-16 h-16 bg-forest/10 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <Play className="w-8 h-8 text-forest" />
-                      </div>
-                      <div>
-                        <div className="font-bold text-sm">Select Episode File</div>
-                        <div className="text-[10px] text-muted-foreground uppercase tracking-widest mt-1">MP4, MOV up to 2GB</div>
-                      </div>
-                   </div>
-                   <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label>Target Series</Label>
-                        <Select>
-                          <SelectTrigger className="h-11 rounded-xl">
-                            <SelectValue placeholder="Select series" />
-                          </SelectTrigger>
-                          <SelectContent className="rounded-xl">
-                             {series.map(s => <SelectItem key={s.id} value={s.id.toString()}>{s.name}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                   </div>
-                   <Button className="w-full bg-forest h-11 rounded-xl" onClick={() => {
-                     toast.success("Upload started in background");
-                     setIsUploadDialogOpen(false);
-                   }}>Start Upload</Button>
-                </div>
-             </DialogContent>
-          </Dialog>
+          <Button variant="outline" className="h-11 rounded-xl border-border/50 gap-2" onClick={() => setIsSeriesDialogOpen(true)}>
+            <Plus className="w-4 h-4" />
+            New Series
+          </Button>
+          <Button className="bg-forest h-11 rounded-xl gap-2 shadow-md" onClick={() => setIsUploadDialogOpen(true)}>
+            <CloudUpload className="w-4 h-4" />
+            Upload Content
+          </Button>
         </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-4">
-        <StatsCard title="Total Episodes" value="142" icon={Baby} color="forest" />
         <StatsCard title="Series" value={series.length.toString()} icon={Layers} color="gold" />
-        <StatsCard title="Lifetime Users" value={lifetimeUsers.length.toString()} icon={Star} color="sky" />
-        <StatsCard title="Monthly Subscription" value="$4.99" icon={CreditCard} color="forest" />
+        <StatsCard title="Topics" value={topics.length.toString()} icon={Heart} color="forest" />
+        <StatsCard title="Total Content" value={content.length.toString()} icon={Play} color="sky" />
+        <StatsCard title="Lifetime Users" value={lifetimeUsers.length.toString()} icon={Star} color="gold" />
       </div>
 
       <Tabs defaultValue="series" className="space-y-6">
         <TabsList className="bg-card/50 border border-border/50 p-1 rounded-xl">
-          <TabsTrigger value="series" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Series & Topics</TabsTrigger>
+          <TabsTrigger value="series" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Series</TabsTrigger>
+          <TabsTrigger value="topics" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Topics</TabsTrigger>
+          <TabsTrigger value="library" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Library (Video/Audio)</TabsTrigger>
           <TabsTrigger value="lifetime" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Lifetime Access</TabsTrigger>
-          <TabsTrigger value="subscriptions" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Subscriptions</TabsTrigger>
         </TabsList>
 
         <TabsContent value="series" className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -258,10 +169,6 @@ function KidsManagement() {
                 <img src={item.img} alt={item.name} className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                 <div className="absolute bottom-3 left-3 text-white font-display font-bold text-lg">{item.name}</div>
-                <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                   <Button size="icon" variant="secondary" className="h-8 w-8 bg-white/20 backdrop-blur-md border-white/10 hover:bg-white/40"><Edit className="w-4 h-4 text-white" /></Button>
-                   <Button size="icon" variant="destructive" className="h-8 w-8 bg-rose-500/80 backdrop-blur-md border-none" onClick={() => handleDeleteSeries(item.id)}><Trash2 className="w-4 h-4 text-white" /></Button>
-                </div>
               </div>
               <CardContent className="p-4 flex flex-col gap-3">
                 <div className="flex items-center justify-between">
@@ -285,8 +192,76 @@ function KidsManagement() {
             <div className="p-3 bg-muted/20 rounded-full group-hover:bg-forest/10 transition-colors">
               <Plus className="w-6 h-6 text-muted-foreground group-hover:text-forest" />
             </div>
-            <span className="font-medium text-muted-foreground group-hover:text-forest">Add New Series</span>
+            <span className="font-medium text-muted-foreground group-hover:text-forest text-sm">Add New Series</span>
           </button>
+        </TabsContent>
+
+        <TabsContent value="topics" className="space-y-4">
+           <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
+              <Table>
+                 <TableHeader className="bg-muted/30">
+                    <TableRow className="border-border/50">
+                       <TableHead className="font-bold">Topic Name</TableHead>
+                       <TableHead className="font-bold">Icon</TableHead>
+                       <TableHead className="font-bold">Series Count</TableHead>
+                       <TableHead className="font-bold">Status</TableHead>
+                       <TableHead className="text-right font-bold">Actions</TableHead>
+                    </TableRow>
+                 </TableHeader>
+                 <TableBody>
+                    {topics.map(t => (
+                      <TableRow key={t.id} className="border-border/50 group">
+                         <TableCell className="font-bold text-base">{t.name}</TableCell>
+                         <TableCell><t.icon className="w-5 h-5 text-forest" /></TableCell>
+                         <TableCell>{t.count} Series</TableCell>
+                         <TableCell><Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">{t.status}</Badge></TableCell>
+                         <TableCell className="text-right">
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"><Edit className="w-4 h-4" /></Button>
+                         </TableCell>
+                      </TableRow>
+                    ))}
+                 </TableBody>
+              </Table>
+           </Card>
+        </TabsContent>
+
+        <TabsContent value="library" className="space-y-4">
+           <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                 <Input placeholder="Search library..." className="pl-10 h-11 rounded-xl bg-card/50 border-border/50" />
+              </div>
+              <Button variant="outline" className="h-11 rounded-xl gap-2"><Filter className="w-4 h-4" /> Filter</Button>
+           </div>
+           <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
+              <Table>
+                 <TableHeader className="bg-muted/30">
+                    <TableRow className="border-border/50">
+                       <TableHead className="font-bold">Title</TableHead>
+                       <TableHead className="font-bold">Type</TableHead>
+                       <TableHead className="font-bold">Series</TableHead>
+                       <TableHead className="font-bold">Duration</TableHead>
+                       <TableHead className="font-bold text-right">Views</TableHead>
+                    </TableRow>
+                 </TableHeader>
+                 <TableBody>
+                    {content.map(c => (
+                      <TableRow key={c.id} className="border-border/50">
+                         <TableCell className="font-bold">{c.title}</TableCell>
+                         <TableCell>
+                            <Badge variant="outline" className="gap-1.5 font-bold uppercase text-[9px] tracking-widest">
+                               {c.type === "Video" ? <FileVideo className="w-3 h-3" /> : <Mic2 className="w-3 h-3" />}
+                               {c.type}
+                            </Badge>
+                         </TableCell>
+                         <TableCell className="text-muted-foreground text-sm">{c.series}</TableCell>
+                         <TableCell className="font-mono text-xs">{c.length}</TableCell>
+                         <TableCell className="text-right font-medium">{c.views.toLocaleString()}</TableCell>
+                      </TableRow>
+                    ))}
+                 </TableBody>
+              </Table>
+           </Card>
         </TabsContent>
 
         <TabsContent value="lifetime">
@@ -296,66 +271,10 @@ function KidsManagement() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input placeholder="Search lifetime users..." className="pl-10 h-11 rounded-xl bg-muted/20 border-border/50" />
               </div>
-              
-              <Dialog open={isGrantDialogOpen} onOpenChange={setIsGrantDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button className="bg-gold text-forest-deep font-bold h-11 rounded-xl px-6 hover:bg-gold/90 transition-all active:scale-95 shadow-md">
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    Grant Lifetime Access
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px] rounded-[2.5rem]">
-                   <DialogHeader>
-                      <DialogTitle className="text-2xl font-display font-bold">Grant Lifetime Access</DialogTitle>
-                      <DialogDescription>Users with lifetime access will never be charged for KidsBibleFlix.</DialogDescription>
-                   </DialogHeader>
-                   <form onSubmit={handleGrantLifetime} className="space-y-6 py-4">
-                      <div className="space-y-4">
-                         <div className="space-y-2">
-                            <Label>Parent Name</Label>
-                            <Input 
-                              placeholder="e.g. John Doe" 
-                              className="h-11 rounded-xl"
-                              value={grantForm.name}
-                              onChange={e => setGrantForm({...grantForm, name: e.target.value})}
-                              required
-                            />
-                         </div>
-                         <div className="space-y-2">
-                            <Label>Parent Email</Label>
-                            <Input 
-                              type="email"
-                              placeholder="e.g. john@example.com" 
-                              className="h-11 rounded-xl"
-                              value={grantForm.email}
-                              onChange={e => setGrantForm({...grantForm, email: e.target.value})}
-                              required
-                            />
-                         </div>
-                         <div className="space-y-2">
-                            <Label>Source / Reason</Label>
-                            <Select 
-                              value={grantForm.source}
-                              onValueChange={val => setGrantForm({...grantForm, source: val})}
-                            >
-                               <SelectTrigger className="h-11 rounded-xl">
-                                  <SelectValue placeholder="Select source" />
-                               </SelectTrigger>
-                               <SelectContent className="rounded-xl">
-                                  <SelectItem value="Founder Pack">Founder Pack</SelectItem>
-                                  <SelectItem value="Promo Code">Promo Code</SelectItem>
-                                  <SelectItem value="Donation Reward">Donation Reward</SelectItem>
-                                  <SelectItem value="Manual Grant">Manual Grant</SelectItem>
-                               </SelectContent>
-                            </Select>
-                         </div>
-                      </div>
-                      <DialogFooter>
-                         <Button type="submit" className="w-full bg-forest h-11 rounded-xl">Confirm Lifetime Grant</Button>
-                      </DialogFooter>
-                   </form>
-                </DialogContent>
-              </Dialog>
+              <Button className="bg-gold text-forest-deep font-bold h-11 rounded-xl px-6 hover:bg-gold/90 transition-all active:scale-95 shadow-md" onClick={() => setIsGrantDialogOpen(true)}>
+                <UserPlus className="w-4 h-4 mr-2" />
+                Grant Lifetime Access
+              </Button>
             </div>
             <Table>
               <TableHeader className="bg-muted/30">
@@ -379,12 +298,7 @@ function KidsManagement() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="text-destructive hover:bg-destructive/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => handleRevokeLifetime(user.id)}
-                      >
+                      <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
                         Revoke Access
                       </Button>
                     </TableCell>
@@ -394,35 +308,80 @@ function KidsManagement() {
             </Table>
           </Card>
         </TabsContent>
-
-        <TabsContent value="subscriptions">
-          <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card p-12 text-center flex flex-col items-center gap-6">
-            <div className="w-20 h-20 bg-gold/10 rounded-full flex items-center justify-center shadow-glow">
-              <Star className="w-10 h-10 text-gold" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-2xl font-display font-bold">Subscription Support</h3>
-              <p className="text-muted-foreground max-w-md mx-auto">
-                Manage your recurring revenue and trial users. Pricing is currently locked at **$4.99/mo** for all regions.
-              </p>
-            </div>
-            <div className="grid grid-cols-2 gap-4 w-full max-w-lg">
-               <div className="p-4 rounded-2xl bg-white/40 border border-border/50">
-                  <div className="text-xs text-muted-foreground uppercase tracking-widest font-bold mb-1">Active Subs</div>
-                  <div className="text-2xl font-bold">1,452</div>
-               </div>
-               <div className="p-4 rounded-2xl bg-white/40 border border-border/50">
-                  <div className="text-xs text-muted-foreground uppercase tracking-widest font-bold mb-1">Trial Users</div>
-                  <div className="text-2xl font-bold">284</div>
-               </div>
-            </div>
-            <div className="flex gap-2">
-              <Badge className="bg-forest">Active Platform</Badge>
-              <Badge variant="outline">Billing Integrated</Badge>
-            </div>
-          </Card>
-        </TabsContent>
       </Tabs>
+
+      {/* Dialogs */}
+      <Dialog open={isSeriesDialogOpen} onOpenChange={setIsSeriesDialogOpen}>
+        <DialogContent className="sm:max-w-[425px] rounded-[2.5rem]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-display font-bold">Create New Series</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleAddSeries} className="space-y-6 py-4">
+             <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Series Name</Label>
+                  <Input 
+                    placeholder="e.g. Parable Pals" 
+                    className="h-11 rounded-xl"
+                    value={seriesForm.name}
+                    onChange={e => setSeriesForm({...seriesForm, name: e.target.value})}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Main Topic</Label>
+                  <Select value={seriesForm.topic} onValueChange={val => setSeriesForm({...seriesForm, topic: val})}>
+                    <SelectTrigger className="h-11 rounded-xl">
+                      <SelectValue placeholder="Select topic" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                       <SelectItem value="Kindness">Kindness</SelectItem>
+                       <SelectItem value="Courage">Courage</SelectItem>
+                       <SelectItem value="Creation">Creation</SelectItem>
+                       <SelectItem value="Worship">Worship</SelectItem>
+                       <SelectItem value="Honesty">Honesty</SelectItem>
+                       <SelectItem value="Joy">Joy</SelectItem>
+                       <SelectItem value="Peace">Peace</SelectItem>
+                       <SelectItem value="Faith">Faith</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+             </div>
+             <DialogFooter>
+                <Button type="submit" className="w-full bg-forest h-11 rounded-xl">Create Series</Button>
+             </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
+        <DialogContent className="sm:max-w-[425px] rounded-[2.5rem]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-display font-bold">Upload Content</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 py-4 text-center">
+             <div className="border-2 border-dashed border-border rounded-3xl p-12 hover:bg-forest/5 hover:border-forest/50 transition-all cursor-pointer group">
+                <CloudUpload className="w-12 h-12 text-muted-foreground group-hover:text-forest mx-auto mb-4" />
+                <div className="font-bold text-sm">Select Video or Audio File</div>
+             </div>
+             <div className="space-y-4 text-left">
+                <div className="space-y-2">
+                   <Label>Content Type</Label>
+                   <Select defaultValue="Video">
+                      <SelectTrigger className="h-11 rounded-xl">
+                         <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                         <SelectItem value="Video">Video Episode</SelectItem>
+                         <SelectItem value="Audio">Audio / Song</SelectItem>
+                      </SelectContent>
+                   </Select>
+                </div>
+             </div>
+             <Button className="w-full bg-forest h-11 rounded-xl" onClick={() => { toast.success("Upload started"); setIsUploadDialogOpen(false); }}>Start Upload</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
