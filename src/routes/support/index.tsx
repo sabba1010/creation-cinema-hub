@@ -1,8 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Heart, Globe, Users, TrendingUp, DollarSign, Calendar, ShieldCheck, CheckCircle2, ArrowRight, Mail, Phone, MapPin } from "lucide-react";
+import { Heart, CheckCircle2, ArrowRight, ShieldCheck, DollarSign, Globe, Users } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/support/")({
   component: SupportPage,
@@ -14,261 +18,152 @@ function SupportPage() {
   const [customAmount, setCustomAmount] = useState<string>("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [donorName, setDonorName] = useState("");
 
   const AMOUNTS = ["10", "25", "50", "100", "250", "Custom"];
 
   const handleDonate = (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-    const name = `${formData.get("firstName")} ${formData.get("lastName")}`;
-    setDonorName(name);
-    
     setIsProcessing(true);
-    // Simulate payment processing
     setTimeout(() => {
       setIsProcessing(false);
       setShowSuccess(true);
-    }, 2000);
+    }, 1500);
   };
 
   const finalAmount = amount === "Custom" ? customAmount : amount;
 
   return (
-    <div className="bg-background min-h-screen flex flex-col">
+    <div className="bg-[#FAF7EE] min-h-screen flex flex-col">
       <SiteHeader />
       <main className="flex-grow pt-24">
-        {/* Hero Section */}
-        <section className="relative py-24 sm:py-32 overflow-hidden bg-forest-deep text-cream">
-          <div className="absolute inset-0 opacity-20">
-             <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=2000" alt="Giving" className="w-full h-full object-cover" />
-             <div className="absolute inset-0 bg-gradient-to-t from-forest-deep via-transparent to-transparent" />
-          </div>
-          <div className="relative mx-auto max-w-7xl px-6 text-center">
-            <span className="text-[11px] font-bold uppercase tracking-[0.4em] text-gold mb-6 block">Fuel the Mission</span>
-            <h1 className="font-display text-5xl sm:text-7xl font-medium tracking-tight mb-8">
-              Partner with <span className="italic text-gold">Wonder</span>
-            </h1>
-            <p className="mx-auto max-w-2xl text-lg text-cream/70 leading-relaxed">
-              Your generosity enables One Mustard Seed to create cinematic media that grounds faith in the beauty of creation. Together, we can reach the next generation.
-            </p>
-          </div>
-        </section>
-
-        {/* Donation Hub */}
-        <section className="py-24 bg-background">
-          <div className="mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-20 items-start">
-            <div className="space-y-12">
-              <div>
-                <h2 className="font-display text-4xl font-medium">Invest in the <span className="italic text-primary">Kingdom</span></h2>
-                <p className="mt-4 text-muted-foreground leading-relaxed">
-                  Every dollar goes directly toward the production of high-fidelity films, podcasts, and resources for families and churches worldwide.
-                </p>
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-6">
-                <div className="p-8 rounded-3xl bg-muted/30 border border-border">
-                   <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6">
-                      <TrendingUp className="h-6 w-6" />
-                   </div>
-                   <h3 className="font-bold text-lg mb-2">Sustainable Impact</h3>
-                   <p className="text-sm text-muted-foreground">Monthly giving provides the reliable funding needed for long-term production cycles.</p>
-                </div>
-                <div className="p-8 rounded-3xl bg-muted/30 border border-border">
-                   <div className="h-12 w-12 rounded-2xl bg-gold/10 text-gold flex items-center justify-center mb-6">
-                      <Globe className="h-6 w-6" />
-                   </div>
-                   <h3 className="font-bold text-lg mb-2">Global Reach</h3>
-                   <p className="text-sm text-muted-foreground">We distribute our content freely to mission fields and under-resourced schools globally.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative p-10 rounded-[2.5rem] bg-card border border-border shadow-2xl overflow-hidden">
-              {showSuccess ? (
-                <div className="absolute inset-0 bg-card z-20 flex flex-col items-center justify-center text-center p-12 animate-in fade-in zoom-in duration-500">
-                  <div className="h-20 w-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-6">
-                    <CheckCircle2 className="h-10 w-10" />
-                  </div>
-                  <h3 className="text-3xl font-display font-medium text-foreground mb-4 italic">Thank You, {donorName.split(' ')[0]}!</h3>
-                  <div className="p-6 rounded-2xl bg-muted/50 w-full mb-8">
-                     <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block mb-2">Your Impact</span>
-                     <div className="text-2xl font-bold text-primary">${finalAmount} {givingType === "monthly" ? "/ Month" : "Once"}</div>
-                  </div>
-                  <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
-                    Your contribution has been received. A receipt will be sent to your email shortly.
-                  </p>
-                  <button onClick={() => setShowSuccess(false)} className="mt-10 text-xs font-bold uppercase tracking-widest text-primary border-b border-primary/20 pb-1 hover:border-primary transition-all">Make another gift</button>
-                </div>
-              ) : null}
-
-              {isProcessing && (
-                <div className="absolute inset-0 bg-card/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center animate-in fade-in duration-300">
-                   <div className="h-12 w-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4" />
-                   <span className="text-xs font-bold uppercase tracking-widest text-foreground">Processing Gift...</span>
-                </div>
-              )}
-
-              <div className="flex bg-muted rounded-2xl p-1 mb-10">
-                <button 
-                  onClick={() => setGivingType("monthly")}
-                  className={`flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${givingType === "monthly" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}
-                >
-                  Monthly
-                </button>
-                <button 
-                  onClick={() => setGivingType("one-time")}
-                  className={`flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${givingType === "one-time" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}
-                >
-                  One-time
-                </button>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3 mb-6">
-                {AMOUNTS.map((amt) => (
-                  <button
-                    key={amt}
-                    onClick={() => setAmount(amt)}
-                    className={`py-4 rounded-2xl border font-bold text-lg transition-all ${amount === amt ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}
-                  >
-                    {amt === "Custom" ? amt : `$${amt}`}
-                  </button>
-                ))}
-              </div>
-
-              {amount === "Custom" && (
-                <div className="mb-10 animate-in slide-in-from-top-4 duration-300">
-                   <div className="relative">
-                      <div className="absolute left-6 top-1/2 -translate-y-1/2 text-muted-foreground font-bold">$</div>
-                      <input 
-                        type="number" 
-                        placeholder="Enter custom amount"
-                        value={customAmount}
-                        onChange={(e) => setCustomAmount(e.target.value)}
-                        className="w-full bg-muted/50 border border-primary/30 rounded-2xl pl-12 pr-6 py-4 font-bold text-lg focus:outline-none focus:border-primary transition-all"
-                      />
-                   </div>
-                </div>
-              )}
-
-              <form onSubmit={handleDonate} className="space-y-6">
-                <div className="grid sm:grid-cols-2 gap-4">
-                   <div className="space-y-2">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">First Name</label>
-                      <input name="firstName" required type="text" className="w-full bg-muted/50 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40" />
-                   </div>
-                   <div className="space-y-2">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Last Name</label>
-                      <input name="lastName" required type="text" className="w-full bg-muted/50 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40" />
-                   </div>
-                </div>
-                <div className="space-y-2">
-                   <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Email Address</label>
-                   <input name="email" required type="email" className="w-full bg-muted/50 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40" />
-                </div>
-                <button type="submit" disabled={isProcessing} className="w-full py-5 rounded-2xl bg-primary text-primary-foreground font-bold text-sm uppercase tracking-widest shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3">
-                   {isProcessing ? "Processing..." : `Complete ${amount === 'Custom' ? '' : '$' + finalAmount} Donation`} <ArrowRight className="h-4 w-4" />
-                </button>
-                <div className="flex items-center justify-center gap-2 text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
-                   <ShieldCheck className="h-3 w-3 text-emerald-500" /> Secure SSL Encrypted
-                </div>
-              </form>
-            </div>
-          </div>
-        </section>
-
-        {/* Mission & Impact */}
-        <section className="py-24 bg-forest-deep text-cream">
-           <div className="mx-auto max-w-7xl px-6">
-              <div className="text-center mb-16">
-                 <h2 className="font-display text-4xl font-medium">Mission & <span className="italic text-gold">Impact</span></h2>
-                 <p className="mt-4 text-cream/60">The quantifiable fruit of your partnership.</p>
-              </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                 {[
-                   { label: "Lives Impacted", val: "2.4M+", icon: Users },
-                   { label: "Films Produced", val: "48", icon: DollarSign },
-                   { label: "Countries Reached", val: "162", icon: Globe },
-                   { label: "Years of Ministry", val: "12", icon: Calendar },
-                 ].map((stat, i) => (
-                   <div key={i} className="p-10 rounded-[2rem] bg-white/5 border border-white/10 text-center hover:bg-white/10 transition-all group">
-                      <div className="mx-auto h-12 w-12 rounded-xl bg-gold/20 text-gold flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                         <stat.icon className="h-6 w-6" />
-                      </div>
-                      <div className="text-3xl font-bold mb-2">{stat.val}</div>
-                      <div className="text-[10px] font-bold uppercase tracking-widest text-cream/40">{stat.label}</div>
-                   </div>
-                 ))}
-              </div>
+        {/* Simple Hero */}
+        <section className="py-20 bg-forest-deep text-cream relative overflow-hidden">
+           <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-gold blur-[120px] rounded-full" />
+           </div>
+           <div className="relative mx-auto max-w-3xl px-6 text-center space-y-6">
+              <Badge className="bg-gold text-forest-deep font-bold border-none px-4 py-1.5 uppercase tracking-widest text-[10px]">Your Support Matters</Badge>
+              <h1 className="font-display text-5xl sm:text-6xl font-bold tracking-tight">Partner with <span className="text-gold italic">OMS</span></h1>
+              <p className="text-cream/70 text-lg leading-relaxed">
+                Join us in creating cinematic stories that ground faith in the wonder of creation. Every gift directly fuels our production.
+              </p>
            </div>
         </section>
 
-        {/* Sponsorships & Campaigns */}
-        <section className="py-24 bg-background">
-          <div className="mx-auto max-w-7xl px-6">
-             <div className="grid lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 space-y-8">
-                   <h3 className="font-display text-3xl font-medium">Active <span className="italic text-primary">Campaigns</span></h3>
-                   <div className="grid sm:grid-cols-2 gap-6">
-                      {[
-                        { title: "Friendly Forest Series", goal: "$45k", raised: "$28k", img: "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&q=80&w=600" },
-                        { title: "Global Resource Kits", goal: "$12k", raised: "$9.5k", img: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=600" },
-                      ].map((cam, i) => (
-                        <div key={i} className="group cursor-pointer">
-                           <div className="relative aspect-video rounded-3xl overflow-hidden mb-4">
-                              <img src={cam.img} alt={cam.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all" />
-                           </div>
-                           <h4 className="font-bold text-lg">{cam.title}</h4>
-                           <div className="mt-4 space-y-2">
-                              <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
-                                 <span className="text-primary">{cam.raised} raised</span>
-                                 <span className="text-muted-foreground">{cam.goal} goal</span>
-                              </div>
-                              <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                                 <div className="h-full bg-primary" style={{ width: '65%' }} />
-                              </div>
-                           </div>
-                        </div>
-                      ))}
-                   </div>
-                </div>
-                <div className="p-10 rounded-[2.5rem] bg-card border border-border shadow-xl space-y-8">
-                   <h3 className="font-display text-2xl font-medium">Corporate <span className="italic text-primary">Sponsorship</span></h3>
-                   <p className="text-sm text-muted-foreground leading-relaxed">
-                     Align your brand with world-class faith media. We offer unique sponsorship opportunities for our major film releases and live events.
-                   </p>
-                   <ul className="space-y-4">
-                      {["Screening Credits", "Co-Branded Resources", "Live Event VIP", "Founding Partner Status"].map((f) => (
-                        <li key={f} className="flex items-center gap-3 text-sm font-medium">
-                           <CheckCircle2 className="h-4 w-4 text-primary" /> {f}
-                        </li>
-                      ))}
-                   </ul>
-                   <button className="w-full py-4 rounded-xl border border-border font-bold text-xs uppercase tracking-widest hover:bg-muted transition-all">Download Media Kit</button>
-                </div>
-             </div>
-          </div>
-        </section>
+        {/* Focused Donation Form */}
+        <section className="py-20 -mt-10 relative z-10">
+           <div className="mx-auto max-w-5xl px-6 grid lg:grid-cols-5 gap-12 items-start">
+              
+              {/* Left Side: Trust & Impact */}
+              <div className="lg:col-span-2 space-y-8 lg:pt-10">
+                 <div className="space-y-4">
+                    <h2 className="text-3xl font-display font-bold text-forest-deep">Making an <span className="italic text-gold">Impact</span></h2>
+                    <p className="text-forest-deep/60 leading-relaxed text-sm">Your contribution supports our global mission to reach the next generation through high-fidelity media.</p>
+                 </div>
+                 
+                 <div className="space-y-4">
+                    {[
+                      { icon: Globe, label: "162 Countries reached with gospel media" },
+                      { icon: Users, label: "2.4M+ Lives impacted annually" },
+                      { icon: Heart, label: "Ad-free content for families" },
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-white border border-cream/20 shadow-sm">
+                         <div className="h-10 w-10 rounded-xl bg-forest/5 text-forest flex items-center justify-center shrink-0">
+                            <item.icon className="h-5 w-5" />
+                         </div>
+                         <span className="text-xs font-bold text-forest-deep/70">{item.label}</span>
+                      </div>
+                    ))}
+                 </div>
+              </div>
 
-        {/* Contact Support */}
-        <section className="py-24 border-t border-border">
-          <div className="mx-auto max-w-7xl px-6 text-center">
-             <div className="flex justify-center gap-12 flex-wrap">
-                <div className="flex items-center gap-3">
-                   <Mail className="h-5 w-5 text-primary" />
-                   <span className="text-sm font-bold">giving@onemustardseed.com</span>
-                </div>
-                <div className="flex items-center gap-3">
-                   <Phone className="h-5 w-5 text-primary" />
-                   <span className="text-sm font-bold">+1 (800) 555-SEED</span>
-                </div>
-                <div className="flex items-center gap-3">
-                   <MapPin className="h-5 w-5 text-primary" />
-                   <span className="text-sm font-bold">Luminara Plaza, OMS Square</span>
-                </div>
-             </div>
-          </div>
+              {/* Right Side: Simple Form */}
+              <div className="lg:col-span-3">
+                 <Card className="rounded-[3rem] border-cream/10 bg-white shadow-2xl overflow-hidden relative">
+                    {showSuccess ? (
+                      <div className="p-12 text-center space-y-6 animate-in fade-in zoom-in duration-500">
+                         <div className="h-20 w-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                            <CheckCircle2 className="h-10 w-10" />
+                         </div>
+                         <div className="space-y-2">
+                            <h3 className="text-3xl font-display font-bold text-forest-deep">Thank You!</h3>
+                            <p className="text-muted-foreground">Your ${finalAmount} gift has been processed successfully.</p>
+                         </div>
+                         <Button onClick={() => setShowSuccess(false)} variant="outline" className="rounded-xl px-10 h-12">Make Another Gift</Button>
+                      </div>
+                    ) : (
+                      <div className="p-8 sm:p-12 space-y-8">
+                         {/* Toggle */}
+                         <div className="flex bg-cream/50 p-1 rounded-2xl border border-cream/10">
+                            <button 
+                              type="button"
+                              onClick={() => setGivingType("monthly")}
+                              className={`flex-1 py-3 rounded-xl font-bold text-[11px] uppercase tracking-widest transition-all ${givingType === "monthly" ? "bg-forest-deep text-white shadow-lg" : "text-forest-deep/40"}`}
+                            >
+                               Monthly
+                            </button>
+                            <button 
+                              type="button"
+                              onClick={() => setGivingType("one-time")}
+                              className={`flex-1 py-3 rounded-xl font-bold text-[11px] uppercase tracking-widest transition-all ${givingType === "one-time" ? "bg-forest-deep text-white shadow-lg" : "text-forest-deep/40"}`}
+                            >
+                               One-time
+                            </button>
+                         </div>
+
+                         {/* Amounts */}
+                         <div className="grid grid-cols-3 gap-3">
+                            {AMOUNTS.map(amt => (
+                              <button 
+                                key={amt}
+                                type="button"
+                                onClick={() => setAmount(amt)}
+                                className={`py-4 rounded-2xl border-2 font-bold text-lg transition-all ${amount === amt ? "border-gold bg-gold/5 text-forest-deep" : "border-cream/20 text-forest-deep/40 hover:border-gold/30"}`}
+                              >
+                                 {amt === "Custom" ? "..." : `$${amt}`}
+                              </button>
+                            ))}
+                         </div>
+
+                         {amount === "Custom" && (
+                           <div className="animate-in slide-in-from-top-4">
+                              <Input 
+                                type="number" 
+                                placeholder="Enter custom amount" 
+                                className="h-14 rounded-2xl border-gold/30 text-lg font-bold"
+                                value={customAmount}
+                                onChange={e => setCustomAmount(e.target.value)}
+                              />
+                           </div>
+                         )}
+
+                         {/* Quick Form */}
+                         <form onSubmit={handleDonate} className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                               <Input placeholder="First Name" required className="h-12 rounded-xl bg-cream/20" />
+                               <Input placeholder="Last Name" required className="h-12 rounded-xl bg-cream/20" />
+                            </div>
+                            <Input type="email" placeholder="Email Address" required className="h-12 rounded-xl bg-cream/20" />
+                            
+                            <Button 
+                              type="submit" 
+                              className="w-full h-14 rounded-2xl bg-forest-deep text-white text-sm font-bold uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] active:scale-95 transition-all gap-3"
+                              disabled={isProcessing}
+                            >
+                               {isProcessing ? "Processing..." : `Donate $${finalAmount || '0'} Now`}
+                               <ArrowRight className="h-4 w-4" />
+                            </Button>
+                         </form>
+
+                         <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-forest-deep/30 uppercase tracking-widest pt-2">
+                            <ShieldCheck className="h-3 w-3" /> SSL Secured & Encrypted
+                         </div>
+                      </div>
+                    )}
+                 </Card>
+              </div>
+
+           </div>
         </section>
       </main>
       <SiteFooter />
