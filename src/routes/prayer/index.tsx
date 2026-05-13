@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Calendar, Play, BookOpen, Share2, Users, Heart, ArrowRight, ShieldCheck } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import eventImg from "@/assets/event-live.jpg";
 
 export const Route = createFileRoute("/prayer/")({
@@ -70,23 +71,38 @@ function PrayerLandingPage() {
 
             <div className="space-y-4">
               {[
-                { n: "01", t: "The Architecture of Light", status: "Live Soon" },
-                { n: "02", t: "Rhythms of the Deep", status: "Coming Soon" },
-                { n: "03", t: "Whispers in the Wind", status: "Coming Soon" },
-                { n: "04", t: "The Soil's Secret", status: "Coming Soon" },
+                { n: "01", t: "The Architecture of Light", status: "Live Now", color: "forest" },
+                { n: "02", t: "Rhythms of the Deep", status: "Coming Soon", color: "muted" },
+                { n: "03", t: "Whispers in the Wind", status: "Coming Soon", color: "muted" },
+                { n: "04", t: "The Soil's Secret", status: "Coming Soon", color: "muted" },
+                { n: "05", t: "The Celestial Clockwork", status: "Locked", color: "muted" },
+                { n: "06", t: "Life in Paradox", status: "Locked", color: "muted" },
+                { n: "07", t: "The Sabbath Rest", status: "Locked", color: "muted" },
               ].map((night) => (
-                <div key={night.n} className="flex items-center justify-between p-8 rounded-3xl bg-background border border-border group hover:border-primary/20 transition-all cursor-pointer">
+                <Link 
+                  key={night.n} 
+                  to="/prayer/video"
+                  className="flex items-center justify-between p-8 rounded-3xl bg-card border border-border group hover:border-primary/40 hover:shadow-xl hover:scale-[1.01] transition-all cursor-pointer"
+                >
                   <div className="flex items-center gap-8">
                     <span className="font-display text-3xl text-muted-foreground/30 group-hover:text-primary/40 transition-colors">{night.n}</span>
-                    <h4 className="font-display text-2xl text-foreground">{night.t}</h4>
+                    <div>
+                      <h4 className="font-display text-2xl text-foreground group-hover:text-primary transition-colors">{night.t}</h4>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-1">Evening Session • 7:00 PM EST</p>
+                    </div>
                   </div>
                   <div className="flex items-center gap-6">
-                    <span className="hidden sm:block text-[10px] font-bold uppercase tracking-widest text-primary/70">{night.status}</span>
-                    <div className="h-12 w-12 rounded-full border border-border flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all">
+                    <Badge 
+                      variant={night.status === "Live Now" ? "default" : "outline"}
+                      className={night.status === "Live Now" ? "bg-emerald-500 animate-pulse text-white border-none" : "opacity-50"}
+                    >
+                      {night.status}
+                    </Badge>
+                    <div className="h-12 w-12 rounded-full border border-border flex items-center justify-center group-hover:bg-primary group-hover:text-cream group-hover:border-primary transition-all shadow-sm">
                       <ArrowRight className="h-5 w-5" />
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

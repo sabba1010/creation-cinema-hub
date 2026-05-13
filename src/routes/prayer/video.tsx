@@ -61,17 +61,39 @@ function VideoAccessPage() {
               </div>
             </div>
 
-            {/* Sidebar / Live Chat & Materials */}
+            {/* Sidebar / Next Sessions & Chat */}
             <div className="space-y-8">
-              <div className="rounded-[2rem] bg-white/5 border border-white/10 flex flex-col h-[500px]">
+              <div className="p-8 rounded-[2.5rem] bg-white/5 border border-white/10 space-y-6">
+                 <h3 className="text-sm font-bold uppercase tracking-widest text-gold/80">Program Schedule</h3>
+                 <div className="space-y-3">
+                    {[
+                      { n: "01", t: "The Architecture of Light", status: "Now Playing", active: true },
+                      { n: "02", t: "Rhythms of the Deep", status: "June 15", active: false },
+                      { n: "03", t: "Whispers in the Wind", status: "June 16", active: false },
+                      { n: "04", t: "The Soil's Secret", status: "June 17", active: false },
+                    ].map((session) => (
+                      <div 
+                        key={session.n} 
+                        className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${session.active ? "bg-gold text-gold-foreground border-gold" : "bg-white/5 border-white/5 text-cream/40 hover:bg-white/10"}`}
+                      >
+                         <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-bold opacity-50">{session.n}</span>
+                            <span className="text-xs font-bold truncate max-w-[120px]">{session.t}</span>
+                         </div>
+                         <span className="text-[8px] font-bold uppercase tracking-tighter opacity-70">{session.status}</span>
+                      </div>
+                    ))}
+                 </div>
+              </div>
+
+              <div className="rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col h-[350px]">
                 <div className="p-6 border-b border-white/10 flex items-center justify-between">
-                  <h3 className="text-sm font-bold uppercase tracking-widest text-gold/80">Live Community</h3>
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-gold/80">Live Chat</h3>
                   <Users className="h-4 w-4 text-white/40" />
                 </div>
                 <div className="flex-grow overflow-y-auto p-6 space-y-4">
                   {[
                     { u: "Faith77", m: "Amen! Such a powerful opening." },
-                    { u: "ChurchLeader", m: "Greetings from South Africa! We are watching as a group." },
                     { u: "SarahE", m: "The cinematography is stunning tonight." },
                     { u: "DavidW", m: "Praying for everyone joining tonight." },
                   ].map((msg, i) => (
@@ -82,7 +104,7 @@ function VideoAccessPage() {
                   ))}
                 </div>
                 <div className="p-6 border-t border-white/10">
-                  <input type="text" placeholder="Join the conversation..." className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-cream focus:outline-none focus:border-gold/30" />
+                  <input type="text" placeholder="Join chat..." className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm text-cream focus:outline-none focus:border-gold/30" />
                 </div>
               </div>
 
