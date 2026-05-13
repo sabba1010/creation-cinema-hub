@@ -62,6 +62,7 @@ export function SiteFooter() {
             <a href="#" className="hover:text-gold">Privacy</a>
             <a href="#" className="hover:text-gold">Terms</a>
             <a href="#" className="hover:text-gold">Contact</a>
+            <a href="/admin" className="hover:text-gold">Admin</a>
           </div>
         </div>
       </div>

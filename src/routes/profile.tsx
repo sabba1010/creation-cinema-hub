@@ -1,8 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { User, Settings, Play, Heart, LogOut, Shield, Bell, CreditCard, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/profile")({
   component: ProfilePage,
@@ -10,6 +11,14 @@ export const Route = createFileRoute("/profile")({
 
 function ProfilePage() {
   const [activeTab, setActiveTab] = useState("overview");
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    localStorage.removeItem("admin_auth");
+    localStorage.removeItem("user_auth");
+    toast.success("Successfully signed out");
+    navigate({ to: "/login" });
+  };
 
   const TABS = [
     { id: "overview", label: "Overview", icon: User },
@@ -54,7 +63,10 @@ function ProfilePage() {
                       <ChevronRight className={`h-4 w-4 transition-transform ${activeTab === tab.id ? "rotate-90 text-primary" : "opacity-30"}`} />
                     </button>
                   ))}
-                  <button className="flex items-center gap-4 p-5 rounded-2xl text-destructive hover:bg-destructive/5 transition-all mt-8">
+                  <button 
+                    onClick={handleSignOut}
+                    className="flex items-center gap-4 p-5 rounded-2xl text-destructive hover:bg-destructive/5 transition-all mt-8"
+                  >
                     <LogOut className="h-5 w-5" />
                     <span className="text-sm font-bold tracking-wide">Sign Out</span>
                   </button>
