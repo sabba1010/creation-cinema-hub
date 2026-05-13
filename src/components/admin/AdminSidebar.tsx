@@ -41,7 +41,7 @@ const menuItems = [
   { title: "Podcast", icon: Mic, path: "/admin/podcast" },
   { title: "Shop", icon: ShoppingBag, path: "/admin/shop" },
   { title: "Payments", icon: CreditCard, path: "/admin/payments" },
-  { title: "Marketing", icon: Mail, path: "/admin/marketing" },
+  // { title: "Marketing", icon: Mail, path: "/admin/marketing" },
 ];
 
 export function AdminSidebar() {
