@@ -24,7 +24,7 @@ const FILMS = [
     year: "2025", 
     runtime: "62 min", 
     genre: "Spiritual",
-    img: "https://images.unsplash.com/photo-1499209974431-9dac3adaf471?auto=format&fit=crop&q=80&w=800" 
+    img: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&q=80&w=800" 
   },
 ];
 

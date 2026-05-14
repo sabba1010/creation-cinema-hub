@@ -38,7 +38,7 @@ const BOOKS = [
     price: "$22.00",
     rating: 5.0,
     reviews: 210,
-    image: "https://images.unsplash.com/photo-1543003919-a995d51555c9?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: "faith-for-little-hearts",
