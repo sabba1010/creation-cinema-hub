@@ -15,10 +15,7 @@ const NAV_GROUPS = [
   { label: "PODCAST", href: "/podcast" },
   {
     label: "RESOURCES",
-    links: [
-      { label: "Books", href: "/books" },
-      { label: "Resource Hub", href: "/resources" },
-    ]
+    href: "/resources"
   },
   {
     label: "CONNECT",
@@ -28,7 +25,7 @@ const NAV_GROUPS = [
       { label: "Contact", href: "/contact" },
     ]
   },
-  { label: "SHOP", href: "/shop" },
+  { label: "STORE", href: "/shop" },
 ];
 
 export function SiteHeader() {
