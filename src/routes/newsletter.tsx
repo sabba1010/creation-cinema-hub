@@ -1,4 +1,4 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { useState } from "react";
@@ -100,21 +100,37 @@ function NewsletterPage() {
     <div className="bg-background min-h-screen">
       <SiteHeader />
       
-      <main className="pt-24 pb-20">
-        <div className="container px-4 mx-auto">
-          {/* Header Section */}
-          <div className="max-w-3xl mb-12 animate-fade-up">
-            <Badge className="mb-4 bg-forest/10 text-forest border-forest/20 hover:bg-forest/20 px-3 py-1 rounded-full transition-colors">
-              Our Updates
-            </Badge>
-            <h1 className="text-4xl md:text-6xl font-display font-bold text-foreground mb-6 leading-tight">
-              Monthly <span className="text-forest">Newsletter</span>
-            </h1>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Stay connected with the latest from One Mustard Seed. From ministry updates to behind-the-scenes glimpses, 
-              find it all in our monthly digest.
-            </p>
+      <main className="pb-20">
+        {/* Cinematic Header Section */}
+        <section className="pt-32 pb-24 bg-forest-deep text-cream relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 right-0 w-[40%] h-full bg-[radial-gradient(circle_at_center,var(--color-gold),transparent_70%)]" />
+            <div className="absolute bottom-0 left-0 w-[40%] h-full bg-[radial-gradient(circle_at_center,var(--color-sky),transparent_70%)]" />
           </div>
+          
+          <div className="container px-6 mx-auto relative z-10 text-center lg:text-left">
+            <div className="max-w-3xl animate-fade-up">
+              <Badge className="mb-6 bg-gold/10 text-gold border-gold/20 hover:bg-gold/20 px-4 py-1.5 rounded-full transition-all tracking-[0.2em] uppercase text-[10px] font-black">
+                Our Updates
+              </Badge>
+              <h1 className="text-5xl md:text-8xl font-display font-medium text-cream mb-8 leading-[0.9] tracking-tighter">
+                Monthly <span className="italic text-gold block sm:inline">Newsletter</span>
+              </h1>
+              <p className="text-xl text-cream/70 leading-relaxed font-light max-w-2xl mx-auto lg:mx-0">
+                Immersive storytelling, ministry milestones, and behind-the-scenes glimpses from the heart of One Mustard Seed.
+              </p>
+            </div>
+          </div>
+          
+          {/* Elegant Wave Transition */}
+          <div className="absolute bottom-[-1px] left-0 w-full overflow-hidden leading-[0] z-20">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block h-[40px] sm:h-[60px] lg:h-[80px] w-full" style={{ transform: "rotate(180deg)" }}>
+              <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" fill="var(--color-background)"></path>
+            </svg>
+          </div>
+        </section>
+
+        <div className="container px-6 mx-auto pt-16">
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             {/* Main Content Area - Latest Newsletter */}
@@ -122,64 +138,66 @@ function NewsletterPage() {
               {selectedNewsletter && (
                 <div className="animate-fade-in">
                   {/* Newsletter Template */}
-                  <Card className="border-none bg-card shadow-xl rounded-[2.5rem] overflow-hidden">
-                    <div className="relative aspect-[21/9] w-full overflow-hidden">
+                  <Card className="border-none bg-card shadow-elevated rounded-[3rem] overflow-hidden group/card transition-all duration-500 hover:shadow-2xl">
+                    <div className="relative aspect-[16/8] w-full overflow-hidden">
                       <img 
                         src={selectedNewsletter.featuredImage} 
                         alt={selectedNewsletter.title}
-                        className="object-cover w-full h-full"
+                        className="object-cover w-full h-full transition-transform duration-[3000ms] group-hover/card:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                      <div className="absolute bottom-8 left-8 right-8">
-                        <div className="flex items-center gap-3 text-white/80 mb-2">
+                      <div className="absolute inset-0 bg-gradient-to-t from-forest-deep via-forest-deep/20 to-transparent" />
+                      <div className="absolute bottom-10 left-10 right-10">
+                        <div className="flex items-center gap-3 text-gold/80 mb-3">
+                          <div className="h-px w-8 bg-gold/40" />
                           <Calendar className="w-4 h-4" />
-                          <span className="text-sm font-medium uppercase tracking-wider">{selectedNewsletter.date}</span>
+                          <span className="text-[10px] font-black uppercase tracking-[0.3em]">{selectedNewsletter.date}</span>
                         </div>
-                        <h2 className="text-3xl md:text-4xl font-display font-bold text-white">
+                        <h2 className="text-3xl md:text-5xl font-display font-medium text-cream leading-tight">
                           {selectedNewsletter.title}
                         </h2>
                       </div>
                     </div>
 
-                    <CardContent className="p-8 md:p-12 space-y-10">
+                    <CardContent className="p-10 md:p-20 space-y-16">
                       {selectedNewsletter.blocks.map((block, index) => (
                         <div key={index} className="animate-fade-up" style={{ animationDelay: `${index * 100}ms` }}>
                           {block.type === "text" && (
-                            <p className="text-lg text-muted-foreground leading-relaxed first-letter:text-4xl first-letter:font-bold first-letter:text-forest first-letter:mr-2">
+                            <p className="text-xl text-muted-foreground/90 leading-relaxed font-light first-letter:text-6xl first-letter:font-display first-letter:font-bold first-letter:text-forest first-letter:mr-4 first-letter:float-left first-letter:mt-1">
                               {block.content}
                             </p>
                           )}
 
                           {block.type === "photo" && (
-                            <figure className="space-y-3">
-                              <div className="rounded-2xl overflow-hidden shadow-lg group">
+                            <figure className="space-y-4">
+                              <div className="rounded-[2rem] overflow-hidden shadow-2xl group/img relative">
                                 <img 
                                   src={block.url} 
                                   alt={block.caption || "Newsletter Photo"} 
-                                  className="w-full h-auto transition-transform duration-500 group-hover:scale-105"
+                                  className="w-full h-auto transition-transform duration-700 group-hover/img:scale-110"
                                 />
+                                <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-[2rem]" />
                               </div>
                               {block.caption && (
-                                <figcaption className="text-sm text-center italic text-muted-foreground">
-                                  {block.caption}
+                                <figcaption className="text-xs text-center font-bold uppercase tracking-[0.2em] text-muted-foreground/60 italic">
+                                  — {block.caption}
                                 </figcaption>
                               )}
                             </figure>
                           )}
 
                           {block.type === "news" && (
-                            <div className="bg-forest/5 border border-forest/10 rounded-3xl p-8 relative overflow-hidden group">
-                              <div className="absolute top-0 right-0 p-4 opacity-10">
-                                <FileText className="w-24 h-24 text-forest" />
+                            <div className="bg-forest/5 border border-forest/10 rounded-[2.5rem] p-10 relative overflow-hidden group/news transition-all hover:bg-forest/10 hover:border-forest/20">
+                              <div className="absolute top-0 right-0 p-8 opacity-5 transition-transform group-hover/news:scale-110 group-hover/news:rotate-6">
+                                <FileText className="w-32 h-32 text-forest" />
                               </div>
                               <div className="relative z-10">
-                                <Badge className="mb-4 bg-forest text-white">Ministry Update</Badge>
-                                <h3 className="text-2xl font-display font-bold text-foreground mb-3">{block.title}</h3>
-                                <p className="text-muted-foreground mb-6">{block.excerpt}</p>
+                                <Badge className="mb-6 bg-forest text-cream px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border-none">Ministry Update</Badge>
+                                <h3 className="text-3xl font-display font-medium text-foreground mb-4">{block.title}</h3>
+                                <p className="text-lg text-muted-foreground/80 mb-8 max-w-xl">{block.excerpt}</p>
                                 {block.link && (
-                                  <Button variant="link" className="p-0 h-auto text-forest font-bold group" asChild>
+                                  <Button variant="link" className="p-0 h-auto text-forest font-bold group/btn text-sm uppercase tracking-widest" asChild>
                                     <a href={block.link}>
-                                      Read More <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                      Read More <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover/btn:translate-x-2" />
                                     </a>
                                   </Button>
                                 )}
@@ -188,21 +206,21 @@ function NewsletterPage() {
                           )}
 
                           {block.type === "video" && (
-                            <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl group cursor-pointer">
+                            <div className="relative aspect-video rounded-[2.5rem] overflow-hidden shadow-glow group/vid cursor-pointer">
                               <img 
                                 src={block.thumbnail} 
                                 alt={block.title} 
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover/vid:scale-105"
                               />
-                              <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors" />
+                              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors" />
                               <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 transition-transform duration-300 group-hover:scale-110">
-                                  <Play className="w-8 h-8 text-white fill-white" />
+                                <div className="w-24 h-24 bg-gold/90 text-forest-deep rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 group-hover:scale-110 group-hover:bg-gold">
+                                  <Play className="w-10 h-10 fill-current ml-1" />
                                 </div>
                               </div>
-                              <div className="absolute bottom-6 left-6 text-white">
-                                <p className="text-xs font-bold uppercase tracking-widest opacity-80 mb-1">Featured Video</p>
-                                <h4 className="text-xl font-display font-bold">{block.title}</h4>
+                              <div className="absolute bottom-10 left-10 text-white">
+                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gold mb-2">Featured Experience</p>
+                                <h4 className="text-2xl font-display font-medium">{block.title}</h4>
                               </div>
                             </div>
                           )}
@@ -215,29 +233,29 @@ function NewsletterPage() {
             </div>
 
             {/* Sidebar - Archive & Search */}
-            <aside className="lg:col-span-4 space-y-8">
-              <div className="sticky top-24 space-y-8">
+            <aside className="lg:col-span-4 space-y-10">
+              <div className="sticky top-28 space-y-10">
                 {/* Search */}
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <div className="relative group">
+                  <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground transition-colors group-focus-within:text-forest" />
                   <Input 
                     placeholder="Search archive..." 
-                    className="pl-12 h-14 rounded-2xl bg-card border-border/50 shadow-sm focus:ring-forest/20"
+                    className="pl-14 h-16 rounded-[1.5rem] bg-card border-border/50 shadow-sm focus:ring-forest/20 text-sm font-medium transition-all"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
 
                 {/* Archive List */}
-                <Card className="border-border/50 bg-card/50 backdrop-blur-sm rounded-3xl overflow-hidden">
-                  <div className="p-6 border-b border-border/50 flex items-center justify-between">
-                    <div className="flex items-center gap-2 font-display font-bold text-lg">
-                      <FileText className="w-5 h-5 text-forest" />
-                      Newsletter Archive
+                <Card className="border-border/40 bg-card/40 backdrop-blur-md rounded-[2.5rem] overflow-hidden shadow-sm">
+                  <div className="p-8 border-b border-border/40 flex items-center justify-between bg-muted/30">
+                    <div className="flex items-center gap-3 font-display font-medium text-xl">
+                      <Archive className="w-5 h-5 text-gold" />
+                      Newsletter <span className="italic">Archive</span>
                     </div>
                   </div>
-                  <CardContent className="p-2">
-                    <div className="space-y-1">
+                  <CardContent className="p-3">
+                    <div className="space-y-2">
                       {filteredArchive.length > 0 ? (
                         filteredArchive.map((nl) => (
                           <button
@@ -246,25 +264,25 @@ function NewsletterPage() {
                               setSelectedNewsletter(nl);
                               window.scrollTo({ top: 0, behavior: 'smooth' });
                             }}
-                            className={`w-full text-left p-4 rounded-2xl flex items-center gap-4 transition-all hover:bg-forest/5 group ${selectedNewsletter?.id === nl.id ? 'bg-forest/10' : ''}`}
+                            className={`w-full text-left p-5 rounded-2xl flex items-center gap-5 transition-all hover:bg-forest/5 group ${selectedNewsletter?.id === nl.id ? 'bg-forest/10 shadow-inner' : ''}`}
                           >
-                            <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-border/50">
+                            <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-border/40 group-hover:border-forest/20 transition-colors shadow-sm">
                               <img src={nl.featuredImage} alt="" className="w-full h-full object-cover" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h4 className={`font-bold truncate transition-colors ${selectedNewsletter?.id === nl.id ? 'text-forest' : 'text-foreground'}`}>
+                              <h4 className={`font-bold text-sm truncate transition-colors ${selectedNewsletter?.id === nl.id ? 'text-forest' : 'text-foreground group-hover:text-forest'}`}>
                                 {nl.title}
                               </h4>
-                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <Clock className="w-3 h-3" />
+                              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mt-1">
+                                <Calendar className="w-3 h-3" />
                                 {nl.date}
                               </div>
                             </div>
-                            <ChevronRight className={`w-4 h-4 transition-transform group-hover:translate-x-1 ${selectedNewsletter?.id === nl.id ? 'text-forest' : 'text-muted-foreground opacity-0 group-hover:opacity-100'}`} />
+                            <ChevronRight className={`w-4 h-4 transition-all duration-300 ${selectedNewsletter?.id === nl.id ? 'text-forest translate-x-1' : 'text-muted-foreground opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0'}`} />
                           </button>
                         ))
                       ) : (
-                        <div className="p-8 text-center text-muted-foreground italic">
+                        <div className="p-12 text-center text-muted-foreground italic text-sm">
                           No results found for "{searchTerm}"
                         </div>
                       )}
@@ -273,25 +291,28 @@ function NewsletterPage() {
                 </Card>
 
                 {/* Re-subscription Call to Action */}
-                <div className="bg-gradient-forest rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-glow">
+                <div className="bg-forest-deep rounded-[3rem] p-10 text-cream relative overflow-hidden shadow-elevated group/sub border border-white/5">
                   <div className="relative z-10">
-                    <h3 className="text-2xl font-display font-bold mb-3">Don't Miss an Update</h3>
-                    <p className="text-white/80 text-sm mb-6 leading-relaxed">
+                    <Badge className="mb-6 bg-gold/20 text-gold border-gold/30 px-3 py-1 text-[8px] font-black tracking-[0.3em] uppercase rounded-full">Subscribe</Badge>
+                    <h3 className="text-3xl font-display font-medium mb-4 leading-tight">Don't Miss an <span className="italic text-gold">Update</span></h3>
+                    <p className="text-cream/60 text-sm mb-10 leading-relaxed font-light">
                       Join 5,000+ others who receive our monthly newsletter directly in their inbox.
                     </p>
-                    <div className="space-y-3">
-                      <Input 
-                        placeholder="your@email.com" 
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/50 h-12 rounded-xl"
-                      />
-                      <Button className="w-full bg-gold hover:bg-gold/90 text-forest font-bold h-12 rounded-xl">
+                    <div className="space-y-4">
+                      <div className="relative">
+                        <Input 
+                          placeholder="your@email.com" 
+                          className="bg-white/5 border-white/10 text-white placeholder:text-white/30 h-14 rounded-2xl focus:border-gold/50 focus:bg-white/10 transition-all pl-5"
+                        />
+                      </div>
+                      <Button className="w-full bg-gold hover:bg-gold/90 text-forest-deep font-bold h-14 rounded-2xl shadow-glow transition-all hover:scale-[1.02] active:scale-[0.98] uppercase tracking-widest text-xs">
                         Subscribe Now
                       </Button>
                     </div>
                   </div>
                   {/* Decorative Elements */}
-                  <div className="absolute top-[-20%] right-[-10%] w-40 h-40 bg-gold/10 rounded-full blur-3xl" />
-                  <div className="absolute bottom-[-20%] left-[-10%] w-40 h-40 bg-white/5 rounded-full blur-3xl" />
+                  <div className="absolute top-[-10%] right-[-10%] w-60 h-60 bg-gold/10 rounded-full blur-[100px] transition-transform duration-1000 group-hover/sub:scale-125" />
+                  <div className="absolute bottom-[-10%] left-[-10%] w-40 h-40 bg-white/5 rounded-full blur-[80px]" />
                 </div>
               </div>
             </aside>

@@ -1,4 +1,4 @@
-﻿import {
+import {
   Calendar,
   LayoutDashboard,
   Film,
@@ -12,12 +12,9 @@
   Mail,
   ChevronRight,
   LogOut,
-  Settings,
   Baby,
   Newspaper,
-  Navigation,
-  Globe,
-  Plus
+  Globe
 } from "lucide-react";
 import {
   Sidebar,
@@ -31,7 +28,6 @@ import {
 } from "../ui/sidebar";
 import { Link, useLocation } from "@tanstack/react-router";
 import { Button } from "../ui/button";
-import { Separator } from "../ui/separator";
 
 const menuItems = [
   { title: "Dashboard", icon: LayoutDashboard, path: "/admin/" },
@@ -104,23 +100,6 @@ export function AdminSidebar() {
           </SidebarMenu>
         </div>
 
-        <Separator className="mx-4 bg-border/50" />
-        
-        <div className="px-4 py-4 bg-forest/5 rounded-2xl border border-forest/10 mx-1">
-           <div className="flex items-center gap-3 mb-3">
-              <div className="h-8 w-8 rounded-full bg-forest/20 flex items-center justify-center">
-                 <Settings className="h-4 w-4 text-forest" />
-              </div>
-              <span className="text-xs font-bold text-forest-deep uppercase tracking-widest">System Status</span>
-           </div>
-           <div className="flex items-center justify-between text-[10px] font-bold">
-              <span className="text-muted-foreground uppercase">API Server</span>
-              <span className="flex items-center gap-1 text-emerald-500">
-                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                 ONLINE
-              </span>
-           </div>
-        </div>
       </SidebarContent>
 
       <SidebarFooter className="p-6 border-t border-border/50">
