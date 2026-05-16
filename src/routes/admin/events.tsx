@@ -13,7 +13,12 @@ import {
   Eye,
   Calendar as CalendarIcon,
   MapPin,
-  DollarSign
+  DollarSign,
+  Clock,
+  Navigation,
+  Globe,
+  Settings,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -34,7 +39,7 @@ import {
   DropdownMenuTrigger
 } from "../../components/ui/dropdown-menu";
 import { Badge } from "../../components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
 import {
   Dialog,
@@ -42,114 +47,104 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter
+  DialogFooter,
+  DialogDescription
 } from "../../components/ui/dialog";
 import { Label } from "../../components/ui/label";
 import { toast } from "sonner";
-import { INITIAL_EVENTS } from "../../data/events-data";
+import { INITIAL_EVENTS, type Event, type CityScreening, type Showtime } from "../../data/events-data";
 
 export const Route = createFileRoute("/admin/events")({
   component: EventsManagement,
 });
 
 const INITIAL_TICKETS = [
-  { id: "TKT-1001", eventId: "EVT-001", user: "Alice Walker", status: "Paid", checkedIn: false },
-  { id: "TKT-1002", eventId: "EVT-001", user: "Bob Smith", status: "Paid", checkedIn: true },
-  { id: "TKT-1003", eventId: "EVT-001", user: "Charlie Brown", status: "Refunded", checkedIn: false },
-  { id: "TKT-1004", eventId: "EVT-003", user: "Diana Prince", status: "Paid", checkedIn: true },
+  { id: "TKT-1001", eventId: "EVT-004", user: "Alice Walker", status: "Paid", checkedIn: false, city: "London" },
+  { id: "TKT-1002", eventId: "EVT-004", user: "Bob Smith", status: "Paid", checkedIn: true, city: "Accra" },
+  { id: "TKT-1003", eventId: "EVT-001", user: "Charlie Brown", status: "Refunded", checkedIn: false, city: "Toronto" },
+  { id: "TKT-1004", eventId: "EVT-003", user: "Diana Prince", status: "Paid", checkedIn: true, city: "Online" },
 ];
 
 const INITIAL_PROMOS = [
-  { id: 1, code: "EARLYBIRD", discount: "25%", expiry: "May 20, 2026", status: "Active" },
-  { id: 2, code: "SUMMER25", discount: "15%", expiry: "June 15, 2026", status: "Active" },
+  { id: 1, code: "EARLYBIRD", discount: "25%", expiry: "2026-05-20", status: "Active" },
+  { id: 2, code: "SUMMER25", discount: "15%", expiry: "2026-06-15", status: "Active" },
 ];
 
-const DEFAULT_FORM = {
-  name: "Night of Miracles: Praise Concert",
-  date: "2026-08-22",
-  location: "Symphony Hall, Downtown",
-  price: "35.00",
-  capacity: "450",
-  description: "Join us for an unforgettable night of praise and worship.",
-  image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1200&q=80"
-};
-
 function EventsManagement() {
-  const [events, setEvents] = useState(INITIAL_EVENTS);
+  const [events, setEvents] = useState<Event[]>(INITIAL_EVENTS);
   const [tickets, setTickets] = useState(INITIAL_TICKETS);
   const [promos, setPromos] = useState(INITIAL_PROMOS);
   const [activeTab, setActiveTab] = useState("all-events");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingEvent, setEditingEvent] = useState<any>(null);
-  const [formData, setFormData] = useState(DEFAULT_FORM);
+  
+  // Dialog States
+  const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
+  const [isCityDialogOpen, setIsCityDialogOpen] = useState(false);
+  const [isPromoDialogOpen, setIsPromoDialogOpen] = useState(false);
+  
+  // Selection States
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  
+  // Form States
+  const [eventForm, setEventForm] = useState({
+    name: "",
+    subtitle: "",
+    date: "",
+    location: "",
+    price: "",
+    capacity: "500",
+    description: "",
+    image: "",
+  });
+
   const [promoForm, setPromoForm] = useState({ code: "", discount: "", expiry: "2026-12-31" });
 
-  const handleCreateEvent = (e: React.FormEvent) => {
+  const handleSaveEvent = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingEvent) {
       setEvents(events.map(ev =>
         ev.id === editingEvent.id
           ? {
               ...ev,
-              name: formData.name,
-              date: formData.date,
-              location: formData.location,
-              price: `$${formData.price}`,
-              capacity: parseInt(formData.capacity) || ev.capacity,
-              description: formData.description,
-              image: formData.image,
+              ...eventForm,
+              price: eventForm.price.startsWith("$") ? eventForm.price : `$${eventForm.price}`,
+              capacity: parseInt(eventForm.capacity) || 0
             }
           : ev
       ));
       toast.success("Event updated successfully!");
-      setEditingEvent(null);
     } else {
-      const newEvent = {
+      const newEvent: Event = {
         id: `EVT-${Math.floor(100 + Math.random() * 900)}`,
-        name: formData.name,
-        date: formData.date,
-        location: formData.location,
-        status: "Active" as const,
+        ...eventForm,
+        status: "Active",
         ticketsSold: 0,
-        capacity: parseInt(formData.capacity) || 0,
-        price: `$${formData.price}`,
-        description: formData.description,
-        image: formData.image,
+        capacity: parseInt(eventForm.capacity) || 0,
+        price: eventForm.price.startsWith("$") ? eventForm.price : `$${eventForm.price}`,
+        cities: [],
+        support: [],
+        faq: []
       };
       setEvents([newEvent, ...events]);
-      toast.success("Event created successfully!");
+      toast.success("New event created!");
     }
-    setIsDialogOpen(false);
-    setFormData(DEFAULT_FORM);
+    setIsEventDialogOpen(false);
+    setEditingEvent(null);
   };
 
-  const handleEditClick = (event: any) => {
+  const handleEditEvent = (event: Event) => {
     setEditingEvent(event);
-    setFormData({
+    setEventForm({
       name: event.name,
+      subtitle: event.subtitle || "",
       date: event.date,
       location: event.location,
       price: event.price.replace("$", ""),
       capacity: String(event.capacity),
       description: event.description || "",
-      image: event.image || ""
+      image: event.image || "",
     });
-    setIsDialogOpen(true);
-  };
-
-  const handleDeleteEvent = (id: string) => {
-    setEvents(events.filter(e => e.id !== id));
-    toast.error("Event deleted");
-  };
-
-  const handleCheckIn = (ticketId: string) => {
-    setTickets(tickets.map(t => t.id === ticketId ? { ...t, checkedIn: true } : t));
-    toast.success("Attendee checked in!");
-  };
-
-  const handleRefund = (ticketId: string) => {
-    setTickets(tickets.map(t => t.id === ticketId ? { ...t, status: "Refunded" } : t));
-    toast.info("Ticket refunded successfully");
+    setIsEventDialogOpen(true);
   };
 
   const handleAddPromo = (e: React.FormEvent) => {
@@ -157,418 +152,400 @@ function EventsManagement() {
     const newPromo = {
       id: Date.now(),
       code: promoForm.code.toUpperCase(),
-      discount: promoForm.discount + (promoForm.discount.includes("%") ? "" : "%"),
+      discount: promoForm.discount.includes("%") ? promoForm.discount : `${promoForm.discount}%`,
       expiry: promoForm.expiry,
-      status: "Active"
+      status: "Active" as const
     };
     setPromos([newPromo, ...promos]);
+    setIsPromoDialogOpen(false);
     setPromoForm({ code: "", discount: "", expiry: "2026-12-31" });
-    toast.success("Promo code added!");
+    toast.success("Promo code created!");
   };
 
   return (
-    <div className="space-y-6 animate-fade-up">
+    <div className="space-y-8 animate-fade-up">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-display font-bold text-foreground">Events Management</h1>
-          <p className="text-muted-foreground">Manage your upcoming events, tickets, and check-ins.</p>
+          <h1 className="text-3xl font-display font-bold text-foreground">Events Engine</h1>
+          <p className="text-muted-foreground">Manage multi-city screenings, showtimes, and global registrations.</p>
         </div>
-
         <div className="flex gap-3">
-          <Button
-            variant="outline"
-            onClick={() => {
-              const names = [
-                "Creation Discovery Workshop",
-                "Youth Media Bootcamp",
-                "Regional Meetup: Austin",
-                "Faith & Science Symposium",
-                "Worship in the Wild"
-              ];
-              const locations = ["Community Center", "OMS Studio B", "Grace Plaza", "Online (Zoom)", "National Park Annex"];
-              const newEvent = {
-                id: `EVT-${Math.floor(100 + Math.random() * 900)}`,
-                name: names[Math.floor(Math.random() * names.length)],
-                date: "August 10, 2026",
-                location: locations[Math.floor(Math.random() * locations.length)],
-                status: "Active" as const,
-                ticketsSold: Math.floor(Math.random() * 100),
-                capacity: 200,
-                price: "$25.00",
-                description: "A specially curated session focusing on the intersection of faith and creativity.",
-                image: "https://images.unsplash.com/photo-1493612276216-ee3925520721?w=1200&q=80"
-              };
-              setEvents([newEvent, ...events]);
-              toast.success("Fake event generated for testing!");
-            }}
-            className="border-forest/20 text-forest hover:bg-forest/5 h-11 rounded-xl"
+          <Button 
+            variant="outline" 
+            className="h-11 rounded-xl border-border/50 gap-2"
+            onClick={() => setIsPromoDialogOpen(true)}
           >
-            Generate Fake Event
+            <TicketPercent className="w-4 h-4" />
+            Promo Codes
           </Button>
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
-            setIsDialogOpen(open);
-            if (!open) setEditingEvent(null);
-          }}>
-            <DialogTrigger asChild>
-              <Button className="bg-forest hover:bg-forest/90 text-white gap-2 h-11 rounded-xl shadow-md transition-all active:scale-95">
-                <Plus className="w-4 h-4" />
-                Create New Event
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] rounded-[2rem] border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-display font-bold">
-                  {editingEvent ? "Edit Event" : "Create New Event"}
-                </DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleCreateEvent} className="space-y-6 py-4">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Event Name</Label>
-                    <div className="relative">
-                      <CalendarIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="name"
-                        placeholder="e.g. Summer Bible Camp"
-                        className="pl-10 h-11 rounded-xl bg-background/50"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="date">Date</Label>
-                      <Input
-                        id="date"
-                        type="text"
-                        placeholder="July 15, 2026"
-                        className="h-11 rounded-xl bg-background/50"
-                        value={formData.date}
-                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="price">Ticket Price</Label>
-                      <div className="relative">
-                        <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="price"
-                          placeholder="25.00"
-                          className="pl-10 h-11 rounded-xl bg-background/50"
-                          value={formData.price}
-                          onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="location">Location</Label>
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="location"
-                        placeholder="Physical address or Online"
-                        className="pl-10 h-11 rounded-xl bg-background/50"
-                        value={formData.location}
-                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="capacity">Total Capacity</Label>
-                    <Input
-                      id="capacity"
-                      type="number"
-                      placeholder="200"
-                      className="h-11 rounded-xl bg-background/50"
-                      value={formData.capacity}
-                      onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Event Description</Label>
-                    <textarea
-                      id="description"
-                      placeholder="Short description of the event..."
-                      className="w-full min-h-[80px] p-3 rounded-xl border border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-ring"
-                      value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="image">Featured Image URL</Label>
-                    <Input
-                      id="image"
-                      placeholder="https://images.unsplash.com/..."
-                      className="h-11 rounded-xl bg-background/50"
-                      value={formData.image}
-                      onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    />
-                  </div>
-                </div>
-                <DialogFooter className="pt-4">
-                  <Button type="button" variant="ghost" onClick={() => setIsDialogOpen(false)} className="rounded-xl">Cancel</Button>
-                  <Button type="submit" className="bg-forest hover:bg-forest/90 rounded-xl px-8 shadow-md">
-                    {editingEvent ? "Save Changes" : "Create Event"}
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+          <Button 
+            className="bg-forest h-11 rounded-xl gap-2 shadow-md transition-all active:scale-95"
+            onClick={() => {
+              setEditingEvent(null);
+              setEventForm({
+                name: "",
+                subtitle: "",
+                date: "",
+                location: "",
+                price: "",
+                capacity: "500",
+                description: "",
+                image: "",
+              });
+              setIsEventDialogOpen(true);
+            }}
+          >
+            <Plus className="w-4 h-4" />
+            Create Event
+          </Button>
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-card/50 backdrop-blur-md border border-border/50 p-1 rounded-xl">
-          <TabsTrigger value="all-events" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">All Events</TabsTrigger>
-          <TabsTrigger value="tickets" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Tickets & Sales</TabsTrigger>
-          <TabsTrigger value="check-in" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Check-in</TabsTrigger>
-          <TabsTrigger value="promo" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Promo Codes</TabsTrigger>
+          <TabsTrigger value="all-events" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white transition-all">All Events</TabsTrigger>
+          <TabsTrigger value="registrations" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white transition-all">Registrations</TabsTrigger>
+          <TabsTrigger value="settings" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white transition-all">Global Settings</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="all-events" className="space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input placeholder="Search events..." className="pl-10 bg-card/50 border-border/50 h-11 rounded-xl focus:ring-forest/30" />
-            </div>
-            <Button variant="outline" className="h-11 rounded-xl gap-2 border-border/50">
-              <Filter className="w-4 h-4" />
-              Filters
-            </Button>
-          </div>
-
-          <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
-            <Table>
-              <TableHeader className="bg-muted/30">
-                <TableRow className="border-border/50">
-                  <TableHead className="font-bold">Event Name</TableHead>
-                  <TableHead className="font-bold">Date</TableHead>
-                  <TableHead className="font-bold">Status</TableHead>
-                  <TableHead className="font-bold">Tickets Sold</TableHead>
-                  <TableHead className="font-bold">Price</TableHead>
-                  <TableHead className="text-right font-bold">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {events.map((event) => (
-                  <TableRow key={event.id} className="border-border/50 hover:bg-muted/10 transition-colors">
-                    <TableCell className="font-medium">
-                      <div>
-                        {event.name}
-                        <div className="text-xs text-muted-foreground font-normal">{event.location}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>{event.date}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={event.status === "Active" ? "default" : event.status === "Draft" ? "secondary" : "outline"}
-                        className={event.status === "Active" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : ""}
-                      >
-                        {event.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col gap-1">
-                        <span className="text-sm">{event.ticketsSold} / {event.capacity}</span>
-                        <div className="w-24 h-1.5 bg-muted rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-forest"
-                            style={{ width: `${Math.min(100, (event.ticketsSold / event.capacity) * 100)}%` }}
-                          />
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-semibold">{event.price}</TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-muted">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48 rounded-xl p-1 shadow-elevated border-border/50">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem className="rounded-lg gap-2 cursor-pointer">
-                            <Eye className="w-4 h-4" /> View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="rounded-lg gap-2 cursor-pointer" onClick={() => handleEditClick(event)}>
-                            <Edit className="w-4 h-4" /> Edit Event
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="rounded-lg gap-2 cursor-pointer" onClick={() => setActiveTab("tickets")}>
-                            <Ticket className="w-4 h-4" /> Manage Tickets
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="rounded-lg gap-2 text-destructive focus:text-destructive cursor-pointer"
-                            onClick={() => handleDeleteEvent(event.id)}
-                          >
-                            <Trash2 className="w-4 h-4" /> Delete Event
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="tickets" className="space-y-4">
-          <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
-            <Table>
-              <TableHeader className="bg-muted/30">
-                <TableRow>
-                  <TableHead>Ticket ID</TableHead>
-                  <TableHead>Attendee</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Check-in</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {tickets.map(t => (
-                  <TableRow key={t.id}>
-                    <TableCell className="font-mono text-xs">{t.id}</TableCell>
-                    <TableCell className="font-medium">{t.user}</TableCell>
-                    <TableCell>
-                      <Badge variant={t.status === "Paid" ? "default" : "secondary"}>{t.status}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      {t.checkedIn ? (
-                        <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">Checked In</Badge>
-                      ) : (
-                        <Badge variant="outline">Pending</Badge>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-xs text-rose-500 hover:bg-rose-500/10"
-                        onClick={() => handleRefund(t.id)}
-                        disabled={t.status === "Refunded"}
-                      >
-                        Refund
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="check-in">
-          <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card p-12 text-center flex flex-col items-center gap-6">
-            <div className="w-24 h-24 bg-forest/10 rounded-3xl flex items-center justify-center shadow-glow animate-pulse">
-              <QrCode className="w-12 h-12 text-forest" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-2xl font-display font-bold">QR Ticket Check-in</h3>
-              <p className="text-muted-foreground max-w-md mx-auto">
-                Scan ticket QR codes to quickly check-in attendees.
-              </p>
-            </div>
-            <div className="space-y-4 w-full max-w-sm">
-              <div className="font-bold text-sm text-left">Quick Search by Ticket ID:</div>
-              <div className="flex gap-2">
-                <Input placeholder="TKT-1001" id="checkin-input" />
-                <Button className="bg-forest" onClick={() => {
-                  const val = (document.getElementById("checkin-input") as HTMLInputElement).value;
-                  if (tickets.find(t => t.id === val)) {
-                    handleCheckIn(val);
-                  } else {
-                    toast.error("Ticket not found");
-                  }
-                }}>Check-In</Button>
-              </div>
-            </div>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="promo">
-          <div className="grid gap-6 md:grid-cols-3">
-            <Card className="md:col-span-1 border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-lg">Create Promo Code</CardTitle>
-              </CardHeader>
-              <form onSubmit={handleAddPromo}>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Code Name</label>
-                    <Input
-                      placeholder="SUMMER25"
-                      className="bg-muted/20 border-border/50"
-                      value={promoForm.code}
-                      onChange={e => setPromoForm({ ...promoForm, code: e.target.value })}
-                      required
-                    />
+        <TabsContent value="all-events" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {events.map((event) => (
+              <Card key={event.id} className="group border-border/50 bg-card/50 backdrop-blur-sm shadow-card hover:shadow-elevated transition-all overflow-hidden">
+                <div className="aspect-video relative overflow-hidden">
+                  <img 
+                    src={event.image} 
+                    alt={event.name} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                  />
+                  <div className="absolute top-4 left-4">
+                    <Badge className="bg-forest/90 backdrop-blur text-white border-none">{event.status}</Badge>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Discount Value (%)</label>
-                    <Input
-                      placeholder="20"
-                      className="bg-muted/20 border-border/50"
-                      value={promoForm.discount}
-                      onChange={e => setPromoForm({ ...promoForm, discount: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Expiry Date</label>
-                    <Input
-                      type="date"
-                      className="bg-muted/20 border-border/50"
-                      value={promoForm.expiry}
-                      onChange={e => setPromoForm({ ...promoForm, expiry: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <Button className="w-full bg-forest">Generate Code</Button>
-                </CardContent>
-              </form>
-            </Card>
-            <Card className="md:col-span-2 border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <TicketPercent className="w-5 h-5 text-gold" />
-                  Active Promo Codes
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {promos.map((promo) => (
-                    <div key={promo.id} className="flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/30">
-                      <div>
-                        <div className="font-bold text-forest">{promo.code}</div>
-                        <div className="text-xs text-muted-foreground">{promo.discount} OFF &bull; Valid until {promo.expiry}</div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => setPromos(promos.filter(p => p.id !== promo.id))}>
-                          <Trash2 className="w-4 h-4 text-rose-500" />
+                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="secondary" size="sm" className="h-8 w-8 p-0 rounded-full bg-white/90 shadow-lg">
+                          <MoreVertical className="h-4 w-4" />
                         </Button>
-                      </div>
-                    </div>
-                  ))}
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="rounded-xl border-border/50 p-1 shadow-elevated">
+                        <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => handleEditEvent(event)}>
+                          <Edit className="w-4 h-4" /> Edit Branding
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => setSelectedEvent(event)}>
+                          <Settings className="w-4 h-4" /> Manage Showtimes
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="gap-2 text-destructive cursor-pointer" onClick={() => setEvents(events.filter(e => e.id !== event.id))}>
+                          <Trash2 className="w-4 h-4" /> Delete Event
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+                <CardContent className="p-6 space-y-4">
+                  <div>
+                    <h3 className="font-display font-bold text-xl leading-tight">{event.name}</h3>
+                    <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{event.subtitle}</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <CalendarIcon className="h-3.5 w-3.5 text-gold" />
+                      {event.date}
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <MapPin className="h-3.5 w-3.5 text-gold" />
+                      {event.cities?.length || 0} Cities
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-border/30 flex items-center justify-between">
+                    <div>
+                      <div className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-0.5">Price</div>
+                      <div className="font-display font-bold text-lg text-forest">{event.price}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-0.5">Sales</div>
+                      <div className="font-bold">{event.ticketsSold} / {event.capacity}</div>
+                    </div>
+                  </div>
+
+                  <Button 
+                    className="w-full bg-forest/10 hover:bg-forest text-forest hover:text-white border border-forest/20 rounded-xl font-bold transition-all"
+                    onClick={() => setSelectedEvent(event)}
+                  >
+                    Manage Event Details
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
           </div>
+        </TabsContent>
+
+        <TabsContent value="registrations">
+           <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
+             <div className="p-6 border-b border-border/30 bg-muted/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input placeholder="Search by name, email or ticket ID..." className="pl-10 h-11 rounded-xl bg-background border-border/50" />
+                </div>
+                <div className="flex gap-2">
+                   <Button variant="outline" className="h-11 rounded-xl border-border/50 gap-2">
+                      <Filter className="w-4 h-4" /> Filters
+                   </Button>
+                   <Button variant="outline" className="h-11 rounded-xl border-border/50">Export PDF</Button>
+                </div>
+             </div>
+             <Table>
+                <TableHeader>
+                  <TableRow className="border-border/50 bg-muted/20">
+                    <TableHead className="font-bold">Attendee</TableHead>
+                    <TableHead className="font-bold">Event</TableHead>
+                    <TableHead className="font-bold">City</TableHead>
+                    <TableHead className="font-bold">Status</TableHead>
+                    <TableHead className="text-right font-bold">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {tickets.map((t) => (
+                    <TableRow key={t.id} className="border-border/30 hover:bg-muted/10 transition-colors">
+                      <TableCell>
+                        <div className="font-bold">{t.user}</div>
+                        <div className="text-[10px] font-mono text-muted-foreground uppercase">{t.id}</div>
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        {events.find(e => e.id === t.eventId)?.name || t.eventId}
+                      </TableCell>
+                      <TableCell className="text-sm">{t.city}</TableCell>
+                      <TableCell>
+                        <Badge 
+                          variant={t.status === "Paid" ? "default" : "secondary"}
+                          className={t.status === "Paid" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : ""}
+                        >
+                          {t.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button 
+                          variant={t.checkedIn ? "outline" : "default"} 
+                          size="sm" 
+                          className={t.checkedIn ? "opacity-50" : "bg-forest hover:bg-forest/90"}
+                          onClick={() => {
+                            setTickets(tickets.map(tk => tk.id === t.id ? {...tk, checkedIn: true} : tk));
+                            toast.success(`Attendee ${t.user} checked in!`);
+                          }}
+                          disabled={t.checkedIn}
+                        >
+                          {t.checkedIn ? "Checked In" : "Check In"}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+             </Table>
+           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Event Edit Dialog */}
+      <Dialog open={isEventDialogOpen} onOpenChange={setIsEventDialogOpen}>
+        <DialogContent className="sm:max-w-[600px] rounded-[2rem] border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl overflow-y-auto max-h-[90vh]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-display font-bold">
+              {editingEvent ? "Update Event Branding" : "Create New Event"}
+            </DialogTitle>
+            <DialogDescription>Set the main identity and featured content for this event.</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSaveEvent} className="space-y-6 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2 space-y-2">
+                <Label>Event Name</Label>
+                <Input 
+                  value={eventForm.name} 
+                  onChange={e => setEventForm({...eventForm, name: e.target.value})}
+                  placeholder="e.g. Worship Night 2026" 
+                  className="h-11 rounded-xl" required 
+                />
+              </div>
+              <div className="col-span-2 space-y-2">
+                <Label>Tagline / Subtitle</Label>
+                <Input 
+                  value={eventForm.subtitle} 
+                  onChange={e => setEventForm({...eventForm, subtitle: e.target.value})}
+                  placeholder="e.g. A global experience of faith" 
+                  className="h-11 rounded-xl" 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Display Date Range</Label>
+                <Input 
+                  value={eventForm.date} 
+                  onChange={e => setEventForm({...eventForm, date: e.target.value})}
+                  placeholder="Aug 18 - 22" 
+                  className="h-11 rounded-xl" required 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Base Ticket Price ($)</Label>
+                <Input 
+                  value={eventForm.price} 
+                  onChange={e => setEventForm({...eventForm, price: e.target.value})}
+                  placeholder="25.00" 
+                  className="h-11 rounded-xl" required 
+                />
+              </div>
+              <div className="col-span-2 space-y-2">
+                <Label>Featured Image URL</Label>
+                <Input 
+                  value={eventForm.image} 
+                  onChange={e => setEventForm({...eventForm, image: e.target.value})}
+                  placeholder="https://images.unsplash.com/..." 
+                  className="h-11 rounded-xl" 
+                />
+              </div>
+              <div className="col-span-2 space-y-2">
+                <Label>Full Description</Label>
+                <textarea 
+                  value={eventForm.description} 
+                  onChange={e => setEventForm({...eventForm, description: e.target.value})}
+                  className="w-full min-h-[100px] p-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-forest/30 outline-none" 
+                  placeholder="Tell your audience about the event..."
+                />
+              </div>
+            </div>
+            <DialogFooter>
+               <Button type="submit" className="w-full bg-forest h-12 rounded-xl shadow-lg font-bold">
+                  {editingEvent ? "Save Branding Changes" : "Initialize Event Engine"}
+               </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Promo Code Dialog */}
+      <Dialog open={isPromoDialogOpen} onOpenChange={setIsPromoDialogOpen}>
+        <DialogContent className="sm:max-w-[400px] rounded-[2rem]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-display font-bold text-center">Promo Management</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            <div className="space-y-4">
+              {promos.map(p => (
+                <div key={p.id} className="flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/50">
+                  <div>
+                    <div className="font-black text-forest tracking-wider">{p.code}</div>
+                    <div className="text-[10px] text-muted-foreground uppercase font-bold">{p.discount} OFF • EXP: {p.expiry}</div>
+                  </div>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive" onClick={() => setPromos(promos.filter(x => x.id !== p.id))}>
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+            <div className="pt-4 border-t border-border/30 space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                 <Input 
+                  placeholder="CODE" 
+                  className="uppercase font-bold" 
+                  value={promoForm.code}
+                  onChange={e => setPromoForm({...promoForm, code: e.target.value})}
+                />
+                 <Input 
+                  placeholder="DISC %" 
+                  value={promoForm.discount}
+                  onChange={e => setPromoForm({...promoForm, discount: e.target.value})}
+                />
+              </div>
+              <Input 
+                type="date" 
+                value={promoForm.expiry}
+                onChange={e => setPromoForm({...promoForm, expiry: e.target.value})}
+              />
+              <Button onClick={handleAddPromo} className="w-full bg-forest rounded-xl shadow-md h-11">Generate Promo Code</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Multi-City / Showtime Detail View */}
+      {selectedEvent && (
+        <div className="fixed inset-0 z-[60] bg-background/80 backdrop-blur-md flex items-center justify-center p-6 animate-fade-in">
+           <Card className="w-full max-w-5xl h-[85vh] overflow-hidden flex flex-col rounded-[2.5rem] shadow-elevated border-border/50 bg-card">
+              <div className="p-6 border-b border-border/30 flex items-center justify-between bg-muted/10">
+                 <div>
+                    <h2 className="text-2xl font-display font-bold text-foreground flex items-center gap-2">
+                       <Settings className="w-6 h-6 text-forest" />
+                       Manage: {selectedEvent.name}
+                    </h2>
+                    <p className="text-sm text-muted-foreground">Configure cities, venues, and specific screening times.</p>
+                 </div>
+                 <Button variant="ghost" className="h-12 w-12 rounded-full" onClick={() => setSelectedEvent(null)}>
+                    <Trash2 className="w-6 h-6 rotate-45" />
+                 </Button>
+              </div>
+              <div className="flex-1 overflow-auto p-8 space-y-8">
+                 {selectedEvent.cities?.map((city) => (
+                    <div key={city.cityId} className="space-y-4 border-l-4 border-gold pl-6 py-2">
+                       <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                             <span className="text-3xl">{city.flag}</span>
+                             <div>
+                                <h4 className="font-bold text-lg">{city.city}, {city.country}</h4>
+                                <div className="text-xs text-muted-foreground flex items-center gap-1">
+                                   <MapPin className="w-3 h-3" /> {city.venue.name}
+                                </div>
+                             </div>
+                          </div>
+                          <div className="flex gap-2">
+                             <Button variant="outline" size="sm" className="h-9 rounded-lg gap-2">
+                                <Plus className="w-3 h-3" /> Add Showtime
+                             </Button>
+                             <Button variant="ghost" size="sm" className="h-9 w-9 p-0 text-destructive">
+                                <Trash2 className="w-4 h-4" />
+                             </Button>
+                          </div>
+                       </div>
+                       
+                       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                          {city.showtimes.map(st => (
+                             <div key={st.id} className="p-4 bg-muted/20 rounded-xl border border-border/30 group">
+                                <div className="flex items-center justify-between mb-2">
+                                   <Badge className="bg-gold/10 text-gold border-gold/20 text-[10px]">{st.day}</Badge>
+                                   <Button variant="ghost" size="sm" className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                      <Edit className="w-3 h-3" />
+                                   </Button>
+                                </div>
+                                <div className="font-bold text-sm">{st.date}</div>
+                                <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                                   <Clock className="w-3 h-3" /> {st.time} ({st.timezone})
+                                </div>
+                                <div className="mt-3 flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
+                                   <span className={st.status === "sold-out" ? "text-rose-500" : "text-emerald-500"}>{st.status}</span>
+                                   <span className="text-muted-foreground">{st.spotsLeft} / {st.totalSpots}</span>
+                                </div>
+                             </div>
+                          ))}
+                       </div>
+                    </div>
+                 ))}
+                 
+                 <button className="w-full py-12 border-2 border-dashed border-border/50 rounded-[2rem] flex flex-col items-center justify-center gap-3 hover:bg-forest/5 hover:border-forest/40 transition-all group">
+                    <div className="p-4 bg-muted/20 rounded-2xl group-hover:bg-forest/10 transition-colors">
+                       <Globe className="w-8 h-8 text-muted-foreground group-hover:text-forest" />
+                    </div>
+                    <div>
+                       <div className="font-bold text-foreground group-hover:text-forest">Add New City Screening</div>
+                       <p className="text-xs text-muted-foreground">Select a new location to expand this event.</p>
+                    </div>
+                 </button>
+              </div>
+              <div className="p-6 border-t border-border/30 bg-muted/5 flex justify-end">
+                 <Button className="bg-forest h-12 rounded-xl px-12 shadow-md font-bold" onClick={() => setSelectedEvent(null)}>Done Managing Showtimes</Button>
+              </div>
+           </Card>
+        </div>
+      )}
     </div>
   );
 }
