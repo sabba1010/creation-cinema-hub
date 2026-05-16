@@ -1,13 +1,7 @@
-import earth from "@/assets/project-earth.jpg";
-import kidsflix from "@/assets/project-kidsflix.jpg";
-import prayer from "@/assets/project-prayer.jpg";
-import creationcase from "@/assets/project-creationcase.jpg";
-import eventImg from "@/assets/event-live.jpg";
-
 export const FEATURED_PROJECTS = [
   { 
     id: "podcast",
-    img: earth, 
+    img: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&q=80&w=800",
     tag: "Podcast", 
     title: "God's Great Earth", 
     desc: "A weekly journey through creation, science, and Scripture.", 
@@ -16,7 +10,7 @@ export const FEATURED_PROJECTS = [
   },
   { 
     id: "films",
-    img: kidsflix, 
+    img: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&q=80&w=800",
     tag: "Streaming", 
     title: "One Mustard Seed Hub", 
     desc: "Safe, wonder-filled Bible stories and documentaries.", 
@@ -25,7 +19,7 @@ export const FEATURED_PROJECTS = [
   },
   { 
     id: "prayer",
-    img: prayer, 
+    img: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&q=80&w=800",
     tag: "Live Event", 
     title: "Week of Prayer Online", 
     desc: "Join thousands worldwide for 7 nights of guided prayer.", 
@@ -34,7 +28,7 @@ export const FEATURED_PROJECTS = [
   },
   { 
     id: "film-doc",
-    img: creationcase, 
+    img: "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&q=80&w=800",
     tag: "Film", 
     title: "The Creation Case", 
     desc: "A feature-length documentary on evidence for creation.", 
@@ -43,7 +37,7 @@ export const FEATURED_PROJECTS = [
   },
   { 
     id: "events",
-    img: eventImg, 
+    img: "https://images.unsplash.com/photo-1493612276216-ee3925520721?auto=format&fit=crop&q=80&w=800",
     tag: "Events", 
     title: "OMS Live Events", 
     desc: "Experience faith-building live events in your local community.", 

@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteHeader } from "@/components/layout/SiteHeader";
-import { SiteFooter } from "@/components/layout/SiteFooter";
+import { SiteHeader } from "../components/layout/SiteHeader";
+import { SiteFooter } from "../components/layout/SiteFooter";
 import { Calendar, MapPin, Ticket, Clock, ArrowRight, Sparkles, Share2 } from "lucide-react";
-import eventImg from "@/assets/event-live.jpg";
-import { INITIAL_EVENTS } from "@/data/events-data";
+const eventImg = "https://images.unsplash.com/photo-1493612276216-ee3925520721?auto=format&fit=crop&q=80&w=1200";
+import { INITIAL_EVENTS } from "../data/events-data";
 
 export const Route = createFileRoute("/events")({
   head: () => ({

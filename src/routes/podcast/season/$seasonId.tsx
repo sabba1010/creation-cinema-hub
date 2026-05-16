@@ -1,6 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { SiteHeader } from "@/components/layout/SiteHeader";
-import { SiteFooter } from "@/components/layout/SiteFooter";
+﻿import { createFileRoute, Link } from "@tanstack/react-router";
+import { SiteHeader } from "../../components/layout/SiteHeader";
+import { SiteFooter } from "../../components/layout/SiteFooter";
 import { Play, Download, BookOpen, Share2, ArrowLeft, Clock, Calendar } from "lucide-react";
 
 export const Route = createFileRoute("/podcast/season/$seasonId")({

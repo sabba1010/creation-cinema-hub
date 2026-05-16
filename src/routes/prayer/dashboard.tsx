@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { SiteHeader } from "@/components/layout/SiteHeader";
-import { SiteFooter } from "@/components/layout/SiteFooter";
+import { SiteHeader } from "../../components/layout/SiteHeader";
+import { SiteFooter } from "../../components/layout/SiteFooter";
 import { User, LayoutDashboard, Film, FileText, Download, Settings, LogOut, ChevronRight, Bell, Star } from "lucide-react";
 
 export const Route = createFileRoute("/prayer/dashboard")({

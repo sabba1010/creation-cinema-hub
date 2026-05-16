@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { SiteHeader } from "@/components/layout/SiteHeader";
-import { SiteFooter } from "@/components/layout/SiteFooter";
+import { SiteHeader } from "../../components/layout/SiteHeader";
+import { SiteFooter } from "../../components/layout/SiteFooter";
 import { Calendar, Play, BookOpen, Share2, Users, Heart, ArrowRight, ShieldCheck } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import eventImg from "@/assets/event-live.jpg";
+import { Badge } from "../../components/ui/badge";
+import eventImg from "../../assets/event-live.jpg";
 
 export const Route = createFileRoute("/prayer/")({
   component: PrayerLandingPage,

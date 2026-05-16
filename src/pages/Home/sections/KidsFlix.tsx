@@ -1,5 +1,5 @@
 import { Play, Shield, Infinity as InfinityIcon, Sparkles } from "lucide-react";
-import promo from "@/assets/kidsflix-promo.jpg";
+const promo = "https://images.unsplash.com/photo-1489824904134-891ab64532f1?auto=format&fit=crop&q=80&w=1200";
 
 export function KidsFlix() {
   return (

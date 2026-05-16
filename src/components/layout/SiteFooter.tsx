@@ -1,5 +1,4 @@
 import { Facebook, Instagram, Youtube, Mail } from "lucide-react";
-import logo from "@/assets/oms-logo.png";
 
 const COLS = [
   { title: "Watch", items: ["Films", "KidsBibleFlix", "Series", "Trailers"] },
@@ -16,8 +15,8 @@ export function SiteFooter() {
         <div className="grid gap-12 lg:grid-cols-[1.3fr_2fr_1.2fr]">
           <div>
             <div className="flex items-center gap-3">
-              <span className="grid h-12 w-12 place-items-center rounded-full bg-cream">
-                <img src={logo} alt="" width={32} height={32} className="h-8 w-8" />
+              <span className="grid h-12 w-12 place-items-center rounded-full bg-gold text-forest-deep font-black text-lg">
+                ✦
               </span>
               <div className="font-display text-xl">One Mustard Seed</div>
             </div>

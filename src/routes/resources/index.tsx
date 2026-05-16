@@ -1,13 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { SiteHeader } from "@/components/layout/SiteHeader";
-import { SiteFooter } from "@/components/layout/SiteFooter";
+﻿import { createFileRoute, Link } from "@tanstack/react-router";
+import { SiteHeader } from "../../components/layout/SiteHeader";
+import { SiteFooter } from "../../components/layout/SiteFooter";
 import { Download, FileText, ArrowRight, CheckCircle2, Search, Sparkles } from "lucide-react";
 import { useState, useMemo } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Badge } from "../../components/ui/badge";
 import { toast } from "sonner";
-import { Card } from "@/components/ui/card";
+import { Card } from "../../components/ui/card";
 
 export const Route = createFileRoute("/resources/")({
   component: ResourcesLandingPage,

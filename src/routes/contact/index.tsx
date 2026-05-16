@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { SiteHeader } from "@/components/layout/SiteHeader";
-import { SiteFooter } from "@/components/layout/SiteFooter";
+﻿import { createFileRoute } from "@tanstack/react-router";
+import { SiteHeader } from "../../components/layout/SiteHeader";
+import { SiteFooter } from "../../components/layout/SiteFooter";
 import { Mail, Phone, MapPin, MessageSquare, HelpCircle, Users, Heart, Calendar, Briefcase, ChevronDown, Send, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 

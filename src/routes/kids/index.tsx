@@ -1,6 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { SiteHeader } from "@/components/layout/SiteHeader";
-import { SiteFooter } from "@/components/layout/SiteFooter";
+﻿import { createFileRoute, Link } from "@tanstack/react-router";
+import { SiteHeader } from "../../components/layout/SiteHeader";
+import { SiteFooter } from "../../components/layout/SiteFooter";
 import { Play, Sparkles, Tv, Music, Heart, Star, LayoutGrid, ChevronRight, CheckCircle2, ShieldCheck, Sun, Cloud, Anchor } from "lucide-react";
 
 export const Route = createFileRoute("/kids/")({

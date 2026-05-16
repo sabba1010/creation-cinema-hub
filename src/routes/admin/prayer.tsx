@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+﻿import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { 
   Video, 
@@ -17,10 +17,10 @@ import {
   User,
   Calendar as CalendarIcon
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
+import { Badge } from "../../components/ui/badge";
 import { 
   Table, 
   TableBody, 
@@ -28,8 +28,8 @@ import {
   TableHead, 
   TableHeader, 
   TableRow 
-} from "@/components/ui/table";
-import { Progress } from "@/components/ui/progress";
+} from "../../components/ui/table";
+import { Progress } from "../../components/ui/progress";
 import { 
   Dialog, 
   DialogContent, 
@@ -38,8 +38,8 @@ import {
   DialogTrigger,
   DialogFooter,
   DialogDescription
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+} from "../../components/ui/dialog";
+import { Label } from "../../components/ui/label";
 import { toast } from "sonner";
 import { 
   DropdownMenu, 
@@ -48,7 +48,7 @@ import {
   DropdownMenuLabel, 
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
+} from "../../components/ui/dropdown-menu";
 
 export const Route = createFileRoute("/admin/prayer")({
   component: PrayerManagement,

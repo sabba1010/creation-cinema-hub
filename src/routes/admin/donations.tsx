@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+﻿import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { 
   Heart, 
@@ -14,9 +14,9 @@ import {
   ChevronRight,
   HandHeart
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
+import { Badge } from "../../components/ui/badge";
 import { 
   Table, 
   TableBody, 
@@ -24,8 +24,8 @@ import {
   TableHead, 
   TableHeader, 
   TableRow 
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
+} from "../../components/ui/table";
+import { Input } from "../../components/ui/input";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/donations")({

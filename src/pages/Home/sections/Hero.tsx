@@ -1,7 +1,8 @@
 import { Play, Compass } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { HERO_CONTENT } from "@/data/home-data";
-import heroImg from "@/assets/hero-family.jpg";
+import { HERO_CONTENT } from "../../../data/home-data";
+
+const heroImg = "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=1920";
 
 export function Hero() {
   return (

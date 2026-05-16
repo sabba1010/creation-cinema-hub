@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { Search, User, Menu, X, ShoppingBag } from "lucide-react";
-import logo from "@/assets/oms-logo.png";
 
 const NAV_GROUPS = [
   {

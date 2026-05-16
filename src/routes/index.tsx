@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteHeader } from "@/components/layout/SiteHeader";
-import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Hero } from "@/pages/Home/sections/Hero";
-import { FeaturedProjects } from "@/pages/Home/sections/FeaturedProjects";
-import { Films } from "@/pages/Home/sections/Films";
-import { Support } from "@/pages/Home/sections/Support";
-import { Events } from "@/pages/Home/sections/Events";
+import { SiteHeader } from "../components/layout/SiteHeader";
+import { SiteFooter } from "../components/layout/SiteFooter";
+import { Hero } from "../pages/Home/sections/Hero";
+import { FeaturedProjects } from "../pages/Home/sections/FeaturedProjects";
+import { Films } from "../pages/Home/sections/Films";
+import { Support } from "../pages/Home/sections/Support";
+import { Events } from "../pages/Home/sections/Events";
 
 export const Route = createFileRoute("/")({
   head: () => ({

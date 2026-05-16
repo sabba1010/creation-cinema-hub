@@ -1,5 +1,6 @@
 import { Heart, Globe, Users, BookOpenCheck } from "lucide-react";
-import support from "@/assets/support-family.jpg";
+
+const support = "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=1600";
 
 const STATS = [
   { Icon: BookOpenCheck, k: "20+", l: "Original Series" },

@@ -1,6 +1,6 @@
 import { Play } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { FEATURED_PROJECTS } from "@/data/home-data";
+import { FEATURED_PROJECTS } from "../../../data/home-data";
 
 export function FeaturedProjects() {
   return (

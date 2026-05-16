@@ -1,5 +1,5 @@
 import { Calendar, MapPin, Ticket, ArrowRight, Sparkles, Clock, Users } from "lucide-react";
-import { INITIAL_EVENTS } from "@/data/events-data";
+import { INITIAL_EVENTS } from "../../../data/events-data";
 
 export function Events() {
   const featuredEvent = INITIAL_EVENTS.find(e => e.status === "Active") || INITIAL_EVENTS[0];
