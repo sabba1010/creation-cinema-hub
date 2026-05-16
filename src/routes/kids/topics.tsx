@@ -1,6 +1,6 @@
-﻿import { createFileRoute, Link } from "@tanstack/react-router";
-import { SiteHeader } from "../../components/layout/SiteHeader";
-import { SiteFooter } from "../../components/layout/SiteFooter";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Heart, ShieldCheck, Sparkles, Music, Star, Sun, Cloud, Anchor, Play, ChevronRight } from "lucide-react";
 import { Badge } from "../../components/ui/badge";
 

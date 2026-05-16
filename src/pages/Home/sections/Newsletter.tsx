@@ -1,4 +1,4 @@
-export function Newsletter() {
+﻿export function Newsletter() {
   return (
     <section id="resources" className="relative bg-gradient-warm py-24 sm:py-32">
       <div className="mx-auto max-w-5xl px-6">
@@ -13,7 +13,7 @@ export function Newsletter() {
                 Join our<br /><span className="italic text-forest">growing family.</span>
               </h2>
               <p className="mt-5 max-w-md text-muted-foreground">
-                Get free family devotionals, classroom kits, and the latest releases — crafted for parents, teachers, churches, and youth leaders.
+                Get free family devotionals, classroom kits, and the latest releases â€” crafted for parents, teachers, churches, and youth leaders.
               </p>
               <ul className="mt-6 grid gap-2 text-sm text-forest-deep/85">
                 {["Monthly story drop", "Free curriculum samples", "Early event invites"].map((t) => (

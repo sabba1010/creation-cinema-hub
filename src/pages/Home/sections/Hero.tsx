@@ -1,4 +1,4 @@
-import { Play, Compass } from "lucide-react";
+﻿import { Play, Compass } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { HERO_CONTENT } from "../../../data/home-data";
 

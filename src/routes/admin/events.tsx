@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+﻿import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   Plus,
@@ -435,7 +435,7 @@ function EventsManagement() {
                 <div key={p.id} className="flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/50">
                   <div>
                     <div className="font-black text-forest tracking-wider">{p.code}</div>
-                    <div className="text-[10px] text-muted-foreground uppercase font-bold">{p.discount} OFF • EXP: {p.expiry}</div>
+                    <div className="text-[10px] text-muted-foreground uppercase font-bold">{p.discount} OFF â€¢ EXP: {p.expiry}</div>
                   </div>
                   <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive" onClick={() => setPromos(promos.filter(x => x.id !== p.id))}>
                     <Trash2 className="w-4 h-4" />

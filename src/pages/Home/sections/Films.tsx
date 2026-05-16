@@ -1,4 +1,4 @@
-import { Play, Clock } from "lucide-react";
+﻿import { Play, Clock } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 const FILMS = [
@@ -15,7 +15,7 @@ const FILMS = [
     title: "Great Earth", 
     year: "2024", 
     runtime: "84 min", 
-    genre: "Nature · Faith",
+    genre: "Nature Â· Faith",
     img: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&q=80&w=800" 
   },
   { 

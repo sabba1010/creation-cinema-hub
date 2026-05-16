@@ -1,6 +1,6 @@
-﻿import { createFileRoute, Link } from "@tanstack/react-router";
-import { SiteHeader } from "../../components/layout/SiteHeader";
-import { SiteFooter } from "../../components/layout/SiteFooter";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Heart, CheckCircle2, ArrowRight, ShieldCheck, DollarSign, Globe, Users } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../../components/ui/button";

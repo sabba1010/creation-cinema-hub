@@ -1,4 +1,4 @@
-import { Calendar, MapPin, Ticket, ArrowRight, Sparkles, Clock, Users } from "lucide-react";
+﻿import { Calendar, MapPin, Ticket, ArrowRight, Sparkles, Clock, Users } from "lucide-react";
 import { INITIAL_EVENTS } from "../../../data/events-data";
 
 export function Events() {

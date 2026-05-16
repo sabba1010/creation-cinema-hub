@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+﻿import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -92,7 +92,7 @@ function LoginPage() {
                   <Input
                     id="password"
                     type="password"
-                    placeholder="••••••••"
+                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                     className="pl-10 h-12 rounded-xl bg-background/50 border-border/50"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}

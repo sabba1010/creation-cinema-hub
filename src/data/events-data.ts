@@ -1,4 +1,4 @@
-// ─── Events Data System ────────────────────────────────────────────────────
+﻿// â”€â”€â”€ Events Data System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export interface Showtime {
   id: string;
@@ -68,15 +68,15 @@ export interface Event {
   faq?: { q: string; a: string }[];
 }
 
-// ─── Event Data ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Event Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const INITIAL_EVENTS: Event[] = [
   {
     id: "EVT-004",
     name: "Week of Prayer Online",
     subtitle: "Seven nights of global worship, teaching & prayer",
-    date: "August 18–22, 2026",
-    location: "Global — Online + In-Person",
+    date: "August 18â€“22, 2026",
+    location: "Global â€” Online + In-Person",
     status: "Active",
     ticketsSold: 12450,
     capacity: 50000,
@@ -99,9 +99,9 @@ export const INITIAL_EVENTS: Event[] = [
     cities: [
       {
         cityId: "online",
-        city: "Online — Global Stream",
+        city: "Online â€” Global Stream",
         country: "Worldwide",
-        flag: "🌍",
+        flag: "ðŸŒ",
         isOnline: true,
         venue: {
           name: "OMS Live Stream Platform",
@@ -110,7 +110,7 @@ export const INITIAL_EVENTS: Event[] = [
           state: "",
           country: "Worldwide",
           mapUrl: "#",
-          parkingInfo: "No parking needed — join from anywhere.",
+          parkingInfo: "No parking needed â€” join from anywhere.",
           accessibilityInfo: "Closed captions available. Screen-reader compatible.",
           email: "stream@onemustardSeed.org",
         },
@@ -119,14 +119,14 @@ export const INITIAL_EVENTS: Event[] = [
           { id: "st-wop-2", date: "Tuesday, Aug 19", day: "Night 2", time: "7:00 PM", timezone: "GMT", spotsLeft: 99999, totalSpots: 99999, status: "available" },
           { id: "st-wop-3", date: "Wednesday, Aug 20", day: "Night 3", time: "7:00 PM", timezone: "GMT", spotsLeft: 99999, totalSpots: 99999, status: "available" },
           { id: "st-wop-4", date: "Thursday, Aug 21", day: "Night 4", time: "7:00 PM", timezone: "GMT", spotsLeft: 99999, totalSpots: 99999, status: "available" },
-          { id: "st-wop-5", date: "Friday, Aug 22", day: "Night 5 — Commissioning", time: "7:00 PM", timezone: "GMT", spotsLeft: 99999, totalSpots: 99999, status: "available" },
+          { id: "st-wop-5", date: "Friday, Aug 22", day: "Night 5 â€” Commissioning", time: "7:00 PM", timezone: "GMT", spotsLeft: 99999, totalSpots: 99999, status: "available" },
         ],
       },
       {
         cityId: "accra",
         city: "Accra",
         country: "Ghana",
-        flag: "🇬🇭",
+        flag: "ðŸ‡¬ðŸ‡­",
         venue: {
           name: "National Theatre of Ghana",
           address: "Liberation Road, Accra",
@@ -142,14 +142,14 @@ export const INITIAL_EVENTS: Event[] = [
         },
         showtimes: [
           { id: "st-accra-1", date: "Monday, Aug 18", day: "Night 1", time: "7:00 PM", timezone: "GMT", spotsLeft: 380, totalSpots: 500, status: "available" },
-          { id: "st-accra-2", date: "Friday, Aug 22", day: "Night 5 — Commissioning", time: "7:00 PM", timezone: "GMT", spotsLeft: 45, totalSpots: 500, status: "limited" },
+          { id: "st-accra-2", date: "Friday, Aug 22", day: "Night 5 â€” Commissioning", time: "7:00 PM", timezone: "GMT", spotsLeft: 45, totalSpots: 500, status: "limited" },
         ],
       },
       {
         cityId: "london",
         city: "London",
         country: "United Kingdom",
-        flag: "🇬🇧",
+        flag: "ðŸ‡¬ðŸ‡§",
         venue: {
           name: "Emmanuel Centre",
           address: "9-23 Marsham Street, Westminster",
@@ -165,16 +165,16 @@ export const INITIAL_EVENTS: Event[] = [
         },
         showtimes: [
           { id: "st-ldn-1", date: "Tuesday, Aug 19", day: "Night 2", time: "7:30 PM", timezone: "BST", spotsLeft: 210, totalSpots: 300, status: "available" },
-          { id: "st-ldn-2", date: "Friday, Aug 22", day: "Night 5 — Commissioning", time: "7:30 PM", timezone: "BST", spotsLeft: 12, totalSpots: 300, status: "limited" },
+          { id: "st-ldn-2", date: "Friday, Aug 22", day: "Night 5 â€” Commissioning", time: "7:30 PM", timezone: "BST", spotsLeft: 12, totalSpots: 300, status: "limited" },
         ],
       },
       {
         cityId: "toronto",
         city: "Toronto",
         country: "Canada",
-        flag: "🇨🇦",
+        flag: "ðŸ‡¨ðŸ‡¦",
         venue: {
-          name: "Centennial College — Progress Campus",
+          name: "Centennial College â€” Progress Campus",
           address: "941 Progress Ave, Scarborough",
           city: "Toronto",
           state: "Ontario",
@@ -188,14 +188,14 @@ export const INITIAL_EVENTS: Event[] = [
         },
         showtimes: [
           { id: "st-tor-1", date: "Wednesday, Aug 20", day: "Night 3", time: "7:00 PM", timezone: "EDT", spotsLeft: 175, totalSpots: 250, status: "available" },
-          { id: "st-tor-2", date: "Friday, Aug 22", day: "Night 5 — Commissioning", time: "7:00 PM", timezone: "EDT", spotsLeft: 0, totalSpots: 250, status: "sold-out" },
+          { id: "st-tor-2", date: "Friday, Aug 22", day: "Night 5 â€” Commissioning", time: "7:00 PM", timezone: "EDT", spotsLeft: 0, totalSpots: 250, status: "sold-out" },
         ],
       },
     ],
     support: [
-      { type: "email", label: "General Enquiries", value: "events@onemustardSeed.org", available: "Mon–Fri, 9am–5pm GMT" },
-      { type: "whatsapp", label: "WhatsApp Support", value: "+233 55 123 4567", available: "Mon–Sat, 8am–8pm GMT" },
-      { type: "phone", label: "Accra Office", value: "+233 30 2123456", available: "Mon–Fri, 9am–5pm GMT" },
+      { type: "email", label: "General Enquiries", value: "events@onemustardSeed.org", available: "Monâ€“Fri, 9amâ€“5pm GMT" },
+      { type: "whatsapp", label: "WhatsApp Support", value: "+233 55 123 4567", available: "Monâ€“Sat, 8amâ€“8pm GMT" },
+      { type: "phone", label: "Accra Office", value: "+233 30 2123456", available: "Monâ€“Fri, 9amâ€“5pm GMT" },
       { type: "chat", label: "Live Chat", value: "Available on this page", available: "During event weeks only" },
     ],
     faq: [
@@ -211,7 +211,7 @@ export const INITIAL_EVENTS: Event[] = [
     name: "Worship Night: Echoes of Grace",
     subtitle: "An evening of powerful music, prayer & community",
     date: "June 2, 2026",
-    location: "Multiple Cities — UK & Ghana",
+    location: "Multiple Cities â€” UK & Ghana",
     status: "Active",
     ticketsSold: 890,
     capacity: 3000,
@@ -236,7 +236,7 @@ export const INITIAL_EVENTS: Event[] = [
         cityId: "kumasi",
         city: "Kumasi",
         country: "Ghana",
-        flag: "🇬🇭",
+        flag: "ðŸ‡¬ðŸ‡­",
         venue: {
           name: "Kumasi Cultural Centre",
           address: "Old Railway Station Rd, Kumasi",
@@ -257,7 +257,7 @@ export const INITIAL_EVENTS: Event[] = [
         cityId: "birmingham",
         city: "Birmingham",
         country: "United Kingdom",
-        flag: "🇬🇧",
+        flag: "ðŸ‡¬ðŸ‡§",
         venue: {
           name: "Symphony Hall",
           address: "Broad Street, Birmingham",
@@ -280,7 +280,7 @@ export const INITIAL_EVENTS: Event[] = [
         cityId: "manchester",
         city: "Manchester",
         country: "United Kingdom",
-        flag: "🇬🇧",
+        flag: "ðŸ‡¬ðŸ‡§",
         venue: {
           name: "Albert Hall Manchester",
           address: "27 Peter St, Manchester",
@@ -300,8 +300,8 @@ export const INITIAL_EVENTS: Event[] = [
       },
     ],
     support: [
-      { type: "email", label: "Ticket Enquiries", value: "tickets@onemustardSeed.org", available: "Mon–Fri, 9am–5pm GMT" },
-      { type: "whatsapp", label: "WhatsApp", value: "+44 7700 900123", available: "Mon–Sat, 8am–9pm BST" },
+      { type: "email", label: "Ticket Enquiries", value: "tickets@onemustardSeed.org", available: "Monâ€“Fri, 9amâ€“5pm GMT" },
+      { type: "whatsapp", label: "WhatsApp", value: "+44 7700 900123", available: "Monâ€“Sat, 8amâ€“9pm BST" },
     ],
     faq: [
       { q: "Are tickets refundable?", a: "Tickets are non-refundable but transferable. You may transfer your ticket to another person by contacting us at least 48 hours before the event." },
@@ -313,15 +313,15 @@ export const INITIAL_EVENTS: Event[] = [
   {
     id: "EVT-001",
     name: "Summer Bible Camp 2026",
-    subtitle: "Faith, fun & friendship for children ages 5–12",
-    date: "July 15–19, 2026",
+    subtitle: "Faith, fun & friendship for children ages 5â€“12",
+    date: "July 15â€“19, 2026",
     location: "Accra, Ghana",
     status: "Active",
     ticketsSold: 145,
     capacity: 200,
     price: "$45.00",
     duration: "5 Days",
-    ageRating: "Ages 5–12",
+    ageRating: "Ages 5â€“12",
     language: "English",
     description:
       "A fun-filled week of learning and growing in faith for children ages 5-12. Includes media workshops and nature tours.",
@@ -340,7 +340,7 @@ export const INITIAL_EVENTS: Event[] = [
         cityId: "accra-camp",
         city: "Accra",
         country: "Ghana",
-        flag: "🇬🇭",
+        flag: "ðŸ‡¬ðŸ‡­",
         venue: {
           name: "OMS Retreat Centre",
           address: "Abokobi Road, East Legon Hills, Accra",
@@ -354,19 +354,19 @@ export const INITIAL_EVENTS: Event[] = [
           email: "camp@onemustardSeed.org",
         },
         showtimes: [
-          { id: "st-camp-1", date: "Tue–Sat, Jul 15–19", day: "Full Week Programme", time: "8:00 AM – 4:00 PM", timezone: "GMT", spotsLeft: 55, totalSpots: 200, status: "available" },
+          { id: "st-camp-1", date: "Tueâ€“Sat, Jul 15â€“19", day: "Full Week Programme", time: "8:00 AM â€“ 4:00 PM", timezone: "GMT", spotsLeft: 55, totalSpots: 200, status: "available" },
         ],
       },
     ],
     support: [
-      { type: "email", label: "Camp Registration", value: "camp@onemustardSeed.org", available: "Mon–Fri, 9am–5pm GMT" },
-      { type: "phone", label: "Parents Helpline", value: "+233 30 2123456", available: "Mon–Fri, 8am–6pm GMT" },
+      { type: "email", label: "Camp Registration", value: "camp@onemustardSeed.org", available: "Monâ€“Fri, 9amâ€“5pm GMT" },
+      { type: "phone", label: "Parents Helpline", value: "+233 30 2123456", available: "Monâ€“Fri, 8amâ€“6pm GMT" },
       { type: "whatsapp", label: "WhatsApp Parents Group", value: "+233 55 123 4567", available: "Anytime" },
     ],
     faq: [
       { q: "What should my child bring?", a: "A list will be sent after registration. Essentials include a Bible, notebook, comfortable shoes, sunscreen, and a water bottle." },
-      { q: "Are there supervised drop-off and pick-up times?", a: "Yes. Drop-off is between 7:30–8:15 AM and pick-up is between 4:00–4:45 PM. ID required for pick-up." },
-      { q: "My child has dietary requirements — can you accommodate?", a: "Absolutely. Please indicate any dietary needs during registration and our catering team will be notified." },
+      { q: "Are there supervised drop-off and pick-up times?", a: "Yes. Drop-off is between 7:30â€“8:15 AM and pick-up is between 4:00â€“4:45 PM. ID required for pick-up." },
+      { q: "My child has dietary requirements â€” can you accommodate?", a: "Absolutely. Please indicate any dietary needs during registration and our catering team will be notified." },
     ],
   },
   {
@@ -374,7 +374,7 @@ export const INITIAL_EVENTS: Event[] = [
     name: "Leadership Summit 2026",
     subtitle: "Equipping the next generation of ministry leaders",
     date: "May 28, 2026",
-    location: "Online — Global",
+    location: "Online â€” Global",
     status: "Active",
     ticketsSold: 320,
     capacity: 1000,
@@ -398,9 +398,9 @@ export const INITIAL_EVENTS: Event[] = [
     cities: [
       {
         cityId: "online-summit",
-        city: "Online — Zoom Webinar",
+        city: "Online â€” Zoom Webinar",
         country: "Worldwide",
-        flag: "🌐",
+        flag: "ðŸŒ",
         isOnline: true,
         venue: {
           name: "OMS Virtual Summit Platform",
@@ -419,13 +419,13 @@ export const INITIAL_EVENTS: Event[] = [
       },
     ],
     support: [
-      { type: "email", label: "Summit Support", value: "summit@onemustardSeed.org", available: "Mon–Fri, 9am–5pm GMT" },
-      { type: "whatsapp", label: "WhatsApp", value: "+233 55 123 4567", available: "Mon–Sat, 8am–6pm GMT" },
+      { type: "email", label: "Summit Support", value: "summit@onemustardSeed.org", available: "Monâ€“Fri, 9amâ€“5pm GMT" },
+      { type: "whatsapp", label: "WhatsApp", value: "+233 55 123 4567", available: "Monâ€“Sat, 8amâ€“6pm GMT" },
     ],
     faq: [
       { q: "What platform is the summit on?", a: "The summit is hosted on Zoom Webinar. You will receive a unique join link after registration." },
       { q: "Can I watch in a different time zone?", a: "Yes! The sessions will be recorded and available for replay for 30 days after the event." },
-      { q: "Is there a group discount?", a: "Yes — groups of 5 or more receive 20% off. Contact us at summit@onemustardSeed.org for a group code." },
+      { q: "Is there a group discount?", a: "Yes â€” groups of 5 or more receive 20% off. Contact us at summit@onemustardSeed.org for a group code." },
     ],
   },
 ];

@@ -1,4 +1,4 @@
-import { Play, Shield, Infinity as InfinityIcon, Sparkles } from "lucide-react";
+﻿import { Play, Shield, Infinity as InfinityIcon, Sparkles } from "lucide-react";
 const promo = "https://images.unsplash.com/photo-1489824904134-891ab64532f1?auto=format&fit=crop&q=80&w=1200";
 
 export function KidsFlix() {
@@ -19,7 +19,7 @@ export function KidsFlix() {
                 A streaming home<br /><span className="italic text-gold">for little hearts.</span>
               </h2>
               <p className="mt-6 max-w-xl text-lg text-cream/80">
-                Hundreds of safe, beautifully crafted Bible stories, songs, and adventures — handpicked for kids and trusted by parents.
+                Hundreds of safe, beautifully crafted Bible stories, songs, and adventures â€” handpicked for kids and trusted by parents.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
@@ -27,7 +27,7 @@ export function KidsFlix() {
                   <Play className="h-4 w-4 fill-forest-deep" /> Start watching
                 </a>
                 <a href="#" className="inline-flex items-center gap-2 rounded-full border border-cream/30 px-6 py-3.5 text-sm font-semibold text-cream hover:border-gold hover:text-gold transition">
-                  Browse series →
+                  Browse series â†’
                 </a>
               </div>
 

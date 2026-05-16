@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { SiteHeader } from "../../../components/layout/SiteHeader";
-import { SiteFooter } from "../../../components/layout/SiteFooter";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import {
   Play,
   Lock,
@@ -44,7 +44,7 @@ function PrayerSeriesPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <h1 className="font-display text-4xl">Series Not Found</h1>
-          <Link to="/prayer" className="text-primary underline">← Back to Week of Prayer</Link>
+          <Link to="/prayer" className="text-primary underline">â† Back to Week of Prayer</Link>
         </div>
       </div>
     );
@@ -116,7 +116,7 @@ function PrayerSeriesPage() {
                 <div className="flex flex-wrap gap-6 text-sm">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar className="h-4 w-4 text-primary" />
-                    {series.startDate} – {series.endDate}
+                    {series.startDate} â€“ {series.endDate}
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Play className="h-4 w-4 text-primary" />
@@ -331,7 +331,7 @@ function PrayerSeriesPage() {
               )}
             </div>
 
-            {/* Sidebar — Access Card */}
+            {/* Sidebar â€” Access Card */}
             <div className="space-y-6 sticky top-28">
               {hasAccess ? (
                 <div className="p-8 rounded-[2rem] bg-emerald-50 border border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-800">
@@ -351,7 +351,7 @@ function PrayerSeriesPage() {
                       {series.status === "upcoming" ? "Pre-Order Access" : "Full Series Access"}
                     </span>
                     <div className="font-display text-5xl font-medium text-gold mb-1">${series.price}</div>
-                    <div className="text-cream/60 text-sm mb-6">per school or church · {series.accessDays} days</div>
+                    <div className="text-cream/60 text-sm mb-6">per school or church Â· {series.accessDays} days</div>
 
                     <ul className="space-y-3 mb-8 text-sm text-cream/80">
                       {[

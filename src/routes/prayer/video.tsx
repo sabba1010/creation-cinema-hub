@@ -1,6 +1,6 @@
-﻿import { createFileRoute, Link } from "@tanstack/react-router";
-import { SiteHeader } from "../../components/layout/SiteHeader";
-import { SiteFooter } from "../../components/layout/SiteFooter";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Play, MessageCircle, FileText, Share2, Settings, Maximize, Volume2, User, Clock } from "lucide-react";
 
 export const Route = createFileRoute("/prayer/video")({

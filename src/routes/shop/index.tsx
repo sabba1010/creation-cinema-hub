@@ -1,6 +1,6 @@
-﻿import { createFileRoute, Link } from "@tanstack/react-router";
-import { SiteHeader } from "../../components/layout/SiteHeader";
-import { SiteFooter } from "../../components/layout/SiteFooter";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Star, Search, Tag, Shirt, Book, ExternalLink, ShoppingBag, ArrowRight } from "lucide-react";
 import { useState } from "react";
 

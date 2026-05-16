@@ -1,6 +1,6 @@
-﻿import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { SiteHeader } from "../../components/layout/SiteHeader";
-import { SiteFooter } from "../../components/layout/SiteFooter";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { User, Settings, Play, Heart, LogOut, Shield, Bell, CreditCard, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

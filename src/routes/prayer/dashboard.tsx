@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { SiteHeader } from "../../components/layout/SiteHeader";
-import { SiteFooter } from "../../components/layout/SiteFooter";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { User, LayoutDashboard, Film, FileText, Download, Settings, LogOut, ChevronRight, Bell, Star, Play } from "lucide-react";
 
 export const Route = createFileRoute("/prayer/dashboard")({
@@ -89,10 +89,10 @@ function DashboardPage() {
                 <h3 className="font-display text-3xl font-medium text-foreground mb-8">Promo <span className="italic text-primary">Materials</span></h3>
                 <div className="grid gap-4 md:grid-cols-2">
                   {[
-                    { title: "Social Media Bundle", type: "ZIP • 45MB", icon: Download },
-                    { title: "Church Presentation Deck", type: "PPTX • 12MB", icon: Download },
-                    { title: "Printable Posters (Hi-Res)", type: "PDF • 28MB", icon: Download },
-                    { title: "Invitation Video (HD)", type: "MP4 • 120MB", icon: Download },
+                    { title: "Social Media Bundle", type: "ZIP â€¢ 45MB", icon: Download },
+                    { title: "Church Presentation Deck", type: "PPTX â€¢ 12MB", icon: Download },
+                    { title: "Printable Posters (Hi-Res)", type: "PDF â€¢ 28MB", icon: Download },
+                    { title: "Invitation Video (HD)", type: "MP4 â€¢ 120MB", icon: Download },
                   ].map((mat, i) => (
                     <div key={i} className="flex items-center justify-between p-6 rounded-3xl bg-card border border-border group hover:border-primary/20 transition-all">
                       <div className="flex items-center gap-5">

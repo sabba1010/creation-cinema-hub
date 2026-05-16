@@ -1,4 +1,4 @@
-import { Play } from "lucide-react";
+﻿import { Play } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { FEATURED_PROJECTS } from "../../../data/home-data";
 
@@ -13,7 +13,7 @@ export function FeaturedProjects() {
               Discover our <span className="italic text-forest">projects</span>
             </h2>
           </div>
-          <Link to="/resources" className="text-sm font-semibold text-forest hover:text-gold transition">View all →</Link>
+          <Link to="/resources" className="text-sm font-semibold text-forest hover:text-gold transition">View all â†’</Link>
         </div>
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -43,7 +43,7 @@ export function FeaturedProjects() {
                   <h3 className="font-display text-2xl leading-tight">{p.title}</h3>
                   <p className="mt-2 text-sm text-cream/75 line-clamp-2">{p.desc}</p>
                   <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-gold px-4 py-2 text-xs font-semibold text-gold-foreground opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0 translate-y-2">
-                    {p.cta} →
+                    {p.cta} â†’
                   </div>
                 </div>
               </article>
