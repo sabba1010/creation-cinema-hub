@@ -57,6 +57,7 @@ import { Route as AdminKidsRouteImport } from './routes/admin/kids'
 import { Route as AdminFilmsRouteImport } from './routes/admin/films'
 import { Route as AdminEventsRouteImport } from './routes/admin/events'
 import { Route as AdminDonationsRouteImport } from './routes/admin/donations'
+import { Route as PrayerSeriesSeriesIdRouteImport } from './routes/prayer/series/$seriesId'
 import { Route as PodcastSeasonSeasonIdRouteImport } from './routes/podcast/season/$seasonId'
 
 const ShopRoute = ShopRouteImport.update({
@@ -299,6 +300,11 @@ const AdminDonationsRoute = AdminDonationsRouteImport.update({
   path: '/donations',
   getParentRoute: () => AdminRoute,
 } as any)
+const PrayerSeriesSeriesIdRoute = PrayerSeriesSeriesIdRouteImport.update({
+  id: '/series/$seriesId',
+  path: '/series/$seriesId',
+  getParentRoute: () => PrayerRoute,
+} as any)
 const PodcastSeasonSeasonIdRoute = PodcastSeasonSeasonIdRouteImport.update({
   id: '/season/$seasonId',
   path: '/season/$seasonId',
@@ -355,6 +361,7 @@ export interface FileRoutesByFullPath {
   '/shop/': typeof ShopIndexRoute
   '/support/': typeof SupportIndexRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
+  '/prayer/series/$seriesId': typeof PrayerSeriesSeriesIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -399,6 +406,7 @@ export interface FileRoutesByTo {
   '/shop': typeof ShopIndexRoute
   '/support': typeof SupportIndexRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
+  '/prayer/series/$seriesId': typeof PrayerSeriesSeriesIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -451,6 +459,7 @@ export interface FileRoutesById {
   '/shop/': typeof ShopIndexRoute
   '/support/': typeof SupportIndexRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
+  '/prayer/series/$seriesId': typeof PrayerSeriesSeriesIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -504,6 +513,7 @@ export interface FileRouteTypes {
     | '/shop/'
     | '/support/'
     | '/podcast/season/$seasonId'
+    | '/prayer/series/$seriesId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -548,6 +558,7 @@ export interface FileRouteTypes {
     | '/shop'
     | '/support'
     | '/podcast/season/$seasonId'
+    | '/prayer/series/$seriesId'
   id:
     | '__root__'
     | '/'
@@ -599,6 +610,7 @@ export interface FileRouteTypes {
     | '/shop/'
     | '/support/'
     | '/podcast/season/$seasonId'
+    | '/prayer/series/$seriesId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -963,6 +975,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDonationsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/prayer/series/$seriesId': {
+      id: '/prayer/series/$seriesId'
+      path: '/series/$seriesId'
+      fullPath: '/prayer/series/$seriesId'
+      preLoaderRoute: typeof PrayerSeriesSeriesIdRouteImport
+      parentRoute: typeof PrayerRoute
+    }
     '/podcast/season/$seasonId': {
       id: '/podcast/season/$seasonId'
       path: '/season/$seasonId'
@@ -1052,12 +1071,14 @@ interface PrayerRouteChildren {
   PrayerDashboardRoute: typeof PrayerDashboardRoute
   PrayerVideoRoute: typeof PrayerVideoRoute
   PrayerIndexRoute: typeof PrayerIndexRoute
+  PrayerSeriesSeriesIdRoute: typeof PrayerSeriesSeriesIdRoute
 }
 
 const PrayerRouteChildren: PrayerRouteChildren = {
   PrayerDashboardRoute: PrayerDashboardRoute,
   PrayerVideoRoute: PrayerVideoRoute,
   PrayerIndexRoute: PrayerIndexRoute,
+  PrayerSeriesSeriesIdRoute: PrayerSeriesSeriesIdRoute,
 }
 
 const PrayerRouteWithChildren =
