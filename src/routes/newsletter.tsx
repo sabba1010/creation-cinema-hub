@@ -5,9 +5,8 @@ import { useState } from "react";
 import { 
   Calendar, 
   ChevronRight, 
-  Image as ImageIcon, 
   Play, 
-  Newspaper, 
+  FileText, 
   ArrowRight,
   Search,
   Archive,
@@ -171,7 +170,7 @@ function NewsletterPage() {
                           {block.type === "news" && (
                             <div className="bg-forest/5 border border-forest/10 rounded-3xl p-8 relative overflow-hidden group">
                               <div className="absolute top-0 right-0 p-4 opacity-10">
-                                <Newspaper className="w-24 h-24 text-forest" />
+                                <FileText className="w-24 h-24 text-forest" />
                               </div>
                               <div className="relative z-10">
                                 <Badge className="mb-4 bg-forest text-white">Ministry Update</Badge>
@@ -233,7 +232,7 @@ function NewsletterPage() {
                 <Card className="border-border/50 bg-card/50 backdrop-blur-sm rounded-3xl overflow-hidden">
                   <div className="p-6 border-b border-border/50 flex items-center justify-between">
                     <div className="flex items-center gap-2 font-display font-bold text-lg">
-                      <Archive className="w-5 h-5 text-forest" />
+                      <FileText className="w-5 h-5 text-forest" />
                       Newsletter Archive
                     </div>
                   </div>

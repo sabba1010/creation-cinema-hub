@@ -93,24 +93,10 @@ function FilmsLandingPage() {
                 <h2 className="font-display text-3xl font-medium text-foreground">Official <span className="italic text-primary">Library</span></h2>
                 <p className="mt-2 text-sm text-muted-foreground uppercase tracking-widest">Admin Curated Content</p>
               </div>
-              <div className="hidden sm:flex gap-4">
-                {["All", "Documentaries", "Series"].map((f) => (
-                  <button
-                    key={f}
-                    onClick={() => setActiveFilter(f)}
-                    className={`px-6 py-2 rounded-full border transition-all text-[10px] font-bold uppercase tracking-widest ${activeFilter === f
-                        ? "bg-primary text-primary-foreground border-primary shadow-lg"
-                        : "border-border text-muted-foreground hover:bg-muted"
-                      }`}
-                  >
-                    {f}
-                  </button>
-                ))}
-              </div>
             </div>
 
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 animate-in fade-in duration-500">
-              {filteredFilms.map((film) => (
+              {FILMS.map((film) => (
                 <Link key={film.id} to={`/films/${film.id}`} className="group flex flex-col">
                   <div className="relative aspect-[16/9] overflow-hidden rounded-[2rem] bg-muted shadow-card transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-elevated">
                     <img src={film.image} alt={film.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />

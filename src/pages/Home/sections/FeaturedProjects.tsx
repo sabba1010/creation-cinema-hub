@@ -1,58 +1,6 @@
 import { Play } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import earth from "@/assets/project-earth.jpg";
-import kidsflix from "@/assets/project-kidsflix.jpg";
-import prayer from "@/assets/project-prayer.jpg";
-import creationcase from "@/assets/project-creationcase.jpg";
-import vbs from "@/assets/project-vbs.jpg";
-
-const PROJECTS = [
-  { 
-    id: "podcast",
-    img: earth, 
-    tag: "Podcast", 
-    title: "God's Great Earth", 
-    desc: "A weekly journey through creation, science, and Scripture.", 
-    cta: "Listen Now",
-    to: "/podcast"
-  },
-  { 
-    id: "films",
-    img: kidsflix, 
-    tag: "Streaming", 
-    title: "One Mustard Seed Hub", 
-    desc: "Safe, wonder-filled Bible stories and documentaries.", 
-    cta: "Stream Now",
-    to: "/films"
-  },
-  { 
-    id: "prayer",
-    img: prayer, 
-    tag: "Live Event", 
-    title: "Week of Prayer Online", 
-    desc: "Join thousands worldwide for 7 nights of guided prayer.", 
-    cta: "Join Free",
-    to: "/prayer"
-  },
-  { 
-    id: "film-doc",
-    img: creationcase, 
-    tag: "Film", 
-    title: "The Creation Case", 
-    desc: "A feature-length documentary on evidence for creation.", 
-    cta: "Watch Trailer",
-    to: "/films/trailer"
-  },
-  { 
-    id: "resources",
-    img: vbs, 
-    tag: "Curriculum", 
-    title: "VBS Resources", 
-    desc: "Turn-key vacation Bible school kits for any size church.", 
-    cta: "Get Kit",
-    to: "/resources"
-  },
-];
+import { FEATURED_PROJECTS } from "@/data/home-data";
 
 export function FeaturedProjects() {
   return (
@@ -69,7 +17,7 @@ export function FeaturedProjects() {
         </div>
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {PROJECTS.map((p) => (
+          {FEATURED_PROJECTS.map((p) => (
             <Link key={p.title} to={p.to} className="group relative block aspect-[4/5] overflow-hidden rounded-3xl bg-forest-deep shadow-card transition-all duration-700 hover:shadow-elevated">
               <article className="h-full w-full">
                 <img

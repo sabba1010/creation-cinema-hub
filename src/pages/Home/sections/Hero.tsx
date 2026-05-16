@@ -1,4 +1,6 @@
 import { Play, Compass } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { HERO_CONTENT } from "@/data/home-data";
 import heroImg from "@/assets/hero-family.jpg";
 
 export function Hero() {
@@ -21,31 +23,31 @@ export function Hero() {
       <div className="relative mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-12 text-center">
         <div className="mx-auto max-w-4xl pt-8">
           <span className="inline-block px-4 py-1.5 mb-8 rounded-full border border-cream/20 bg-cream/5 text-[10px] font-bold tracking-[0.3em] text-cream/80 uppercase backdrop-blur-sm animate-fade-up">
-            A faith-centered media ministry
+            {HERO_CONTENT.subtitle}
           </span>
 
           <h1 className="font-display text-[clamp(2.5rem,8vw,6.5rem)] font-medium leading-[1] tracking-tight text-cream drop-shadow-xl">
-            <span className="block animate-fade-up [animation-delay:150ms]">Wonder. Explore. Belong.</span>
+            <span className="block animate-fade-up [animation-delay:150ms]">{HERO_CONTENT.title}</span>
           </h1>
 
           <div className="mt-8 mx-auto max-w-xl space-y-8 animate-fade-up [animation-delay:400ms]">
             <p className="text-lg sm:text-xl font-light leading-relaxed text-cream/90 text-balance italic">
-              Discover the Creator through His creation.
+              {HERO_CONTENT.description}
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-5 pt-2">
               <a 
-                href="#watch" 
+                href={HERO_CONTENT.primaryCTA.href} 
                 className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-[#5A6F3E] px-9 py-3.5 text-[13px] font-bold tracking-[0.2em] text-cream uppercase transition-all duration-300 hover:bg-[#4A5F2E] hover:scale-105"
               >
-                <span className="relative z-10">Watch Now</span>
+                <span className="relative z-10">{HERO_CONTENT.primaryCTA.label}</span>
                 <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
               </a>
               <a 
-                href="#projects" 
+                href={HERO_CONTENT.secondaryCTA.href} 
                 className="inline-flex items-center justify-center rounded-full border border-cream/40 px-9 py-3.5 text-[13px] font-bold tracking-[0.2em] text-cream uppercase transition-all duration-300 hover:bg-cream hover:text-forest-deep hover:scale-105"
               >
-                Explore More
+                {HERO_CONTENT.secondaryCTA.label}
               </a>
             </div>
           </div>

@@ -53,38 +53,7 @@ export const Route = createFileRoute("/admin/events")({
   component: EventsManagement,
 });
 
-const INITIAL_EVENTS = [
-  {
-    id: "EVT-001",
-    name: "Summer Bible Camp 2026",
-    date: "July 15, 2026",
-    location: "Grace Cathedral",
-    status: "Active",
-    ticketsSold: 145,
-    capacity: 200,
-    price: "$45.00"
-  },
-  {
-    id: "EVT-002",
-    name: "Worship Night: Echoes of Grace",
-    date: "June 02, 2026",
-    location: "City Park Arena",
-    status: "Draft",
-    ticketsSold: 0,
-    capacity: 500,
-    price: "$20.00"
-  },
-  {
-    id: "EVT-003",
-    name: "Leadership Summit",
-    date: "May 28, 2026",
-    location: "Online",
-    status: "Completed",
-    ticketsSold: 320,
-    capacity: 1000,
-    price: "$15.00"
-  }
-];
+import { INITIAL_EVENTS } from "@/data/events-data";
 
 const INITIAL_TICKETS = [
   { id: "TKT-1001", eventId: "EVT-001", user: "Alice Walker", status: "Paid", checkedIn: false },
@@ -112,7 +81,9 @@ function EventsManagement() {
     date: "2026-08-22",
     location: "Symphony Hall, Downtown",
     price: "35.00",
-    capacity: "450"
+    capacity: "450",
+    description: "Join us for an unforgettable night of praise and worship.",
+    image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1200&q=80"
   });
 
   const [promoForm, setPromoForm] = useState({ code: "", discount: "", expiry: "2026-12-31" });
@@ -148,7 +119,9 @@ function EventsManagement() {
       date: event.date,
       location: event.location,
       price: event.price.replace("$", ""),
-      capacity: event.capacity.toString()
+      capacity: event.capacity.toString(),
+      description: event.description || "",
+      image: event.image || ""
     });
     setIsDialogOpen(true);
   };
@@ -277,6 +250,28 @@ function EventsManagement() {
                     value={formData.capacity}
                     onChange={(e) => setFormData({...formData, capacity: e.target.value})}
                     required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description">Event Description</Label>
+                  <textarea 
+                    id="description" 
+                    placeholder="Short description of the event..." 
+                    className="w-full min-h-[80px] p-3 rounded-xl border border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-ring"
+                    value={formData.description}
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="image">Featured Image URL</Label>
+                  <Input 
+                    id="image" 
+                    placeholder="https://images.unsplash.com/..." 
+                    className="h-11 rounded-xl bg-background/50"
+                    value={formData.image}
+                    onChange={(e) => setFormData({...formData, image: e.target.value})}
                   />
                 </div>
               </div>
