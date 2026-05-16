@@ -27,7 +27,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "../../components/ui/sidebar";
+} from "../ui/sidebar";
 import { Link, useLocation } from "@tanstack/react-router";
 
 const menuItems = [

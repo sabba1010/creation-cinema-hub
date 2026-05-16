@@ -43,8 +43,8 @@ function LoginPage() {
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-forest/5 rounded-full blur-3xl" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-gold/5 rounded-full blur-3xl" />
 
-      <Link 
-        to="/" 
+      <Link
+        to="/"
         className="absolute top-8 left-8 flex items-center gap-2 text-sm font-bold tracking-widest text-muted-foreground hover:text-primary transition-all group"
       >
         <ChevronLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
@@ -54,7 +54,7 @@ function LoginPage() {
       <div className="w-full max-w-[450px] space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
         <div className="text-center space-y-2">
           <div className="inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-forest-deep text-cream shadow-xl mb-4">
-             <Globe className="h-8 w-8" />
+            <Globe className="h-8 w-8" />
           </div>
           <h1 className="font-display text-4xl font-medium">Welcome <span className="italic text-primary">Back</span></h1>
           <p className="text-muted-foreground">Sign in to your One Mustard Seed account</p>
@@ -71,11 +71,11 @@ function LoginPage() {
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="name@example.com" 
-                    className="pl-10 h-12 rounded-xl bg-background/50 border-border/50" 
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="name@example.com"
+                    className="pl-10 h-12 rounded-xl bg-background/50 border-border/50"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -89,11 +89,11 @@ function LoginPage() {
                 </div>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    id="password" 
-                    type="password" 
-                    placeholder="••••••••" 
-                    className="pl-10 h-12 rounded-xl bg-background/50 border-border/50" 
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    className="pl-10 h-12 rounded-xl bg-background/50 border-border/50"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -102,14 +102,14 @@ function LoginPage() {
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full h-12 rounded-xl bg-forest-deep text-cream font-bold uppercase tracking-widest shadow-lg hover:shadow-forest/20 transition-all active:scale-95"
                 disabled={isLoading}
               >
                 {isLoading ? "Signing in..." : "Continue"}
               </Button>
-              
+
               <div className="relative w-full py-2">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-border/50"></div>

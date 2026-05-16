@@ -3,7 +3,7 @@ import { SiteHeader } from "../../components/layout/SiteHeader";
 import { SiteFooter } from "../../components/layout/SiteFooter";
 import { Calendar, Play, BookOpen, Share2, Users, Heart, ArrowRight, ShieldCheck } from "lucide-react";
 import { Badge } from "../../components/ui/badge";
-import eventImg from "../../assets/event-live.jpg";
+const eventImg = "https://images.unsplash.com/photo-1493612276216-ee3925520721?auto=format&fit=crop&q=80&w=1200";
 
 export const Route = createFileRoute("/prayer/")({
   component: PrayerLandingPage,
