@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { SidebarProvider, SidebarTrigger } from "../components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger, SidebarInset } from "../components/ui/sidebar";
 import { AdminSidebar } from "../components/admin/AdminSidebar";
 
 export const Route = createFileRoute("/admin")({
@@ -33,8 +33,8 @@ function AdminLayout() {
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background/50">
         <AdminSidebar />
-        <main className="flex-1 overflow-auto">
-          <div className="p-4 md:p-8 max-w-7xl mx-auto">
+        <main className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden bg-background">
+          <div className="p-4 md:p-8 max-w-7xl mx-auto w-full">
             <div className="flex items-center gap-4 mb-8 md:hidden">
               <SidebarTrigger className="h-10 w-10 border border-border bg-card shadow-sm" />
               <h1 className="font-display font-bold text-xl">OMS Admin</h1>

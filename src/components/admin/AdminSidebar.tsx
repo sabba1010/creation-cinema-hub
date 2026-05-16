@@ -59,7 +59,7 @@ export function AdminSidebar() {
   };
 
   return (
-    <Sidebar className="border-r border-border/50 bg-card/50 backdrop-blur-md">
+    <Sidebar className="border-r border-border/50 bg-card/50 backdrop-blur-md overflow-x-hidden box-border">
       <SidebarHeader className="p-6 border-b border-border/50">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 bg-forest rounded-2xl flex items-center justify-center shadow-lg shadow-forest/20">
@@ -72,7 +72,7 @@ export function AdminSidebar() {
         </div>
       </SidebarHeader>
       
-      <SidebarContent className="p-4 space-y-6">
+      <SidebarContent className="p-4 space-y-6 overflow-x-hidden box-border">
         <div className="space-y-1">
           <p className="px-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 mb-2">Main Menu</p>
           <SidebarMenu>
@@ -85,9 +85,9 @@ export function AdminSidebar() {
                   <SidebarMenuButton
                     asChild
                     isActive={isActive}
-                    className={`h-11 rounded-xl transition-all duration-300 ${
+                    className={`h-11 rounded-xl transition-all duration-300 w-full overflow-hidden ${
                       isActive 
-                        ? "bg-forest text-white shadow-md shadow-forest/20 translate-x-1" 
+                        ? "bg-forest text-white shadow-md shadow-forest/20" 
                         : "hover:bg-forest/10 hover:text-forest text-muted-foreground"
                     }`}
                     onClick={() => setOpenMobile(false)}
@@ -106,7 +106,7 @@ export function AdminSidebar() {
 
         <Separator className="mx-4 bg-border/50" />
         
-        <div className="px-4 py-4 bg-forest/5 rounded-2xl border border-forest/10 mx-2">
+        <div className="px-4 py-4 bg-forest/5 rounded-2xl border border-forest/10 mx-1">
            <div className="flex items-center gap-3 mb-3">
               <div className="h-8 w-8 rounded-full bg-forest/20 flex items-center justify-center">
                  <Settings className="h-4 w-4 text-forest" />

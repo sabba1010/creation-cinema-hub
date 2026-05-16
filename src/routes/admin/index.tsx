@@ -1,4 +1,4 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { 
   Users, 
@@ -85,7 +85,7 @@ function DashboardOverview() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card">
+        <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
           <CardHeader>
             <CardTitle className="text-xl font-display flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-forest" />
@@ -125,7 +125,7 @@ function DashboardOverview() {
           </CardContent>
         </Card>
 
-        <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card">
+        <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
           <CardHeader>
             <CardTitle className="text-xl font-display flex items-center gap-2">
               <Activity className="w-5 h-5 text-gold" />
