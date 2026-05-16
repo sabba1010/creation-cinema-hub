@@ -14,6 +14,7 @@ import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrayerRouteImport } from './routes/prayer'
 import { Route as PodcastRouteImport } from './routes/podcast'
+import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as FilmsRouteImport } from './routes/films'
 import { Route as EventsRouteImport } from './routes/events'
@@ -50,6 +51,7 @@ import { Route as AdminResourcesRouteImport } from './routes/admin/resources'
 import { Route as AdminPrayerRouteImport } from './routes/admin/prayer'
 import { Route as AdminPodcastRouteImport } from './routes/admin/podcast'
 import { Route as AdminPaymentsRouteImport } from './routes/admin/payments'
+import { Route as AdminNewsletterRouteImport } from './routes/admin/newsletter'
 import { Route as AdminMarketingRouteImport } from './routes/admin/marketing'
 import { Route as AdminKidsRouteImport } from './routes/admin/kids'
 import { Route as AdminFilmsRouteImport } from './routes/admin/films'
@@ -80,6 +82,11 @@ const PrayerRoute = PrayerRouteImport.update({
 const PodcastRoute = PodcastRouteImport.update({
   id: '/podcast',
   path: '/podcast',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsletterRoute = NewsletterRouteImport.update({
+  id: '/newsletter',
+  path: '/newsletter',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -262,6 +269,11 @@ const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
   path: '/payments',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminNewsletterRoute = AdminNewsletterRouteImport.update({
+  id: '/newsletter',
+  path: '/newsletter',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminMarketingRoute = AdminMarketingRouteImport.update({
   id: '/marketing',
   path: '/marketing',
@@ -301,6 +313,7 @@ export interface FileRoutesByFullPath {
   '/events': typeof EventsRoute
   '/films': typeof FilmsRouteWithChildren
   '/login': typeof LoginRoute
+  '/newsletter': typeof NewsletterRoute
   '/podcast': typeof PodcastRouteWithChildren
   '/prayer': typeof PrayerRouteWithChildren
   '/profile': typeof ProfileRoute
@@ -311,6 +324,7 @@ export interface FileRoutesByFullPath {
   '/admin/films': typeof AdminFilmsRoute
   '/admin/kids': typeof AdminKidsRoute
   '/admin/marketing': typeof AdminMarketingRoute
+  '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/podcast': typeof AdminPodcastRoute
   '/admin/prayer': typeof AdminPrayerRoute
@@ -347,12 +361,14 @@ export interface FileRoutesByTo {
   '/cart': typeof CartRoute
   '/events': typeof EventsRoute
   '/login': typeof LoginRoute
+  '/newsletter': typeof NewsletterRoute
   '/profile': typeof ProfileRoute
   '/admin/donations': typeof AdminDonationsRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/films': typeof AdminFilmsRoute
   '/admin/kids': typeof AdminKidsRoute
   '/admin/marketing': typeof AdminMarketingRoute
+  '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/podcast': typeof AdminPodcastRoute
   '/admin/prayer': typeof AdminPrayerRoute
@@ -393,6 +409,7 @@ export interface FileRoutesById {
   '/events': typeof EventsRoute
   '/films': typeof FilmsRouteWithChildren
   '/login': typeof LoginRoute
+  '/newsletter': typeof NewsletterRoute
   '/podcast': typeof PodcastRouteWithChildren
   '/prayer': typeof PrayerRouteWithChildren
   '/profile': typeof ProfileRoute
@@ -403,6 +420,7 @@ export interface FileRoutesById {
   '/admin/films': typeof AdminFilmsRoute
   '/admin/kids': typeof AdminKidsRoute
   '/admin/marketing': typeof AdminMarketingRoute
+  '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/podcast': typeof AdminPodcastRoute
   '/admin/prayer': typeof AdminPrayerRoute
@@ -444,6 +462,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/films'
     | '/login'
+    | '/newsletter'
     | '/podcast'
     | '/prayer'
     | '/profile'
@@ -454,6 +473,7 @@ export interface FileRouteTypes {
     | '/admin/films'
     | '/admin/kids'
     | '/admin/marketing'
+    | '/admin/newsletter'
     | '/admin/payments'
     | '/admin/podcast'
     | '/admin/prayer'
@@ -490,12 +510,14 @@ export interface FileRouteTypes {
     | '/cart'
     | '/events'
     | '/login'
+    | '/newsletter'
     | '/profile'
     | '/admin/donations'
     | '/admin/events'
     | '/admin/films'
     | '/admin/kids'
     | '/admin/marketing'
+    | '/admin/newsletter'
     | '/admin/payments'
     | '/admin/podcast'
     | '/admin/prayer'
@@ -535,6 +557,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/films'
     | '/login'
+    | '/newsletter'
     | '/podcast'
     | '/prayer'
     | '/profile'
@@ -545,6 +568,7 @@ export interface FileRouteTypes {
     | '/admin/films'
     | '/admin/kids'
     | '/admin/marketing'
+    | '/admin/newsletter'
     | '/admin/payments'
     | '/admin/podcast'
     | '/admin/prayer'
@@ -585,6 +609,7 @@ export interface RootRouteChildren {
   EventsRoute: typeof EventsRoute
   FilmsRoute: typeof FilmsRouteWithChildren
   LoginRoute: typeof LoginRoute
+  NewsletterRoute: typeof NewsletterRoute
   PodcastRoute: typeof PodcastRouteWithChildren
   PrayerRoute: typeof PrayerRouteWithChildren
   ProfileRoute: typeof ProfileRoute
@@ -635,6 +660,13 @@ declare module '@tanstack/react-router' {
       path: '/podcast'
       fullPath: '/podcast'
       preLoaderRoute: typeof PodcastRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/newsletter': {
+      id: '/newsletter'
+      path: '/newsletter'
+      fullPath: '/newsletter'
+      preLoaderRoute: typeof NewsletterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -889,6 +921,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPaymentsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/newsletter': {
+      id: '/admin/newsletter'
+      path: '/newsletter'
+      fullPath: '/admin/newsletter'
+      preLoaderRoute: typeof AdminNewsletterRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/marketing': {
       id: '/admin/marketing'
       path: '/marketing'
@@ -940,6 +979,7 @@ interface AdminRouteChildren {
   AdminFilmsRoute: typeof AdminFilmsRoute
   AdminKidsRoute: typeof AdminKidsRoute
   AdminMarketingRoute: typeof AdminMarketingRoute
+  AdminNewsletterRoute: typeof AdminNewsletterRoute
   AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminPodcastRoute: typeof AdminPodcastRoute
   AdminPrayerRoute: typeof AdminPrayerRoute
@@ -955,6 +995,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminFilmsRoute: AdminFilmsRoute,
   AdminKidsRoute: AdminKidsRoute,
   AdminMarketingRoute: AdminMarketingRoute,
+  AdminNewsletterRoute: AdminNewsletterRoute,
   AdminPaymentsRoute: AdminPaymentsRoute,
   AdminPodcastRoute: AdminPodcastRoute,
   AdminPrayerRoute: AdminPrayerRoute,
@@ -1056,6 +1097,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsRoute: EventsRoute,
   FilmsRoute: FilmsRouteWithChildren,
   LoginRoute: LoginRoute,
+  NewsletterRoute: NewsletterRoute,
   PodcastRoute: PodcastRouteWithChildren,
   PrayerRoute: PrayerRouteWithChildren,
   ProfileRoute: ProfileRoute,

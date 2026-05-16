@@ -24,6 +24,7 @@ const NAV_GROUPS = [
     label: "CONNECT",
     links: [
       { label: "Events", href: "/events" },
+      { label: "Newsletter", href: "/newsletter" },
       { label: "Contact", href: "/contact" },
     ]
   },

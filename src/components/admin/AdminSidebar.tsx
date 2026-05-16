@@ -13,7 +13,8 @@ import {
   ChevronRight,
   LogOut,
   Settings,
-  Baby
+  Baby,
+  Newspaper
 } from "lucide-react";
 import {
   Sidebar,
@@ -41,7 +42,8 @@ const menuItems = [
   { title: "Podcast", icon: Mic, path: "/admin/podcast" },
   { title: "Shop", icon: ShoppingBag, path: "/admin/shop" },
   { title: "Payments", icon: CreditCard, path: "/admin/payments" },
-  // { title: "Marketing", icon: Mail, path: "/admin/marketing" },
+  { title: "Newsletter", icon: Mail, path: "/admin/newsletter" },
+  { title: "Marketing", icon: Newspaper, path: "/admin/marketing" },
 ];
 
 export function AdminSidebar() {
