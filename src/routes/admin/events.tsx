@@ -163,16 +163,48 @@ function EventsManagement() {
           <p className="text-muted-foreground">Manage your upcoming events, tickets, and check-ins.</p>
         </div>
         
-        <Dialog open={isDialogOpen} onOpenChange={(open) => {
-          setIsDialogOpen(open);
-          if (!open) setEditingEvent(null);
-        }}>
-          <DialogTrigger asChild>
-            <Button className="bg-forest hover:bg-forest/90 text-white gap-2 h-11 rounded-xl shadow-md transition-all active:scale-95">
-              <Plus className="w-4 h-4" />
-              Create New Event
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-3">
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              const names = [
+                "Creation Discovery Workshop", 
+                "Youth Media Bootcamp", 
+                "Regional Meetup: Austin", 
+                "Faith & Science Symposium",
+                "Worship in the Wild"
+              ];
+              const locations = ["Community Center", "OMS Studio B", "Grace Plaza", "Online (Zoom)", "National Park Annex"];
+              const randomName = names[Math.floor(Math.random() * names.length)];
+              const newEvent = {
+                id: `EVT-${Math.floor(100 + Math.random() * 900)}`,
+                name: randomName,
+                date: "August 10, 2026",
+                location: locations[Math.floor(Math.random() * locations.length)],
+                status: "Active" as const,
+                ticketsSold: Math.floor(Math.random() * 100),
+                capacity: 200,
+                price: "$25.00",
+                description: "A specially curated session focusing on the intersection of faith and creativity.",
+                image: `https://images.unsplash.com/photo-${1500000000000 + Math.floor(Math.random() * 1000000)}?w=1200&q=80`
+              };
+              setEvents([newEvent, ...events]);
+              toast.success("Fake event generated for testing!");
+            }}
+            className="border-forest/20 text-forest hover:bg-forest/5 h-11 rounded-xl"
+          >
+            Generate Fake Event
+          </Button>
+          <Dialog open={isDialogOpen} onOpenChange={(open) => {
+            setIsDialogOpen(open);
+            if (!open) setEditingEvent(null);
+          }}>
+            <DialogTrigger asChild>
+              <Button className="bg-forest hover:bg-forest/90 text-white gap-2 h-11 rounded-xl shadow-md transition-all active:scale-95">
+                <Plus className="w-4 h-4" />
+                Create New Event
+              </Button>
+            </DialogTrigger>
           <DialogContent className="sm:max-w-[500px] rounded-[2rem] border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl">
             <DialogHeader>
               <DialogTitle className="text-2xl font-display font-bold">
