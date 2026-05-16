@@ -2,7 +2,7 @@ import { Play, Compass } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { HERO_CONTENT } from "../../../data/home-data";
 
-const heroImg = "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=1920";
+import heroImg from "@/assets/hero-family.jpg";
 
 export function Hero() {
   return (
@@ -15,7 +15,7 @@ export function Hero() {
         height={1280}
         className="absolute inset-0 h-full w-full object-cover"
       />
-      
+
       {/* Sophisticated Overlays */}
       <div className="absolute inset-0 bg-black/30" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
@@ -37,15 +37,15 @@ export function Hero() {
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-5 pt-2">
-              <a 
-                href={HERO_CONTENT.primaryCTA.href} 
+              <a
+                href={HERO_CONTENT.primaryCTA.href}
                 className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-[#5A6F3E] px-9 py-3.5 text-[13px] font-bold tracking-[0.2em] text-cream uppercase transition-all duration-300 hover:bg-[#4A5F2E] hover:scale-105"
               >
                 <span className="relative z-10">{HERO_CONTENT.primaryCTA.label}</span>
                 <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
               </a>
-              <a 
-                href={HERO_CONTENT.secondaryCTA.href} 
+              <a
+                href={HERO_CONTENT.secondaryCTA.href}
                 className="inline-flex items-center justify-center rounded-full border border-cream/40 px-9 py-3.5 text-[13px] font-bold tracking-[0.2em] text-cream uppercase transition-all duration-300 hover:bg-cream hover:text-forest-deep hover:scale-105"
               >
                 {HERO_CONTENT.secondaryCTA.label}
@@ -61,7 +61,7 @@ export function Hero() {
         <div className="h-10 w-px bg-gradient-to-b from-cream/40 to-transparent" />
       </div>
 
-      {/* Ripped Paper Edge */}
+      {/* Elegant Wave Edge */}
       <div className="absolute bottom-[-1px] left-0 w-full overflow-hidden leading-[0] z-20">
         <svg
           viewBox="0 0 1200 120"
