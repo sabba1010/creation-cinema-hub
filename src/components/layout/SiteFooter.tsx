@@ -2,10 +2,10 @@ import { Facebook, Instagram, Youtube, Mail } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 const COLS = [
-  { title: "Watch", items: ["Films", "KidsBibleFlix", "Series", "Trailers"] },
-  { title: "Listen", items: ["God's Great Earth Podcast", "Sermons", "Audio Books"] },
-  { title: "Engage", items: ["Events", "Newsletter", "Week of Prayer Online", "Shop"] },
-  { title: "About", items: ["Mission", "Team", "Contact", "Support OMS"] },
+  { title: "Watch", items: [{label: "Films", to: "/films"}, {label: "KidsBibleFlix", to: "#"}, {label: "Series", to: "#"}, {label: "Trailers", to: "#"}] },
+  { title: "Listen", items: [{label: "God's Great Earth Podcast", to: "#"}, {label: "Sermons", to: "#"}, {label: "Audio Books", to: "#"}] },
+  { title: "Engage", items: [{label: "Events", to: "/events"}, {label: "Newsletter", to: "#"}, {label: "Week of Prayer Online", to: "#"}, {label: "Shop", to: "#"}] },
+  { title: "About", items: [{label: "Mission", to: "#"}, {label: "Team", to: "#"}, {label: "Contact", to: "/contact"}, {label: "Support OMS", to: "#"}] },
 ];
 
 export function SiteFooter() {
@@ -39,7 +39,13 @@ export function SiteFooter() {
                 <h4 className="font-display text-sm uppercase tracking-[0.2em] text-gold/90">{c.title}</h4>
                 <ul className="mt-4 space-y-2.5 text-sm text-cream/75">
                   {c.items.map((i) => (
-                    <li key={i}><a href="#" className="hover:text-gold transition">{i}</a></li>
+                    <li key={i.label}>
+                      {i.to !== "#" ? (
+                        <Link to={i.to as any} className="hover:text-gold transition">{i.label}</Link>
+                      ) : (
+                        <a href={i.to} className="hover:text-gold transition">{i.label}</a>
+                      )}
+                    </li>
                   ))}
                 </ul>
               </div>
