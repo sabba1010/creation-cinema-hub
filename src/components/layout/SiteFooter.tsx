@@ -2,7 +2,7 @@ import { Facebook, Instagram, Youtube, Mail } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 const COLS = [
-  { title: "Watch", items: [{label: "Films", to: "/films"}, {label: "KidsBibleFlix", to: "#"}, {label: "Series", to: "#"}, {label: "Trailers", to: "#"}] },
+  { title: "Watch", items: [{label: "Films", to: "/films"}, {label: "KidsBibleFlix", to: "/kids"}, {label: "Series", to: "/kids/series"}, {label: "Trailers", to: "#"}] },
   { title: "Listen", items: [{label: "God's Great Earth Podcast", to: "#"}, {label: "Sermons", to: "#"}, {label: "Audio Books", to: "#"}] },
   { title: "Engage", items: [{label: "Events", to: "/events"}, {label: "Newsletter", to: "#"}, {label: "Week of Prayer Online", to: "#"}, {label: "Shop", to: "#"}] },
   { title: "About", items: [{label: "Mission", to: "#"}, {label: "Team", to: "#"}, {label: "Contact", to: "/contact"}, {label: "Support OMS", to: "#"}] },
