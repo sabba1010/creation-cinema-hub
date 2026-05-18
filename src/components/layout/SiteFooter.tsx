@@ -3,9 +3,9 @@ import { Link } from "@tanstack/react-router";
 
 const COLS = [
   { title: "Watch", items: [{label: "Films", to: "/films"}, {label: "KidsBibleFlix", to: "/kids"}, {label: "Series", to: "/kids/series"}, {label: "Trailers", to: "#"}] },
-  { title: "Listen", items: [{label: "God's Great Earth Podcast", to: "#"}, {label: "Sermons", to: "#"}, {label: "Audio Books", to: "#"}] },
-  { title: "Engage", items: [{label: "Events", to: "/events"}, {label: "Newsletter", to: "#"}, {label: "Week of Prayer Online", to: "#"}, {label: "Shop", to: "#"}] },
-  { title: "About", items: [{label: "Mission", to: "#"}, {label: "Team", to: "#"}, {label: "Contact", to: "/contact"}, {label: "Support OMS", to: "#"}] },
+  { title: "Listen", items: [{label: "God's Great Earth Podcast", to: "/podcast"}, {label: "Sermons", to: "#"}, {label: "Audio Books", to: "/books"}] },
+  { title: "Engage", items: [{label: "Events", to: "/events"}, {label: "Newsletter", to: "/newsletter"}, {label: "Week of Prayer Online", to: "/prayer"}, {label: "Shop", to: "/shop"}] },
+  { title: "About", items: [{label: "Mission", to: "#"}, {label: "Team", to: "#"}, {label: "Contact", to: "/contact"}, {label: "Support OMS", to: "/support"}] },
 ];
 
 export function SiteFooter() {
