@@ -69,14 +69,15 @@ function FilmsLandingPage() {
     });
 
   return (
-    <div className="bg-background min-h-screen flex flex-col">
+    <div className="bg-[#050704] min-h-screen flex flex-col text-cream selection:bg-gold/30">
       <SiteHeader />
       <main className="flex-grow pt-24">
         {/* Cinema Hub Header */}
-        <section className="py-20 bg-forest-deep text-cream">
-          <div className="mx-auto max-w-7xl px-6">
+        <section className="py-20 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a1a0a] to-[#050704] opacity-50 pointer-events-none" />
+          <div className="relative mx-auto max-w-7xl px-6">
             <span className="text-[11px] font-bold uppercase tracking-[0.4em] text-gold/80 mb-6 block">The OMS Collection</span>
-            <h1 className="font-display text-5xl sm:text-7xl font-medium tracking-tight">
+            <h1 className="font-display text-5xl sm:text-7xl font-medium tracking-tight text-cream">
               Cinema <span className="italic text-gold">Hub</span>
             </h1>
             <p className="mt-8 max-w-2xl text-lg text-cream/70 leading-relaxed">
@@ -86,19 +87,19 @@ function FilmsLandingPage() {
         </section>
 
         {/* Film Catalog */}
-        <section className="py-24 bg-background min-h-[600px]">
+        <section className="py-24 relative z-10 min-h-[600px]">
           <div className="mx-auto max-w-7xl px-6">
-            <div className="flex items-end justify-between mb-16 border-b border-border pb-8">
+            <div className="flex items-end justify-between mb-16 border-b border-white/10 pb-8">
               <div>
-                <h2 className="font-display text-3xl font-medium text-foreground">Official <span className="italic text-primary">Library</span></h2>
-                <p className="mt-2 text-sm text-muted-foreground uppercase tracking-widest">Admin Curated Content</p>
+                <h2 className="font-display text-3xl font-medium text-cream">Official <span className="italic text-gold">Library</span></h2>
+                <p className="mt-2 text-sm text-gold/70 uppercase tracking-widest">Admin Curated Content</p>
               </div>
             </div>
 
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 animate-in fade-in duration-500">
               {FILMS.map((film) => (
-                <Link key={film.id} to={`/films/${film.id}`} className="group flex flex-col">
-                  <div className="relative aspect-[16/9] overflow-hidden rounded-[2rem] bg-muted shadow-card transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-elevated">
+                <Link key={film.id} to="/films/$filmId" params={{ filmId: film.id }} className="group flex flex-col">
+                  <div className="relative aspect-[16/9] overflow-hidden rounded-[2rem] bg-white/5 border border-white/10 shadow-2xl transition-all duration-500 group-hover:-translate-y-2">
                     <img src={film.image} alt={film.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -119,8 +120,8 @@ function FilmsLandingPage() {
                     </div>
                   </div>
                   <div className="mt-6 px-4">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-2">{film.year} • {film.duration}</p>
-                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{film.desc}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold mb-2">{film.year} • {film.duration}</p>
+                    <p className="text-sm text-cream/60 leading-relaxed line-clamp-2">{film.desc}</p>
                   </div>
                 </Link>
               ))}

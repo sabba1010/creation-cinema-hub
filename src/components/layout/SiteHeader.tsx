@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { Search, User, Menu, X, ShoppingBag } from "lucide-react";
 
@@ -16,14 +16,8 @@ const NAV_GROUPS = [
     label: "RESOURCES",
     href: "/resources"
   },
-  {
-    label: "CONNECT",
-    links: [
-      { label: "Events", href: "/events" },
-      { label: "Newsletter", href: "/newsletter" },
-      { label: "Contact", href: "/contact" },
-    ]
-  },
+  { label: "EVENTS", href: "/events" },
+  { label: "NEWSLETTER", href: "/newsletter" },
   { label: "STORE", href: "/shop" },
 ];
 

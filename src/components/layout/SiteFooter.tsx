@@ -1,4 +1,5 @@
-﻿import { Facebook, Instagram, Youtube, Mail } from "lucide-react";
+import { Facebook, Instagram, Youtube, Mail } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 const COLS = [
   { title: "Watch", items: ["Films", "KidsBibleFlix", "Series", "Trailers"] },
@@ -60,7 +61,7 @@ export function SiteFooter() {
           <div className="flex gap-6">
             <a href="#" className="hover:text-gold">Privacy</a>
             <a href="#" className="hover:text-gold">Terms</a>
-            <a href="#" className="hover:text-gold">Contact</a>
+            <Link to="/contact" className="px-3 py-1 -my-1 rounded-full bg-white/5 border border-white/10 hover:bg-gold hover:text-forest-deep transition-all font-medium">Contact</Link>
             <a href="/admin" className="hover:text-gold">Admin</a>
           </div>
         </div>
