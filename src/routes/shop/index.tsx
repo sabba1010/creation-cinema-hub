@@ -79,14 +79,26 @@ function ShopLandingPage() {
     <div className="bg-background min-h-screen flex flex-col">
       <SiteHeader />
       <main className="flex-grow pt-24">
-        {/* Store Hero - More Immersive */}
-        <section className="relative py-28 overflow-hidden bg-forest-deep text-cream">
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_30%,var(--gold),transparent_50%)]" />
-            <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_70%,var(--sky),transparent_50%)]" />
+        {/* Store Hero - More Immersive with Video Background */}
+        <section className="relative py-28 overflow-hidden bg-[#050704] text-cream">
+          <div className="absolute inset-0 z-0 bg-[#050704]">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover opacity-60 scale-105 transition-opacity duration-1000"
+            >
+              <source
+                src="https://vjs.zencdn.net/v/oceans.mp4"
+                type="video/mp4"
+              />
+            </video>
+            <div className="absolute inset-0 bg-gradient-to-b from-[#050704]/30 via-transparent to-[#050704]/90" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#050704]/30 via-transparent to-[#050704]/30" />
           </div>
           
-          <div className="relative mx-auto max-w-7xl px-6 flex flex-col items-center text-center">
+          <div className="relative mx-auto max-w-7xl px-6 flex flex-col items-center text-center z-10">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cream/10 border border-cream/20 text-[10px] font-bold tracking-[0.3em] text-gold uppercase backdrop-blur-sm mb-8 animate-fade-up">
               <ShoppingBag className="w-3 h-3" /> Supporting the Mission
             </div>

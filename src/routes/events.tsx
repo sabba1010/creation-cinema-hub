@@ -1,4 +1,4 @@
-﻿import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -231,14 +231,21 @@ function EventsPage() {
 
         {/* Hero */}
         <section className="relative min-h-[70vh] flex items-center justify-center pt-24 overflow-hidden">
-          <div className="absolute inset-0 z-0">
-            <img
-              src={selectedEvent.heroImage || selectedEvent.image}
-              className="w-full h-full object-cover opacity-25 scale-105 blur-sm transition-all duration-700"
-              alt=""
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#050704]/80 via-[#050704]/40 to-[#050704]" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#050704] via-transparent to-[#050704]" />
+          <div className="absolute inset-0 z-0 bg-[#050704]">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover opacity-60 scale-105 transition-opacity duration-1000"
+            >
+              <source
+                src="https://vjs.zencdn.net/v/oceans.mp4"
+                type="video/mp4"
+              />
+            </video>
+            <div className="absolute inset-0 bg-gradient-to-b from-[#050704]/30 via-transparent to-[#050704]/90" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#050704]/30 via-transparent to-[#050704]/30" />
           </div>
 
           <div className="relative z-10 mx-auto max-w-5xl px-6 text-center space-y-6">

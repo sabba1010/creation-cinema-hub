@@ -102,10 +102,22 @@ function NewsletterPage() {
       
       <main className="pb-20">
         {/* Cinematic Header Section */}
-        <section className="pt-32 pb-24 bg-forest-deep text-cream relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-[40%] h-full bg-[radial-gradient(circle_at_center,var(--color-gold),transparent_70%)]" />
-            <div className="absolute bottom-0 left-0 w-[40%] h-full bg-[radial-gradient(circle_at_center,var(--color-sky),transparent_70%)]" />
+        <section className="pt-32 pb-24 bg-[#050704] text-cream relative overflow-hidden">
+          <div className="absolute inset-0 z-0 bg-[#050704]">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover opacity-60 scale-105 transition-opacity duration-1000"
+            >
+              <source
+                src="https://vjs.zencdn.net/v/oceans.mp4"
+                type="video/mp4"
+              />
+            </video>
+            <div className="absolute inset-0 bg-gradient-to-b from-[#050704]/30 via-transparent to-[#050704]/90" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#050704]/30 via-transparent to-[#050704]/30" />
           </div>
           
           <div className="container px-6 mx-auto relative z-10 text-center lg:text-left">
