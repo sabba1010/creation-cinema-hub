@@ -2,16 +2,18 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Play, Download, BookOpen, Share2, ArrowLeft, Clock, Calendar } from "lucide-react";
+import { usePodcast } from "../../podcast";
+
 
 export const Route = createFileRoute("/podcast/season/$seasonId")({
   component: SeasonDetailsPage,
 });
 
 const EPISODES = [
-  { id: "1", title: "The Architecture of Light", duration: "42:15", date: "May 12, 2026" },
-  { id: "2", title: "Rhythms of the Deep", duration: "38:40", date: "May 19, 2026" },
-  { id: "3", title: "Whispers in the Wind", duration: "45:10", date: "May 26, 2026" },
-  { id: "4", title: "The Soil's Secret Language", duration: "40:05", date: "June 02, 2026" },
+  { id: "1", title: "The Architecture of Light", duration: "42:15", date: "May 12, 2026", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+  { id: "2", title: "Rhythms of the Deep", duration: "38:40", date: "May 19, 2026", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+  { id: "3", title: "Whispers in the Wind", duration: "45:10", date: "May 26, 2026", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+  { id: "4", title: "The Soil's Secret Language", duration: "40:05", date: "June 02, 2026", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
 ];
 
 const RESOURCES = [
@@ -22,6 +24,8 @@ const RESOURCES = [
 
 function SeasonDetailsPage() {
   const { seasonId } = Route.useParams();
+  const { playEpisode } = usePodcast();
+
 
   return (
     <div className="bg-background min-h-screen flex flex-col">
@@ -61,9 +65,14 @@ function SeasonDetailsPage() {
               {EPISODES.map((ep) => (
                 <div key={ep.id} className="group flex items-center justify-between p-6 rounded-3xl bg-card border border-border hover:border-primary/20 hover:shadow-lg transition-all">
                   <div className="flex items-center gap-6">
-                    <button className="h-12 w-12 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                    <a 
+                      href="https://godsgreatearth.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="h-12 w-12 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all cursor-pointer"
+                    >
                       <Play className="h-5 w-5 fill-current" />
-                    </button>
+                    </a>
                     <div>
                       <h4 className="font-display text-xl text-foreground group-hover:text-primary transition-colors">{ep.id}. {ep.title}</h4>
                       <p className="mt-1 text-sm text-muted-foreground">{ep.date} • {ep.duration}</p>
