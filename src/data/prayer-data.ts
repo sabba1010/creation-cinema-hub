@@ -1,4 +1,4 @@
-﻿// Week of Prayer Series Data
+// Week of Prayer Series Data
 
 export interface PrayerVideo {
   id: string;
@@ -442,7 +442,7 @@ export const PRAYER_SERIES: PrayerSeries[] = [
     startDate: "August 20, 2024",
     endDate: "August 24, 2024",
     price: 20,
-    status: "archived",
+    status: "active",
     accessDays: 365,
     videos: [
       {
@@ -513,6 +513,93 @@ export const PRAYER_SERIES: PrayerSeries[] = [
       { id: "d2", title: "Inaugural Church Pack 2024", type: "ZIP", size: "44 MB", description: "The original church facilitator toolkit from the 2024 launch series.", locked: false },
       { id: "d3", title: "Children's Storybook — God Makes Things New", type: "PDF", size: "9.1 MB", description: "Beautiful illustrated storybook for children based on the 2024 theme.", locked: true },
       { id: "d4", title: "WOP 2024 Full Audio Collection", type: "ZIP", size: "165 MB", description: "All five sermon audio recordings in high quality MP3.", locked: true },
+    ],
+  },
+  {
+    id: "wop-2026-awake",
+    title: "Week of Prayer Online 2026 — Awake My Soul",
+    year: 2026,
+    theme: "Awake My Soul",
+    tagline: "Awakening to His Presence. Alive in His Grace.",
+    description:
+      "A second special gathering for Summer 2026, focusing on spiritual awakening, local community revival, and learning to walk in the clarity of God's presence daily.",
+    thumbnail:
+      "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&q=80&w=800",
+    bannerImage:
+      "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&q=80&w=1600",
+    startDate: "August 25, 2026",
+    endDate: "August 29, 2026",
+    price: 29,
+    status: "upcoming",
+    accessDays: 90,
+    videos: [
+      {
+        id: "v1",
+        day: 1,
+        title: "Wake Up, O Sleeper",
+        speaker: "Rev. Philip Darko",
+        description: "Opening night message on Ephesians 5:14 — what it means to shake off spiritual slumber and let Christ shine on us.",
+        duration: "45:10",
+        thumbnail: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=600",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        locked: false,
+      },
+      {
+        id: "v2",
+        day: 2,
+        title: "The Light That Guides Us",
+        speaker: "Sister Agnes Koomson",
+        description: "A look at walking in spiritual clarity and leaving the darkness of confusion behind.",
+        duration: "49:15",
+        thumbnail: "https://images.unsplash.com/photo-1493612276216-ee3925520721?auto=format&fit=crop&q=80&w=600",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        locked: true,
+      },
+      {
+        id: "v3",
+        day: 3,
+        title: "Awakened by Grace",
+        speaker: "Dr. Kwame Asante",
+        description: "Understanding God's voice in moments of exhaustion and how His grace awakens dry bones.",
+        duration: "46:40",
+        thumbnail: "https://images.unsplash.com/photo-1476610182048-b716b8518aae?auto=format&fit=crop&q=80&w=600",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        locked: true,
+      },
+      {
+        id: "v4",
+        day: 4,
+        title: "Living Wide Awake",
+        speaker: "Pastor Grace Ofosu",
+        description: "Practical steps to maintain spiritual alertness and stay actively engaged with what God is doing around us.",
+        duration: "51:30",
+        thumbnail: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&q=80&w=600",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        locked: true,
+      },
+      {
+        id: "v5",
+        day: 5,
+        title: "Send the Fire — Commissioning Night",
+        speaker: "Bishop Emmanuel Asante",
+        description: "Closing night service: praying for a fresh outpouring of the Holy Spirit and a commissioning to serve.",
+        duration: "1:04:12",
+        thumbnail: "https://images.unsplash.com/photo-1519834785169-98be25ec3f84?auto=format&fit=crop&q=80&w=600",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        locked: true,
+      },
+    ],
+    resources: [
+      { day: 1, title: "Day 1: Rise and Shine", scripture: "Ephesians 5:14", devotional: "Spiritual sleep is subtle. We can go to church, sing songs, and still be asleep to God's presence. Today, ask God to wake you up.", prayerPoints: ["Ask God to show you areas where you've fallen asleep spiritually", "Pray for a fresh awakening in your daily devotion", "Intercede for a friend who seems distant from God"] },
+      { day: 2, title: "Day 2: Walking in Light", scripture: "1 John 1:7", devotional: "Light exposes but it also heals. Walking in the light means living honestly before God and others. Bring your hidden things into His light today.", prayerPoints: ["Confess any hidden struggles honestly to God", "Ask for the courage to walk in transparency", "Pray for unity and truth in your local church"] },
+      { day: 3, title: "Day 3: Strength for the Weary", scripture: "Isaiah 40:31", devotional: "We cannot awaken ourselves in our own strength. True revival starts when we admit we are tired and wait upon the Lord.", prayerPoints: ["Bring your exhaustion to God and ask for rest", "Wait silently in His presence for 5 minutes", "Pray for weary leaders and pastors in your community"] },
+      { day: 4, title: "Day 4: Alert and Active", scripture: "1 Peter 5:8", devotional: "Staying awake requires vigilance. The distractions of the world constantly try to lull us back to sleep. Guard your heart today.", prayerPoints: ["Identify the biggest distractions in your spiritual life", "Ask God for spiritual alertness and wisdom", "Pray for protection over your family and church"] },
+      { day: 5, title: "Day 5: Fresh Fire", scripture: "Acts 2:1-4", devotional: "An awakened soul is a soul on fire with love for God and others. As we conclude this week, pray for the fire of the Holy Spirit to burn brightly in you.", prayerPoints: ["Ask for a fresh baptism of love and zeal", "Pray for your community to feel the impact of this week", "Declare: 'Here I am, use me to spread Your light'"] },
+    ],
+    downloads: [
+      { id: "d1", title: "Awake My Soul — Study Guide 2026", type: "PDF", size: "4.0 MB", description: "Complete 5-day devotional and study guide for the Awake My Soul series.", locked: false },
+      { id: "d2", title: "Church Facilitator Kit — Awake My Soul", type: "ZIP", size: "46 MB", description: "Promotional graphics, slides, and group discussion guides.", locked: true },
+      { id: "d3", title: "Awake My Soul Full Audio Collection", type: "ZIP", size: "172 MB", description: "High-quality MP3 recordings of all five sessions.", locked: true },
     ],
   },
 ];
