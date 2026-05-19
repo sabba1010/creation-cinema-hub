@@ -10,13 +10,13 @@ import { Events } from "../pages/Home/sections/Events";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "One Mustard Seed â€” Faith-centered media for families, churches & schools" },
+      { title: "One Mustard Seed — Faith-centered media for families, churches & schools" },
       {
         name: "description",
         content:
           "One Mustard Seed (OMS) is a faith-centered multimedia ministry creating films, podcasts, events, and resources for families, churches, and schools.",
       },
-      { property: "og:title", content: "One Mustard Seed â€” Wonder. Explore. Belong." },
+      { property: "og:title", content: "One Mustard Seed — Wonder. Explore. Belong." },
       {
         property: "og:description",
         content:

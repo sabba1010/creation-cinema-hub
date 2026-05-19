@@ -21,6 +21,7 @@ import { Route as EventsRouteImport } from './routes/events'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as BooksRouteImport } from './routes/books'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SupportIndexRouteImport } from './routes/support/index'
 import { Route as ShopIndexRouteImport } from './routes/shop/index'
@@ -32,6 +33,7 @@ import { Route as FilmsIndexRouteImport } from './routes/films/index'
 import { Route as ContactIndexRouteImport } from './routes/contact/index'
 import { Route as BooksIndexRouteImport } from './routes/books/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AboutIndexRouteImport } from './routes/about/index'
 import { Route as ShopProductIdRouteImport } from './routes/shop/$productId'
 import { Route as ResourcesResourceIdRouteImport } from './routes/resources/$resourceId'
 import { Route as PrayerVideoRouteImport } from './routes/prayer/video'
@@ -120,6 +122,11 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -174,6 +181,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const AboutIndexRoute = AboutIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AboutRoute,
 } as any)
 const ShopProductIdRoute = ShopProductIdRouteImport.update({
   id: '/$productId',
@@ -313,6 +325,7 @@ const PodcastSeasonSeasonIdRoute = PodcastSeasonSeasonIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/books': typeof BooksRouteWithChildren
   '/cart': typeof CartRoute
@@ -350,6 +363,7 @@ export interface FileRoutesByFullPath {
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
   '/shop/$productId': typeof ShopProductIdRoute
+  '/about/': typeof AboutIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/books/': typeof BooksIndexRoute
   '/contact/': typeof ContactIndexRoute
@@ -395,6 +409,7 @@ export interface FileRoutesByTo {
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
   '/shop/$productId': typeof ShopProductIdRoute
+  '/about': typeof AboutIndexRoute
   '/admin': typeof AdminIndexRoute
   '/books': typeof BooksIndexRoute
   '/contact': typeof ContactIndexRoute
@@ -411,6 +426,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/books': typeof BooksRouteWithChildren
   '/cart': typeof CartRoute
@@ -448,6 +464,7 @@ export interface FileRoutesById {
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
   '/shop/$productId': typeof ShopProductIdRoute
+  '/about/': typeof AboutIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/books/': typeof BooksIndexRoute
   '/contact/': typeof ContactIndexRoute
@@ -465,6 +482,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/admin'
     | '/books'
     | '/cart'
@@ -502,6 +520,7 @@ export interface FileRouteTypes {
     | '/prayer/video'
     | '/resources/$resourceId'
     | '/shop/$productId'
+    | '/about/'
     | '/admin/'
     | '/books/'
     | '/contact/'
@@ -547,6 +566,7 @@ export interface FileRouteTypes {
     | '/prayer/video'
     | '/resources/$resourceId'
     | '/shop/$productId'
+    | '/about'
     | '/admin'
     | '/books'
     | '/contact'
@@ -562,6 +582,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/admin'
     | '/books'
     | '/cart'
@@ -599,6 +620,7 @@ export interface FileRouteTypes {
     | '/prayer/video'
     | '/resources/$resourceId'
     | '/shop/$productId'
+    | '/about/'
     | '/admin/'
     | '/books/'
     | '/contact/'
@@ -615,6 +637,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
   BooksRoute: typeof BooksRouteWithChildren
   CartRoute: typeof CartRoute
@@ -723,6 +746,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -799,6 +829,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/about/': {
+      id: '/about/'
+      path: '/'
+      fullPath: '/about/'
+      preLoaderRoute: typeof AboutIndexRouteImport
+      parentRoute: typeof AboutRoute
     }
     '/shop/$productId': {
       id: '/shop/$productId'
@@ -992,6 +1029,16 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AboutRouteChildren {
+  AboutIndexRoute: typeof AboutIndexRoute
+}
+
+const AboutRouteChildren: AboutRouteChildren = {
+  AboutIndexRoute: AboutIndexRoute,
+}
+
+const AboutRouteWithChildren = AboutRoute._addFileChildren(AboutRouteChildren)
+
 interface AdminRouteChildren {
   AdminDonationsRoute: typeof AdminDonationsRoute
   AdminEventsRoute: typeof AdminEventsRoute
@@ -1112,6 +1159,7 @@ const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
   BooksRoute: BooksRouteWithChildren,
   CartRoute: CartRoute,

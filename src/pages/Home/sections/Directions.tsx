@@ -18,7 +18,7 @@ export function Directions() {
             <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-gold">Pick your path</span>
             <h2 className="mt-3 font-display text-4xl font-light leading-tight sm:text-5xl">Where do you want to begin?</h2>
           </div>
-          <p className="max-w-sm text-cream/70">Six doorways into the OMS experience â€” for families, churches, and curious explorers.</p>
+          <p className="max-w-sm text-cream/70">Six doorways into the OMS experience — for families, churches, and curious explorers.</p>
         </div>
 
         <div className="mt-14 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
@@ -35,7 +35,7 @@ export function Directions() {
                   <div className="font-display text-2xl">{label}</div>
                   <div className="mt-1 text-xs text-cream/70">{copy}</div>
                   <div className="mt-3 inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.22em] text-gold opacity-0 transition-opacity group-hover:opacity-100">
-                    Enter â†’
+                    Enter →
                   </div>
                 </div>
               </div>

@@ -30,7 +30,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/events")({
   head: () => ({
     meta: [
-      { title: "Events â€” One Mustard Seed" },
+      { title: "Events — One Mustard Seed" },
       { name: "description", content: "Join us for upcoming live events, workshops, and worship nights across multiple cities." },
     ],
   }),
@@ -89,7 +89,7 @@ function ShowtimeCard({ showtime, onBook }: { showtime: Showtime; onBook: () => 
             : "bg-gold text-forest-deep hover:bg-gold/90 shadow-lg"
         }`}
       >
-        {showtime.status === "sold-out" ? "Sold Out" : "Register / Book â†’"}
+        {showtime.status === "sold-out" ? "Sold Out" : "Register / Book →"}
       </button>
     </div>
   );
@@ -99,7 +99,7 @@ function CityPanel({ city, eventId }: { city: CityScreening; eventId: string }) 
   const [expanded, setExpanded] = useState(false);
 
   const handleBook = (showtimeId: string) => {
-    toast.success(`Booking started for ${city.city} â€” ${showtimeId}`);
+    toast.success(`Booking started for ${city.city} — ${showtimeId}`);
   };
 
   return (
@@ -120,7 +120,7 @@ function CityPanel({ city, eventId }: { city: CityScreening; eventId: string }) 
             </div>
             <div className="text-sm text-cream/50 flex items-center gap-1.5 mt-0.5">
               <MapPin className="h-3.5 w-3.5" />
-              {city.venue.name} Â· {city.country}
+              {city.venue.name} · {city.country}
             </div>
           </div>
         </div>
@@ -249,7 +249,7 @@ function EventsPage() {
               Live <span className="italic text-gold block sm:inline">Events</span>
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-cream/60 font-light leading-relaxed">
-              Immersive gatherings in cities around the world â€” and online for everyone.
+              Immersive gatherings in cities around the world — and online for everyone.
             </p>
             {/* Stats */}
             <div className="flex flex-wrap justify-center gap-8 pt-4 text-sm text-cream/50">
@@ -257,7 +257,7 @@ function EventsPage() {
                 { icon: Globe, v: `${INITIAL_EVENTS.reduce((acc, e) => acc + (e.cities?.length ?? 0), 0)}`, l: "Locations" },
                 { icon: Calendar, v: `${INITIAL_EVENTS.length}`, l: "Events" },
                 { icon: Users, v: `${INITIAL_EVENTS.reduce((acc, e) => acc + e.ticketsSold, 0).toLocaleString()}+`, l: "Registered" },
-                { icon: Ticket, v: "Free â€“ $45", l: "Ticket Range" },
+                { icon: Ticket, v: "Free – $45", l: "Ticket Range" },
               ].map(({ icon: Icon, v, l }) => (
                 <div key={l} className="flex items-center gap-2">
                   <Icon className="h-4 w-4 text-gold/60" />

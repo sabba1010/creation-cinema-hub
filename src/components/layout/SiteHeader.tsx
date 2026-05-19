@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { Search, User, Menu, X, ShoppingBag } from "lucide-react";
+import { Search, User, Menu, X, ShoppingBag, ChevronDown } from "lucide-react";
 
 const NAV_GROUPS = [
   {
@@ -64,7 +64,10 @@ export function SiteHeader() {
                 {group.links ? (
                   <>
                     <button className={`flex flex-col items-center gap-0.5 px-4 py-2 text-[11px] font-bold tracking-[0.2em] transition-all ${isGroupActive ? "text-gold" : "text-[#faf7ee]/70 hover:text-[#faf7ee]"}`}>
-                      {group.label}
+                      <span className="flex items-center gap-1">
+                        {group.label}
+                        <ChevronDown className="h-3 w-3 transition-transform duration-300 group-hover/nav:rotate-180" strokeWidth={2.5} />
+                      </span>
                       {isGroupActive && <div className="h-0.5 w-4 bg-gold rounded-full" />}
                     </button>
                     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 translate-y-2 pointer-events-none group-hover/nav:opacity-100 group-hover/nav:translate-y-0 group-hover/nav:pointer-events-auto transition-all duration-300">

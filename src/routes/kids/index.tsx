@@ -60,7 +60,7 @@ function KidsLandingPage() {
               </div>
               <div className="relative aspect-square sm:aspect-video lg:aspect-square">
                  <div className="absolute inset-0 rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white/5 bg-forest-deep/50">
-                    <img src="https://images.unsplash.com/photo-1502086223501-7ea2443054f1?auto=format&fit=crop&q=80&w=1200" alt="Kids Flix" className="w-full h-full object-cover opacity-80" />
+                    <img src="https://images.unsplash.com/photo-1489824904134-891ab64532f1?auto=format&fit=crop&q=80&w=1200" alt="Kids Flix" className="w-full h-full object-cover opacity-80" />
                     <div className="absolute inset-0 flex items-center justify-center">
                        <Link to="/kids/watch" className="h-24 w-24 rounded-full bg-gold text-forest-deep flex items-center justify-center shadow-2xl hover:scale-110 transition-transform">
                           <Play className="h-10 w-10 fill-current ml-1" />

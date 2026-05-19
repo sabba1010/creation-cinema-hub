@@ -21,7 +21,7 @@ export function MediaHub() {
             One ministry. <span className="italic text-forest">Many ways</span> to encounter wonder.
           </h2>
           <p className="mt-4 max-w-xl text-pretty text-muted-foreground">
-            A multimedia ecosystem of films, podcasts, events, and learning â€” built for the modern family of faith.
+            A multimedia ecosystem of films, podcasts, events, and learning — built for the modern family of faith.
           </p>
         </div>
 

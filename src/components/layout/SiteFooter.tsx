@@ -17,7 +17,7 @@ export function SiteFooter() {
           <div>
             <div className="flex items-center gap-3">
               <span className="grid h-12 w-12 place-items-center rounded-full bg-gold text-forest-deep font-black text-lg">
-                âœ¦
+                ✦
               </span>
               <div className="font-display text-xl">One Mustard Seed</div>
             </div>
@@ -63,7 +63,7 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-cream/10 pt-8 text-xs text-cream/55 sm:flex-row">
-          <span>Â© {new Date().getFullYear()} One Mustard Seed Ministries. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} One Mustard Seed Ministries. All rights reserved.</span>
           <div className="flex gap-6">
             <a href="#" className="hover:text-gold">Privacy</a>
             <a href="#" className="hover:text-gold">Terms</a>

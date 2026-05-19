@@ -15,7 +15,7 @@ const FILMS = [
     title: "Great Earth", 
     year: "2024", 
     runtime: "84 min", 
-    genre: "Nature Â· Faith",
+    genre: "Nature · Faith",
     img: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&q=80&w=800" 
   },
   { 

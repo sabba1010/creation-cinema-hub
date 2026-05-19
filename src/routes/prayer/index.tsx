@@ -29,7 +29,7 @@ function PrayerLandingPage() {
               Week of <span className="italic text-gold">Prayer</span> Online
             </h1>
             <p className="mt-6 mx-auto max-w-2xl text-xl text-cream/75 leading-relaxed">
-              Five nights of worship, biblical teaching, and guided prayer â€” streamed live to homes, churches, and schools around the globe.
+              Five nights of worship, biblical teaching, and guided prayer — streamed live to homes, churches, and schools around the globe.
             </p>
             <div className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-cream/60">
               {[
@@ -79,7 +79,7 @@ function PrayerLandingPage() {
                 </div>
                 <div className="space-y-3 text-sm">
                   {[
-                    `${upcomingSeries.startDate} â€” ${upcomingSeries.endDate}`,
+                    `${upcomingSeries.startDate} — ${upcomingSeries.endDate}`,
                     "5 video sessions + daily devotionals",
                     `Full access for ${upcomingSeries.accessDays} days`,
                     "School & church facilitator pack",
@@ -96,7 +96,7 @@ function PrayerLandingPage() {
                     params={{ seriesId: upcomingSeries.id }}
                     className="inline-flex items-center gap-2 py-4 px-8 rounded-2xl bg-forest-deep text-cream font-black text-xs uppercase tracking-widest hover:bg-forest-deep/90 transition-all active:scale-95 shadow-lg"
                   >
-                    Pre-Order â€” ${upcomingSeries.price} <ArrowRight className="h-4 w-4" />
+                    Pre-Order — ${upcomingSeries.price} <ArrowRight className="h-4 w-4" />
                   </Link>
                   <Link
                     to="/prayer/series/$seriesId"

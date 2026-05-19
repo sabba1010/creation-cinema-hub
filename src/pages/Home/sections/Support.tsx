@@ -30,7 +30,7 @@ export function Support() {
               <div className="mt-8 flex flex-wrap gap-3">
                 <a href="#" className="rounded-full bg-gradient-gold px-6 py-3.5 text-sm font-bold text-gold-foreground shadow-glow transition hover:scale-[1.02]">Give once</a>
                 <a href="#" className="rounded-full bg-cream px-6 py-3.5 text-sm font-bold text-forest-deep transition hover:scale-[1.02]">Give monthly</a>
-                <a href="#" className="rounded-full border border-cream/25 px-6 py-3.5 text-sm font-semibold text-cream/90 hover:border-gold hover:text-gold transition">Learn more â†’</a>
+                <a href="#" className="rounded-full border border-cream/25 px-6 py-3.5 text-sm font-semibold text-cream/90 hover:border-gold hover:text-gold transition">Learn more →</a>
               </div>
             </div>
 

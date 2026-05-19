@@ -92,7 +92,7 @@ function LoginPage() {
                   <Input
                     id="password"
                     type="password"
-                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                    placeholder="••••••••"
                     className="pl-10 h-12 rounded-xl bg-background/50 border-border/50"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
