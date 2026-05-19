@@ -79,15 +79,26 @@ function ResourcesLandingPage() {
     <div className="bg-[#FAF7EE] min-h-screen flex flex-col">
       <SiteHeader />
       <main className="flex-grow pt-24">
-        {/* Resources Hero */}
-        <section className="relative py-24 overflow-hidden bg-forest-deep text-cream">
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_left_bottom,var(--gold),transparent_60%)]" />
-          <div className="relative mx-auto max-w-7xl px-6 text-center space-y-6">
+        {/* Resources Hero with Blurred Background Image */}
+        <section className="relative py-32 overflow-hidden bg-forest-deep text-cream">
+          {/* Blurred Background Image */}
+          <div className="absolute inset-0 w-full h-full">
+            <img
+              src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&q=80&w=1200"
+              alt="Blurred background"
+              className="w-full h-full object-cover blur-lg scale-110 opacity-30 select-none pointer-events-none"
+            />
+            {/* Dark vignette overlays */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-forest-deep/60 to-forest-deep" />
+            <div className="absolute inset-0 bg-radial-gradient(circle_at_center, transparent_20%, rgba(0,0,0,0.4)_100%)" />
+          </div>
+
+          <div className="relative mx-auto max-w-7xl px-6 text-center space-y-6 z-10">
             <Badge className="bg-gold text-forest-deep font-bold border-none px-4 py-1.5 uppercase tracking-widest text-[10px]">Free Resources</Badge>
             <h1 className="font-display text-6xl sm:text-7xl font-bold tracking-tight">
               The <span className="italic text-gold">Learning</span> Library
             </h1>
-            <p className="mt-8 mx-auto max-w-2xl text-lg text-cream/70 leading-relaxed text-pretty">
+            <p className="mt-8 mx-auto max-w-2xl text-lg text-cream/80 leading-relaxed text-pretty">
               Equip your family or ministry with these free downloadable tools, curriculum samples, and study guides curated by the One Mustard Seed team.
             </p>
           </div>
@@ -152,6 +163,46 @@ function ResourcesLandingPage() {
                   )}
                </div>
             </Card>
+          </div>
+        </section>
+
+        {/* Importance of Quality Materials Text Section */}
+        <section className="py-16 bg-[#FAF7EE]">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="bg-white rounded-[3rem] p-10 sm:p-16 border border-[#EFECE3] shadow-sm grid lg:grid-cols-[1.2fr_1fr] gap-12 items-center">
+              <div className="space-y-6">
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary">Our Educational Philosophy</span>
+                <h2 className="font-display text-4xl sm:text-5xl font-bold text-forest-deep tracking-tight">
+                  Why <span className="italic text-gold font-medium">Quality Media</span> Matters for Kids
+                </h2>
+                <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                  In a world saturated with low-effort digital noise, we believe children and families deserve materials crafted with excellence. High-quality media is more than just screen entertainment—it shapes worldview, captivates imagination, and acts as a bridge for conversations between parents and children.
+                </p>
+                <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                  Every printable card, discussion guide, and curriculum package in our library is designed by professionals, vetted by theologians, and tested in active ministry environments. We do not compromise on illustrations, typography, or theological rigor, because we know that the seeds planted in young hearts require rich, nutritious soil to flourish.
+                </p>
+              </div>
+              <div className="bg-[#FAF7EE] rounded-[2.5rem] p-8 border border-[#EFECE3] space-y-6">
+                <h4 className="font-display font-bold text-lg text-forest-deep">Our Three Quality Pillars</h4>
+                <div className="space-y-4">
+                  {[
+                    { title: "Theological Integrity", desc: "No watering down. We anchor every message in the historical truths of scripture." },
+                    { title: "Aesthetic Excellence", desc: "Vibrant illustrations and clean layouts that command respect and spark creativity." },
+                    { title: "Relational Design", desc: "Every sheet contains interactive prompts to facilitate authentic face-to-face family bonding." }
+                  ].map((pillar, index) => (
+                    <div key={index} className="flex gap-4">
+                      <div className="h-8 w-8 rounded-lg bg-gold/10 text-gold flex items-center justify-center shrink-0 font-bold text-sm">
+                        0{index + 1}
+                      </div>
+                      <div>
+                        <h5 className="font-bold text-xs sm:text-sm text-forest-deep">{pillar.title}</h5>
+                        <p className="text-muted-foreground text-xs leading-relaxed mt-0.5">{pillar.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
