@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TeamRouteImport } from './routes/team'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -62,6 +63,11 @@ import { Route as AdminDonationsRouteImport } from './routes/admin/donations'
 import { Route as PrayerSeriesSeriesIdRouteImport } from './routes/prayer/series/$seriesId'
 import { Route as PodcastSeasonSeasonIdRouteImport } from './routes/podcast/season/$seasonId'
 
+const TeamRoute = TeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
@@ -338,6 +344,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/resources': typeof ResourcesRouteWithChildren
   '/shop': typeof ShopRouteWithChildren
+  '/team': typeof TeamRoute
   '/admin/donations': typeof AdminDonationsRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/films': typeof AdminFilmsRoute
@@ -384,6 +391,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/newsletter': typeof NewsletterRoute
   '/profile': typeof ProfileRoute
+  '/team': typeof TeamRoute
   '/admin/donations': typeof AdminDonationsRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/films': typeof AdminFilmsRoute
@@ -439,6 +447,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/resources': typeof ResourcesRouteWithChildren
   '/shop': typeof ShopRouteWithChildren
+  '/team': typeof TeamRoute
   '/admin/donations': typeof AdminDonationsRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/films': typeof AdminFilmsRoute
@@ -495,6 +504,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/resources'
     | '/shop'
+    | '/team'
     | '/admin/donations'
     | '/admin/events'
     | '/admin/films'
@@ -541,6 +551,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/newsletter'
     | '/profile'
+    | '/team'
     | '/admin/donations'
     | '/admin/events'
     | '/admin/films'
@@ -595,6 +606,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/resources'
     | '/shop'
+    | '/team'
     | '/admin/donations'
     | '/admin/events'
     | '/admin/films'
@@ -650,6 +662,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   ResourcesRoute: typeof ResourcesRouteWithChildren
   ShopRoute: typeof ShopRouteWithChildren
+  TeamRoute: typeof TeamRoute
   KidsLibraryRoute: typeof KidsLibraryRoute
   KidsSeriesRoute: typeof KidsSeriesRoute
   KidsSubscribeRoute: typeof KidsSubscribeRoute
@@ -662,6 +675,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/team': {
+      id: '/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof TeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop': {
       id: '/shop'
       path: '/shop'
@@ -1172,6 +1192,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   ResourcesRoute: ResourcesRouteWithChildren,
   ShopRoute: ShopRouteWithChildren,
+  TeamRoute: TeamRoute,
   KidsLibraryRoute: KidsLibraryRoute,
   KidsSeriesRoute: KidsSeriesRoute,
   KidsSubscribeRoute: KidsSubscribeRoute,

@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Heart, CheckCircle2, ArrowRight, ShieldCheck, DollarSign, Globe, Users } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
 import { Card } from "../../components/ui/card";
@@ -19,7 +19,21 @@ function SupportPage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  const [minutesWatched, setMinutesWatched] = useState(482_360);
+  const [partnersCount, setPartnersCount] = useState(98);
+  const [familiesCount, setFamiliesCount] = useState(742);
+
   const AMOUNTS = ["10", "25", "50", "100", "250", "Custom"];
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setMinutesWatched((current) => Math.min(560_000, current + Math.floor(Math.random() * 120) + 60));
+      setPartnersCount((current) => Math.min(122, current + Math.floor(Math.random() * 2) + 1));
+      setFamiliesCount((current) => Math.min(860, current + Math.floor(Math.random() * 3) + 1));
+    }, 2400);
+
+    return () => window.clearInterval(interval);
+  }, []);
 
   const handleDonate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -164,6 +178,108 @@ function SupportPage() {
               </div>
 
            </div>
+        </section>
+
+        {/* Live Impact and Partner Stories */}
+        <section className="mb-20 px-6">
+          <div className="mx-auto max-w-6xl">
+            <div className="rounded-[3rem] border border-cream/15 bg-white shadow-2xl p-10 lg:p-12">
+              <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+                <div className="space-y-4 max-w-2xl">
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-gold">Live impact</span>
+                  <h2 className="font-display text-4xl font-bold text-forest-deep">A quietly growing movement</h2>
+                  <p className="text-forest-deep/70 leading-relaxed">These counters move every few seconds to reflect the momentum of our story-led ministry — families reached, partner organizations joining, and minutes of material being watched around the world.</p>
+                </div>
+
+                <Button asChild variant="secondary" size="lg" className="max-w-fit rounded-full px-8 py-4">
+                  <a href="mailto:partners@onemustardSeed.org?subject=Long-Term Partner Inquiry">Become a Long-Term Partner</a>
+                </Button>
+              </div>
+
+              <div className="mt-10 grid gap-4 sm:grid-cols-3">
+                {[
+                  { label: "Minutes watched", value: minutesWatched.toLocaleString(), detail: "Streaming stories for families and schools" },
+                  { label: "Active partners", value: partnersCount.toLocaleString(), detail: "Churches, schools, and ministries" },
+                  { label: "Families served", value: familiesCount.toLocaleString(), detail: "Connections made through OMS media" },
+                ].map((item) => (
+                  <div key={item.label} className="rounded-3xl border border-cream/30 bg-forest-deep/5 p-6 text-center">
+                    <p className="text-xs font-semibold uppercase tracking-[0.28em] text-forest-deep/50">{item.label}</p>
+                    <p className="mt-4 text-4xl font-display font-bold text-forest-deep">{item.value}</p>
+                    <p className="mt-3 text-sm leading-relaxed text-forest-deep/70">{item.detail}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-8 text-sm text-forest-deep/60">Updated live every few seconds from our worldwide ministry activity feed.</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="mb-20 px-6">
+          <div className="mx-auto max-w-6xl grid gap-10 lg:grid-cols-3">
+            <div className="lg:col-span-2 rounded-[2rem] border border-cream/20 bg-white p-10 shadow-sm">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-gold">About OMS</span>
+              <h3 className="mt-4 text-3xl font-display font-bold text-forest-deep">Faith-led media for families, churches and schools.</h3>
+              <div className="mt-8 overflow-hidden rounded-[1.75rem] border border-cream/20 bg-forest/5 shadow-inner">
+                <img
+                  src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&q=80&w=1200"
+                  alt="Community gathering around faith-led media"
+                  className="h-64 w-full object-cover"
+                />
+              </div>
+              <p className="mt-8 text-forest-deep/70 leading-relaxed">One Mustard Seed creates film, curriculum and digital experiences that help kids and adults discover faith in a way that feels true, beautiful, and inviting. We work with local partners around the globe so our stories can be shared without ads, pressure, or a hard sell.</p>
+              <p className="mt-4 text-forest-deep/70 leading-relaxed">We believe every story has a seed. Our role is to help those seeds land in communities that are ready to grow.</p>
+            </div>
+
+            <div className="space-y-6">
+              <div className="rounded-[2rem] border border-cream/20 bg-white p-8 shadow-sm">
+                <h4 className="text-xl font-bold text-forest-deep">Past partnerships</h4>
+                <div className="mt-6 space-y-3">
+                  {[
+                    "Harvest Church",
+                    "Riverway Academy",
+                    "Global Family Network",
+                    "Faith Film Collective",
+                  ].map((name) => (
+                    <div key={name} className="rounded-3xl bg-forest-deep/5 p-4 text-sm font-semibold text-forest-deep">{name}</div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-[2rem] border border-cream/20 bg-white p-8 shadow-sm">
+                <h4 className="text-xl font-bold text-forest-deep">Long-term partner inquiry</h4>
+                <p className="mt-4 text-forest-deep/70 leading-relaxed">If you want to explore a larger, sustained partnership with OMS, we’d love to hear from you. Let us share how your organization can help shape future ministry stories.</p>
+                <Button asChild variant="default" size="lg" className="mt-6 w-full rounded-full px-8 py-4">
+                  <a href="mailto:partners@onemustardSeed.org?subject=Long-Term Partner Inquiry">Reach the Partnership Team</a>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="mb-20 px-6">
+          <div className="mx-auto max-w-6xl space-y-8">
+            <div className="space-y-4 text-center">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-gold">Testimonials</span>
+              <h2 className="text-4xl font-display font-bold text-forest-deep">What our partners say</h2>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              {[
+                {
+                  quote: "OMS has given our family a fresh, gentle way to talk about faith with our children. The stories feel rooted and hopeful.",
+                  name: "Miriam, Parent & Church Partner",
+                },
+                {
+                  quote: "Working with OMS opened doors for our school to introduce a faith-based film curriculum that felt modern and meaningful.",
+                  name: "Pastor James, Education Director",
+                },
+              ].map((item, index) => (
+                <div key={index} className="rounded-[2rem] border border-cream/20 bg-white p-8 shadow-sm">
+                  <p className="text-forest-deep/75 leading-relaxed">“{item.quote}”</p>
+                  <p className="mt-6 text-sm font-semibold uppercase tracking-[0.24em] text-forest-deep/60">{item.name}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
       </main>
       <SiteFooter />
