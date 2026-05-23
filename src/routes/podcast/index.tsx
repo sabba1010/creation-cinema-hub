@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -106,6 +107,7 @@ const LATEST_EPISODE = {
 
 function PodcastLandingPage() {
   const { playEpisode } = usePodcast();
+  const [activeForm, setActiveForm] = useState<"welcome" | "shoutout" | "brainTeaser" | "joke">("welcome");
 
   return (
     <div className="bg-background min-h-screen flex flex-col">
@@ -119,10 +121,10 @@ function PodcastLandingPage() {
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/20 text-gold text-[10px] font-bold uppercase tracking-widest mb-6">
                 <Mic2 className="h-3 w-3" /> OMS Podcast Network
               </span>
-              <h1 className="font-display text-5xl sm:text-7xl font-medium tracking-tight leading-none">
+              <h1 className="text-5xl sm:text-7xl font-bold tracking-tight leading-none" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"'  }}>
                 God's Great <span className="italic text-gold">Earth</span> Podcast
               </h1>
-              <p className="mt-8 text-lg text-cream/75 leading-relaxed max-w-xl">
+              <p className="mt-8 text-lg text-cream/75 leading-relaxed max-w-xl" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
                 Join us every Tuesday for deep conversations, biblical insights, and stories that celebrate the wonder of our Creator. Available on all major platforms.
               </p>
               
@@ -159,7 +161,7 @@ function PodcastLandingPage() {
                 <div className="absolute bottom-10 left-10 right-10 flex items-center justify-between">
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-widest text-gold">Watch Episode</p>
-                    <p className="text-xl font-display font-medium">The Majesty of the Mountains</p>
+                    <p className="text-xl font-medium" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>The Majesty of the Mountains</p>
                   </div>
                   <button 
                     onClick={() => playEpisode(LATEST_EPISODE)}
@@ -176,8 +178,8 @@ function PodcastLandingPage() {
         {/* Listen & Subscribe Platforms */}
         <section className="py-16 bg-card border-y border-border">
           <div className="mx-auto max-w-7xl px-6 text-center">
-            <h2 className="font-display text-3xl font-medium text-foreground mb-4">Listen & Subscribe</h2>
-            <p className="text-muted-foreground max-w-lg mx-auto mb-10 text-sm">
+            <h2 className="text-[48px] font-medium text-foreground mb-4" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>Listen & Subscribe</h2>
+            <p className="text-muted-foreground max-w-lg mx-auto mb-10 text-[18px]">
               Tune in and follow our podcast on your favorite app. Available on all major platforms:
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
@@ -200,13 +202,127 @@ function PodcastLandingPage() {
         </section>
 
 
+        {/* Submit Your Thoughts */}
+        {/* <section className="py-24 bg-muted/30">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-[48px] font-medium text-foreground" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>Submit Your <span className="italic text-primary">Thoughts</span></h2>
+              <p className="mt-4 text-muted-foreground text-[18px]">Share your voice, jokes, and brain teasers with the OMS Podcast Network!</p>
+            </div>
+
+        
+            <div className="flex flex-wrap justify-center gap-4 mb-16">
+              {[
+                { id: "welcome", label: "Welcome Clip" },
+                { id: "shoutout", label: "Shoutout" },
+                { id: "brainTeaser", label: "Brain Teaser" },
+                { id: "joke", label: "Joke" }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveForm(tab.id as any)}
+                  className={`px-6 py-3 rounded-full text-sm font-bold uppercase tracking-widest transition-all ${
+                    activeForm === tab.id 
+                      ? "bg-primary text-primary-foreground shadow-lg scale-105" 
+                      : "bg-background border border-border text-foreground hover:bg-muted"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+  
+            <div className="w-full grid lg:grid-cols-2 gap-16 items-start transition-opacity duration-500">
+           
+              <div className="animate-fade-up" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
+                {activeForm === "welcome" && (
+                  <>
+                    <h3 className="text-4xl sm:text-5xl font-medium leading-tight mb-6" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
+                      Send us your <br/><span className="text-primary uppercase">Welcome Clip</span><br/> here!
+                    </h3>
+                    <div className="space-y-4 text-muted-foreground text-[18px] leading-relaxed">
+                      <p>We're trying something new! Your kids will now do the WELCOME for each episode!</p>
+                      <p>All you have to do is record your child enthusiastically saying this:</p>
+                      <p className="font-bold text-foreground italic">"Hello! My name is [FIRST NAME], from [CITY AND STATE/PROVINCE/COUNTRY], welcome to God's Great Earth!"</p>
+                      <p className="text-xs mt-4">INSTRUCTIONS:<br/>Record it with any <strong>audio recorder</strong> on your phone, or even a <strong>video recording</strong> if that's easier. Make sure your child is close to the microphone to get a high-quality recording. Pick your one best recording and send it to us using this form.</p>
+                    </div>
+                  </>
+                )}
+                {activeForm === "shoutout" && (
+                  <>
+                    <h3 className="text-4xl sm:text-5xl font-medium leading-tight mb-6" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
+                      Submit your <br/><span className="text-primary uppercase">Shoutout</span><br/> request here!
+                    </h3>
+                    <div className="space-y-4 text-muted-foreground text-[18px] leading-relaxed">
+                      <p>Submit a request for a shout-out for your child from Rich! You can submit your child's FIRST NAME and LAST NAME INITIAL, plus their LOCATION, and we will give kids a special "SHOUT OUT" during a new segment on the show each week!</p>
+                    </div>
+                  </>
+                )}
+                {activeForm === "brainTeaser" && (
+                  <>
+                    <h3 className="text-4xl sm:text-5xl font-medium leading-tight mb-6" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
+                      Submit your <br/><span className="text-primary uppercase">Brain Teasers</span><br/> here!
+                    </h3>
+                    <div className="space-y-4 text-muted-foreground text-[18px] leading-relaxed">
+                      <p>We need your brain teasers! Send them to us right here!</p>
+                    </div>
+                  </>
+                )}
+                {activeForm === "joke" && (
+                  <>
+                    <h3 className="text-4xl sm:text-5xl font-medium leading-tight mb-6" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
+                      Submit your <br/><span className="text-primary uppercase">Jokes</span><br/> here!
+                    </h3>
+                    <div className="space-y-4 text-muted-foreground text-[18px] leading-relaxed">
+                      <p>Yes! We're looking for all those squeaky-clean jokes! Send them in here!</p>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              
+              <div className="bg-card border border-border rounded-3xl p-8 shadow-sm animate-fade-up" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
+                <h4 className="text-xl font-medium mb-6 text-foreground">Please fill out this form</h4>
+                <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                  <input type="text" placeholder="Parent's name" className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50" />
+                  <input type="email" placeholder="Parent's email" className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50" />
+                  <input type="text" placeholder="Child's First name and last name initial (ex: Rich A.)" className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50" />
+                  <input type="text" placeholder="City and State/Province/Country" className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50" />
+                  
+                  {activeForm === "welcome" && (
+                    <div className="pt-2">
+                      <label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Upload file here!</label>
+                      <input type="file" className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition-colors" />
+                    </div>
+                  )}
+                  {activeForm === "brainTeaser" && (
+                    <textarea placeholder="Enter your BRAIN TEASER here!" rows={3} className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50 resize-none"></textarea>
+                  )}
+                  {activeForm === "joke" && (
+                    <textarea placeholder="Enter your JOKE here!" rows={3} className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50 resize-none"></textarea>
+                  )}
+
+                  <button type="submit" className="w-full py-4 mt-4 rounded-xl bg-primary text-primary-foreground font-bold text-sm uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-md">
+                    {activeForm === "welcome" && "Send It In!"}
+                    {activeForm === "shoutout" && "Send Your Shout Out!"}
+                    {activeForm === "brainTeaser" && "Send That Brain Teaser!"}
+                    {activeForm === "joke" && "Send Me Funny Stuff"}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section> */}
+
+
         {/* Seasons Grid */}
         <section className="py-24 bg-background">
           <div className="mx-auto max-w-7xl px-6">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
               <div>
-                <h2 className="font-display text-4xl font-medium text-foreground">Explore <span className="italic text-primary">Seasons</span></h2>
-                <p className="mt-4 text-muted-foreground">Journey through our curated collections of faith and wonder.</p>
+                <h2 className="text-4xl font-medium text-foreground" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>Explore <span className="italic text-primary">Seasons</span></h2>
+                <p className="mt-4 text-muted-foreground text-[18px]">Journey through our curated collections of faith and wonder.</p>
               </div>
               <div className="flex gap-2">
                  <span className="px-4 py-2 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest">3 Seasons Total</span>
@@ -226,12 +342,126 @@ function PodcastLandingPage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                     <div className="absolute bottom-8 left-8 right-8">
                       <p className="text-[10px] font-bold uppercase tracking-widest text-gold/90 mb-2">Season {s.id} • {s.episodes} Episodes</p>
-                      <h3 className="font-display text-2xl font-medium text-cream group-hover:text-gold transition-colors">{s.title}</h3>
+                      <h3 className="text-2xl font-medium text-cream group-hover:text-gold transition-colors" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>{s.title}</h3>
                       <p className="mt-3 text-sm text-cream/70 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">{s.desc}</p>
                     </div>
                   </div>
                 </Link>
               ))}
+            </div>
+          </div>
+        </section>
+
+
+         {/* Submit Your Thoughts */}
+        <section className="py-24 bg-muted/30">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-[48px] font-medium text-foreground" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>Submit Your <span className="italic text-primary">Thoughts</span></h2>
+              <p className="mt-4 text-muted-foreground text-[18px]">Share your voice, jokes, and brain teasers with the OMS Podcast Network!</p>
+            </div>
+
+            {/* Tab Buttons */}
+            <div className="flex flex-wrap justify-center gap-4 mb-16">
+              {[
+                { id: "welcome", label: "Welcome Clip" },
+                { id: "shoutout", label: "Shoutout" },
+                { id: "brainTeaser", label: "Brain Teaser" },
+                { id: "joke", label: "Joke" }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveForm(tab.id as any)}
+                  className={`px-6 py-3 rounded-full text-sm font-bold uppercase tracking-widest transition-all ${
+                    activeForm === tab.id 
+                      ? "bg-primary text-primary-foreground shadow-lg scale-105" 
+                      : "bg-background border border-border text-foreground hover:bg-muted"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Form Content */}
+            <div className="w-full grid lg:grid-cols-2 gap-16 items-start transition-opacity duration-500">
+              {/* Dynamic Copy */}
+              <div className="animate-fade-up" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
+                {activeForm === "welcome" && (
+                  <>
+                    <h3 className="text-4xl sm:text-5xl font-medium leading-tight mb-6" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
+                      Send us your <br/><span className="text-primary uppercase">Welcome Clip</span><br/> here!
+                    </h3>
+                    <div className="space-y-4 text-muted-foreground text-[18px] leading-relaxed">
+                      <p>We're trying something new! Your kids will now do the WELCOME for each episode!</p>
+                      <p>All you have to do is record your child enthusiastically saying this:</p>
+                      <p className="font-bold text-foreground italic">"Hello! My name is [FIRST NAME], from [CITY AND STATE/PROVINCE/COUNTRY], welcome to God's Great Earth!"</p>
+                      <p className="text-xs mt-4">INSTRUCTIONS:<br/>Record it with any <strong>audio recorder</strong> on your phone, or even a <strong>video recording</strong> if that's easier. Make sure your child is close to the microphone to get a high-quality recording. Pick your one best recording and send it to us using this form.</p>
+                    </div>
+                  </>
+                )}
+                {activeForm === "shoutout" && (
+                  <>
+                    <h3 className="text-4xl sm:text-5xl font-medium leading-tight mb-6" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
+                      Submit your <br/><span className="text-primary uppercase">Shoutout</span><br/> request here!
+                    </h3>
+                    <div className="space-y-4 text-muted-foreground text-[18px] leading-relaxed">
+                      <p>Submit a request for a shout-out for your child from Rich! You can submit your child's FIRST NAME and LAST NAME INITIAL, plus their LOCATION, and we will give kids a special "SHOUT OUT" during a new segment on the show each week!</p>
+                    </div>
+                  </>
+                )}
+                {activeForm === "brainTeaser" && (
+                  <>
+                    <h3 className="text-4xl sm:text-5xl font-medium leading-tight mb-6" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
+                      Submit your <br/><span className="text-primary uppercase">Brain Teasers</span><br/> here!
+                    </h3>
+                    <div className="space-y-4 text-muted-foreground text-[18px] leading-relaxed">
+                      <p>We need your brain teasers! Send them to us right here!</p>
+                    </div>
+                  </>
+                )}
+                {activeForm === "joke" && (
+                  <>
+                    <h3 className="text-4xl sm:text-5xl font-medium leading-tight mb-6" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
+                      Submit your <br/><span className="text-primary uppercase">Jokes</span><br/> here!
+                    </h3>
+                    <div className="space-y-4 text-muted-foreground text-[18px] leading-relaxed">
+                      <p>Yes! We're looking for all those squeaky-clean jokes! Send them in here!</p>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Dynamic Form */}
+              <div className="bg-card border border-border rounded-3xl p-8 shadow-sm animate-fade-up" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
+                <h4 className="text-xl font-medium mb-6 text-foreground">Please fill out this form</h4>
+                <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                  <input type="text" placeholder="Parent's name" className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50" />
+                  <input type="email" placeholder="Parent's email" className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50" />
+                  <input type="text" placeholder="Child's First name and last name initial (ex: Rich A.)" className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50" />
+                  <input type="text" placeholder="City and State/Province/Country" className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50" />
+                  
+                  {activeForm === "welcome" && (
+                    <div className="pt-2">
+                      <label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Upload file here!</label>
+                      <input type="file" className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition-colors" />
+                    </div>
+                  )}
+                  {activeForm === "brainTeaser" && (
+                    <textarea placeholder="Enter your BRAIN TEASER here!" rows={3} className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50 resize-none"></textarea>
+                  )}
+                  {activeForm === "joke" && (
+                    <textarea placeholder="Enter your JOKE here!" rows={3} className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50 resize-none"></textarea>
+                  )}
+
+                  <button type="submit" className="w-full py-4 mt-4 rounded-xl bg-primary text-primary-foreground font-bold text-sm uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-md">
+                    {activeForm === "welcome" && "Send It In!"}
+                    {activeForm === "shoutout" && "Send Your Shout Out!"}
+                    {activeForm === "brainTeaser" && "Send That Brain Teaser!"}
+                    {activeForm === "joke" && "Send Me Funny Stuff"}
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </section>
