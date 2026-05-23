@@ -127,14 +127,12 @@ function PodcastLandingPage() {
               </p>
               
               <div className="mt-10 flex flex-wrap items-center gap-6">
-                <a 
-                  href="https://godsgreatearth.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button 
+                  onClick={() => playEpisode(LATEST_EPISODE)}
                   className="rounded-full bg-gold px-8 py-4 text-sm font-bold uppercase tracking-widest text-gold-foreground shadow-lg hover:scale-105 transition cursor-pointer inline-block"
                 >
                   Latest Episode
-                </a>
+                </button>
                 <div className="flex items-center gap-3">
                   {PLATFORMS.slice(0, 4).map((p) => (
                     <a 
@@ -163,14 +161,12 @@ function PodcastLandingPage() {
                     <p className="text-[10px] font-bold uppercase tracking-widest text-gold">Watch Episode</p>
                     <p className="text-xl font-display font-medium">The Majesty of the Mountains</p>
                   </div>
-                  <a 
-                    href="https://godsgreatearth.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button 
+                    onClick={() => playEpisode(LATEST_EPISODE)}
                     className="h-14 w-14 rounded-full bg-cream text-forest-deep grid place-items-center shadow-glow hover:scale-105 hover:bg-gold hover:text-gold-foreground transition cursor-pointer"
                   >
                     <Play className="h-6 w-6 fill-current" />
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>

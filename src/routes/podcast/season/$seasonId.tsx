@@ -65,14 +65,12 @@ function SeasonDetailsPage() {
               {EPISODES.map((ep) => (
                 <div key={ep.id} className="group flex items-center justify-between p-6 rounded-3xl bg-card border border-border hover:border-primary/20 hover:shadow-lg transition-all">
                   <div className="flex items-center gap-6">
-                    <a 
-                      href="https://godsgreatearth.com/"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button 
+                      onClick={() => playEpisode({ ...ep, seasonTitle: `Season ${seasonId}`, coverImage: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800" })}
                       className="h-12 w-12 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all cursor-pointer"
                     >
                       <Play className="h-5 w-5 fill-current" />
-                    </a>
+                    </button>
                     <div>
                       <h4 className="font-display text-xl text-foreground group-hover:text-primary transition-colors">{ep.id}. {ep.title}</h4>
                       <p className="mt-1 text-sm text-muted-foreground">{ep.date} • {ep.duration}</p>
