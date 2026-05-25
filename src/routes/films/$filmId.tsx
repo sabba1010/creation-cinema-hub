@@ -21,7 +21,15 @@ function IndividualFilmPage() {
   const [hasAccess, setHasAccess] = useState(false);
   const [accessInfo, setAccessInfo] = useState<{type: "buy" | "rent", expiresAt: number | null} | null>(null);
   const [timeLeft, setTimeLeft] = useState<string>("");
-  
+  const [checkoutName, setCheckoutName] = useState(() => {
+    const userData = localStorage.getItem("user_data");
+    if (userData) {
+      try {
+        return JSON.parse(userData).name || "";
+      } catch (e) {}
+    }
+    return "";
+  });
   const [ratingInput, setRatingInput] = useState(5);
   const [reviews, setReviews] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
@@ -36,13 +44,40 @@ function IndividualFilmPage() {
     e.preventDefault();
     setPaymentStatus("processing");
     // Simulate API call to payment gateway
-    setTimeout(() => {
+    setTimeout(async () => {
       const accessData = {
         type: paymentType as "buy" | "rent",
         expiresAt: paymentType === "rent" ? Date.now() + 48 * 60 * 60 * 1000 : null
       };
-      localStorage.setItem(`cinema_access_${filmId}`, JSON.stringify(accessData));
+      const getUserKey = () => {
+        const userDataStr = localStorage.getItem("user_data");
+        if (userDataStr) {
+          try {
+            const user = JSON.parse(userDataStr);
+            return `cinema_access_${user._id || user.id || "guest"}_${filmId}`;
+          } catch(e) {}
+        }
+        return `cinema_access_guest_${filmId}`;
+      };
+
+      localStorage.setItem(getUserKey(), JSON.stringify(accessData));
       
+      // Save purchase to backend
+      try {
+        await fetch(`http://localhost:5000/api/purchases`, {
+           method: "POST",
+           headers: { "Content-Type": "application/json" },
+           body: JSON.stringify({
+              filmId: film._id,
+              type: paymentType === "buy" ? "Buy" : "Rent",
+              amount: paymentType === "buy" ? film.price : film.rentPrice,
+              user: checkoutName || "Guest User"
+           })
+        });
+      } catch (err) {
+        console.error("Failed to save purchase to backend", err);
+      }
+
       setPaymentStatus("success");
       setAccessInfo(accessData);
       setHasAccess(true);
@@ -68,7 +103,19 @@ function IndividualFilmPage() {
 
     // Check LocalStorage for existing access
     const checkAccess = () => {
-      const stored = localStorage.getItem(`cinema_access_${filmId}`);
+      const getUserKey = () => {
+        const userDataStr = localStorage.getItem("user_data");
+        if (userDataStr) {
+          try {
+            const user = JSON.parse(userDataStr);
+            return `cinema_access_${user._id || user.id || "guest"}_${filmId}`;
+          } catch(e) {}
+        }
+        return `cinema_access_guest_${filmId}`;
+      };
+
+      const userKey = getUserKey();
+      const stored = localStorage.getItem(userKey);
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed.type === "buy") {
@@ -80,7 +127,7 @@ function IndividualFilmPage() {
             setHasAccess(true);
           } else {
             // Expired
-            localStorage.removeItem(`cinema_access_${filmId}`);
+            localStorage.removeItem(userKey);
             setAccessInfo(null);
             setHasAccess(false);
           }
@@ -100,7 +147,17 @@ function IndividualFilmPage() {
           clearInterval(interval);
           setHasAccess(false);
           setAccessInfo(null);
-          localStorage.removeItem(`cinema_access_${filmId}`);
+          const getUserKey = () => {
+            const userDataStr = localStorage.getItem("user_data");
+            if (userDataStr) {
+              try {
+                const user = JSON.parse(userDataStr);
+                return `cinema_access_${user._id || user.id || "guest"}_${filmId}`;
+              } catch(e) {}
+            }
+            return `cinema_access_guest_${filmId}`;
+          };
+          localStorage.removeItem(getUserKey());
         } else {
           const h = Math.floor(diff / (1000 * 60 * 60));
           const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -117,13 +174,19 @@ function IndividualFilmPage() {
     if (!newComment.trim()) return;
 
     try {
+       const userData = localStorage.getItem("user_data");
+       let authorName = "Guest User";
+       if (userData) {
+         try { authorName = JSON.parse(userData).name || "Guest User"; } catch(e){}
+       }
+
        const res = await fetch(`http://localhost:5000/api/films/${filmId}/reviews`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
              text: newComment,
              rating: ratingInput,
-             user: "Current User" // In a real app, this would be from Auth context
+             user: authorName
           })
        });
        const data = await res.json();
@@ -429,6 +492,20 @@ function IndividualFilmPage() {
             {paymentStatus === "idle" && (
               <form onSubmit={processPayment} className="space-y-6">
                 <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-xs uppercase tracking-widest text-cream/50 font-bold">Name on Card</label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-cream/30" />
+                      <input 
+                        type="text" 
+                        required
+                        value={checkoutName}
+                        onChange={(e) => setCheckoutName(e.target.value)}
+                        placeholder="John Doe" 
+                        className="w-full bg-white/5 border border-white/10 rounded-xl p-3 pl-11 text-cream placeholder:text-cream/20 focus:outline-none focus:border-gold/50 transition-colors"
+                      />
+                    </div>
+                  </div>
                   <div className="space-y-2">
                     <label className="text-xs uppercase tracking-widest text-cream/50 font-bold">Card Number</label>
                     <div className="relative">

@@ -117,15 +117,9 @@ const INITIAL_FILMS = [
   }
 ];
 
-const INITIAL_PURCHASES = [
-  { id: "ORD-9901", user: "James Wilson", film: "The Seed", type: "Buy", amount: "$19.99", date: "May 12, 2026", expires: "Lifetime" },
-  { id: "ORD-9902", user: "Maria Garcia", film: "Mountain Majesty", type: "Rent", amount: "$3.99", date: "May 13, 2026", expires: "May 15, 2026 (48h)" },
-  { id: "ORD-9903", user: "Robert Chen", film: "The Seed", type: "Buy", amount: "$19.99", date: "May 11, 2026", expires: "Lifetime" },
-];
-
 function FilmsManagement() {
   const [films, setFilms] = useState<any[]>([]);
-  const [purchases, setPurchases] = useState(INITIAL_PURCHASES);
+  const [purchases, setPurchases] = useState<any[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingFilm, setEditingFilm] = useState<any>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -145,6 +139,7 @@ function FilmsManagement() {
 
   useEffect(() => {
     fetchFilms();
+    fetchPurchases();
   }, []);
 
   const fetchFilms = async () => {
@@ -156,6 +151,26 @@ function FilmsManagement() {
       }
     } catch (err) {
       console.error("Error fetching films:", err);
+    }
+  };
+
+  const fetchPurchases = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/purchases");
+      const data = await res.json();
+      if (data.success) {
+        setPurchases(data.data.map((p: any) => ({
+           id: p._id,
+           user: p.user,
+           film: p.filmTitle,
+           type: p.type,
+           amount: p.amount,
+           date: new Date(p.createdAt).toLocaleDateString(),
+           expires: p.expiresAt ? new Date(p.expiresAt).toLocaleDateString() : "Lifetime"
+        })));
+      }
+    } catch (err) {
+      console.error("Error fetching purchases:", err);
     }
   };
 
