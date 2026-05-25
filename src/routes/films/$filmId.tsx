@@ -30,6 +30,7 @@ function IndividualFilmPage() {
     }
     return "";
   });
+  const [globalRentDuration, setGlobalRentDuration] = useState("48");
   const [ratingInput, setRatingInput] = useState(5);
   const [reviews, setReviews] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
@@ -45,9 +46,11 @@ function IndividualFilmPage() {
     setPaymentStatus("processing");
     // Simulate API call to payment gateway
     setTimeout(async () => {
+      const globalRentHours = parseInt(localStorage.getItem("global_rent_duration") || "48", 10) || 48;
+      
       const accessData = {
         type: paymentType as "buy" | "rent",
-        expiresAt: paymentType === "rent" ? Date.now() + 48 * 60 * 60 * 1000 : null
+        expiresAt: paymentType === "rent" ? Date.now() + globalRentHours * 60 * 60 * 1000 : null
       };
       const getUserKey = () => {
         const userDataStr = localStorage.getItem("user_data");
@@ -71,7 +74,8 @@ function IndividualFilmPage() {
               filmId: film._id,
               type: paymentType === "buy" ? "Buy" : "Rent",
               amount: paymentType === "buy" ? film.price : film.rentPrice,
-              user: checkoutName || "Guest User"
+              user: checkoutName || "Guest User",
+              customExpiresAt: accessData.expiresAt
            })
         });
       } catch (err) {
@@ -135,6 +139,30 @@ function IndividualFilmPage() {
       }
     };
     checkAccess();
+    
+    // Initial load
+    fetch("http://localhost:5000/api/settings")
+      .then(res => res.json())
+      .then(data => {
+         if (data.success && data.data.global_rent_duration) {
+            setGlobalRentDuration(data.data.global_rent_duration);
+            localStorage.setItem("global_rent_duration", data.data.global_rent_duration);
+         } else {
+            setGlobalRentDuration(localStorage.getItem("global_rent_duration") || "48");
+         }
+      })
+      .catch(() => {
+         setGlobalRentDuration(localStorage.getItem("global_rent_duration") || "48");
+      });
+
+    // Listen for cross-tab updates
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "global_rent_duration") {
+        setGlobalRentDuration(e.newValue || "48");
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, [filmId]);
 
   // Timer for Rental Expiration
@@ -308,7 +336,7 @@ function IndividualFilmPage() {
                 </div>
                 <div className="flex items-center justify-between p-5 rounded-2xl bg-white/5 border border-white/10">
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-cream/50 mb-1">Rent 48h</p>
+                    <p className="text-xs font-bold uppercase tracking-widest text-cream/50 mb-1">Rent {globalRentDuration}h</p>
                     <p className="text-xl font-bold text-cream">{film.rentPrice || "$4.99"}</p>
                   </div>
                   {accessInfo?.type === "rent" ? (
@@ -479,7 +507,7 @@ function IndividualFilmPage() {
               <div>
                 <h3 className="font-display text-2xl font-medium">{film.title}</h3>
                 <p className="text-xs uppercase tracking-widest text-gold mt-1">
-                   {paymentType === "buy" ? "Digital HD Purchase" : "48-Hour Rental"}
+                   {paymentType === "buy" ? "Digital HD Purchase" : `${globalRentDuration}-Hour Rental`}
                 </p>
                 <p className="text-2xl font-bold mt-2">
                    {paymentType === "buy" ? (film.price || "$14.99") : (film.rentPrice || "$4.99")}

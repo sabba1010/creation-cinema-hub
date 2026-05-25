@@ -123,6 +123,7 @@ function FilmsManagement() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingFilm, setEditingFilm] = useState<any>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [rentDuration, setRentDuration] = useState("48");
 
   // Form State
   const [formData, setFormData] = useState({
@@ -140,6 +141,15 @@ function FilmsManagement() {
   useEffect(() => {
     fetchFilms();
     fetchPurchases();
+    fetch("http://localhost:5000/api/settings")
+      .then(res => res.json())
+      .then(data => {
+         if (data.success && data.data.global_rent_duration) {
+            setRentDuration(data.data.global_rent_duration);
+            localStorage.setItem("global_rent_duration", data.data.global_rent_duration);
+         }
+      })
+      .catch(err => console.error(err));
   }, []);
 
   const fetchFilms = async () => {
@@ -420,15 +430,14 @@ function FilmsManagement() {
           <div className="p-3 bg-sky/10 rounded-2xl w-fit">
             <Clock className="w-6 h-6 text-sky" />
           </div>
-          <div className="text-3xl font-bold font-display">48h</div>
-          <div className="text-sm text-muted-foreground">Rental Window (2 Days)</div>
+          <div className="text-3xl font-bold font-display">{rentDuration}h</div>
+          <div className="text-sm text-muted-foreground">Rental Window</div>
         </Card>
       </div>
 
       <Tabs defaultValue="all" className="space-y-6">
         <TabsList className="bg-card/50 border border-border/50 p-1 rounded-xl">
           <TabsTrigger value="all" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">All Films</TabsTrigger>
-          <TabsTrigger value="trailers" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Trailers</TabsTrigger>
           <TabsTrigger value="purchases" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Recent Purchases</TabsTrigger>
           <TabsTrigger value="settings" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Policy Settings</TabsTrigger>
         </TabsList>
@@ -562,55 +571,44 @@ function FilmsManagement() {
                     <div className="flex items-center gap-3">
                       <Clock className="w-5 h-5 text-forest" />
                       <div>
-                        <div className="font-semibold">Rental Window</div>
+                        <div className="font-semibold">Rental Window (Hours)</div>
                         <div className="text-xs text-muted-foreground">Standard duration for film rentals</div>
                       </div>
                     </div>
-                    <Badge className="bg-forest">48 Hours</Badge>
-                  </div>
-                  <div className="flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/30">
-                    <div className="flex items-center gap-3">
-                      <Eye className="w-5 h-5 text-gold" />
-                      <div>
-                        <div className="font-semibold">First View Grace</div>
-                        <div className="text-xs text-muted-foreground">Time allowed before window starts</div>
-                      </div>
-                    </div>
-                    <Badge variant="outline">7 Days</Badge>
-                  </div>
-                </div>
-                <Button className="w-full bg-forest shadow-md" onClick={() => toast.success("Policies updated globally")}>Update Policies</Button>
-              </CardContent>
-            </Card>
-
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-lg">Trailer & Preview Rules</CardTitle>
-                <CardDescription>Manage how content is previewed.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div className="p-4 bg-muted/20 rounded-xl space-y-3 border border-border/30">
-                    <div className="font-semibold text-sm flex items-center gap-2">
-                       <PlaySquare className="w-4 h-4 text-forest" />
-                       Global Trailer Visibility
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" className="flex-1 bg-background text-xs">Hidden</Button>
-                      <Button className="flex-1 bg-forest text-xs">Visible to All</Button>
-                    </div>
-                  </div>
-                  <div className="p-4 bg-muted/20 rounded-xl space-y-3 border border-border/30">
-                    <div className="font-semibold text-sm flex items-center gap-2">
-                       <Lock className="w-4 h-4 text-gold" />
-                       DRM Protection
-                    </div>
-                    <div className="flex items-center justify-between">
-                       <span className="text-xs text-muted-foreground">Prevent screen recording</span>
-                       <Badge className="bg-emerald-500">Active</Badge>
+                    <div className="flex items-center gap-2">
+                       <Input 
+                         type="number" 
+                         value={rentDuration} 
+                         onChange={(e) => setRentDuration(e.target.value)} 
+                         className="w-20 bg-background h-8" 
+                       />
                     </div>
                   </div>
                 </div>
+                <Button 
+                   className="w-full bg-forest shadow-md" 
+                   onClick={async () => {
+                     try {
+                        const res = await fetch("http://localhost:5000/api/settings", {
+                           method: "POST",
+                           headers: { "Content-Type": "application/json" },
+                           body: JSON.stringify({ key: "global_rent_duration", value: rentDuration })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                           localStorage.setItem("global_rent_duration", rentDuration);
+                           window.dispatchEvent(new StorageEvent('storage', { key: 'global_rent_duration', newValue: rentDuration }));
+                           toast.success("Policies updated globally in database");
+                        } else {
+                           toast.error(data.message);
+                        }
+                     } catch(err) {
+                        toast.error("Network error saving policy");
+                     }
+                   }}
+                >
+                   Update Policies
+                </Button>
               </CardContent>
             </Card>
           </div>
