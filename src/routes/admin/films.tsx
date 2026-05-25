@@ -487,9 +487,6 @@ function FilmsManagement() {
                            <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => handleEditClick(film)}>
                               <Edit className="w-4 h-4" /> Edit Details
                            </DropdownMenuItem>
-                           <DropdownMenuItem className="gap-2 cursor-pointer">
-                              <Globe className="w-4 h-4" /> View Public Page
-                           </DropdownMenuItem>
                            <DropdownMenuSeparator />
                            <DropdownMenuItem className="gap-2 text-destructive cursor-pointer" onClick={() => handleDeleteFilm(film.id)}>
                               <Trash2 className="w-4 h-4" /> Remove Film
