@@ -1,5 +1,5 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { 
   Film, 
   Plus, 
@@ -124,10 +124,11 @@ const INITIAL_PURCHASES = [
 ];
 
 function FilmsManagement() {
-  const [films, setFilms] = useState(INITIAL_FILMS);
+  const [films, setFilms] = useState<any[]>([]);
   const [purchases, setPurchases] = useState(INITIAL_PURCHASES);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingFilm, setEditingFilm] = useState<any>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -137,49 +138,127 @@ function FilmsManagement() {
     price: "19.99",
     rentPrice: "4.99",
     rating: "9.5",
-    trailer: "https://vimeo.com/..."
+    trailer: "https://vimeo.com/...",
+    movieLink: "https://vimeo.com/...",
+    thumbnail: ""
   });
 
-  const handleSaveFilm = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingFilm) {
-      setFilms(films.map(f => f.id === editingFilm.id ? { ...f, ...formData, price: `$${formData.price}`, rentPrice: `$${formData.rentPrice}` } : f));
-      toast.success("Film updated successfully!");
-    } else {
-      const newFilm = {
-        id: formData.title.toLowerCase().replace(/ /g, "-"),
-        ...formData,
-        price: `$${formData.price}`,
-        rentPrice: `$${formData.rentPrice}`,
-        status: "Published",
-        sales: 0,
-        purchases: 0,
-        thumbnail: "https://images.unsplash.com/photo-1485846234645-a62644ef7467?w=120&h=67"
-      };
-      setFilms([newFilm, ...films]);
-      toast.success("New film added to library!");
+  useEffect(() => {
+    fetchFilms();
+  }, []);
+
+  const fetchFilms = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/films");
+      const data = await res.json();
+      if (data.success) {
+        setFilms(data.data.map((f: any) => ({ ...f, id: f._id })));
+      }
+    } catch (err) {
+      console.error("Error fetching films:", err);
     }
-    setIsDialogOpen(false);
-    setEditingFilm(null);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const fd = new FormData();
+    fd.append("image", file);
+
+    try {
+      const res = await fetch("http://localhost:5000/api/upload", {
+        method: "POST",
+        body: fd,
+      });
+      const data = await res.json();
+      if (data.success) {
+        setFormData({ ...formData, thumbnail: `http://localhost:5000${data.url}` });
+        toast.success("Image uploaded successfully!");
+      } else {
+        toast.error(data.message || "Upload failed");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      toast.error("Network error during upload");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleSaveFilm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = localStorage.getItem("user_token");
+    try {
+      const payload = {
+        ...formData,
+        price: formData.price.startsWith("$") ? formData.price : `$${formData.price}`,
+        rentPrice: formData.rentPrice.startsWith("$") ? formData.rentPrice : `$${formData.rentPrice}`,
+      };
+
+      if (editingFilm) {
+        const res = await fetch(`http://localhost:5000/api/films/${editingFilm.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          setFilms(films.map(f => f.id === editingFilm.id ? { ...data.data, id: data.data._id } : f));
+          toast.success("Film updated successfully!");
+        } else toast.error(data.message);
+      } else {
+        const res = await fetch("http://localhost:5000/api/films", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          setFilms([{ ...data.data, id: data.data._id }, ...films]);
+          toast.success("New film added to library!");
+        } else toast.error(data.message);
+      }
+      setIsDialogOpen(false);
+      setEditingFilm(null);
+    } catch (err) {
+      toast.error("Network error");
+    }
   };
 
   const handleEditClick = (film: any) => {
     setEditingFilm(film);
     setFormData({
-      title: film.title,
-      year: film.year,
-      duration: film.duration,
-      price: film.price.replace("$", ""),
-      rentPrice: film.rentPrice.replace("$", ""),
-      rating: film.rating,
-      trailer: film.trailer
+      title: film.title || "",
+      year: film.year || "",
+      duration: film.duration || "",
+      price: (film.price || "").replace("$", ""),
+      rentPrice: (film.rentPrice || "").replace("$", ""),
+      rating: film.rating || "",
+      trailer: film.trailer || "",
+      movieLink: film.movieLink || "",
+      thumbnail: film.thumbnail || ""
     });
     setIsDialogOpen(true);
   };
 
-  const handleDeleteFilm = (id: string) => {
-    setFilms(films.filter(f => f.id !== id));
-    toast.error("Film removed from library");
+  const handleDeleteFilm = async (id: string) => {
+    if(!confirm("Delete this film?")) return;
+    const token = localStorage.getItem("user_token");
+    try {
+      const res = await fetch(`http://localhost:5000/api/films/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setFilms(films.filter(f => f.id !== id));
+        toast.error("Film removed from library");
+      }
+    } catch (err) {
+      toast.error("Network error");
+    }
   };
 
   return (
@@ -255,46 +334,41 @@ function FilmsManagement() {
                     required 
                   />
                 </div>
-                <div className="col-span-2 space-y-4 pt-2 border-t border-border/30">
-                  <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Media Uploads</Label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                       <Label className="text-sm">Trailer File</Label>
-                       <div className="relative group">
-                          <Input type="file" className="hidden" id="trailer-upload" onChange={() => toast.info("Trailer file selected")} />
-                          <label 
-                            htmlFor="trailer-upload" 
-                            className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-border rounded-2xl cursor-pointer hover:border-forest/50 hover:bg-forest/5 transition-all"
-                          >
-                             <Video className="w-6 h-6 text-muted-foreground mb-2" />
-                             <span className="text-[10px] font-bold text-muted-foreground">SELECT TRAILER</span>
-                          </label>
-                       </div>
-                    </div>
-                    <div className="space-y-2">
-                       <Label className="text-sm">Movie File (Full)</Label>
-                       <div className="relative group">
-                          <Input type="file" className="hidden" id="movie-upload" onChange={() => toast.info("Movie file selected")} />
-                          <label 
-                            htmlFor="movie-upload" 
-                            className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-border rounded-2xl cursor-pointer hover:border-forest/50 hover:bg-forest/5 transition-all"
-                          >
-                             <Clapperboard className="w-6 h-6 text-muted-foreground mb-2" />
-                             <span className="text-[10px] font-bold text-muted-foreground">SELECT MOVIE</span>
-                          </label>
-                       </div>
-                    </div>
-                  </div>
-                </div>
-
                 <div className="col-span-2 space-y-2">
-                  <Label>Or use Video Link (Vimeo/YouTube)</Label>
+                  <Label>Film Poster / Thumbnail Image</Label>
+                  <div className="flex gap-4 items-center">
+                    <Input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="h-11 rounded-xl flex-1 pt-2.5" 
+                      disabled={isUploading}
+                    />
+                    {formData.thumbnail && (
+                      <img src={formData.thumbnail} alt="Preview" className="h-11 w-11 object-cover rounded-md border border-border" />
+                    )}
+                  </div>
+                  {isUploading && <p className="text-xs text-muted-foreground">Uploading image...</p>}
+                </div>
+                <div className="col-span-2 space-y-2">
+                  <Label>Trailer Link (Vimeo/YouTube)</Label>
                   <div className="relative">
                      <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                      <Input 
                         className="pl-10 h-11 rounded-xl"
                         value={formData.trailer}
                         onChange={e => setFormData({...formData, trailer: e.target.value})}
+                     />
+                  </div>
+                </div>
+                <div className="col-span-2 space-y-2">
+                  <Label>Full Movie Link (Vimeo/YouTube)</Label>
+                  <div className="relative">
+                     <Video className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                     <Input 
+                        className="pl-10 h-11 rounded-xl"
+                        value={formData.movieLink}
+                        onChange={e => setFormData({...formData, movieLink: e.target.value})}
                      />
                   </div>
                 </div>
@@ -369,7 +443,7 @@ function FilmsManagement() {
                   <TableRow key={film.id} className="border-border/50 group hover:bg-muted/10 transition-colors">
                     <TableCell>
                       <div className="w-20 h-12 rounded-xl bg-muted overflow-hidden border border-border/50 shadow-sm">
-                        <img src={film.thumbnail} alt={film.title} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+                        <img src={film.thumbnail || "https://images.unsplash.com/photo-1485846234645-a62644ef7467?w=120&h=67"} alt={film.title || "Film"} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
                       </div>
                     </TableCell>
                     <TableCell>
@@ -394,14 +468,14 @@ function FilmsManagement() {
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col">
-                        <span className="text-sm font-semibold">Buy: {film.price}</span>
-                        <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Rent: {film.rentPrice}</span>
+                        <span className="text-sm font-semibold">Buy: {film.price || "$0.00"}</span>
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Rent: {film.rentPrice || "$0.00"}</span>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1.5 font-medium text-sm">
                         <CreditCard className="w-3.5 h-3.5 text-muted-foreground" />
-                        {film.purchases.toLocaleString()}
+                        {(film.purchases || 0).toLocaleString()}
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
