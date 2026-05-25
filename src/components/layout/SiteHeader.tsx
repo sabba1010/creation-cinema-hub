@@ -151,7 +151,7 @@ export function SiteHeader() {
           </Link>
 
           <Link 
-            to="/profile" 
+            to={localStorage.getItem("user_auth") === "true" || localStorage.getItem("admin_auth") === "true" ? "/profile" : "/login"} 
             aria-label="Account" 
             className="hidden sm:block text-[#faf7ee]/80 hover:text-[#faf7ee] transition"
           >

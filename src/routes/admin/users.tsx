@@ -1,4 +1,4 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { 
   Users, 
@@ -106,12 +106,53 @@ const INITIAL_USERS = [
   }
 ];
 
+import { useEffect } from "react";
+
 function UserManagement() {
-  const [users, setUsers] = useState(INITIAL_USERS);
+  const [users, setUsers] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const handleBlockUser = (id: number) => {
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem("user_token");
+        const res = await fetch("http://localhost:5000/api/users", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        const data = await res.json();
+        if (data.success) {
+          const mappedUsers = data.data.map((u: any) => ({
+            id: u._id,
+            name: u.name,
+            email: u.email,
+            status: u.status || "Active",
+            membership: u.role === "admin" ? "Admin" : "Basic",
+            lastActive: "Recent",
+            joined: new Date(u.createdAt).toLocaleDateString(),
+            avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=random`,
+            totalSpent: "$0.00",
+            lastOrder: "None"
+          }));
+          setUsers(mappedUsers);
+        } else {
+          toast.error(data.message || "Failed to load users");
+        }
+      } catch (err) {
+        console.error("Failed to fetch users", err);
+        toast.error("Network error while loading users");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  const handleBlockUser = (id: string) => {
     setUsers(users.map(u => {
       if (u.id === id) {
         const isBlocked = u.status === "Blocked";
@@ -122,7 +163,7 @@ function UserManagement() {
     }));
   };
 
-  const handleDeleteUser = (id: number) => {
+  const handleDeleteUser = (id: string) => {
     const user = users.find(u => u.id === id);
     setUsers(users.filter(u => u.id !== id));
     toast.error(`${user?.name}'s account has been permanently deleted`);
@@ -132,6 +173,12 @@ function UserManagement() {
     setSelectedUser(user);
     setIsProfileOpen(true);
   };
+
+  const filteredUsers = users.filter((user) => 
+    user.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.id.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="space-y-8 animate-fade-up">
@@ -149,8 +196,8 @@ function UserManagement() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <StatsCard title="Active Users" value="2,145" icon={Activity} trend="+12%" color="forest" />
-        <StatsCard title="Premium Members" value="482" icon={ShieldCheck} trend="+5%" color="gold" />
+        <StatsCard title="Total Users" value={users.length} icon={Activity} trend="+12%" color="forest" />
+        <StatsCard title="Admins" value={users.filter(u => u.membership === 'Admin').length} icon={ShieldCheck} trend="0%" color="gold" />
         <StatsCard title="Access Violations" value="0" icon={XCircle} trend="0%" color="destructive" />
       </div>
 
@@ -158,7 +205,12 @@ function UserManagement() {
         <div className="p-6 border-b border-border/50 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-muted/20">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input placeholder="Search by name, email or ID..." className="pl-10 h-11 rounded-xl bg-background/50" />
+            <Input 
+              placeholder="Search by name, email or ID..." 
+              className="pl-10 h-11 rounded-xl bg-background/50"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
           <div className="flex gap-2">
             <Button variant="outline" className="rounded-xl h-11 border-border/50 gap-2">
@@ -180,7 +232,7 @@ function UserManagement() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <TableRow key={user.id} className="border-border/50 group hover:bg-muted/10 transition-colors">
                 <TableCell className="pl-6 py-4">
                   <div className="flex items-center gap-3">
@@ -248,7 +300,7 @@ function UserManagement() {
         </Table>
 
         <div className="p-4 border-t border-border/50 flex items-center justify-between bg-muted/10">
-          <p className="text-sm text-muted-foreground">Showing {users.length} active records</p>
+          <p className="text-sm text-muted-foreground">Showing {filteredUsers.length} records</p>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" disabled className="rounded-lg">Previous</Button>
             <Button variant="outline" size="sm" className="rounded-lg bg-background shadow-sm">Next</Button>

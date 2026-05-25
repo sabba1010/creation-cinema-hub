@@ -13,7 +13,6 @@ import {
   ChevronRight,
   LogOut,
   Baby,
-  Newspaper,
   Globe
 } from "lucide-react";
 import {
@@ -42,7 +41,6 @@ const menuItems = [
   { title: "Shop", icon: ShoppingBag, path: "/admin/shop" },
   { title: "Payments", icon: CreditCard, path: "/admin/payments" },
   { title: "Newsletter", icon: Mail, path: "/admin/newsletter" },
-  { title: "Marketing", icon: Newspaper, path: "/admin/marketing" },
 ];
 
 export function AdminSidebar() {

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ResourcesRouteImport } from './routes/resources'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrayerRouteImport } from './routes/prayer'
 import { Route as PodcastRouteImport } from './routes/podcast'
@@ -77,6 +78,11 @@ const ShopRoute = ShopRouteImport.update({
 const ResourcesRoute = ResourcesRouteImport.update({
   id: '/resources',
   path: '/resources',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -349,6 +355,7 @@ export interface FileRoutesByFullPath {
   '/podcast': typeof PodcastRouteWithChildren
   '/prayer': typeof PrayerRouteWithChildren
   '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
   '/resources': typeof ResourcesRouteWithChildren
   '/shop': typeof ShopRouteWithChildren
   '/team': typeof TeamRoute
@@ -399,6 +406,7 @@ export interface FileRoutesByTo {
   '/mission': typeof MissionRoute
   '/newsletter': typeof NewsletterRoute
   '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
   '/team': typeof TeamRoute
   '/admin/donations': typeof AdminDonationsRoute
   '/admin/events': typeof AdminEventsRoute
@@ -454,6 +462,7 @@ export interface FileRoutesById {
   '/podcast': typeof PodcastRouteWithChildren
   '/prayer': typeof PrayerRouteWithChildren
   '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
   '/resources': typeof ResourcesRouteWithChildren
   '/shop': typeof ShopRouteWithChildren
   '/team': typeof TeamRoute
@@ -512,6 +521,7 @@ export interface FileRouteTypes {
     | '/podcast'
     | '/prayer'
     | '/profile'
+    | '/register'
     | '/resources'
     | '/shop'
     | '/team'
@@ -562,6 +572,7 @@ export interface FileRouteTypes {
     | '/mission'
     | '/newsletter'
     | '/profile'
+    | '/register'
     | '/team'
     | '/admin/donations'
     | '/admin/events'
@@ -616,6 +627,7 @@ export interface FileRouteTypes {
     | '/podcast'
     | '/prayer'
     | '/profile'
+    | '/register'
     | '/resources'
     | '/shop'
     | '/team'
@@ -673,6 +685,7 @@ export interface RootRouteChildren {
   PodcastRoute: typeof PodcastRouteWithChildren
   PrayerRoute: typeof PrayerRouteWithChildren
   ProfileRoute: typeof ProfileRoute
+  RegisterRoute: typeof RegisterRoute
   ResourcesRoute: typeof ResourcesRouteWithChildren
   ShopRoute: typeof ShopRouteWithChildren
   TeamRoute: typeof TeamRoute
@@ -707,6 +720,13 @@ declare module '@tanstack/react-router' {
       path: '/resources'
       fullPath: '/resources'
       preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -1211,6 +1231,7 @@ const rootRouteChildren: RootRouteChildren = {
   PodcastRoute: PodcastRouteWithChildren,
   PrayerRoute: PrayerRouteWithChildren,
   ProfileRoute: ProfileRoute,
+  RegisterRoute: RegisterRoute,
   ResourcesRoute: ResourcesRouteWithChildren,
   ShopRoute: ShopRouteWithChildren,
   TeamRoute: TeamRoute,

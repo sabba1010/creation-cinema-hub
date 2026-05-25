@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { User, Settings, Play, Heart, LogOut, Shield, Bell, CreditCard, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/profile")({
@@ -11,7 +11,25 @@ export const Route = createFileRoute("/profile")({
 
 function ProfilePage() {
   const [activeTab, setActiveTab] = useState("overview");
+  const [userData, setUserData] = useState<any>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const isUserAuth = localStorage.getItem("user_auth") === "true";
+    const isAdminAuth = localStorage.getItem("admin_auth") === "true";
+    if (!isUserAuth && !isAdminAuth) {
+      navigate({ to: "/login" });
+    } else {
+      const stored = localStorage.getItem("user_data");
+      if (stored) {
+        try {
+          setUserData(JSON.parse(stored));
+        } catch (e) {
+          console.error("Failed to parse user data");
+        }
+      }
+    }
+  }, [navigate]);
 
   const handleSignOut = () => {
     localStorage.removeItem("admin_auth");
@@ -44,8 +62,10 @@ function ProfilePage() {
                     <div className="h-24 w-24 rounded-full bg-gold/20 border-4 border-gold/40 mx-auto flex items-center justify-center mb-6 overflow-hidden">
                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200" alt="Profile" className="w-full h-full object-cover" />
                     </div>
-                    <h2 className="font-display text-2xl font-medium">David Kingdom</h2>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold mt-2">Ministry Partner</p>
+                    <h2 className="font-display text-2xl font-medium">{userData?.name || "Welcome!"}</h2>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold mt-2">
+                      {userData?.role === 'admin' ? 'Administrator' : 'Ministry Partner'}
+                    </p>
                   </div>
                </div>
 
