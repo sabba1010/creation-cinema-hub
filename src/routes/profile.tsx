@@ -12,6 +12,7 @@ export const Route = createFileRoute("/profile")({
 function ProfilePage() {
   const [activeTab, setActiveTab] = useState("overview");
   const [userData, setUserData] = useState<any>(null);
+  const [tickets, setTickets] = useState<any[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +29,23 @@ function ProfilePage() {
           console.error("Failed to parse user data");
         }
       }
+      // Fetch tickets
+      const fetchTickets = async () => {
+        try {
+          const res = await fetch("http://localhost:5000/api/tickets/my-tickets", {
+            headers: {
+              "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+            }
+          });
+          const data = await res.json();
+          if (data.success) {
+            setTickets(data.data);
+          }
+        } catch (err) {
+          console.error("Error fetching tickets", err);
+        }
+      };
+      fetchTickets();
     }
   }, [navigate]);
 
@@ -40,9 +58,9 @@ function ProfilePage() {
 
   const TABS = [
     { id: "overview", label: "Overview", icon: User },
+    { id: "tickets", label: "My Tickets", icon: CreditCard },
     { id: "history", label: "Watch History", icon: Play },
     { id: "favorites", label: "Favorites", icon: Heart },
-    { id: "billing", label: "Billing", icon: CreditCard },
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
@@ -150,6 +168,41 @@ function ProfilePage() {
                        </div>
                        <button className="px-8 py-4 rounded-xl bg-gold text-forest-deep font-bold text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-all">Get Share Link</button>
                     </div>
+                 </div>
+               )}
+
+               {activeTab === "tickets" && (
+                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <h3 className="font-display text-3xl font-medium">My <span className="italic text-primary">Tickets</span></h3>
+                    {tickets.length === 0 ? (
+                      <div className="p-10 rounded-[2.5rem] bg-card border border-border text-center space-y-4">
+                        <CreditCard className="w-12 h-12 text-muted-foreground/30 mx-auto" />
+                        <p className="text-muted-foreground">You have no tickets yet.</p>
+                        <Link to="/events" className="inline-block text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/30 px-6 py-3 rounded-full hover:bg-primary/5 transition-colors">Browse Events →</Link>
+                      </div>
+                    ) : (
+                      <div className="grid gap-6">
+                        {tickets.map(ticket => (
+                          <div key={ticket._id} className="p-6 rounded-[2rem] bg-card border border-border flex flex-col md:flex-row gap-6 items-center shadow-sm hover:shadow-md transition-all">
+                             {ticket.event?.image && ticket.event.image !== 'no-photo.jpg' && (
+                               <img src={ticket.event.image.startsWith('http') ? ticket.event.image : `http://localhost:5000${ticket.event.image}`} alt="Event" className="w-full md:w-48 h-32 object-cover rounded-2xl" />
+                             )}
+                             <div className="flex-grow space-y-2 text-center md:text-left">
+                                <h4 className="font-display font-medium text-2xl">{ticket.event?.name}</h4>
+                                <div className="text-sm text-muted-foreground flex items-center gap-2 justify-center md:justify-start">
+                                   <span>{ticket.city}</span>
+                                   <span>•</span>
+                                   <span>{ticket.showtimeId}</span>
+                                </div>
+                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary mt-2">ID: {ticket.ticketId}</p>
+                             </div>
+                             <div className="text-center md:text-right shrink-0">
+                                <div className="text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-full bg-primary/10 text-primary">{ticket.status}</div>
+                             </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                  </div>
                )}
 

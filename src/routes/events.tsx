@@ -98,8 +98,37 @@ function ShowtimeCard({ showtime, onBook }: { showtime: Showtime; onBook: () => 
 function CityPanel({ city, eventId }: { city: CityScreening; eventId: string }) {
   const [expanded, setExpanded] = useState(false);
 
-  const handleBook = (showtimeId: string) => {
-    toast.success(`Booking started for ${city.city} — ${showtimeId}`);
+  const handleBook = async (showtimeId: string) => {
+    const token = localStorage.getItem("user_token");
+    if (!token) {
+      toast.error("Please login first to book a ticket.");
+      window.location.href = "/login";
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:5000/api/tickets", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          eventId,
+          city: city.city,
+          showtimeId
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`Ticket booked successfully! Ticket ID: ${data.data.ticketId}`);
+        window.location.href = "/profile";
+      } else {
+        toast.error(data.message || "Failed to book ticket");
+      }
+    } catch (err) {
+      toast.error("Network error");
+    }
   };
 
   return (
@@ -240,6 +269,39 @@ function EventsPage() {
   }, []);
 
   const selectedEvent = events.find((e) => e.id === selectedEventId) || events[0];
+
+  const handleGlobalBook = async () => {
+    const token = localStorage.getItem("user_token");
+    if (!token) {
+      toast.error("Please login first to book a ticket.");
+      window.location.href = "/login";
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:5000/api/tickets", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          eventId: selectedEventId,
+          city: "Global",
+          showtimeId: "General"
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`Ticket booked successfully! Ticket ID: ${data.data.ticketId}`);
+        window.location.href = "/profile";
+      } else {
+        toast.error(data.message || "Failed to book ticket");
+      }
+    } catch (err) {
+      toast.error("Network error");
+    }
+  };
 
   const supportIcons: Record<string, typeof Mail> = {
     email: Mail,
@@ -386,7 +448,15 @@ function EventsPage() {
                   ))}
                 </ul>
               )}
-              <div className="text-xs text-cream/40 text-center">Select a city & showtime below</div>
+              <button
+                onClick={handleGlobalBook}
+                className="w-full py-4 rounded-xl text-sm font-black uppercase tracking-widest transition-all active:scale-95 bg-gold text-forest-deep hover:bg-gold/90 shadow-lg"
+              >
+                Buy Ticket Now →
+              </button>
+              {selectedEvent.cities && selectedEvent.cities.length > 0 && (
+                <div className="text-xs text-cream/40 text-center">Or select a specific city & showtime below</div>
+              )}
             </div>
           </div>
 
