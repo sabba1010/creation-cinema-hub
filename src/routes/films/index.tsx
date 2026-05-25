@@ -2,61 +2,14 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Play, Film, Info, Calendar, Clock, Star, ArrowRight } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export const Route = createFileRoute("/films/")({
   component: FilmsLandingPage,
 });
 
-const FILMS = [
-  {
-    id: "the-seed",
-    title: "The Seed",
-    year: "2024",
-    duration: "1h 42m",
-    rating: "9.8",
-    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800",
-    desc: "A cinematic journey into the microscopic wonder of creation.",
-  },
-  {
-    id: "mountain-majesty",
-    title: "Mountain Majesty",
-    year: "2023",
-    duration: "52m",
-    rating: "9.5",
-    image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&q=80&w=800",
-    desc: "Exploring the peaks where earth meets the heavens.",
-  },
-  {
-    id: "deep-wonders",
-    title: "Deep Wonders",
-    year: "2022",
-    duration: "1h 15m",
-    rating: "9.6",
-    image: "https://images.unsplash.com/photo-1528460033278-a6ba57020470?auto=format&fit=crop&q=80&w=800",
-    desc: "The unseen architecture of the ocean's depths.",
-  },
-  {
-    id: "eternal-light",
-    title: "Eternal Light",
-    year: "2024",
-    duration: "1h 05m",
-    rating: "9.9",
-    image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=800",
-    desc: "A documentary on the first day of creation.",
-  },
-  {
-    id: "breath-of-life",
-    title: "Breath of Life",
-    year: "2021",
-    duration: "45m",
-    rating: "9.4",
-    image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=800",
-    desc: "The invisible rhythms that sustain every living thing.",
-  },
-];
-
 function FilmsLandingPage() {
+  const [films, setFilms] = useState<any[]>([]);
   const [activeFilter, setActiveFilter] = useState("All");
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -68,9 +21,20 @@ function FilmsLandingPage() {
     }
   };
 
+  useEffect(() => {
+    fetch("http://localhost:5000/api/films")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setFilms(data.data.map((f: any) => ({ ...f, id: f._id })));
+        }
+      })
+      .catch(err => console.error(err));
+  }, []);
+
   const filteredFilms = activeFilter === "All"
-    ? FILMS
-    : FILMS.filter(film => {
+    ? films
+    : films.filter(film => {
       if (activeFilter === "Documentaries") return true;
       if (activeFilter === "Series") return false;
       return true;
@@ -170,10 +134,10 @@ function FilmsLandingPage() {
             </div>
 
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 animate-in fade-in duration-500">
-              {FILMS.map((film) => (
+              {filteredFilms.map((film) => (
                 <Link key={film.id} to="/films/$filmId" params={{ filmId: film.id }} className="group flex flex-col">
                   <div className="relative aspect-[16/9] overflow-hidden rounded-[2rem] bg-white/5 border border-white/10 shadow-2xl transition-all duration-500 group-hover:-translate-y-2">
-                    <img src={film.image} alt={film.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <img src={film.thumbnail || film.image || "https://images.unsplash.com/photo-1485846234645-a62644ef7467?w=800"} alt={film.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <div className="h-16 w-16 rounded-full bg-cream/90 text-forest-deep flex items-center justify-center shadow-2xl">
@@ -187,14 +151,14 @@ function FilmsLandingPage() {
                         </div>
                         <div className="flex items-center gap-1 text-gold">
                           <Star className="h-3 w-3 fill-current" />
-                          <span className="text-[10px] font-bold">{film.rating}</span>
+                          <span className="text-[10px] font-bold">{film.rating || "0.0"}</span>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="mt-6 px-4">
                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold mb-2">{film.year} • {film.duration}</p>
-                    <p className="text-sm text-cream/60 leading-relaxed line-clamp-2">{film.desc}</p>
+                    <p className="text-sm text-cream/60 leading-relaxed line-clamp-2">{film.desc || "A cinematic journey exploring the wonders of God's creation."}</p>
                   </div>
                 </Link>
               ))}
