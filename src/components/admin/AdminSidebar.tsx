@@ -13,7 +13,8 @@ import {
   ChevronRight,
   LogOut,
   Baby,
-  Globe
+  Globe,
+  Ticket
 } from "lucide-react";
 import {
   Sidebar,
@@ -31,6 +32,7 @@ import { Button } from "../ui/button";
 const menuItems = [
   { title: "Dashboard", icon: LayoutDashboard, path: "/admin/" },
   { title: "Events", icon: Calendar, path: "/admin/events" },
+  { title: "Tickets", icon: Ticket, path: "/admin/tickets" },
   { title: "Week Of Prayer", icon: Video, path: "/admin/prayer" },
   { title: "Films", icon: Film, path: "/admin/films" },
   { title: "KidsBibleFlix", icon: Baby, path: "/admin/kids" },
@@ -39,7 +41,6 @@ const menuItems = [
   { title: "Resources", icon: FileText, path: "/admin/resources" },
   { title: "Podcast", icon: Mic, path: "/admin/podcast" },
   { title: "Shop", icon: ShoppingBag, path: "/admin/shop" },
-  { title: "Payments", icon: CreditCard, path: "/admin/payments" },
   { title: "Newsletter", icon: Mail, path: "/admin/newsletter" },
 ];
 

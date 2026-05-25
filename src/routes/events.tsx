@@ -95,40 +95,11 @@ function ShowtimeCard({ showtime, onBook }: { showtime: Showtime; onBook: () => 
   );
 }
 
-function CityPanel({ city, eventId }: { city: CityScreening; eventId: string }) {
+function CityPanel({ city, eventId, onBookRequest }: { city: CityScreening; eventId: string; onBookRequest: (city: string, showtimeId: string) => void }) {
   const [expanded, setExpanded] = useState(false);
 
-  const handleBook = async (showtimeId: string) => {
-    const token = localStorage.getItem("user_token");
-    if (!token) {
-      toast.error("Please login first to book a ticket.");
-      window.location.href = "/login";
-      return;
-    }
-
-    try {
-      const res = await fetch("http://localhost:5000/api/tickets", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          eventId,
-          city: city.city,
-          showtimeId
-        })
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast.success(`Ticket booked successfully! Ticket ID: ${data.data.ticketId}`);
-        window.location.href = "/profile";
-      } else {
-        toast.error(data.message || "Failed to book ticket");
-      }
-    } catch (err) {
-      toast.error("Network error");
-    }
+  const handleBook = (showtimeId: string) => {
+    onBookRequest(city.city, showtimeId);
   };
 
   return (
@@ -249,6 +220,11 @@ function EventsPage() {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [pendingBookingDetails, setPendingBookingDetails] = useState<{city: string, showtimeId: string} | null>(null);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [paymentForm, setPaymentForm] = useState({ name: "", cardNumber: "", expiry: "", cvc: "" });
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -270,13 +246,37 @@ function EventsPage() {
 
   const selectedEvent = events.find((e) => e.id === selectedEventId) || events[0];
 
-  const handleGlobalBook = async () => {
+  const handleBookRequest = (city: string, showtimeId: string) => {
     const token = localStorage.getItem("user_token");
     if (!token) {
       toast.error("Please login first to book a ticket.");
       window.location.href = "/login";
       return;
     }
+    setPendingBookingDetails({ city, showtimeId });
+    setIsPaymentModalOpen(true);
+  };
+
+  const handleGlobalBook = () => {
+    const token = localStorage.getItem("user_token");
+    if (!token) {
+      toast.error("Please login first to book a ticket.");
+      window.location.href = "/login";
+      return;
+    }
+    setPendingBookingDetails({ city: "Global", showtimeId: "General" });
+    setIsPaymentModalOpen(true);
+  };
+
+  const processPayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = localStorage.getItem("user_token");
+    if (!token || !pendingBookingDetails) return;
+
+    setIsProcessingPayment(true);
+    
+    // Simulate payment processing delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
 
     try {
       const res = await fetch("http://localhost:5000/api/tickets", {
@@ -287,19 +287,21 @@ function EventsPage() {
         },
         body: JSON.stringify({
           eventId: selectedEventId,
-          city: "Global",
-          showtimeId: "General"
+          city: pendingBookingDetails.city,
+          showtimeId: pendingBookingDetails.showtimeId
         })
       });
       const data = await res.json();
       if (data.success) {
-        toast.success(`Ticket booked successfully! Ticket ID: ${data.data.ticketId}`);
+        toast.success(`Payment successful! Ticket booked! Ticket ID: ${data.data.ticketId}`);
         window.location.href = "/profile";
       } else {
         toast.error(data.message || "Failed to book ticket");
+        setIsProcessingPayment(false);
       }
     } catch (err) {
       toast.error("Network error");
+      setIsProcessingPayment(false);
     }
   };
 
@@ -474,7 +476,7 @@ function EventsPage() {
               </div>
               <div className="space-y-4">
                 {selectedEvent.cities.map((city) => (
-                  <CityPanel key={city.cityId} city={city} eventId={selectedEvent.id} />
+                  <CityPanel key={city.cityId} city={city} eventId={selectedEvent.id} onBookRequest={handleBookRequest} />
                 ))}
               </div>
             </div>
@@ -568,6 +570,92 @@ function EventsPage() {
             <p>No upcoming events at this moment. Please check back later!</p>
           </div>
         )}
+
+      {/* Payment Modal */}
+      {isPaymentModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-[#0a1a0a] w-full max-w-md rounded-[2rem] border border-white/10 overflow-hidden shadow-2xl">
+            <div className="p-6 border-b border-white/10 flex justify-between items-center bg-forest-deep text-cream">
+              <h3 className="font-display text-2xl font-medium">Complete Purchase</h3>
+              <button onClick={() => setIsPaymentModalOpen(false)} className="opacity-50 hover:opacity-100 transition-opacity">
+                <XCircle className="w-6 h-6" />
+              </button>
+            </div>
+            <form onSubmit={processPayment} className="p-6 space-y-4">
+              <div className="bg-white/5 p-4 rounded-xl border border-white/10 mb-6">
+                 <div className="text-xs text-cream/50 uppercase tracking-widest mb-1">Order Summary</div>
+                 <div className="font-bold text-lg text-cream">{selectedEvent?.name}</div>
+                 <div className="text-sm text-cream/70">{pendingBookingDetails?.city} • {pendingBookingDetails?.showtimeId}</div>
+                 <div className="mt-4 pt-4 border-t border-white/10 flex justify-between items-center text-cream">
+                    <span>Total due</span>
+                    <span className="font-bold text-xl text-gold">{selectedEvent?.price || 'Free'}</span>
+                 </div>
+              </div>
+              
+              <div className="space-y-3">
+                 <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50">Name on Card</label>
+                    <input 
+                      required
+                      type="text" 
+                      value={paymentForm.name}
+                      onChange={e => setPaymentForm({...paymentForm, name: e.target.value})}
+                      className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream placeholder:text-cream/30 focus:outline-none focus:border-gold/50 transition-colors" 
+                      placeholder="John Doe"
+                    />
+                 </div>
+                 <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50">Card Number</label>
+                    <input 
+                      required
+                      type="text" 
+                      value={paymentForm.cardNumber}
+                      onChange={e => setPaymentForm({...paymentForm, cardNumber: e.target.value})}
+                      className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream font-mono tracking-widest placeholder:text-cream/30 focus:outline-none focus:border-gold/50 transition-colors" 
+                      placeholder="0000 0000 0000 0000"
+                    />
+                 </div>
+                 <div className="grid grid-cols-2 gap-4">
+                   <div className="space-y-1">
+                      <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50">Expiry</label>
+                      <input 
+                        required
+                        type="text" 
+                        value={paymentForm.expiry}
+                        onChange={e => setPaymentForm({...paymentForm, expiry: e.target.value})}
+                        className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream font-mono placeholder:text-cream/30 focus:outline-none focus:border-gold/50 transition-colors" 
+                        placeholder="MM/YY"
+                      />
+                   </div>
+                   <div className="space-y-1">
+                      <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50">CVC</label>
+                      <input 
+                        required
+                        type="text" 
+                        value={paymentForm.cvc}
+                        onChange={e => setPaymentForm({...paymentForm, cvc: e.target.value})}
+                        className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream font-mono placeholder:text-cream/30 focus:outline-none focus:border-gold/50 transition-colors" 
+                        placeholder="123"
+                      />
+                   </div>
+                 </div>
+              </div>
+              <button
+                type="submit"
+                disabled={isProcessingPayment}
+                className="w-full mt-6 py-4 rounded-xl text-sm font-black uppercase tracking-widest transition-all active:scale-95 bg-gold text-forest-deep hover:bg-gold/90 shadow-lg disabled:opacity-50 flex justify-center items-center gap-2"
+              >
+                {isProcessingPayment ? (
+                   <span className="animate-pulse">Processing...</span>
+                ) : (
+                   <>Pay {selectedEvent?.price || 'Now'} →</>
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
       </main>
       <SiteFooter />
     </div>

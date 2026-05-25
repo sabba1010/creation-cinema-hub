@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { User, Settings, Play, Heart, LogOut, Shield, Bell, CreditCard, ChevronRight } from "lucide-react";
+import { User, Settings, Play, Heart, LogOut, Shield, Bell, CreditCard, ChevronRight, XCircle, Printer, Ticket as TicketIcon, Barcode } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
@@ -13,6 +13,7 @@ function ProfilePage() {
   const [activeTab, setActiveTab] = useState("overview");
   const [userData, setUserData] = useState<any>(null);
   const [tickets, setTickets] = useState<any[]>([]);
+  const [selectedTicket, setSelectedTicket] = useState<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -196,8 +197,14 @@ function ProfilePage() {
                                 </div>
                                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary mt-2">ID: {ticket.ticketId}</p>
                              </div>
-                             <div className="text-center md:text-right shrink-0">
-                                <div className="text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-full bg-primary/10 text-primary">{ticket.status}</div>
+                             <div className="text-center md:text-right shrink-0 space-y-3">
+                                <div className="text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-full bg-primary/10 text-primary inline-block">{ticket.status}</div>
+                                <button 
+                                  onClick={() => setSelectedTicket(ticket)}
+                                  className="block w-full px-4 py-2 rounded-xl bg-forest-deep text-gold text-xs font-bold uppercase tracking-widest hover:bg-forest transition-colors shadow-md"
+                                >
+                                  View / Print
+                                </button>
                              </div>
                           </div>
                         ))}
@@ -254,6 +261,71 @@ function ProfilePage() {
             </div>
           </div>
         </div>
+      {/* Ticket Print Modal */}
+      {selectedTicket && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm print:bg-white print:p-0 print:block">
+          <div className="bg-card w-full max-w-2xl rounded-[2rem] border border-border overflow-hidden shadow-2xl print:shadow-none print:border-none print:rounded-none">
+            <div className="p-6 border-b border-border flex justify-between items-center bg-forest-deep text-cream print:hidden">
+              <h3 className="font-display text-2xl font-medium">Your Ticket</h3>
+              <div className="flex items-center gap-4">
+                <button onClick={() => window.print()} className="flex items-center gap-2 text-gold hover:text-white transition-colors text-sm font-bold uppercase tracking-widest">
+                  <Printer className="w-4 h-4" /> Print
+                </button>
+                <button onClick={() => setSelectedTicket(null)} className="opacity-50 hover:opacity-100 transition-opacity">
+                  <XCircle className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+
+            {/* Printable Ticket Area */}
+            <div className="p-8 print:p-0 print:text-black">
+               <div className="border-4 border-forest-deep rounded-[2rem] overflow-hidden flex flex-col md:flex-row print:border-black print:rounded-3xl">
+                  {/* Left Side (Image) */}
+                  <div className="md:w-1/3 bg-forest-deep p-6 text-center text-cream flex flex-col items-center justify-center print:bg-gray-100 print:text-black print:border-r print:border-black">
+                     <TicketIcon className="w-16 h-16 text-gold mb-4 print:text-black" />
+                     <h2 className="font-display text-2xl font-bold uppercase tracking-widest">Admit One</h2>
+                     <div className="text-[10px] uppercase tracking-[0.3em] mt-2 opacity-70">OMS Events</div>
+                  </div>
+                  
+                  {/* Right Side (Details) */}
+                  <div className="md:w-2/3 p-8 bg-white text-forest-deep relative">
+                     <div className="absolute top-4 right-4 flex flex-col items-end">
+                       <Barcode className="w-24 h-12 opacity-80" />
+                       <div className="text-[10px] font-mono mt-1 font-bold">{selectedTicket.ticketId}</div>
+                     </div>
+                     <div className="pr-20">
+                        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold print:text-gray-500 mb-1">Event Ticket</div>
+                        <h3 className="font-display text-3xl font-bold mb-4 leading-tight">{selectedTicket.event?.name}</h3>
+                        
+                        <div className="grid grid-cols-2 gap-4 mb-6">
+                           <div>
+                              <div className="text-[10px] font-bold uppercase tracking-widest opacity-50 mb-1">Location / City</div>
+                              <div className="font-bold">{selectedTicket.city}</div>
+                           </div>
+                           <div>
+                              <div className="text-[10px] font-bold uppercase tracking-widest opacity-50 mb-1">Showtime</div>
+                              <div className="font-bold">{selectedTicket.showtimeId}</div>
+                           </div>
+                           <div>
+                              <div className="text-[10px] font-bold uppercase tracking-widest opacity-50 mb-1">Attendee</div>
+                              <div className="font-bold">{userData?.name || "Guest"}</div>
+                           </div>
+                           <div>
+                              <div className="text-[10px] font-bold uppercase tracking-widest opacity-50 mb-1">Status</div>
+                              <div className="font-bold">{selectedTicket.status}</div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div className="text-center mt-6 text-xs text-muted-foreground print:text-black print:mt-12">
+                 Please present this digital or printed ticket at the venue.
+               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       </main>
       <SiteFooter />
     </div>
