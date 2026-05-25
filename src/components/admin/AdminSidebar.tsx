@@ -13,8 +13,7 @@ import {
   ChevronRight,
   LogOut,
   Baby,
-  Globe,
-  Ticket
+  Globe
 } from "lucide-react";
 import {
   Sidebar,
@@ -32,7 +31,6 @@ import { Button } from "../ui/button";
 const menuItems = [
   { title: "Dashboard", icon: LayoutDashboard, path: "/admin/" },
   { title: "Events", icon: Calendar, path: "/admin/events" },
-  { title: "Tickets", icon: Ticket, path: "/admin/tickets" },
   { title: "Week Of Prayer", icon: Video, path: "/admin/prayer" },
   { title: "Films", icon: Film, path: "/admin/films" },
   { title: "KidsBibleFlix", icon: Baby, path: "/admin/kids" },

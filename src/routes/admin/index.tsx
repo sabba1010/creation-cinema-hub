@@ -1,4 +1,5 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { 
   Users, 
@@ -46,6 +47,64 @@ const revenueData = [
 ];
 
 function DashboardOverview() {
+  const [stats, setStats] = useState({
+    users: 0,
+    films: 24, // Assuming we don't have film data yet
+    events: 0,
+    revenue: 0
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const token = localStorage.getItem("user_token");
+      if (!token) return;
+
+      try {
+        const headers = { "Authorization": `Bearer ${token}` };
+        
+        // Fetch users
+        const usersRes = await fetch("http://localhost:5000/api/users", { headers });
+        const usersData = await usersRes.json();
+        const usersCount = usersData.success ? usersData.data.length : 0;
+
+        // Fetch events
+        const eventsRes = await fetch("http://localhost:5000/api/events");
+        const eventsData = await eventsRes.json();
+        const eventsCount = eventsData.success ? eventsData.data.length : 0;
+
+        // Fetch tickets for revenue
+        const ticketsRes = await fetch("http://localhost:5000/api/tickets", { headers });
+        const ticketsData = await ticketsRes.json();
+        let totalRevenue = 0;
+        if (ticketsData.success) {
+          ticketsData.data.forEach((t: any) => {
+            if (t.status === 'Paid') {
+              const priceStr = String(t.pricePaid || 0).replace(/[^0-9.]/g, '');
+              totalRevenue += parseFloat(priceStr) || 0;
+            }
+          });
+        }
+
+        // Fetch films
+        const filmsRes = await fetch("http://localhost:5000/api/films");
+        const filmsData = await filmsRes.json();
+        const filmsCount = filmsData.success ? filmsData.data.length : 0;
+
+        setStats({
+          users: usersCount,
+          films: filmsCount,
+          events: eventsCount,
+          revenue: totalRevenue
+        });
+
+      } catch (err) {
+        console.error("Error fetching stats:", err);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   return (
     <div className="space-y-8 animate-fade-up">
       <div>
@@ -56,29 +115,29 @@ function DashboardOverview() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard 
           title="Total Users" 
-          value="2,854" 
-          change="+12.5%" 
+          value={stats.users.toString()} 
+          change="Real-time" 
           trend="up" 
           icon={Users} 
         />
         <StatsCard 
-          title="Film Views" 
-          value="45.2K" 
-          change="+8.2%" 
+          title="Total Films" 
+          value={stats.films.toString()} 
+          change="Real-time" 
           trend="up" 
           icon={Film} 
         />
         <StatsCard 
           title="Active Events" 
-          value="12" 
-          change="-2" 
-          trend="down" 
+          value={stats.events.toString()} 
+          change="Real-time" 
+          trend="up" 
           icon={Calendar} 
         />
         <StatsCard 
-          title="Revenue" 
-          value="$12,450" 
-          change="+18.7%" 
+          title="Revenue (Tickets)" 
+          value={`$${stats.revenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`} 
+          change="Real-time" 
           trend="up" 
           icon={CreditCard} 
         />
@@ -190,14 +249,8 @@ function StatsCard({ title, value, change, trend, icon: Icon }: any) {
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold font-display">{value}</div>
-        <p className="text-xs flex items-center mt-1">
-          {trend === "up" ? (
-            <ArrowUpRight className="w-3 h-3 text-emerald-500 mr-1" />
-          ) : (
-            <ArrowDownRight className="w-3 h-3 text-rose-500 mr-1" />
-          )}
-          <span className={trend === "up" ? "text-emerald-500" : "text-rose-500"}>{change}</span>
-          <span className="text-muted-foreground ml-1">from last month</span>
+        <p className="text-xs flex items-center mt-1 text-muted-foreground">
+          <span className="text-emerald-500 mr-1 font-bold">{change}</span> Live Data
         </p>
       </CardContent>
     </Card>
