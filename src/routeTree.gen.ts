@@ -16,6 +16,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrayerRouteImport } from './routes/prayer'
 import { Route as PodcastRouteImport } from './routes/podcast'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
+import { Route as MissionRouteImport } from './routes/mission'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as FilmsRouteImport } from './routes/films'
 import { Route as EventsRouteImport } from './routes/events'
@@ -96,6 +97,11 @@ const PodcastRoute = PodcastRouteImport.update({
 const NewsletterRoute = NewsletterRouteImport.update({
   id: '/newsletter',
   path: '/newsletter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MissionRoute = MissionRouteImport.update({
+  id: '/mission',
+  path: '/mission',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -338,6 +344,7 @@ export interface FileRoutesByFullPath {
   '/events': typeof EventsRoute
   '/films': typeof FilmsRouteWithChildren
   '/login': typeof LoginRoute
+  '/mission': typeof MissionRoute
   '/newsletter': typeof NewsletterRoute
   '/podcast': typeof PodcastRouteWithChildren
   '/prayer': typeof PrayerRouteWithChildren
@@ -389,6 +396,7 @@ export interface FileRoutesByTo {
   '/cart': typeof CartRoute
   '/events': typeof EventsRoute
   '/login': typeof LoginRoute
+  '/mission': typeof MissionRoute
   '/newsletter': typeof NewsletterRoute
   '/profile': typeof ProfileRoute
   '/team': typeof TeamRoute
@@ -441,6 +449,7 @@ export interface FileRoutesById {
   '/events': typeof EventsRoute
   '/films': typeof FilmsRouteWithChildren
   '/login': typeof LoginRoute
+  '/mission': typeof MissionRoute
   '/newsletter': typeof NewsletterRoute
   '/podcast': typeof PodcastRouteWithChildren
   '/prayer': typeof PrayerRouteWithChildren
@@ -498,6 +507,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/films'
     | '/login'
+    | '/mission'
     | '/newsletter'
     | '/podcast'
     | '/prayer'
@@ -549,6 +559,7 @@ export interface FileRouteTypes {
     | '/cart'
     | '/events'
     | '/login'
+    | '/mission'
     | '/newsletter'
     | '/profile'
     | '/team'
@@ -600,6 +611,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/films'
     | '/login'
+    | '/mission'
     | '/newsletter'
     | '/podcast'
     | '/prayer'
@@ -656,6 +668,7 @@ export interface RootRouteChildren {
   EventsRoute: typeof EventsRoute
   FilmsRoute: typeof FilmsRouteWithChildren
   LoginRoute: typeof LoginRoute
+  MissionRoute: typeof MissionRoute
   NewsletterRoute: typeof NewsletterRoute
   PodcastRoute: typeof PodcastRouteWithChildren
   PrayerRoute: typeof PrayerRouteWithChildren
@@ -722,6 +735,13 @@ declare module '@tanstack/react-router' {
       path: '/newsletter'
       fullPath: '/newsletter'
       preLoaderRoute: typeof NewsletterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mission': {
+      id: '/mission'
+      path: '/mission'
+      fullPath: '/mission'
+      preLoaderRoute: typeof MissionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -1186,6 +1206,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsRoute: EventsRoute,
   FilmsRoute: FilmsRouteWithChildren,
   LoginRoute: LoginRoute,
+  MissionRoute: MissionRoute,
   NewsletterRoute: NewsletterRoute,
   PodcastRoute: PodcastRouteWithChildren,
   PrayerRoute: PrayerRouteWithChildren,
