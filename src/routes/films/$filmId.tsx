@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Play, FileText, Download, Share2, Info, Star, Clock, Calendar, ChevronRight, User, MessageCircle, Film, X } from "lucide-react";
+import { Play, FileText, Download, Share2, Info, Star, Clock, Calendar, ChevronRight, User, MessageCircle, Film, X, CreditCard, CheckCircle2, Lock } from "lucide-react";
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/films/$filmId")({
   component: IndividualFilmPage,
@@ -15,13 +15,42 @@ function IndividualFilmPage() {
   const [showTrailer, setShowTrailer] = useState(false);
   const [showMovie, setShowMovie] = useState(false);
   const [purchaseStatus, setPurchaseStatus] = useState<null | "buy" | "rent">(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<"idle" | "processing" | "success">("idle");
+  const [paymentType, setPaymentType] = useState<"buy" | "rent" | null>(null);
+  const [hasAccess, setHasAccess] = useState(false);
+  const [accessInfo, setAccessInfo] = useState<{type: "buy" | "rent", expiresAt: number | null} | null>(null);
+  const [timeLeft, setTimeLeft] = useState<string>("");
+  
   const [ratingInput, setRatingInput] = useState(5);
   const [reviews, setReviews] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
 
   const handlePurchase = (type: "buy" | "rent") => {
-    setPurchaseStatus(type);
-    setTimeout(() => setPurchaseStatus(null), 3000);
+    setPaymentType(type);
+    setPaymentStatus("idle");
+    setShowPaymentModal(true);
+  };
+
+  const processPayment = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPaymentStatus("processing");
+    // Simulate API call to payment gateway
+    setTimeout(() => {
+      const accessData = {
+        type: paymentType as "buy" | "rent",
+        expiresAt: paymentType === "rent" ? Date.now() + 48 * 60 * 60 * 1000 : null
+      };
+      localStorage.setItem(`cinema_access_${filmId}`, JSON.stringify(accessData));
+      
+      setPaymentStatus("success");
+      setAccessInfo(accessData);
+      setHasAccess(true);
+      setPurchaseStatus(paymentType);
+      setTimeout(() => {
+        setShowPaymentModal(false);
+      }, 2000);
+    }, 2500);
   };
 
   useEffect(() => {
@@ -36,7 +65,52 @@ function IndividualFilmPage() {
         }
       })
       .catch(err => console.error(err));
+
+    // Check LocalStorage for existing access
+    const checkAccess = () => {
+      const stored = localStorage.getItem(`cinema_access_${filmId}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.type === "buy") {
+          setAccessInfo(parsed);
+          setHasAccess(true);
+        } else if (parsed.type === "rent") {
+          if (parsed.expiresAt > Date.now()) {
+            setAccessInfo(parsed);
+            setHasAccess(true);
+          } else {
+            // Expired
+            localStorage.removeItem(`cinema_access_${filmId}`);
+            setAccessInfo(null);
+            setHasAccess(false);
+          }
+        }
+      }
+    };
+    checkAccess();
   }, [filmId]);
+
+  // Timer for Rental Expiration
+  useEffect(() => {
+    if (accessInfo?.type === "rent" && accessInfo.expiresAt) {
+      const interval = setInterval(() => {
+        const now = Date.now();
+        const diff = accessInfo.expiresAt! - now;
+        if (diff <= 0) {
+          clearInterval(interval);
+          setHasAccess(false);
+          setAccessInfo(null);
+          localStorage.removeItem(`cinema_access_${filmId}`);
+        } else {
+          const h = Math.floor(diff / (1000 * 60 * 60));
+          const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+          const s = Math.floor((diff % (1000 * 60)) / 1000);
+          setTimeLeft(`${h}h ${m}m ${s}s`);
+        }
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [accessInfo, filmId]);
 
   const handlePostComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,10 +198,17 @@ function IndividualFilmPage() {
 
             {/* Video Action Buttons */}
             <div className="grid sm:grid-cols-2 gap-6">
-              <button onClick={() => setShowMovie(true)} className="flex flex-col p-8 rounded-3xl bg-gold text-forest-deep shadow-lg hover:scale-[1.02] transition-all group text-left">
-                <Play className="h-8 w-8 mb-6 fill-current" />
-                <span className="text-xl font-display font-medium">Watch Full Film</span>
-                <span className="text-xs uppercase tracking-widest opacity-70 mt-2">Streaming Access Included</span>
+              <button 
+                onClick={() => hasAccess ? setShowMovie(true) : handlePurchase("buy")} 
+                className={`flex flex-col p-8 rounded-3xl shadow-lg hover:scale-[1.02] transition-all group text-left ${hasAccess ? 'bg-gold text-forest-deep' : 'bg-white/5 border border-white/10'}`}
+              >
+                {hasAccess ? <Play className="h-8 w-8 mb-6 fill-current" /> : <Lock className="h-8 w-8 mb-6 text-cream/40" />}
+                <span className={`text-xl font-display font-medium ${hasAccess ? '' : 'text-cream/80'}`}>Watch Full Film</span>
+                <span className={`text-xs uppercase tracking-widest mt-2 ${hasAccess ? 'opacity-70 font-bold text-forest-deep' : 'text-cream/40'}`}>
+                  {hasAccess ? (
+                    accessInfo?.type === "buy" ? 'Lifetime Access' : `Rent Expires in: ${timeLeft}`
+                  ) : 'Requires Purchase or Rent'}
+                </span>
               </button>
               <button onClick={() => setShowTrailer(true)} className="flex flex-col p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-gold/30 hover:shadow-xl transition-all text-left">
                 <Film className="h-8 w-8 mb-6 text-gold" />
@@ -149,28 +230,41 @@ function IndividualFilmPage() {
                     <p className="text-xs font-bold uppercase tracking-widest text-cream/50 mb-1">Digital HD</p>
                     <p className="text-xl font-bold text-cream">{film.price || "$14.99"}</p>
                   </div>
-                  <button 
-                    onClick={() => handlePurchase("buy")}
-                    className={`px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-md transition-all ${
-                      purchaseStatus === "buy" ? "bg-emerald-500 text-white" : "bg-gold text-forest-deep"
-                    }`}
-                  >
-                    {purchaseStatus === "buy" ? "Added!" : "Buy Now"}
-                  </button>
+                  {accessInfo?.type === "buy" ? (
+                    <span className="px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Purchased</span>
+                  ) : (
+                    <button 
+                      onClick={() => handlePurchase("buy")}
+                      className={`px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-md transition-all ${
+                        purchaseStatus === "buy" ? "bg-emerald-500 text-white" : "bg-gold text-forest-deep"
+                      }`}
+                    >
+                      {purchaseStatus === "buy" ? "Added!" : "Buy Now"}
+                    </button>
+                  )}
                 </div>
                 <div className="flex items-center justify-between p-5 rounded-2xl bg-white/5 border border-white/10">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-widest text-cream/50 mb-1">Rent 48h</p>
                     <p className="text-xl font-bold text-cream">{film.rentPrice || "$4.99"}</p>
                   </div>
-                  <button 
-                    onClick={() => handlePurchase("rent")}
-                    className={`px-6 py-3 rounded-xl border transition-all text-[10px] font-bold uppercase tracking-widest ${
-                      purchaseStatus === "rent" ? "bg-emerald-500 text-white border-emerald-500" : "border-white/10 text-cream hover:bg-white/5"
-                    }`}
-                  >
-                    {purchaseStatus === "rent" ? "Rented!" : "Rent"}
-                  </button>
+                  {accessInfo?.type === "rent" ? (
+                    <div className="text-right">
+                       <span className="block px-4 py-1.5 mb-1 rounded-lg text-[10px] font-bold uppercase tracking-widest bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Active</span>
+                       <span className="text-[9px] text-cream/40 uppercase tracking-widest">{timeLeft}</span>
+                    </div>
+                  ) : (
+                    <button 
+                      onClick={() => handlePurchase("rent")}
+                      disabled={accessInfo?.type === "buy"}
+                      className={`px-6 py-3 rounded-xl border transition-all text-[10px] font-bold uppercase tracking-widest ${
+                        accessInfo?.type === "buy" ? "opacity-50 cursor-not-allowed border-white/5 text-white/20" :
+                        purchaseStatus === "rent" ? "bg-emerald-500 text-white border-emerald-500" : "border-white/10 text-cream hover:bg-white/5"
+                      }`}
+                    >
+                      {purchaseStatus === "rent" ? "Rented!" : "Rent"}
+                    </button>
+                  )}
                 </div>
               </div>
               <p className="mt-8 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-cream/40">Supported on all devices</p>
@@ -303,6 +397,92 @@ function IndividualFilmPage() {
               ></iframe>
             ) : (
               <div className="flex h-full items-center justify-center text-white/50">Movie not available</div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Payment Checkout Modal */}
+      <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
+        <DialogContent className="max-w-md bg-[#0a1a0a] border-white/10 text-cream p-0 overflow-hidden shadow-2xl rounded-2xl">
+          <DialogTitle className="sr-only">Complete Checkout</DialogTitle>
+          <DialogDescription className="sr-only">Enter payment details to buy or rent this film.</DialogDescription>
+          
+          <div className="p-8 border-b border-white/5 bg-white/5">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-16 h-24 shrink-0 rounded bg-black overflow-hidden shadow-lg border border-white/10">
+                <img src={film.thumbnail || film.image} alt={film.title} className="w-full h-full object-cover" />
+              </div>
+              <div>
+                <h3 className="font-display text-2xl font-medium">{film.title}</h3>
+                <p className="text-xs uppercase tracking-widest text-gold mt-1">
+                   {paymentType === "buy" ? "Digital HD Purchase" : "48-Hour Rental"}
+                </p>
+                <p className="text-2xl font-bold mt-2">
+                   {paymentType === "buy" ? (film.price || "$14.99") : (film.rentPrice || "$4.99")}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8">
+            {paymentStatus === "idle" && (
+              <form onSubmit={processPayment} className="space-y-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-xs uppercase tracking-widest text-cream/50 font-bold">Card Number</label>
+                    <div className="relative">
+                      <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-cream/30" />
+                      <input 
+                        type="text" 
+                        required
+                        placeholder="•••• •••• •••• ••••" 
+                        className="w-full bg-white/5 border border-white/10 rounded-xl p-3 pl-11 text-cream placeholder:text-cream/20 focus:outline-none focus:border-gold/50 transition-colors"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-xs uppercase tracking-widest text-cream/50 font-bold">Expiry</label>
+                      <input type="text" required placeholder="MM/YY" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-cream placeholder:text-cream/20 focus:outline-none focus:border-gold/50 transition-colors" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs uppercase tracking-widest text-cream/50 font-bold">CVC</label>
+                      <input type="text" required placeholder="123" className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-cream placeholder:text-cream/20 focus:outline-none focus:border-gold/50 transition-colors" />
+                    </div>
+                  </div>
+                </div>
+                <button type="submit" className="w-full bg-gold text-forest-deep font-bold uppercase tracking-widest text-sm p-4 rounded-xl shadow-lg hover:bg-gold/90 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                  Pay Securely
+                </button>
+              </form>
+            )}
+
+            {paymentStatus === "processing" && (
+              <div className="py-12 flex flex-col items-center justify-center text-center space-y-6 animate-in fade-in zoom-in duration-500">
+                <div className="relative w-16 h-16">
+                  <div className="absolute inset-0 rounded-full border-4 border-gold/20"></div>
+                  <div className="absolute inset-0 rounded-full border-4 border-gold border-t-transparent animate-spin"></div>
+                </div>
+                <div>
+                  <h3 className="font-display text-xl font-medium text-cream">Processing Payment</h3>
+                  <p className="text-sm text-cream/50 mt-2">Connecting to secure gateway...</p>
+                </div>
+              </div>
+            )}
+
+            {paymentStatus === "success" && (
+              <div className="py-12 flex flex-col items-center justify-center text-center space-y-6 animate-in fade-in zoom-in duration-500">
+                <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                  <CheckCircle2 className="w-8 h-8" />
+                </div>
+                <div>
+                  <h3 className="font-display text-2xl font-medium text-cream">Payment Successful!</h3>
+                  <p className="text-sm text-cream/70 mt-2 max-w-[250px] mx-auto">
+                    You now have access to watch <span className="text-gold font-bold">{film.title}</span>.
+                  </p>
+                </div>
+              </div>
             )}
           </div>
         </DialogContent>
