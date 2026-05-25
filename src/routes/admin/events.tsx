@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Plus,
   Search,
@@ -52,7 +52,7 @@ import {
 } from "../../components/ui/dialog";
 import { Label } from "../../components/ui/label";
 import { toast } from "sonner";
-import { INITIAL_EVENTS, type Event, type CityScreening, type Showtime } from "../../data/events-data";
+import { type Event, type CityScreening, type Showtime } from "../../data/events-data";
 
 export const Route = createFileRoute("/admin/events")({
   component: EventsManagement,
@@ -71,7 +71,7 @@ const INITIAL_PROMOS = [
 ];
 
 function EventsManagement() {
-  const [events, setEvents] = useState<Event[]>(INITIAL_EVENTS);
+  const [events, setEvents] = useState<any[]>([]);
   const [tickets, setTickets] = useState(INITIAL_TICKETS);
   const [promos, setPromos] = useState(INITIAL_PROMOS);
   const [activeTab, setActiveTab] = useState("all-events");
@@ -128,37 +128,63 @@ function EventsManagement() {
     }
   };
 
-  const handleSaveEvent = (e: React.FormEvent) => {
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/events");
+        const data = await res.json();
+        if (data.success) {
+          setEvents(data.data.map((e: any) => ({ ...e, id: e._id })));
+        }
+      } catch (err) {
+        console.error("Error fetching events:", err);
+      }
+    };
+    fetchEvents();
+  }, []);
+
+  const handleSaveEvent = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingEvent) {
-      setEvents(events.map(ev =>
-        ev.id === editingEvent.id
-          ? {
-              ...ev,
-              ...eventForm,
-              price: eventForm.price.startsWith("$") ? eventForm.price : `$${eventForm.price}`,
-              capacity: parseInt(eventForm.capacity) || 0
-            }
-          : ev
-      ));
-      toast.success("Event updated successfully!");
-    } else {
-      const newEvent: Event = {
-        id: `EVT-${Math.floor(100 + Math.random() * 900)}`,
-        ...eventForm,
-        status: "Active",
-        ticketsSold: 0,
-        capacity: parseInt(eventForm.capacity) || 0,
-        price: eventForm.price.startsWith("$") ? eventForm.price : `$${eventForm.price}`,
-        cities: [],
-        support: [],
-        faq: []
-      };
-      setEvents([newEvent, ...events]);
-      toast.success("New event created!");
+    const token = localStorage.getItem("user_token");
+    
+    try {
+      if (editingEvent) {
+        const res = await fetch(`http://localhost:5000/api/events/${editingEvent.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+          body: JSON.stringify(eventForm)
+        });
+        const data = await res.json();
+        if (data.success) {
+          setEvents(events.map(ev => ev.id === editingEvent.id ? { ...data.data, id: data.data._id } : ev));
+          toast.success("Event updated successfully!");
+        } else {
+          toast.error(data.message || "Failed to update event");
+        }
+      } else {
+        const payload = {
+          ...eventForm,
+          price: eventForm.price.startsWith("$") ? eventForm.price : `$${eventForm.price}`,
+          capacity: parseInt(eventForm.capacity) || 0
+        };
+        const res = await fetch(`http://localhost:5000/api/events`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          setEvents([{ ...data.data, id: data.data._id }, ...events]);
+          toast.success("New event created!");
+        } else {
+          toast.error(data.message || "Failed to create event");
+        }
+      }
+      setIsEventDialogOpen(false);
+      setEditingEvent(null);
+    } catch (err) {
+      toast.error("Network error");
     }
-    setIsEventDialogOpen(false);
-    setEditingEvent(null);
   };
 
   const handleEditEvent = (event: Event) => {
@@ -243,7 +269,7 @@ function EventsManagement() {
               <Card key={event.id} className="group border-border/50 bg-card/50 backdrop-blur-sm shadow-card hover:shadow-elevated transition-all overflow-hidden">
                 <div className="aspect-video relative overflow-hidden">
                   <img 
-                    src={event.image} 
+                    src={event.image?.startsWith('http') ? event.image : event.image?.startsWith('/uploads') ? `http://localhost:5000${event.image}` : event.image} 
                     alt={event.name} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                   />
@@ -265,7 +291,26 @@ function EventsManagement() {
                           <Settings className="w-4 h-4" /> Manage Showtimes
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="gap-2 text-destructive cursor-pointer" onClick={() => setEvents(events.filter(e => e.id !== event.id))}>
+                        <DropdownMenuItem className="gap-2 text-destructive cursor-pointer" onClick={async () => {
+                          if (confirm("Are you sure you want to delete this event?")) {
+                            try {
+                              const token = localStorage.getItem("user_token");
+                              const res = await fetch(`http://localhost:5000/api/events/${event.id}`, {
+                                method: "DELETE",
+                                headers: { "Authorization": `Bearer ${token}` }
+                              });
+                              const data = await res.json();
+                              if (data.success) {
+                                setEvents(events.filter(e => e.id !== event.id));
+                                toast.success("Event deleted");
+                              } else {
+                                toast.error(data.message || "Failed to delete");
+                              }
+                            } catch (err) {
+                              toast.error("Network error");
+                            }
+                          }
+                        }}>
                           <Trash2 className="w-4 h-4" /> Delete Event
                         </DropdownMenuItem>
                       </DropdownMenuContent>

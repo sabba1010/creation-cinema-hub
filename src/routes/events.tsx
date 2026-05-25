@@ -212,10 +212,34 @@ function CityPanel({ city, eventId }: { city: CityScreening; eventId: string }) 
   );
 }
 
+import { useEffect } from "react";
+
 function EventsPage() {
-  const [selectedEventId, setSelectedEventId] = useState(INITIAL_EVENTS[0].id);
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const selectedEvent = INITIAL_EVENTS.find((e) => e.id === selectedEventId) || INITIAL_EVENTS[0];
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/events");
+        const data = await res.json();
+        if (data.success && data.data.length > 0) {
+          const mapped = data.data.map((e: any) => ({ ...e, id: e._id }));
+          setEvents(mapped);
+          setSelectedEventId(mapped[0].id);
+        }
+      } catch (err) {
+        console.error("Error fetching events:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEvents();
+  }, []);
+
+  const selectedEvent = events.find((e) => e.id === selectedEventId) || events[0];
 
   const supportIcons: Record<string, typeof Mail> = {
     email: Mail,
@@ -261,9 +285,9 @@ function EventsPage() {
             {/* Stats */}
             <div className="flex flex-wrap justify-center gap-8 pt-4 text-sm text-cream/50">
               {[
-                { icon: Globe, v: `${INITIAL_EVENTS.reduce((acc, e) => acc + (e.cities?.length ?? 0), 0)}`, l: "Locations" },
-                { icon: Calendar, v: `${INITIAL_EVENTS.length}`, l: "Events" },
-                { icon: Users, v: `${INITIAL_EVENTS.reduce((acc, e) => acc + e.ticketsSold, 0).toLocaleString()}+`, l: "Registered" },
+                { icon: Globe, v: `${events.reduce((acc, e) => acc + (e.cities?.length ?? 0), 0)}`, l: "Locations" },
+                { icon: Calendar, v: `${events.length}`, l: "Events" },
+                { icon: Users, v: `${events.reduce((acc, e) => acc + (e.ticketsSold || 0), 0).toLocaleString()}+`, l: "Registered" },
                 { icon: Ticket, v: "Free – $45", l: "Ticket Range" },
               ].map(({ icon: Icon, v, l }) => (
                 <div key={l} className="flex items-center gap-2">
@@ -280,7 +304,7 @@ function EventsPage() {
         <section className="sticky top-16 z-20 border-b border-white/10 bg-[#050704]/95 backdrop-blur-xl">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex gap-0 overflow-x-auto scrollbar-hide">
-              {INITIAL_EVENTS.map((ev) => (
+              {events.map((ev) => (
                 <button
                   key={ev.id}
                   onClick={() => setSelectedEventId(ev.id)}
@@ -298,11 +322,22 @@ function EventsPage() {
         </section>
 
         {/* Selected Event Detail */}
-        <div className="max-w-7xl mx-auto px-6 py-16 space-y-16">
+        {selectedEvent ? (
+          <div className="max-w-7xl mx-auto px-6 py-16 space-y-16">
 
           {/* Event Overview */}
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2 space-y-6">
+              {/* Event Image */}
+              {selectedEvent.image && selectedEvent.image !== 'no-photo.jpg' && (
+                <div className="w-full h-[300px] sm:h-[400px] rounded-[2rem] overflow-hidden border border-white/10 mb-8 shadow-2xl">
+                   <img 
+                      src={selectedEvent.image?.startsWith('http') ? selectedEvent.image : `http://localhost:5000${selectedEvent.image}`} 
+                      alt={selectedEvent.name} 
+                      className="w-full h-full object-cover"
+                   />
+                </div>
+              )}
               <div>
                 <div className="flex flex-wrap gap-2 mb-4">
                   {selectedEvent.tags?.map((tag) => (
@@ -456,7 +491,13 @@ function EventsPage() {
               <Mail className="h-4 w-4" /> Contact Our Partners Team
             </a>
           </div>
-        </div>
+          </div>
+        ) : (
+          <div className="py-32 text-center text-cream/50 flex flex-col items-center justify-center space-y-4">
+            <Calendar className="w-12 h-12 text-cream/20" />
+            <p>No upcoming events at this moment. Please check back later!</p>
+          </div>
+        )}
       </main>
       <SiteFooter />
     </div>
