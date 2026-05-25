@@ -1,4 +1,4 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   Plus,
@@ -98,6 +98,35 @@ function EventsManagement() {
   });
 
   const [promoForm, setPromoForm] = useState({ code: "", discount: "", expiry: "2026-12-31" });
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await fetch("http://localhost:5000/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEventForm({ ...eventForm, image: `http://localhost:5000${data.url}` });
+        toast.success("Image uploaded successfully!");
+      } else {
+        toast.error(data.message || "Upload failed");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      toast.error("Network error during upload");
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleSaveEvent = (e: React.FormEvent) => {
     e.preventDefault();
@@ -396,13 +425,20 @@ function EventsManagement() {
                 />
               </div>
               <div className="col-span-2 space-y-2">
-                <Label>Featured Image URL</Label>
-                <Input 
-                  value={eventForm.image} 
-                  onChange={e => setEventForm({...eventForm, image: e.target.value})}
-                  placeholder="https://images.unsplash.com/..." 
-                  className="h-11 rounded-xl" 
-                />
+                <Label>Featured Image Upload</Label>
+                <div className="flex gap-4 items-center">
+                  <Input 
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="h-11 rounded-xl flex-1 pt-2.5" 
+                    disabled={isUploading}
+                  />
+                  {eventForm.image && (
+                    <img src={eventForm.image.startsWith('http') || eventForm.image.startsWith('/') ? eventForm.image : `http://localhost:5000${eventForm.image}`} alt="Preview" className="h-11 w-11 object-cover rounded-md border border-border" />
+                  )}
+                </div>
+                {isUploading && <p className="text-xs text-muted-foreground">Uploading image...</p>}
               </div>
               <div className="col-span-2 space-y-2">
                 <Label>Full Description</Label>
