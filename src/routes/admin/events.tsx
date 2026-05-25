@@ -58,12 +58,7 @@ export const Route = createFileRoute("/admin/events")({
   component: EventsManagement,
 });
 
-const INITIAL_TICKETS = [
-  { id: "TKT-1001", eventId: "EVT-004", user: "Alice Walker", status: "Paid", checkedIn: false, city: "London" },
-  { id: "TKT-1002", eventId: "EVT-004", user: "Bob Smith", status: "Paid", checkedIn: true, city: "Accra" },
-  { id: "TKT-1003", eventId: "EVT-001", user: "Charlie Brown", status: "Refunded", checkedIn: false, city: "Toronto" },
-  { id: "TKT-1004", eventId: "EVT-003", user: "Diana Prince", status: "Paid", checkedIn: true, city: "Online" },
-];
+const INITIAL_TICKETS: any[] = [];
 
 const INITIAL_PROMOS = [
   { id: 1, code: "EARLYBIRD", discount: "25%", expiry: "2026-05-20", status: "Active" },
@@ -140,7 +135,34 @@ function EventsManagement() {
         console.error("Error fetching events:", err);
       }
     };
+    const fetchTickets = async () => {
+      const token = localStorage.getItem("user_token");
+      if (!token) return;
+      try {
+        const res = await fetch("http://localhost:5000/api/tickets", {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        const data = await res.json();
+        if (data.success) {
+          setTickets(data.data.map((t: any) => ({
+            id: t.ticketId,
+            eventId: t.event?._id,
+            eventName: t.event?.name,
+            user: t.user?.name,
+            status: t.status,
+            checkedIn: t.checkedIn,
+            city: t.city,
+            _id: t._id
+          })));
+        }
+      } catch (err) {
+        console.error("Error fetching tickets:", err);
+      }
+    };
     fetchEvents();
+    fetchTickets();
   }, []);
 
   const handleSaveEvent = async (e: React.FormEvent) => {
@@ -334,23 +356,20 @@ function EventsManagement() {
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-border/30 flex items-center justify-between">
+                  <div className="pt-4 border-t border-border/30 grid grid-cols-3 gap-2">
                     <div>
                       <div className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-0.5">Price</div>
                       <div className="font-display font-bold text-lg text-forest">{event.price}</div>
                     </div>
+                    <div className="text-center">
+                      <div className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-0.5">Sold</div>
+                      <div className="font-bold text-lg text-forest">{event.ticketsSold || 0}</div>
+                    </div>
                     <div className="text-right">
-                      <div className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-0.5">Sales</div>
-                      <div className="font-bold">{event.ticketsSold} / {event.capacity}</div>
+                      <div className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-0.5">Available</div>
+                      <div className="font-bold text-forest text-lg">{Math.max(0, event.capacity - (event.ticketsSold || 0))}</div>
                     </div>
                   </div>
-
-                  <Button 
-                    className="w-full bg-forest/10 hover:bg-forest text-forest hover:text-white border border-forest/20 rounded-xl font-bold transition-all"
-                    onClick={() => setSelectedEvent(event)}
-                  >
-                    Manage Event Details
-                  </Button>
                 </CardContent>
               </Card>
             ))}
@@ -389,7 +408,7 @@ function EventsManagement() {
                         <div className="text-[10px] font-mono text-muted-foreground uppercase">{t.id}</div>
                       </TableCell>
                       <TableCell className="text-sm">
-                        {events.find(e => e.id === t.eventId)?.name || t.eventId}
+                        {t.eventName || t.eventId}
                       </TableCell>
                       <TableCell className="text-sm">{t.city}</TableCell>
                       <TableCell>
@@ -405,9 +424,23 @@ function EventsManagement() {
                           variant={t.checkedIn ? "outline" : "default"} 
                           size="sm" 
                           className={t.checkedIn ? "opacity-50" : "bg-forest hover:bg-forest/90"}
-                          onClick={() => {
-                            setTickets(tickets.map(tk => tk.id === t.id ? {...tk, checkedIn: true} : tk));
-                            toast.success(`Attendee ${t.user} checked in!`);
+                          onClick={async () => {
+                            try {
+                              const token = localStorage.getItem("user_token");
+                              const res = await fetch(`http://localhost:5000/api/tickets/${t._id}/checkin`, {
+                                method: 'PUT',
+                                headers: { 'Authorization': `Bearer ${token}` }
+                              });
+                              const data = await res.json();
+                              if (data.success) {
+                                setTickets(tickets.map(tk => tk.id === t.id ? {...tk, checkedIn: true} : tk));
+                                toast.success(`Attendee ${t.user} checked in!`);
+                              } else {
+                                toast.error(data.message || "Failed to check in");
+                              }
+                            } catch (err) {
+                              toast.error("Network error");
+                            }
                           }}
                           disabled={t.checkedIn}
                         >
@@ -466,6 +499,16 @@ function EventsManagement() {
                   value={eventForm.price} 
                   onChange={e => setEventForm({...eventForm, price: e.target.value})}
                   placeholder="25.00" 
+                  className="h-11 rounded-xl" required 
+                />
+              </div>
+              <div className="col-span-2 space-y-2">
+                <Label>Total Seats (Capacity)</Label>
+                <Input 
+                  type="number"
+                  value={eventForm.capacity} 
+                  onChange={e => setEventForm({...eventForm, capacity: e.target.value})}
+                  placeholder="e.g. 500" 
                   className="h-11 rounded-xl" required 
                 />
               </div>
