@@ -83,11 +83,10 @@ function ShowtimeCard({ showtime, onBook }: { showtime: Showtime; onBook: () => 
       <button
         onClick={onBook}
         disabled={showtime.status === "sold-out"}
-        className={`w-full py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 ${
-          showtime.status === "sold-out"
+        className={`w-full py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 ${showtime.status === "sold-out"
             ? "bg-white/5 text-cream/30 cursor-not-allowed"
             : "bg-gold text-forest-deep hover:bg-gold/90 shadow-lg"
-        }`}
+          }`}
       >
         {showtime.status === "sold-out" ? "Sold Out" : "Register / Book →"}
       </button>
@@ -131,8 +130,8 @@ function CityPanel({ city, eventId, onBookRequest }: { city: CityScreening; even
               {city.showtimes.filter((s) => s.status === "available").length > 0
                 ? "Spots available"
                 : city.showtimes.some((s) => s.status === "limited")
-                ? "Limited spots"
-                : "Sold out"}
+                  ? "Limited spots"
+                  : "Sold out"}
             </div>
           </div>
           {expanded ? <ChevronUp className="h-5 w-5 text-cream/40" /> : <ChevronDown className="h-5 w-5 text-cream/40" />}
@@ -221,14 +220,14 @@ function EventsPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-  const [pendingBookingDetails, setPendingBookingDetails] = useState<{city: string, showtimeId: string} | null>(null);
+  const [pendingBookingDetails, setPendingBookingDetails] = useState<{ city: string, showtimeId: string } | null>(null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [paymentForm, setPaymentForm] = useState({ name: "", cardNumber: "", expiry: "", cvc: "" });
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/events");
+        const res = await fetch("https://movie-backend-drab.vercel.app/api/events");
         const data = await res.json();
         if (data.success && data.data.length > 0) {
           const mapped = data.data.map((e: any) => ({ ...e, id: e._id }));
@@ -274,12 +273,12 @@ function EventsPage() {
     if (!token || !pendingBookingDetails) return;
 
     setIsProcessingPayment(true);
-    
+
     // Simulate payment processing delay
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     try {
-      const res = await fetch("http://localhost:5000/api/tickets", {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/tickets", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -372,11 +371,10 @@ function EventsPage() {
                 <button
                   key={ev.id}
                   onClick={() => setSelectedEventId(ev.id)}
-                  className={`flex-shrink-0 px-5 py-4 text-xs font-bold uppercase tracking-widest border-b-2 transition-all whitespace-nowrap ${
-                    selectedEventId === ev.id
+                  className={`flex-shrink-0 px-5 py-4 text-xs font-bold uppercase tracking-widest border-b-2 transition-all whitespace-nowrap ${selectedEventId === ev.id
                       ? "border-gold text-gold"
                       : "border-transparent text-cream/40 hover:text-cream/70"
-                  }`}
+                    }`}
                 >
                   {ev.name}
                 </button>
@@ -389,180 +387,180 @@ function EventsPage() {
         {selectedEvent ? (
           <div className="max-w-7xl mx-auto px-6 py-16 space-y-16">
 
-          {/* Event Overview */}
-          <div className="grid lg:grid-cols-3 gap-12">
-            <div className="lg:col-span-2 space-y-6">
-              {/* Event Image */}
-              {selectedEvent.image && selectedEvent.image !== 'no-photo.jpg' && (
-                <div className="w-full h-[300px] sm:h-[400px] rounded-[2rem] overflow-hidden border border-white/10 mb-8 shadow-2xl">
-                   <img 
-                      src={selectedEvent.image?.startsWith('http') ? selectedEvent.image : `http://localhost:5000${selectedEvent.image}`} 
-                      alt={selectedEvent.name} 
+            {/* Event Overview */}
+            <div className="grid lg:grid-cols-3 gap-12">
+              <div className="lg:col-span-2 space-y-6">
+                {/* Event Image */}
+                {selectedEvent.image && selectedEvent.image !== 'no-photo.jpg' && (
+                  <div className="w-full h-[300px] sm:h-[400px] rounded-[2rem] overflow-hidden border border-white/10 mb-8 shadow-2xl">
+                    <img
+                      src={selectedEvent.image?.startsWith('http') ? selectedEvent.image : `https://movie-backend-drab.vercel.app${selectedEvent.image}`}
+                      alt={selectedEvent.name}
                       className="w-full h-full object-cover"
-                   />
-                </div>
-              )}
-              <div>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {selectedEvent.tags?.map((tag) => (
-                    <span key={tag} className="text-[10px] font-black uppercase tracking-[0.25em] px-3 py-1 rounded-full bg-white/5 text-cream/60 border border-white/10">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <h2 className="font-display text-4xl sm:text-5xl font-medium text-cream">{selectedEvent.name}</h2>
-                <p className="text-gold/80 text-lg mt-2">{selectedEvent.subtitle}</p>
-                <p className="text-cream/60 mt-4 leading-relaxed">{selectedEvent.description}</p>
-              </div>
-
-              {/* Quick Info */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {[
-                  { icon: Calendar, label: "Date", value: selectedEvent.date },
-                  { icon: Clock, label: "Duration", value: selectedEvent.duration || "TBA" },
-                  { icon: Users, label: "Age", value: selectedEvent.ageRating || "All Ages" },
-                  { icon: Globe, label: "Language", value: selectedEvent.language || "English" },
-                ].map(({ icon: Icon, label, value }) => (
-                  <div key={label} className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-                    <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.25em] text-cream/40">
-                      <Icon className="h-3.5 w-3.5 text-gold/60" /> {label}
-                    </div>
-                    <div className="text-sm font-bold text-cream">{value}</div>
+                    />
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Ticket Card */}
-            <div className="p-8 rounded-[2rem] bg-gradient-to-b from-forest-deep to-[#0a1a0a] border border-white/10 space-y-6 shadow-2xl">
-              <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.35em] text-gold/70 mb-1">From</div>
-                <div className="font-display text-5xl font-medium text-gold">{selectedEvent.price}</div>
-                <div className="text-cream/50 text-sm mt-1">per person</div>
-              </div>
-              {selectedEvent.includes && (
-                <ul className="space-y-2">
-                  {selectedEvent.includes.map((item) => (
-                    <li key={item} className="flex items-start gap-3 text-sm text-cream/70">
-                      <CheckCircle className="h-4 w-4 text-gold flex-shrink-0 mt-0.5" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <button
-                onClick={handleGlobalBook}
-                className="w-full py-4 rounded-xl text-sm font-black uppercase tracking-widest transition-all active:scale-95 bg-gold text-forest-deep hover:bg-gold/90 shadow-lg"
-              >
-                Buy Ticket Now →
-              </button>
-              {selectedEvent.cities && selectedEvent.cities.length > 0 && (
-                <div className="text-xs text-cream/40 text-center">Or select a specific city & showtime below</div>
-              )}
-            </div>
-          </div>
-
-          {/* Cities & Showtimes */}
-          {selectedEvent.cities && selectedEvent.cities.length > 0 && (
-            <div>
-              <div className="flex items-center gap-4 mb-8">
+                )}
                 <div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.4em] text-gold/70 mb-1">Select Your City</div>
-                  <h3 className="font-display text-3xl text-cream">
-                    {selectedEvent.cities.length} {selectedEvent.cities.length === 1 ? "Location" : "Locations"}
-                  </h3>
-                </div>
-                <span className="h-px flex-grow bg-white/10" />
-              </div>
-              <div className="space-y-4">
-                {selectedEvent.cities.map((city) => (
-                  <CityPanel key={city.cityId} city={city} eventId={selectedEvent.id} onBookRequest={handleBookRequest} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Support */}
-          {selectedEvent.support && selectedEvent.support.length > 0 && (
-            <div className="rounded-[2rem] bg-white/5 border border-white/10 p-10">
-              <div className="text-[10px] font-black uppercase tracking-[0.4em] text-gold/70 mb-2">Need Help?</div>
-              <h3 className="font-display text-3xl text-cream mb-8">Event Support</h3>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {selectedEvent.support.map((contact) => {
-                  const Icon = supportIcons[contact.type] || Mail;
-                  const href =
-                    contact.type === "email"
-                      ? `mailto:${contact.value}`
-                      : contact.type === "phone" || contact.type === "whatsapp"
-                      ? `tel:${contact.value}`
-                      : "#";
-                  return (
-                    <a
-                      key={contact.label}
-                      href={href}
-                      className="group p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-gold/30 hover:bg-gold/5 transition-all space-y-3"
-                    >
-                      <div className="h-10 w-10 rounded-xl bg-gold/10 flex items-center justify-center group-hover:bg-gold/20 transition-colors">
-                        <Icon className="h-5 w-5 text-gold" />
-                      </div>
-                      <div>
-                        <div className="font-bold text-cream text-sm">{contact.label}</div>
-                        <div className="text-xs text-cream/60 mt-0.5 break-all">{contact.value}</div>
-                        <div className="text-[10px] text-cream/40 mt-2 flex items-center gap-1">
-                          <Clock className="h-3 w-3" /> {contact.available}
-                        </div>
-                      </div>
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* FAQ */}
-          {selectedEvent.faq && selectedEvent.faq.length > 0 && (
-            <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.4em] text-gold/70 mb-2">FAQ</div>
-              <h3 className="font-display text-3xl text-cream mb-8">Frequently Asked Questions</h3>
-              <div className="space-y-3 max-w-3xl">
-                {selectedEvent.faq.map((item, i) => (
-                  <div key={i} className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
-                    <button
-                      onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                      className="w-full flex items-center justify-between p-5 text-left hover:bg-white/5 transition-colors"
-                    >
-                      <span className="font-bold text-cream text-sm pr-4">{item.q}</span>
-                      {openFaq === i ? (
-                        <ChevronUp className="h-4 w-4 text-gold flex-shrink-0" />
-                      ) : (
-                        <ChevronDown className="h-4 w-4 text-cream/40 flex-shrink-0" />
-                      )}
-                    </button>
-                    {openFaq === i && (
-                      <div className="px-5 pb-5 text-sm text-cream/60 leading-relaxed border-t border-white/10 pt-4">
-                        {item.a}
-                      </div>
-                    )}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {selectedEvent.tags?.map((tag) => (
+                      <span key={tag} className="text-[10px] font-black uppercase tracking-[0.25em] px-3 py-1 rounded-full bg-white/5 text-cream/60 border border-white/10">
+                        {tag}
+                      </span>
+                    ))}
                   </div>
-                ))}
+                  <h2 className="font-display text-4xl sm:text-5xl font-medium text-cream">{selectedEvent.name}</h2>
+                  <p className="text-gold/80 text-lg mt-2">{selectedEvent.subtitle}</p>
+                  <p className="text-cream/60 mt-4 leading-relaxed">{selectedEvent.description}</p>
+                </div>
+
+                {/* Quick Info */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {[
+                    { icon: Calendar, label: "Date", value: selectedEvent.date },
+                    { icon: Clock, label: "Duration", value: selectedEvent.duration || "TBA" },
+                    { icon: Users, label: "Age", value: selectedEvent.ageRating || "All Ages" },
+                    { icon: Globe, label: "Language", value: selectedEvent.language || "English" },
+                  ].map(({ icon: Icon, label, value }) => (
+                    <div key={label} className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
+                      <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.25em] text-cream/40">
+                        <Icon className="h-3.5 w-3.5 text-gold/60" /> {label}
+                      </div>
+                      <div className="text-sm font-bold text-cream">{value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Ticket Card */}
+              <div className="p-8 rounded-[2rem] bg-gradient-to-b from-forest-deep to-[#0a1a0a] border border-white/10 space-y-6 shadow-2xl">
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.35em] text-gold/70 mb-1">From</div>
+                  <div className="font-display text-5xl font-medium text-gold">{selectedEvent.price}</div>
+                  <div className="text-cream/50 text-sm mt-1">per person</div>
+                </div>
+                {selectedEvent.includes && (
+                  <ul className="space-y-2">
+                    {selectedEvent.includes.map((item) => (
+                      <li key={item} className="flex items-start gap-3 text-sm text-cream/70">
+                        <CheckCircle className="h-4 w-4 text-gold flex-shrink-0 mt-0.5" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <button
+                  onClick={handleGlobalBook}
+                  className="w-full py-4 rounded-xl text-sm font-black uppercase tracking-widest transition-all active:scale-95 bg-gold text-forest-deep hover:bg-gold/90 shadow-lg"
+                >
+                  Buy Ticket Now →
+                </button>
+                {selectedEvent.cities && selectedEvent.cities.length > 0 && (
+                  <div className="text-xs text-cream/40 text-center">Or select a specific city & showtime below</div>
+                )}
               </div>
             </div>
-          )}
 
-          {/* Host CTA */}
-          <div className="text-center py-16 space-y-6">
-            <div className="text-[10px] font-black uppercase tracking-[0.4em] text-gold/70">Host a Screening</div>
-            <h3 className="font-display text-4xl text-cream">Bring the Event to Your City</h3>
-            <p className="text-cream/50 max-w-xl mx-auto">
-              Interested in hosting a One Mustard Seed event in your city, school, or church? We partner with communities around the world.
-            </p>
-            <a
-              href="mailto:partners@onemustardSeed.org"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gold text-forest-deep font-black text-sm uppercase tracking-widest hover:bg-gold/90 active:scale-95 transition-all shadow-xl"
-            >
-              <Mail className="h-4 w-4" /> Contact Our Partners Team
-            </a>
-          </div>
+            {/* Cities & Showtimes */}
+            {selectedEvent.cities && selectedEvent.cities.length > 0 && (
+              <div>
+                <div className="flex items-center gap-4 mb-8">
+                  <div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.4em] text-gold/70 mb-1">Select Your City</div>
+                    <h3 className="font-display text-3xl text-cream">
+                      {selectedEvent.cities.length} {selectedEvent.cities.length === 1 ? "Location" : "Locations"}
+                    </h3>
+                  </div>
+                  <span className="h-px flex-grow bg-white/10" />
+                </div>
+                <div className="space-y-4">
+                  {selectedEvent.cities.map((city) => (
+                    <CityPanel key={city.cityId} city={city} eventId={selectedEvent.id} onBookRequest={handleBookRequest} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Support */}
+            {selectedEvent.support && selectedEvent.support.length > 0 && (
+              <div className="rounded-[2rem] bg-white/5 border border-white/10 p-10">
+                <div className="text-[10px] font-black uppercase tracking-[0.4em] text-gold/70 mb-2">Need Help?</div>
+                <h3 className="font-display text-3xl text-cream mb-8">Event Support</h3>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {selectedEvent.support.map((contact) => {
+                    const Icon = supportIcons[contact.type] || Mail;
+                    const href =
+                      contact.type === "email"
+                        ? `mailto:${contact.value}`
+                        : contact.type === "phone" || contact.type === "whatsapp"
+                          ? `tel:${contact.value}`
+                          : "#";
+                    return (
+                      <a
+                        key={contact.label}
+                        href={href}
+                        className="group p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-gold/30 hover:bg-gold/5 transition-all space-y-3"
+                      >
+                        <div className="h-10 w-10 rounded-xl bg-gold/10 flex items-center justify-center group-hover:bg-gold/20 transition-colors">
+                          <Icon className="h-5 w-5 text-gold" />
+                        </div>
+                        <div>
+                          <div className="font-bold text-cream text-sm">{contact.label}</div>
+                          <div className="text-xs text-cream/60 mt-0.5 break-all">{contact.value}</div>
+                          <div className="text-[10px] text-cream/40 mt-2 flex items-center gap-1">
+                            <Clock className="h-3 w-3" /> {contact.available}
+                          </div>
+                        </div>
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* FAQ */}
+            {selectedEvent.faq && selectedEvent.faq.length > 0 && (
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-[0.4em] text-gold/70 mb-2">FAQ</div>
+                <h3 className="font-display text-3xl text-cream mb-8">Frequently Asked Questions</h3>
+                <div className="space-y-3 max-w-3xl">
+                  {selectedEvent.faq.map((item, i) => (
+                    <div key={i} className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
+                      <button
+                        onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                        className="w-full flex items-center justify-between p-5 text-left hover:bg-white/5 transition-colors"
+                      >
+                        <span className="font-bold text-cream text-sm pr-4">{item.q}</span>
+                        {openFaq === i ? (
+                          <ChevronUp className="h-4 w-4 text-gold flex-shrink-0" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4 text-cream/40 flex-shrink-0" />
+                        )}
+                      </button>
+                      {openFaq === i && (
+                        <div className="px-5 pb-5 text-sm text-cream/60 leading-relaxed border-t border-white/10 pt-4">
+                          {item.a}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Host CTA */}
+            <div className="text-center py-16 space-y-6">
+              <div className="text-[10px] font-black uppercase tracking-[0.4em] text-gold/70">Host a Screening</div>
+              <h3 className="font-display text-4xl text-cream">Bring the Event to Your City</h3>
+              <p className="text-cream/50 max-w-xl mx-auto">
+                Interested in hosting a One Mustard Seed event in your city, school, or church? We partner with communities around the world.
+              </p>
+              <a
+                href="mailto:partners@onemustardSeed.org"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gold text-forest-deep font-black text-sm uppercase tracking-widest hover:bg-gold/90 active:scale-95 transition-all shadow-xl"
+              >
+                <Mail className="h-4 w-4" /> Contact Our Partners Team
+              </a>
+            </div>
           </div>
         ) : (
           <div className="py-32 text-center text-cream/50 flex flex-col items-center justify-center space-y-4">
@@ -571,90 +569,90 @@ function EventsPage() {
           </div>
         )}
 
-      {/* Payment Modal */}
-      {isPaymentModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#0a1a0a] w-full max-w-md rounded-[2rem] border border-white/10 overflow-hidden shadow-2xl">
-            <div className="p-6 border-b border-white/10 flex justify-between items-center bg-forest-deep text-cream">
-              <h3 className="font-display text-2xl font-medium">Complete Purchase</h3>
-              <button onClick={() => setIsPaymentModalOpen(false)} className="opacity-50 hover:opacity-100 transition-opacity">
-                <XCircle className="w-6 h-6" />
-              </button>
-            </div>
-            <form onSubmit={processPayment} className="p-6 space-y-4">
-              <div className="bg-white/5 p-4 rounded-xl border border-white/10 mb-6">
-                 <div className="text-xs text-cream/50 uppercase tracking-widest mb-1">Order Summary</div>
-                 <div className="font-bold text-lg text-cream">{selectedEvent?.name}</div>
-                 <div className="text-sm text-cream/70">{pendingBookingDetails?.city} • {pendingBookingDetails?.showtimeId}</div>
-                 <div className="mt-4 pt-4 border-t border-white/10 flex justify-between items-center text-cream">
+        {/* Payment Modal */}
+        {isPaymentModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <div className="bg-[#0a1a0a] w-full max-w-md rounded-[2rem] border border-white/10 overflow-hidden shadow-2xl">
+              <div className="p-6 border-b border-white/10 flex justify-between items-center bg-forest-deep text-cream">
+                <h3 className="font-display text-2xl font-medium">Complete Purchase</h3>
+                <button onClick={() => setIsPaymentModalOpen(false)} className="opacity-50 hover:opacity-100 transition-opacity">
+                  <XCircle className="w-6 h-6" />
+                </button>
+              </div>
+              <form onSubmit={processPayment} className="p-6 space-y-4">
+                <div className="bg-white/5 p-4 rounded-xl border border-white/10 mb-6">
+                  <div className="text-xs text-cream/50 uppercase tracking-widest mb-1">Order Summary</div>
+                  <div className="font-bold text-lg text-cream">{selectedEvent?.name}</div>
+                  <div className="text-sm text-cream/70">{pendingBookingDetails?.city} • {pendingBookingDetails?.showtimeId}</div>
+                  <div className="mt-4 pt-4 border-t border-white/10 flex justify-between items-center text-cream">
                     <span>Total due</span>
                     <span className="font-bold text-xl text-gold">{selectedEvent?.price || 'Free'}</span>
-                 </div>
-              </div>
-              
-              <div className="space-y-3">
-                 <div className="space-y-1">
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="space-y-1">
                     <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50">Name on Card</label>
-                    <input 
+                    <input
                       required
-                      type="text" 
+                      type="text"
                       value={paymentForm.name}
-                      onChange={e => setPaymentForm({...paymentForm, name: e.target.value})}
-                      className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream placeholder:text-cream/30 focus:outline-none focus:border-gold/50 transition-colors" 
+                      onChange={e => setPaymentForm({ ...paymentForm, name: e.target.value })}
+                      className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream placeholder:text-cream/30 focus:outline-none focus:border-gold/50 transition-colors"
                       placeholder="John Doe"
                     />
-                 </div>
-                 <div className="space-y-1">
+                  </div>
+                  <div className="space-y-1">
                     <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50">Card Number</label>
-                    <input 
+                    <input
                       required
-                      type="text" 
+                      type="text"
                       value={paymentForm.cardNumber}
-                      onChange={e => setPaymentForm({...paymentForm, cardNumber: e.target.value})}
-                      className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream font-mono tracking-widest placeholder:text-cream/30 focus:outline-none focus:border-gold/50 transition-colors" 
+                      onChange={e => setPaymentForm({ ...paymentForm, cardNumber: e.target.value })}
+                      className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream font-mono tracking-widest placeholder:text-cream/30 focus:outline-none focus:border-gold/50 transition-colors"
                       placeholder="0000 0000 0000 0000"
                     />
-                 </div>
-                 <div className="grid grid-cols-2 gap-4">
-                   <div className="space-y-1">
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
                       <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50">Expiry</label>
-                      <input 
+                      <input
                         required
-                        type="text" 
+                        type="text"
                         value={paymentForm.expiry}
-                        onChange={e => setPaymentForm({...paymentForm, expiry: e.target.value})}
-                        className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream font-mono placeholder:text-cream/30 focus:outline-none focus:border-gold/50 transition-colors" 
+                        onChange={e => setPaymentForm({ ...paymentForm, expiry: e.target.value })}
+                        className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream font-mono placeholder:text-cream/30 focus:outline-none focus:border-gold/50 transition-colors"
                         placeholder="MM/YY"
                       />
-                   </div>
-                   <div className="space-y-1">
+                    </div>
+                    <div className="space-y-1">
                       <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50">CVC</label>
-                      <input 
+                      <input
                         required
-                        type="text" 
+                        type="text"
                         value={paymentForm.cvc}
-                        onChange={e => setPaymentForm({...paymentForm, cvc: e.target.value})}
-                        className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream font-mono placeholder:text-cream/30 focus:outline-none focus:border-gold/50 transition-colors" 
+                        onChange={e => setPaymentForm({ ...paymentForm, cvc: e.target.value })}
+                        className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream font-mono placeholder:text-cream/30 focus:outline-none focus:border-gold/50 transition-colors"
                         placeholder="123"
                       />
-                   </div>
-                 </div>
-              </div>
-              <button
-                type="submit"
-                disabled={isProcessingPayment}
-                className="w-full mt-6 py-4 rounded-xl text-sm font-black uppercase tracking-widest transition-all active:scale-95 bg-gold text-forest-deep hover:bg-gold/90 shadow-lg disabled:opacity-50 flex justify-center items-center gap-2"
-              >
-                {isProcessingPayment ? (
-                   <span className="animate-pulse">Processing...</span>
-                ) : (
-                   <>Pay {selectedEvent?.price || 'Now'} →</>
-                )}
-              </button>
-            </form>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  disabled={isProcessingPayment}
+                  className="w-full mt-6 py-4 rounded-xl text-sm font-black uppercase tracking-widest transition-all active:scale-95 bg-gold text-forest-deep hover:bg-gold/90 shadow-lg disabled:opacity-50 flex justify-center items-center gap-2"
+                >
+                  {isProcessingPayment ? (
+                    <span className="animate-pulse">Processing...</span>
+                  ) : (
+                    <>Pay {selectedEvent?.price || 'Now'} →</>
+                  )}
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       </main>
       <SiteFooter />

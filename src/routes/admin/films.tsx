@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { 
-  Film, 
-  Plus, 
-  PlaySquare, 
-  Eye, 
-  Clock, 
+import {
+  Film,
+  Plus,
+  PlaySquare,
+  Eye,
+  Clock,
   DollarSign,
   MoreVertical,
   Edit,
@@ -23,20 +23,20 @@ import {
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from "../../components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
   DialogFooter,
   DialogDescription
@@ -44,13 +44,13 @@ import {
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { toast } from "sonner";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
 } from "../../components/ui/dropdown-menu";
 
 export const Route = createFileRoute("/admin/films")({
@@ -141,20 +141,20 @@ function FilmsManagement() {
   useEffect(() => {
     fetchFilms();
     fetchPurchases();
-    fetch("http://localhost:5000/api/settings")
+    fetch("https://movie-backend-drab.vercel.app/api/settings")
       .then(res => res.json())
       .then(data => {
-         if (data.success && data.data.global_rent_duration) {
-            setRentDuration(data.data.global_rent_duration);
-            localStorage.setItem("global_rent_duration", data.data.global_rent_duration);
-         }
+        if (data.success && data.data.global_rent_duration) {
+          setRentDuration(data.data.global_rent_duration);
+          localStorage.setItem("global_rent_duration", data.data.global_rent_duration);
+        }
       })
       .catch(err => console.error(err));
   }, []);
 
   const fetchFilms = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/films");
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/films");
       const data = await res.json();
       if (data.success) {
         setFilms(data.data.map((f: any) => ({ ...f, id: f._id })));
@@ -166,17 +166,17 @@ function FilmsManagement() {
 
   const fetchPurchases = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/purchases");
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/purchases");
       const data = await res.json();
       if (data.success) {
         setPurchases(data.data.map((p: any) => ({
-           id: p._id,
-           user: p.user,
-           film: p.filmTitle,
-           type: p.type,
-           amount: p.amount,
-           date: new Date(p.createdAt).toLocaleDateString(),
-           expires: p.expiresAt ? new Date(p.expiresAt).toLocaleDateString() : "Lifetime"
+          id: p._id,
+          user: p.user,
+          film: p.filmTitle,
+          type: p.type,
+          amount: p.amount,
+          date: new Date(p.createdAt).toLocaleDateString(),
+          expires: p.expiresAt ? new Date(p.expiresAt).toLocaleDateString() : "Lifetime"
         })));
       }
     } catch (err) {
@@ -193,13 +193,13 @@ function FilmsManagement() {
     fd.append("image", file);
 
     try {
-      const res = await fetch("http://localhost:5000/api/upload", {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/upload", {
         method: "POST",
         body: fd,
       });
       const data = await res.json();
       if (data.success) {
-        setFormData({ ...formData, thumbnail: `http://localhost:5000${data.url}` });
+        setFormData({ ...formData, thumbnail: `https://movie-backend-drab.vercel.app${data.url}` });
         toast.success("Image uploaded successfully!");
       } else {
         toast.error(data.message || "Upload failed");
@@ -223,7 +223,7 @@ function FilmsManagement() {
       };
 
       if (editingFilm) {
-        const res = await fetch(`http://localhost:5000/api/films/${editingFilm.id}`, {
+        const res = await fetch(`https://movie-backend-drab.vercel.app/api/films/${editingFilm.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
           body: JSON.stringify(payload)
@@ -234,7 +234,7 @@ function FilmsManagement() {
           toast.success("Film updated successfully!");
         } else toast.error(data.message);
       } else {
-        const res = await fetch("http://localhost:5000/api/films", {
+        const res = await fetch("https://movie-backend-drab.vercel.app/api/films", {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
           body: JSON.stringify(payload)
@@ -269,10 +269,10 @@ function FilmsManagement() {
   };
 
   const handleDeleteFilm = async (id: string) => {
-    if(!confirm("Delete this film?")) return;
+    if (!confirm("Delete this film?")) return;
     const token = localStorage.getItem("user_token");
     try {
-      const res = await fetch(`http://localhost:5000/api/films/${id}`, {
+      const res = await fetch(`https://movie-backend-drab.vercel.app/api/films/${id}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -293,7 +293,7 @@ function FilmsManagement() {
           <h1 className="text-3xl font-display font-bold text-foreground">Films Management</h1>
           <p className="text-muted-foreground">Manage your cinematic library, trailers, and viewing permissions.</p>
         </div>
-        
+
         <Dialog open={isDialogOpen} onOpenChange={(open) => {
           setIsDialogOpen(open);
           if (!open) setEditingFilm(null);
@@ -315,58 +315,58 @@ function FilmsManagement() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2 space-y-2">
                   <Label>Film Title</Label>
-                  <Input 
-                    placeholder="e.g. The Eternal Journey" 
+                  <Input
+                    placeholder="e.g. The Eternal Journey"
                     className="h-11 rounded-xl"
                     value={formData.title}
-                    onChange={e => setFormData({...formData, title: e.target.value})}
+                    onChange={e => setFormData({ ...formData, title: e.target.value })}
                     required
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Release Year</Label>
-                  <Input 
+                  <Input
                     value={formData.year}
-                    onChange={e => setFormData({...formData, year: e.target.value})}
-                    className="h-11 rounded-xl" 
-                    required 
+                    onChange={e => setFormData({ ...formData, year: e.target.value })}
+                    className="h-11 rounded-xl"
+                    required
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Duration</Label>
-                  <Input 
+                  <Input
                     value={formData.duration}
-                    onChange={e => setFormData({...formData, duration: e.target.value})}
-                    className="h-11 rounded-xl" 
-                    required 
+                    onChange={e => setFormData({ ...formData, duration: e.target.value })}
+                    className="h-11 rounded-xl"
+                    required
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Purchase Price ($)</Label>
-                  <Input 
+                  <Input
                     value={formData.price}
-                    onChange={e => setFormData({...formData, price: e.target.value})}
-                    className="h-11 rounded-xl" 
-                    required 
+                    onChange={e => setFormData({ ...formData, price: e.target.value })}
+                    className="h-11 rounded-xl"
+                    required
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Rental Price ($)</Label>
-                  <Input 
+                  <Input
                     value={formData.rentPrice}
-                    onChange={e => setFormData({...formData, rentPrice: e.target.value})}
-                    className="h-11 rounded-xl" 
-                    required 
+                    onChange={e => setFormData({ ...formData, rentPrice: e.target.value })}
+                    className="h-11 rounded-xl"
+                    required
                   />
                 </div>
                 <div className="col-span-2 space-y-2">
                   <Label>Film Poster / Thumbnail Image</Label>
                   <div className="flex gap-4 items-center">
-                    <Input 
-                      type="file" 
+                    <Input
+                      type="file"
                       accept="image/*"
                       onChange={handleImageUpload}
-                      className="h-11 rounded-xl flex-1 pt-2.5" 
+                      className="h-11 rounded-xl flex-1 pt-2.5"
                       disabled={isUploading}
                     />
                     {formData.thumbnail && (
@@ -378,29 +378,29 @@ function FilmsManagement() {
                 <div className="col-span-2 space-y-2">
                   <Label>Trailer Link (Vimeo/YouTube)</Label>
                   <div className="relative">
-                     <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                     <Input 
-                        className="pl-10 h-11 rounded-xl"
-                        value={formData.trailer}
-                        onChange={e => setFormData({...formData, trailer: e.target.value})}
-                     />
+                    <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      className="pl-10 h-11 rounded-xl"
+                      value={formData.trailer}
+                      onChange={e => setFormData({ ...formData, trailer: e.target.value })}
+                    />
                   </div>
                 </div>
                 <div className="col-span-2 space-y-2">
                   <Label>Full Movie Link (Vimeo/YouTube)</Label>
                   <div className="relative">
-                     <Video className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                     <Input 
-                        className="pl-10 h-11 rounded-xl"
-                        value={formData.movieLink}
-                        onChange={e => setFormData({...formData, movieLink: e.target.value})}
-                     />
+                    <Video className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      className="pl-10 h-11 rounded-xl"
+                      value={formData.movieLink}
+                      onChange={e => setFormData({ ...formData, movieLink: e.target.value })}
+                    />
                   </div>
                 </div>
               </div>
               <DialogFooter>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full bg-forest h-12 rounded-xl shadow-lg hover:shadow-forest/20 transition-all active:scale-95"
                 >
                   {editingFilm ? "Save Changes" : "Publish to Cinema Hub"}
@@ -444,11 +444,11 @@ function FilmsManagement() {
 
         <TabsContent value="all" className="space-y-4">
           <div className="flex items-center gap-2">
-             <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input placeholder="Search films..." className="pl-10 h-11 rounded-xl bg-card/50 border-border/50" />
-             </div>
-             <Button variant="outline" className="h-11 rounded-xl gap-2"><Filter className="w-4 h-4" /> Filter</Button>
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input placeholder="Search films..." className="pl-10 h-11 rounded-xl bg-card/50 border-border/50" />
+            </div>
+            <Button variant="outline" className="h-11 rounded-xl gap-2"><Filter className="w-4 h-4" /> Filter</Button>
           </div>
           <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
             <Table>
@@ -473,17 +473,17 @@ function FilmsManagement() {
                     <TableCell>
                       <div>
                         <div className="font-bold text-base flex items-center gap-2">
-                           {film.title}
-                           <div className="flex items-center gap-1 text-[10px] text-gold font-bold">
-                              <Star className="w-2.5 h-2.5 fill-current" />
-                              {film.rating}
-                           </div>
+                          {film.title}
+                          <div className="flex items-center gap-1 text-[10px] text-gold font-bold">
+                            <Star className="w-2.5 h-2.5 fill-current" />
+                            {film.rating}
+                          </div>
                         </div>
                         <div className="text-xs text-muted-foreground">{film.year} • {film.duration}</div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge 
+                      <Badge
                         variant={film.status === "Published" ? "default" : "secondary"}
                         className={film.status === "Published" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : ""}
                       >
@@ -505,16 +505,16 @@ function FilmsManagement() {
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                           <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-muted"><MoreVertical className="w-4 h-4" /></Button>
+                          <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-muted"><MoreVertical className="w-4 h-4" /></Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="rounded-xl border-border/50 p-1 shadow-elevated">
-                           <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => handleEditClick(film)}>
-                              <Edit className="w-4 h-4" /> Edit Details
-                           </DropdownMenuItem>
-                           <DropdownMenuSeparator />
-                           <DropdownMenuItem className="gap-2 text-destructive cursor-pointer" onClick={() => handleDeleteFilm(film.id)}>
-                              <Trash2 className="w-4 h-4" /> Remove Film
-                           </DropdownMenuItem>
+                          <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => handleEditClick(film)}>
+                            <Edit className="w-4 h-4" /> Edit Details
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="gap-2 text-destructive cursor-pointer" onClick={() => handleDeleteFilm(film.id)}>
+                            <Trash2 className="w-4 h-4" /> Remove Film
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -526,36 +526,36 @@ function FilmsManagement() {
         </TabsContent>
 
         <TabsContent value="purchases" className="space-y-4">
-           <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
-             <Table>
-                <TableHeader className="bg-muted/30">
-                  <TableRow>
-                    <TableHead>Order ID</TableHead>
-                    <TableHead>User</TableHead>
-                    <TableHead>Film</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Expires</TableHead>
+          <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
+            <Table>
+              <TableHeader className="bg-muted/30">
+                <TableRow>
+                  <TableHead>Order ID</TableHead>
+                  <TableHead>User</TableHead>
+                  <TableHead>Film</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Expires</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {purchases.map(p => (
+                  <TableRow key={p.id}>
+                    <TableCell className="font-mono text-xs text-muted-foreground">{p.id}</TableCell>
+                    <TableCell className="font-medium">{p.user}</TableCell>
+                    <TableCell>{p.film}</TableCell>
+                    <TableCell>
+                      <Badge variant={p.type === "Buy" ? "default" : "secondary"} className={p.type === "Buy" ? "bg-forest/10 text-forest border-forest/20" : "bg-gold/10 text-gold-foreground border-gold/20"}>
+                        {p.type}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="font-bold">{p.amount}</TableCell>
+                    <TableCell className="text-xs">{p.expires}</TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                   {purchases.map(p => (
-                     <TableRow key={p.id}>
-                       <TableCell className="font-mono text-xs text-muted-foreground">{p.id}</TableCell>
-                       <TableCell className="font-medium">{p.user}</TableCell>
-                       <TableCell>{p.film}</TableCell>
-                       <TableCell>
-                         <Badge variant={p.type === "Buy" ? "default" : "secondary"} className={p.type === "Buy" ? "bg-forest/10 text-forest border-forest/20" : "bg-gold/10 text-gold-foreground border-gold/20"}>
-                            {p.type}
-                         </Badge>
-                       </TableCell>
-                       <TableCell className="font-bold">{p.amount}</TableCell>
-                       <TableCell className="text-xs">{p.expires}</TableCell>
-                     </TableRow>
-                   ))}
-                </TableBody>
-             </Table>
-           </Card>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
         </TabsContent>
 
         <TabsContent value="settings">
@@ -576,38 +576,38 @@ function FilmsManagement() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                       <Input 
-                         type="number" 
-                         value={rentDuration} 
-                         onChange={(e) => setRentDuration(e.target.value)} 
-                         className="w-20 bg-background h-8" 
-                       />
+                      <Input
+                        type="number"
+                        value={rentDuration}
+                        onChange={(e) => setRentDuration(e.target.value)}
+                        className="w-20 bg-background h-8"
+                      />
                     </div>
                   </div>
                 </div>
-                <Button 
-                   className="w-full bg-forest shadow-md" 
-                   onClick={async () => {
-                     try {
-                        const res = await fetch("http://localhost:5000/api/settings", {
-                           method: "POST",
-                           headers: { "Content-Type": "application/json" },
-                           body: JSON.stringify({ key: "global_rent_duration", value: rentDuration })
-                        });
-                        const data = await res.json();
-                        if (data.success) {
-                           localStorage.setItem("global_rent_duration", rentDuration);
-                           window.dispatchEvent(new StorageEvent('storage', { key: 'global_rent_duration', newValue: rentDuration }));
-                           toast.success("Policies updated globally in database");
-                        } else {
-                           toast.error(data.message);
-                        }
-                     } catch(err) {
-                        toast.error("Network error saving policy");
-                     }
-                   }}
+                <Button
+                  className="w-full bg-forest shadow-md"
+                  onClick={async () => {
+                    try {
+                      const res = await fetch("https://movie-backend-drab.vercel.app/api/settings", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ key: "global_rent_duration", value: rentDuration })
+                      });
+                      const data = await res.json();
+                      if (data.success) {
+                        localStorage.setItem("global_rent_duration", rentDuration);
+                        window.dispatchEvent(new StorageEvent('storage', { key: 'global_rent_duration', newValue: rentDuration }));
+                        toast.success("Policies updated globally in database");
+                      } else {
+                        toast.error(data.message);
+                      }
+                    } catch (err) {
+                      toast.error("Network error saving policy");
+                    }
+                  }}
                 >
-                   Update Policies
+                  Update Policies
                 </Button>
               </CardContent>
             </Card>

@@ -19,14 +19,14 @@ function IndividualFilmPage() {
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "processing" | "success">("idle");
   const [paymentType, setPaymentType] = useState<"buy" | "rent" | null>(null);
   const [hasAccess, setHasAccess] = useState(false);
-  const [accessInfo, setAccessInfo] = useState<{type: "buy" | "rent", expiresAt: number | null} | null>(null);
+  const [accessInfo, setAccessInfo] = useState<{ type: "buy" | "rent", expiresAt: number | null } | null>(null);
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [checkoutName, setCheckoutName] = useState(() => {
     const userData = localStorage.getItem("user_data");
     if (userData) {
       try {
         return JSON.parse(userData).name || "";
-      } catch (e) {}
+      } catch (e) { }
     }
     return "";
   });
@@ -47,7 +47,7 @@ function IndividualFilmPage() {
     // Simulate API call to payment gateway
     setTimeout(async () => {
       const globalRentHours = parseInt(localStorage.getItem("global_rent_duration") || "48", 10) || 48;
-      
+
       const accessData = {
         type: paymentType as "buy" | "rent",
         expiresAt: paymentType === "rent" ? Date.now() + globalRentHours * 60 * 60 * 1000 : null
@@ -58,25 +58,25 @@ function IndividualFilmPage() {
           try {
             const user = JSON.parse(userDataStr);
             return `cinema_access_${user._id || user.id || "guest"}_${filmId}`;
-          } catch(e) {}
+          } catch (e) { }
         }
         return `cinema_access_guest_${filmId}`;
       };
 
       localStorage.setItem(getUserKey(), JSON.stringify(accessData));
-      
+
       // Save purchase to backend
       try {
-        await fetch(`http://localhost:5000/api/purchases`, {
-           method: "POST",
-           headers: { "Content-Type": "application/json" },
-           body: JSON.stringify({
-              filmId: film._id,
-              type: paymentType === "buy" ? "Buy" : "Rent",
-              amount: paymentType === "buy" ? film.price : film.rentPrice,
-              user: checkoutName || "Guest User",
-              customExpiresAt: accessData.expiresAt
-           })
+        await fetch(`https://movie-backend-drab.vercel.app/api/purchases`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            filmId: film._id,
+            type: paymentType === "buy" ? "Buy" : "Rent",
+            amount: paymentType === "buy" ? film.price : film.rentPrice,
+            user: checkoutName || "Guest User",
+            customExpiresAt: accessData.expiresAt
+          })
         });
       } catch (err) {
         console.error("Failed to save purchase to backend", err);
@@ -93,13 +93,13 @@ function IndividualFilmPage() {
   };
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/films/${filmId}`)
+    fetch(`https://movie-backend-drab.vercel.app/api/films/${filmId}`)
       .then(res => res.json())
       .then(data => {
         if (data.success) {
           setFilm(data.data);
           if (data.data.reviews) {
-             setReviews(data.data.reviews);
+            setReviews(data.data.reviews);
           }
         }
       })
@@ -113,7 +113,7 @@ function IndividualFilmPage() {
           try {
             const user = JSON.parse(userDataStr);
             return `cinema_access_${user._id || user.id || "guest"}_${filmId}`;
-          } catch(e) {}
+          } catch (e) { }
         }
         return `cinema_access_guest_${filmId}`;
       };
@@ -139,20 +139,20 @@ function IndividualFilmPage() {
       }
     };
     checkAccess();
-    
+
     // Initial load
-    fetch("http://localhost:5000/api/settings")
+    fetch("https://movie-backend-drab.vercel.app/api/settings")
       .then(res => res.json())
       .then(data => {
-         if (data.success && data.data.global_rent_duration) {
-            setGlobalRentDuration(data.data.global_rent_duration);
-            localStorage.setItem("global_rent_duration", data.data.global_rent_duration);
-         } else {
-            setGlobalRentDuration(localStorage.getItem("global_rent_duration") || "48");
-         }
+        if (data.success && data.data.global_rent_duration) {
+          setGlobalRentDuration(data.data.global_rent_duration);
+          localStorage.setItem("global_rent_duration", data.data.global_rent_duration);
+        } else {
+          setGlobalRentDuration(localStorage.getItem("global_rent_duration") || "48");
+        }
       })
       .catch(() => {
-         setGlobalRentDuration(localStorage.getItem("global_rent_duration") || "48");
+        setGlobalRentDuration(localStorage.getItem("global_rent_duration") || "48");
       });
 
     // Listen for cross-tab updates
@@ -181,7 +181,7 @@ function IndividualFilmPage() {
               try {
                 const user = JSON.parse(userDataStr);
                 return `cinema_access_${user._id || user.id || "guest"}_${filmId}`;
-              } catch(e) {}
+              } catch (e) { }
             }
             return `cinema_access_guest_${filmId}`;
           };
@@ -202,30 +202,30 @@ function IndividualFilmPage() {
     if (!newComment.trim()) return;
 
     try {
-       const userData = localStorage.getItem("user_data");
-       let authorName = "Guest User";
-       if (userData) {
-         try { authorName = JSON.parse(userData).name || "Guest User"; } catch(e){}
-       }
+      const userData = localStorage.getItem("user_data");
+      let authorName = "Guest User";
+      if (userData) {
+        try { authorName = JSON.parse(userData).name || "Guest User"; } catch (e) { }
+      }
 
-       const res = await fetch(`http://localhost:5000/api/films/${filmId}/reviews`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-             text: newComment,
-             rating: ratingInput,
-             user: authorName
-          })
-       });
-       const data = await res.json();
-       if (data.success) {
-          setReviews(data.data.reviews);
-          setFilm(data.data); // Update film rating as well
-          setNewComment("");
-          setRatingInput(5);
-       }
+      const res = await fetch(`https://movie-backend-drab.vercel.app/api/films/${filmId}/reviews`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: newComment,
+          rating: ratingInput,
+          user: authorName
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setReviews(data.data.reviews);
+        setFilm(data.data); // Update film rating as well
+        setNewComment("");
+        setRatingInput(5);
+      }
     } catch (err) {
-       console.error("Failed to post review", err);
+      console.error("Failed to post review", err);
     }
   };
 
@@ -256,7 +256,7 @@ function IndividualFilmPage() {
             <img src={film.thumbnail || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=2000"} alt="Film Banner" className="w-full h-full object-cover opacity-40 blur-sm" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#050704] via-[#050704]/60 to-transparent" />
           </div>
-          
+
           <div className="relative mx-auto max-w-7xl px-6 w-full">
             <div className="flex flex-col md:flex-row items-end gap-12">
               <div className="hidden md:block w-64 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-white/10 shrink-0">
@@ -264,8 +264,8 @@ function IndividualFilmPage() {
               </div>
               <div className="flex-grow pb-4">
                 <div className="flex items-center gap-4 mb-6">
-                   <span className="px-3 py-1 rounded bg-gold text-forest-deep text-[10px] font-bold uppercase tracking-widest">Featured</span>
-                   <div className="flex items-center gap-1 text-gold"><Star className="h-4 w-4 fill-current" /> <span className="text-sm font-bold text-cream">{film.rating || "0.0"}</span></div>
+                  <span className="px-3 py-1 rounded bg-gold text-forest-deep text-[10px] font-bold uppercase tracking-widest">Featured</span>
+                  <div className="flex items-center gap-1 text-gold"><Star className="h-4 w-4 fill-current" /> <span className="text-sm font-bold text-cream">{film.rating || "0.0"}</span></div>
                 </div>
                 <h1 className="font-display text-5xl sm:text-7xl font-medium tracking-tight text-cream leading-none">{film.title}</h1>
                 <div className="mt-8 flex flex-wrap gap-8 text-sm font-bold text-cream/50 uppercase tracking-widest">
@@ -289,8 +289,8 @@ function IndividualFilmPage() {
 
             {/* Video Action Buttons */}
             <div className="grid sm:grid-cols-2 gap-6">
-              <button 
-                onClick={() => hasAccess ? setShowMovie(true) : handlePurchase("buy")} 
+              <button
+                onClick={() => hasAccess ? setShowMovie(true) : handlePurchase("buy")}
                 className={`flex flex-col p-8 rounded-3xl shadow-lg hover:scale-[1.02] transition-all group text-left ${hasAccess ? 'bg-gold text-forest-deep' : 'bg-white/5 border border-white/10'}`}
               >
                 {hasAccess ? <Play className="h-8 w-8 mb-6 fill-current" /> : <Lock className="h-8 w-8 mb-6 text-cream/40" />}
@@ -324,11 +324,10 @@ function IndividualFilmPage() {
                   {accessInfo?.type === "buy" ? (
                     <span className="px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Purchased</span>
                   ) : (
-                    <button 
+                    <button
                       onClick={() => handlePurchase("buy")}
-                      className={`px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-md transition-all ${
-                        purchaseStatus === "buy" ? "bg-emerald-500 text-white" : "bg-gold text-forest-deep"
-                      }`}
+                      className={`px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-md transition-all ${purchaseStatus === "buy" ? "bg-emerald-500 text-white" : "bg-gold text-forest-deep"
+                        }`}
                     >
                       {purchaseStatus === "buy" ? "Added!" : "Buy Now"}
                     </button>
@@ -341,17 +340,16 @@ function IndividualFilmPage() {
                   </div>
                   {accessInfo?.type === "rent" ? (
                     <div className="text-right">
-                       <span className="block px-4 py-1.5 mb-1 rounded-lg text-[10px] font-bold uppercase tracking-widest bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Active</span>
-                       <span className="text-[9px] text-cream/40 uppercase tracking-widest">{timeLeft}</span>
+                      <span className="block px-4 py-1.5 mb-1 rounded-lg text-[10px] font-bold uppercase tracking-widest bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Active</span>
+                      <span className="text-[9px] text-cream/40 uppercase tracking-widest">{timeLeft}</span>
                     </div>
                   ) : (
-                    <button 
+                    <button
                       onClick={() => handlePurchase("rent")}
                       disabled={accessInfo?.type === "buy"}
-                      className={`px-6 py-3 rounded-xl border transition-all text-[10px] font-bold uppercase tracking-widest ${
-                        accessInfo?.type === "buy" ? "opacity-50 cursor-not-allowed border-white/5 text-white/20" :
-                        purchaseStatus === "rent" ? "bg-emerald-500 text-white border-emerald-500" : "border-white/10 text-cream hover:bg-white/5"
-                      }`}
+                      className={`px-6 py-3 rounded-xl border transition-all text-[10px] font-bold uppercase tracking-widest ${accessInfo?.type === "buy" ? "opacity-50 cursor-not-allowed border-white/5 text-white/20" :
+                          purchaseStatus === "rent" ? "bg-emerald-500 text-white border-emerald-500" : "border-white/10 text-cream hover:bg-white/5"
+                        }`}
                     >
                       {purchaseStatus === "rent" ? "Rented!" : "Rent"}
                     </button>
@@ -395,8 +393,8 @@ function IndividualFilmPage() {
                   <span className="text-sm font-bold text-cream/60">Your Rating:</span>
                   <div className="flex gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
-                      <button 
-                        key={star} 
+                      <button
+                        key={star}
                         type="button"
                         onClick={() => setRatingInput(star)}
                         className="transition-transform hover:scale-110 active:scale-95"
@@ -406,10 +404,10 @@ function IndividualFilmPage() {
                     ))}
                   </div>
                 </div>
-                <textarea 
+                <textarea
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Share your review on this film..." 
+                  placeholder="Share your review on this film..."
                   className="w-full bg-transparent p-6 text-sm text-cream placeholder:text-cream/40 focus:outline-none min-h-[120px] resize-none"
                 />
                 <div className="flex justify-end p-2">
@@ -455,7 +453,7 @@ function IndividualFilmPage() {
           <DialogTitle className="sr-only">Watch Trailer</DialogTitle>
           <div className="relative aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl">
             <button onClick={() => setShowTrailer(false)} className="absolute top-4 right-4 z-50 p-2 bg-black/50 hover:bg-gold hover:text-black text-white rounded-full transition-colors backdrop-blur-md">
-               <X className="w-5 h-5" />
+              <X className="w-5 h-5" />
             </button>
             {film.trailer ? (
               <iframe
@@ -477,7 +475,7 @@ function IndividualFilmPage() {
           <DialogTitle className="sr-only">Watch Full Movie</DialogTitle>
           <div className="relative aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl">
             <button onClick={() => setShowMovie(false)} className="absolute top-4 right-4 z-50 p-2 bg-black/50 hover:bg-gold hover:text-black text-white rounded-full transition-colors backdrop-blur-md">
-               <X className="w-5 h-5" />
+              <X className="w-5 h-5" />
             </button>
             {film.movieLink ? (
               <iframe
@@ -498,7 +496,7 @@ function IndividualFilmPage() {
         <DialogContent className="max-w-md bg-[#0a1a0a] border-white/10 text-cream p-0 overflow-hidden shadow-2xl rounded-2xl">
           <DialogTitle className="sr-only">Complete Checkout</DialogTitle>
           <DialogDescription className="sr-only">Enter payment details to buy or rent this film.</DialogDescription>
-          
+
           <div className="p-8 border-b border-white/5 bg-white/5">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-16 h-24 shrink-0 rounded bg-black overflow-hidden shadow-lg border border-white/10">
@@ -507,10 +505,10 @@ function IndividualFilmPage() {
               <div>
                 <h3 className="font-display text-2xl font-medium">{film.title}</h3>
                 <p className="text-xs uppercase tracking-widest text-gold mt-1">
-                   {paymentType === "buy" ? "Digital HD Purchase" : `${globalRentDuration}-Hour Rental`}
+                  {paymentType === "buy" ? "Digital HD Purchase" : `${globalRentDuration}-Hour Rental`}
                 </p>
                 <p className="text-2xl font-bold mt-2">
-                   {paymentType === "buy" ? (film.price || "$14.99") : (film.rentPrice || "$4.99")}
+                  {paymentType === "buy" ? (film.price || "$14.99") : (film.rentPrice || "$4.99")}
                 </p>
               </div>
             </div>
@@ -524,12 +522,12 @@ function IndividualFilmPage() {
                     <label className="text-xs uppercase tracking-widest text-cream/50 font-bold">Name on Card</label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-cream/30" />
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         value={checkoutName}
                         onChange={(e) => setCheckoutName(e.target.value)}
-                        placeholder="John Doe" 
+                        placeholder="John Doe"
                         className="w-full bg-white/5 border border-white/10 rounded-xl p-3 pl-11 text-cream placeholder:text-cream/20 focus:outline-none focus:border-gold/50 transition-colors"
                       />
                     </div>
@@ -538,10 +536,10 @@ function IndividualFilmPage() {
                     <label className="text-xs uppercase tracking-widest text-cream/50 font-bold">Card Number</label>
                     <div className="relative">
                       <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-cream/30" />
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
-                        placeholder="•••• •••• •••• ••••" 
+                        placeholder="•••• •••• •••• ••••"
                         className="w-full bg-white/5 border border-white/10 rounded-xl p-3 pl-11 text-cream placeholder:text-cream/20 focus:outline-none focus:border-gold/50 transition-colors"
                       />
                     </div>

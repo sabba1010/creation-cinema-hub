@@ -1,23 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { 
-  Users, 
-  Film, 
-  Calendar, 
-  CreditCard, 
-  TrendingUp, 
-  ArrowUpRight, 
+import {
+  Users,
+  Film,
+  Calendar,
+  CreditCard,
+  TrendingUp,
+  ArrowUpRight,
   ArrowDownRight,
   Activity
 } from "lucide-react";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   AreaChart,
   Area
@@ -61,19 +61,19 @@ function DashboardOverview() {
 
       try {
         const headers = { "Authorization": `Bearer ${token}` };
-        
+
         // Fetch users
-        const usersRes = await fetch("http://localhost:5000/api/users", { headers });
+        const usersRes = await fetch("https://movie-backend-drab.vercel.app/api/users", { headers });
         const usersData = await usersRes.json();
         const usersCount = usersData.success ? usersData.data.length : 0;
 
         // Fetch events
-        const eventsRes = await fetch("http://localhost:5000/api/events");
+        const eventsRes = await fetch("https://movie-backend-drab.vercel.app/api/events");
         const eventsData = await eventsRes.json();
         const eventsCount = eventsData.success ? eventsData.data.length : 0;
 
         // Fetch tickets for revenue
-        const ticketsRes = await fetch("http://localhost:5000/api/tickets", { headers });
+        const ticketsRes = await fetch("https://movie-backend-drab.vercel.app/api/tickets", { headers });
         const ticketsData = await ticketsRes.json();
         let totalRevenue = 0;
         if (ticketsData.success) {
@@ -86,7 +86,7 @@ function DashboardOverview() {
         }
 
         // Fetch films
-        const filmsRes = await fetch("http://localhost:5000/api/films");
+        const filmsRes = await fetch("https://movie-backend-drab.vercel.app/api/films");
         const filmsData = await filmsRes.json();
         const filmsCount = filmsData.success ? filmsData.data.length : 0;
 
@@ -113,33 +113,33 @@ function DashboardOverview() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatsCard 
-          title="Total Users" 
-          value={stats.users.toString()} 
-          change="Real-time" 
-          trend="up" 
-          icon={Users} 
+        <StatsCard
+          title="Total Users"
+          value={stats.users.toString()}
+          change="Real-time"
+          trend="up"
+          icon={Users}
         />
-        <StatsCard 
-          title="Total Films" 
-          value={stats.films.toString()} 
-          change="Real-time" 
-          trend="up" 
-          icon={Film} 
+        <StatsCard
+          title="Total Films"
+          value={stats.films.toString()}
+          change="Real-time"
+          trend="up"
+          icon={Film}
         />
-        <StatsCard 
-          title="Active Events" 
-          value={stats.events.toString()} 
-          change="Real-time" 
-          trend="up" 
-          icon={Calendar} 
+        <StatsCard
+          title="Active Events"
+          value={stats.events.toString()}
+          change="Real-time"
+          trend="up"
+          icon={Calendar}
         />
-        <StatsCard 
-          title="Revenue (Tickets)" 
-          value={`$${stats.revenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`} 
-          change="Real-time" 
-          trend="up" 
-          icon={CreditCard} 
+        <StatsCard
+          title="Revenue (Tickets)"
+          value={`$${stats.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          change="Real-time"
+          trend="up"
+          icon={CreditCard}
         />
       </div>
 
@@ -155,24 +155,24 @@ function DashboardOverview() {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(var(--border) / 0.5)" />
-                <XAxis 
-                  dataKey="name" 
-                  stroke="oklch(var(--muted-foreground))" 
-                  fontSize={12} 
-                  tickLine={false} 
-                  axisLine={false} 
+                <XAxis
+                  dataKey="name"
+                  stroke="oklch(var(--muted-foreground))"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
                 />
-                <YAxis 
-                  stroke="oklch(var(--muted-foreground))" 
-                  fontSize={12} 
-                  tickLine={false} 
-                  axisLine={false} 
+                <YAxis
+                  stroke="oklch(var(--muted-foreground))"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
                   tickFormatter={(value) => `$${value}`}
                 />
-                <Tooltip 
+                <Tooltip
                   cursor={{ fill: "oklch(var(--forest) / 0.1)" }}
-                  contentStyle={{ 
-                    backgroundColor: "oklch(var(--card))", 
+                  contentStyle={{
+                    backgroundColor: "oklch(var(--card))",
                     borderColor: "oklch(var(--border))",
                     borderRadius: "12px",
                     boxShadow: "var(--shadow-card)"
@@ -196,38 +196,38 @@ function DashboardOverview() {
               <AreaChart data={revenueData}>
                 <defs>
                   <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="oklch(var(--gold))" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="oklch(var(--gold))" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="oklch(var(--gold))" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="oklch(var(--gold))" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(var(--border) / 0.5)" />
-                <XAxis 
-                  dataKey="name" 
-                  stroke="oklch(var(--muted-foreground))" 
-                  fontSize={12} 
-                  tickLine={false} 
-                  axisLine={false} 
+                <XAxis
+                  dataKey="name"
+                  stroke="oklch(var(--muted-foreground))"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
                 />
-                <YAxis 
-                  stroke="oklch(var(--muted-foreground))" 
-                  fontSize={12} 
-                  tickLine={false} 
-                  axisLine={false} 
+                <YAxis
+                  stroke="oklch(var(--muted-foreground))"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
                 />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: "oklch(var(--card))", 
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "oklch(var(--card))",
                     borderColor: "oklch(var(--border))",
                     borderRadius: "12px"
                   }}
                 />
-                <Area 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="oklch(var(--gold))" 
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke="oklch(var(--gold))"
                   strokeWidth={3}
-                  fillOpacity={1} 
-                  fill="url(#colorValue)" 
+                  fillOpacity={1}
+                  fill="url(#colorValue)"
                 />
               </AreaChart>
             </ResponsiveContainer>

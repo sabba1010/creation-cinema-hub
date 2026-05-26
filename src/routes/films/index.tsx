@@ -22,7 +22,7 @@ function FilmsLandingPage() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/films")
+    fetch("https://movie-backend-drab.vercel.app/api/films")
       .then(res => res.json())
       .then(data => {
         if (data.success) {
@@ -81,7 +81,7 @@ function FilmsLandingPage() {
               <p className="text-base sm:text-lg text-cream/80 leading-relaxed">
                 Explore the official library of original productions. High-definition documentaries and films exploring the design, majesty, and theological depth of God's great creation.
               </p>
-              
+
               <div className="flex flex-wrap gap-4 pt-4">
                 <Link
                   to="/films/$filmId"

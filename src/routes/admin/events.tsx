@@ -70,16 +70,16 @@ function EventsManagement() {
   const [tickets, setTickets] = useState(INITIAL_TICKETS);
   const [promos, setPromos] = useState(INITIAL_PROMOS);
   const [activeTab, setActiveTab] = useState("all-events");
-  
+
   // Dialog States
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
   const [isCityDialogOpen, setIsCityDialogOpen] = useState(false);
   const [isPromoDialogOpen, setIsPromoDialogOpen] = useState(false);
-  
+
   // Selection States
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
-  
+
   // Form States
   const [eventForm, setEventForm] = useState({
     name: "",
@@ -104,13 +104,13 @@ function EventsManagement() {
     formData.append("image", file);
 
     try {
-      const res = await fetch("http://localhost:5000/api/upload", {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/upload", {
         method: "POST",
         body: formData,
       });
       const data = await res.json();
       if (data.success) {
-        setEventForm({ ...eventForm, image: `http://localhost:5000${data.url}` });
+        setEventForm({ ...eventForm, image: `https://movie-backend-drab.vercel.app${data.url}` });
         toast.success("Image uploaded successfully!");
       } else {
         toast.error(data.message || "Upload failed");
@@ -126,7 +126,7 @@ function EventsManagement() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/events");
+        const res = await fetch("https://movie-backend-drab.vercel.app/api/events");
         const data = await res.json();
         if (data.success) {
           setEvents(data.data.map((e: any) => ({ ...e, id: e._id })));
@@ -139,7 +139,7 @@ function EventsManagement() {
       const token = localStorage.getItem("user_token");
       if (!token) return;
       try {
-        const res = await fetch("http://localhost:5000/api/tickets", {
+        const res = await fetch("https://movie-backend-drab.vercel.app/api/tickets", {
           headers: {
             "Authorization": `Bearer ${token}`
           }
@@ -168,10 +168,10 @@ function EventsManagement() {
   const handleSaveEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem("user_token");
-    
+
     try {
       if (editingEvent) {
-        const res = await fetch(`http://localhost:5000/api/events/${editingEvent.id}`, {
+        const res = await fetch(`https://movie-backend-drab.vercel.app/api/events/${editingEvent.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
           body: JSON.stringify(eventForm)
@@ -189,7 +189,7 @@ function EventsManagement() {
           price: eventForm.price.startsWith("$") ? eventForm.price : `$${eventForm.price}`,
           capacity: parseInt(eventForm.capacity) || 0
         };
-        const res = await fetch(`http://localhost:5000/api/events`, {
+        const res = await fetch(`https://movie-backend-drab.vercel.app/api/events`, {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
           body: JSON.stringify(payload)
@@ -247,15 +247,15 @@ function EventsManagement() {
           <p className="text-muted-foreground">Manage multi-city screenings, showtimes, and global registrations.</p>
         </div>
         <div className="flex gap-3">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="h-11 rounded-xl border-border/50 gap-2"
             onClick={() => setIsPromoDialogOpen(true)}
           >
             <TicketPercent className="w-4 h-4" />
             Promo Codes
           </Button>
-          <Button 
+          <Button
             className="bg-forest h-11 rounded-xl gap-2 shadow-md transition-all active:scale-95"
             onClick={() => {
               setEditingEvent(null);
@@ -290,10 +290,10 @@ function EventsManagement() {
             {events.map((event) => (
               <Card key={event.id} className="group border-border/50 bg-card/50 backdrop-blur-sm shadow-card hover:shadow-elevated transition-all overflow-hidden">
                 <div className="aspect-video relative overflow-hidden">
-                  <img 
-                    src={event.image?.startsWith('http') ? event.image : event.image?.startsWith('/uploads') ? `http://localhost:5000${event.image}` : event.image} 
-                    alt={event.name} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                  <img
+                    src={event.image?.startsWith('http') ? event.image : event.image?.startsWith('/uploads') ? `https://movie-backend-drab.vercel.app${event.image}` : event.image}
+                    alt={event.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   <div className="absolute top-4 left-4">
                     <Badge className="bg-forest/90 backdrop-blur text-white border-none">{event.status}</Badge>
@@ -317,7 +317,7 @@ function EventsManagement() {
                           if (confirm("Are you sure you want to delete this event?")) {
                             try {
                               const token = localStorage.getItem("user_token");
-                              const res = await fetch(`http://localhost:5000/api/events/${event.id}`, {
+                              const res = await fetch(`https://movie-backend-drab.vercel.app/api/events/${event.id}`, {
                                 method: "DELETE",
                                 headers: { "Authorization": `Bearer ${token}` }
                               });
@@ -344,7 +344,7 @@ function EventsManagement() {
                     <h3 className="font-display font-bold text-xl leading-tight">{event.name}</h3>
                     <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{event.subtitle}</p>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4 text-xs">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <CalendarIcon className="h-3.5 w-3.5 text-gold" />
@@ -377,81 +377,81 @@ function EventsManagement() {
         </TabsContent>
 
         <TabsContent value="registrations">
-           <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
-             <div className="p-6 border-b border-border/30 bg-muted/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input placeholder="Search by name, email or ticket ID..." className="pl-10 h-11 rounded-xl bg-background border-border/50" />
-                </div>
-                <div className="flex gap-2">
-                   <Button variant="outline" className="h-11 rounded-xl border-border/50 gap-2">
-                      <Filter className="w-4 h-4" /> Filters
-                   </Button>
-                   <Button variant="outline" className="h-11 rounded-xl border-border/50">Export PDF</Button>
-                </div>
-             </div>
-             <Table>
-                <TableHeader>
-                  <TableRow className="border-border/50 bg-muted/20">
-                    <TableHead className="font-bold">Attendee</TableHead>
-                    <TableHead className="font-bold">Event</TableHead>
-                    <TableHead className="font-bold">City</TableHead>
-                    <TableHead className="font-bold">Status</TableHead>
-                    <TableHead className="text-right font-bold">Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {tickets.map((t) => (
-                    <TableRow key={t.id} className="border-border/30 hover:bg-muted/10 transition-colors">
-                      <TableCell>
-                        <div className="font-bold">{t.user}</div>
-                        <div className="text-[10px] font-mono text-muted-foreground uppercase">{t.id}</div>
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        {t.eventName || t.eventId}
-                      </TableCell>
-                      <TableCell className="text-sm">{t.city}</TableCell>
-                      <TableCell>
-                        <Badge 
-                          variant={t.status === "Paid" ? "default" : "secondary"}
-                          className={t.status === "Paid" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : ""}
-                        >
-                          {t.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button 
-                          variant={t.checkedIn ? "outline" : "default"} 
-                          size="sm" 
-                          className={t.checkedIn ? "opacity-50" : "bg-forest hover:bg-forest/90"}
-                          onClick={async () => {
-                            try {
-                              const token = localStorage.getItem("user_token");
-                              const res = await fetch(`http://localhost:5000/api/tickets/${t._id}/checkin`, {
-                                method: 'PUT',
-                                headers: { 'Authorization': `Bearer ${token}` }
-                              });
-                              const data = await res.json();
-                              if (data.success) {
-                                setTickets(tickets.map(tk => tk.id === t.id ? {...tk, checkedIn: true} : tk));
-                                toast.success(`Attendee ${t.user} checked in!`);
-                              } else {
-                                toast.error(data.message || "Failed to check in");
-                              }
-                            } catch (err) {
-                              toast.error("Network error");
+          <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
+            <div className="p-6 border-b border-border/30 bg-muted/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input placeholder="Search by name, email or ticket ID..." className="pl-10 h-11 rounded-xl bg-background border-border/50" />
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" className="h-11 rounded-xl border-border/50 gap-2">
+                  <Filter className="w-4 h-4" /> Filters
+                </Button>
+                <Button variant="outline" className="h-11 rounded-xl border-border/50">Export PDF</Button>
+              </div>
+            </div>
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border/50 bg-muted/20">
+                  <TableHead className="font-bold">Attendee</TableHead>
+                  <TableHead className="font-bold">Event</TableHead>
+                  <TableHead className="font-bold">City</TableHead>
+                  <TableHead className="font-bold">Status</TableHead>
+                  <TableHead className="text-right font-bold">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {tickets.map((t) => (
+                  <TableRow key={t.id} className="border-border/30 hover:bg-muted/10 transition-colors">
+                    <TableCell>
+                      <div className="font-bold">{t.user}</div>
+                      <div className="text-[10px] font-mono text-muted-foreground uppercase">{t.id}</div>
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {t.eventName || t.eventId}
+                    </TableCell>
+                    <TableCell className="text-sm">{t.city}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={t.status === "Paid" ? "default" : "secondary"}
+                        className={t.status === "Paid" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : ""}
+                      >
+                        {t.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        variant={t.checkedIn ? "outline" : "default"}
+                        size="sm"
+                        className={t.checkedIn ? "opacity-50" : "bg-forest hover:bg-forest/90"}
+                        onClick={async () => {
+                          try {
+                            const token = localStorage.getItem("user_token");
+                            const res = await fetch(`https://movie-backend-drab.vercel.app/api/tickets/${t._id}/checkin`, {
+                              method: 'PUT',
+                              headers: { 'Authorization': `Bearer ${token}` }
+                            });
+                            const data = await res.json();
+                            if (data.success) {
+                              setTickets(tickets.map(tk => tk.id === t.id ? { ...tk, checkedIn: true } : tk));
+                              toast.success(`Attendee ${t.user} checked in!`);
+                            } else {
+                              toast.error(data.message || "Failed to check in");
                             }
-                          }}
-                          disabled={t.checkedIn}
-                        >
-                          {t.checkedIn ? "Checked In" : "Check In"}
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-             </Table>
-           </Card>
+                          } catch (err) {
+                            toast.error("Network error");
+                          }
+                        }}
+                        disabled={t.checkedIn}
+                      >
+                        {t.checkedIn ? "Checked In" : "Check In"}
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
         </TabsContent>
       </Tabs>
 
@@ -468,80 +468,80 @@ function EventsManagement() {
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2 space-y-2">
                 <Label>Event Name</Label>
-                <Input 
-                  value={eventForm.name} 
-                  onChange={e => setEventForm({...eventForm, name: e.target.value})}
-                  placeholder="e.g. Worship Night 2026" 
-                  className="h-11 rounded-xl" required 
+                <Input
+                  value={eventForm.name}
+                  onChange={e => setEventForm({ ...eventForm, name: e.target.value })}
+                  placeholder="e.g. Worship Night 2026"
+                  className="h-11 rounded-xl" required
                 />
               </div>
               <div className="col-span-2 space-y-2">
                 <Label>Tagline / Subtitle</Label>
-                <Input 
-                  value={eventForm.subtitle} 
-                  onChange={e => setEventForm({...eventForm, subtitle: e.target.value})}
-                  placeholder="e.g. A global experience of faith" 
-                  className="h-11 rounded-xl" 
+                <Input
+                  value={eventForm.subtitle}
+                  onChange={e => setEventForm({ ...eventForm, subtitle: e.target.value })}
+                  placeholder="e.g. A global experience of faith"
+                  className="h-11 rounded-xl"
                 />
               </div>
               <div className="space-y-2">
                 <Label>Display Date Range</Label>
-                <Input 
-                  value={eventForm.date} 
-                  onChange={e => setEventForm({...eventForm, date: e.target.value})}
-                  placeholder="Aug 18 - 22" 
-                  className="h-11 rounded-xl" required 
+                <Input
+                  value={eventForm.date}
+                  onChange={e => setEventForm({ ...eventForm, date: e.target.value })}
+                  placeholder="Aug 18 - 22"
+                  className="h-11 rounded-xl" required
                 />
               </div>
               <div className="space-y-2">
                 <Label>Base Ticket Price ($)</Label>
-                <Input 
-                  value={eventForm.price} 
-                  onChange={e => setEventForm({...eventForm, price: e.target.value})}
-                  placeholder="25.00" 
-                  className="h-11 rounded-xl" required 
+                <Input
+                  value={eventForm.price}
+                  onChange={e => setEventForm({ ...eventForm, price: e.target.value })}
+                  placeholder="25.00"
+                  className="h-11 rounded-xl" required
                 />
               </div>
               <div className="col-span-2 space-y-2">
                 <Label>Total Seats (Capacity)</Label>
-                <Input 
+                <Input
                   type="number"
-                  value={eventForm.capacity} 
-                  onChange={e => setEventForm({...eventForm, capacity: e.target.value})}
-                  placeholder="e.g. 500" 
-                  className="h-11 rounded-xl" required 
+                  value={eventForm.capacity}
+                  onChange={e => setEventForm({ ...eventForm, capacity: e.target.value })}
+                  placeholder="e.g. 500"
+                  className="h-11 rounded-xl" required
                 />
               </div>
               <div className="col-span-2 space-y-2">
                 <Label>Featured Image Upload</Label>
                 <div className="flex gap-4 items-center">
-                  <Input 
+                  <Input
                     type="file"
                     accept="image/*"
                     onChange={handleImageUpload}
-                    className="h-11 rounded-xl flex-1 pt-2.5" 
+                    className="h-11 rounded-xl flex-1 pt-2.5"
                     disabled={isUploading}
                   />
                   {eventForm.image && (
-                    <img src={eventForm.image.startsWith('http') || eventForm.image.startsWith('/') ? eventForm.image : `http://localhost:5000${eventForm.image}`} alt="Preview" className="h-11 w-11 object-cover rounded-md border border-border" />
+                    <img src={eventForm.image.startsWith('http') || eventForm.image.startsWith('/') ? eventForm.image : `https://movie-backend-drab.vercel.app${eventForm.image}`} alt="Preview" className="h-11 w-11 object-cover rounded-md border border-border" />
                   )}
                 </div>
                 {isUploading && <p className="text-xs text-muted-foreground">Uploading image...</p>}
               </div>
               <div className="col-span-2 space-y-2">
                 <Label>Full Description</Label>
-                <textarea 
-                  value={eventForm.description} 
-                  onChange={e => setEventForm({...eventForm, description: e.target.value})}
-                  className="w-full min-h-[100px] p-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-forest/30 outline-none" 
+                <textarea
+                  value={eventForm.description}
+                  onChange={e => setEventForm({ ...eventForm, description: e.target.value })}
+                  className="w-full min-h-[100px] p-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-forest/30 outline-none"
                   placeholder="Tell your audience about the event..."
                 />
               </div>
             </div>
             <DialogFooter>
-               <Button type="submit" className="w-full bg-forest h-12 rounded-xl shadow-lg font-bold">
-                  {editingEvent ? "Save Branding Changes" : "Initialize Event Engine"}
-               </Button>
+              <Button type="submit" className="w-full bg-forest h-12 rounded-xl shadow-lg font-bold">
+                {editingEvent ? "Save Branding Changes" : "Initialize Event Engine"}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
@@ -569,22 +569,22 @@ function EventsManagement() {
             </div>
             <div className="pt-4 border-t border-border/30 space-y-4">
               <div className="grid grid-cols-2 gap-3">
-                 <Input 
-                  placeholder="CODE" 
-                  className="uppercase font-bold" 
+                <Input
+                  placeholder="CODE"
+                  className="uppercase font-bold"
                   value={promoForm.code}
-                  onChange={e => setPromoForm({...promoForm, code: e.target.value})}
+                  onChange={e => setPromoForm({ ...promoForm, code: e.target.value })}
                 />
-                 <Input 
-                  placeholder="DISC %" 
+                <Input
+                  placeholder="DISC %"
                   value={promoForm.discount}
-                  onChange={e => setPromoForm({...promoForm, discount: e.target.value})}
+                  onChange={e => setPromoForm({ ...promoForm, discount: e.target.value })}
                 />
               </div>
-              <Input 
-                type="date" 
+              <Input
+                type="date"
                 value={promoForm.expiry}
-                onChange={e => setPromoForm({...promoForm, expiry: e.target.value})}
+                onChange={e => setPromoForm({ ...promoForm, expiry: e.target.value })}
               />
               <Button onClick={handleAddPromo} className="w-full bg-forest rounded-xl shadow-md h-11">Generate Promo Code</Button>
             </div>
@@ -595,79 +595,79 @@ function EventsManagement() {
       {/* Multi-City / Showtime Detail View */}
       {selectedEvent && (
         <div className="fixed inset-0 z-[60] bg-background/80 backdrop-blur-md flex items-center justify-center p-6 animate-fade-in">
-           <Card className="w-full max-w-5xl h-[85vh] overflow-hidden flex flex-col rounded-[2.5rem] shadow-elevated border-border/50 bg-card">
-              <div className="p-6 border-b border-border/30 flex items-center justify-between bg-muted/10">
-                 <div>
-                    <h2 className="text-2xl font-display font-bold text-foreground flex items-center gap-2">
-                       <Settings className="w-6 h-6 text-forest" />
-                       Manage: {selectedEvent.name}
-                    </h2>
-                    <p className="text-sm text-muted-foreground">Configure cities, venues, and specific screening times.</p>
-                 </div>
-                 <Button variant="ghost" className="h-12 w-12 rounded-full" onClick={() => setSelectedEvent(null)}>
-                    <Trash2 className="w-6 h-6 rotate-45" />
-                 </Button>
+          <Card className="w-full max-w-5xl h-[85vh] overflow-hidden flex flex-col rounded-[2.5rem] shadow-elevated border-border/50 bg-card">
+            <div className="p-6 border-b border-border/30 flex items-center justify-between bg-muted/10">
+              <div>
+                <h2 className="text-2xl font-display font-bold text-foreground flex items-center gap-2">
+                  <Settings className="w-6 h-6 text-forest" />
+                  Manage: {selectedEvent.name}
+                </h2>
+                <p className="text-sm text-muted-foreground">Configure cities, venues, and specific screening times.</p>
               </div>
-              <div className="flex-1 overflow-auto p-8 space-y-8">
-                 {selectedEvent.cities?.map((city) => (
-                    <div key={city.cityId} className="space-y-4 border-l-4 border-gold pl-6 py-2">
-                       <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                             <span className="text-3xl">{city.flag}</span>
-                             <div>
-                                <h4 className="font-bold text-lg">{city.city}, {city.country}</h4>
-                                <div className="text-xs text-muted-foreground flex items-center gap-1">
-                                   <MapPin className="w-3 h-3" /> {city.venue.name}
-                                </div>
-                             </div>
-                          </div>
-                          <div className="flex gap-2">
-                             <Button variant="outline" size="sm" className="h-9 rounded-lg gap-2">
-                                <Plus className="w-3 h-3" /> Add Showtime
-                             </Button>
-                             <Button variant="ghost" size="sm" className="h-9 w-9 p-0 text-destructive">
-                                <Trash2 className="w-4 h-4" />
-                             </Button>
-                          </div>
-                       </div>
-                       
-                       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                          {city.showtimes.map(st => (
-                             <div key={st.id} className="p-4 bg-muted/20 rounded-xl border border-border/30 group">
-                                <div className="flex items-center justify-between mb-2">
-                                   <Badge className="bg-gold/10 text-gold border-gold/20 text-[10px]">{st.day}</Badge>
-                                   <Button variant="ghost" size="sm" className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                                      <Edit className="w-3 h-3" />
-                                   </Button>
-                                </div>
-                                <div className="font-bold text-sm">{st.date}</div>
-                                <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                                   <Clock className="w-3 h-3" /> {st.time} ({st.timezone})
-                                </div>
-                                <div className="mt-3 flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
-                                   <span className={st.status === "sold-out" ? "text-rose-500" : "text-emerald-500"}>{st.status}</span>
-                                   <span className="text-muted-foreground">{st.spotsLeft} / {st.totalSpots}</span>
-                                </div>
-                             </div>
-                          ))}
-                       </div>
+              <Button variant="ghost" className="h-12 w-12 rounded-full" onClick={() => setSelectedEvent(null)}>
+                <Trash2 className="w-6 h-6 rotate-45" />
+              </Button>
+            </div>
+            <div className="flex-1 overflow-auto p-8 space-y-8">
+              {selectedEvent.cities?.map((city) => (
+                <div key={city.cityId} className="space-y-4 border-l-4 border-gold pl-6 py-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">{city.flag}</span>
+                      <div>
+                        <h4 className="font-bold text-lg">{city.city}, {city.country}</h4>
+                        <div className="text-xs text-muted-foreground flex items-center gap-1">
+                          <MapPin className="w-3 h-3" /> {city.venue.name}
+                        </div>
+                      </div>
                     </div>
-                 ))}
-                 
-                 <button className="w-full py-12 border-2 border-dashed border-border/50 rounded-[2rem] flex flex-col items-center justify-center gap-3 hover:bg-forest/5 hover:border-forest/40 transition-all group">
-                    <div className="p-4 bg-muted/20 rounded-2xl group-hover:bg-forest/10 transition-colors">
-                       <Globe className="w-8 h-8 text-muted-foreground group-hover:text-forest" />
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" className="h-9 rounded-lg gap-2">
+                        <Plus className="w-3 h-3" /> Add Showtime
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-9 w-9 p-0 text-destructive">
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
                     </div>
-                    <div>
-                       <div className="font-bold text-foreground group-hover:text-forest">Add New City Screening</div>
-                       <p className="text-xs text-muted-foreground">Select a new location to expand this event.</p>
-                    </div>
-                 </button>
-              </div>
-              <div className="p-6 border-t border-border/30 bg-muted/5 flex justify-end">
-                 <Button className="bg-forest h-12 rounded-xl px-12 shadow-md font-bold" onClick={() => setSelectedEvent(null)}>Done Managing Showtimes</Button>
-              </div>
-           </Card>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {city.showtimes.map(st => (
+                      <div key={st.id} className="p-4 bg-muted/20 rounded-xl border border-border/30 group">
+                        <div className="flex items-center justify-between mb-2">
+                          <Badge className="bg-gold/10 text-gold border-gold/20 text-[10px]">{st.day}</Badge>
+                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Edit className="w-3 h-3" />
+                          </Button>
+                        </div>
+                        <div className="font-bold text-sm">{st.date}</div>
+                        <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                          <Clock className="w-3 h-3" /> {st.time} ({st.timezone})
+                        </div>
+                        <div className="mt-3 flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
+                          <span className={st.status === "sold-out" ? "text-rose-500" : "text-emerald-500"}>{st.status}</span>
+                          <span className="text-muted-foreground">{st.spotsLeft} / {st.totalSpots}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              <button className="w-full py-12 border-2 border-dashed border-border/50 rounded-[2rem] flex flex-col items-center justify-center gap-3 hover:bg-forest/5 hover:border-forest/40 transition-all group">
+                <div className="p-4 bg-muted/20 rounded-2xl group-hover:bg-forest/10 transition-colors">
+                  <Globe className="w-8 h-8 text-muted-foreground group-hover:text-forest" />
+                </div>
+                <div>
+                  <div className="font-bold text-foreground group-hover:text-forest">Add New City Screening</div>
+                  <p className="text-xs text-muted-foreground">Select a new location to expand this event.</p>
+                </div>
+              </button>
+            </div>
+            <div className="p-6 border-t border-border/30 bg-muted/5 flex justify-end">
+              <Button className="bg-forest h-12 rounded-xl px-12 shadow-md font-bold" onClick={() => setSelectedEvent(null)}>Done Managing Showtimes</Button>
+            </div>
+          </Card>
         </div>
       )}
     </div>

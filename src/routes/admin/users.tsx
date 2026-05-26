@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { 
-  Users, 
-  Search, 
-  Filter, 
-  ShieldCheck, 
-  Mail, 
-  Clock, 
+import {
+  Users,
+  Search,
+  Filter,
+  ShieldCheck,
+  Mail,
+  Clock,
   MoreVertical,
   Activity,
   ArrowUpRight,
@@ -25,27 +25,27 @@ import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from "../../components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
 } from "../../components/ui/dropdown-menu";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogDescription,
   DialogFooter
 } from "../../components/ui/dialog";
@@ -56,48 +56,48 @@ export const Route = createFileRoute("/admin/users")({
 });
 
 const INITIAL_USERS = [
-  { 
-    id: 1, 
-    name: "Alex Thompson", 
-    email: "alex@example.com", 
-    status: "Active", 
-    membership: "Premium", 
+  {
+    id: 1,
+    name: "Alex Thompson",
+    email: "alex@example.com",
+    status: "Active",
+    membership: "Premium",
     lastActive: "2 hours ago",
     joined: "Jan 12, 2024",
     avatar: "https://i.pravatar.cc/150?u=1",
     totalSpent: "$240.00",
     lastOrder: "ORD-5501"
   },
-  { 
-    id: 2, 
-    name: "Sarah Miller", 
-    email: "sarah.m@example.com", 
-    status: "Inactive", 
-    membership: "Basic", 
+  {
+    id: 2,
+    name: "Sarah Miller",
+    email: "sarah.m@example.com",
+    status: "Inactive",
+    membership: "Basic",
     lastActive: "3 days ago",
     joined: "Feb 05, 2024",
     avatar: "https://i.pravatar.cc/150?u=2",
     totalSpent: "$15.99",
     lastOrder: "ORD-4202"
   },
-  { 
-    id: 3, 
-    name: "David Chen", 
-    email: "d.chen@example.com", 
-    status: "Active", 
-    membership: "Lifetime", 
+  {
+    id: 3,
+    name: "David Chen",
+    email: "d.chen@example.com",
+    status: "Active",
+    membership: "Lifetime",
     lastActive: "Now",
     joined: "Mar 10, 2023",
     avatar: "https://i.pravatar.cc/150?u=3",
     totalSpent: "$499.00",
     lastOrder: "ORD-1100"
   },
-  { 
-    id: 4, 
-    name: "Maria Garcia", 
-    email: "m.garcia@example.com", 
-    status: "Active", 
-    membership: "Basic", 
+  {
+    id: 4,
+    name: "Maria Garcia",
+    email: "m.garcia@example.com",
+    status: "Active",
+    membership: "Basic",
     lastActive: "1 week ago",
     joined: "Dec 15, 2023",
     avatar: "https://i.pravatar.cc/150?u=4",
@@ -119,7 +119,7 @@ function UserManagement() {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("user_token");
-        const res = await fetch("http://localhost:5000/api/users", {
+        const res = await fetch("https://movie-backend-drab.vercel.app/api/users", {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -174,8 +174,8 @@ function UserManagement() {
     setIsProfileOpen(true);
   };
 
-  const filteredUsers = users.filter((user) => 
-    user.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -205,8 +205,8 @@ function UserManagement() {
         <div className="p-6 border-b border-border/50 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-muted/20">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input 
-              placeholder="Search by name, email or ID..." 
+            <Input
+              placeholder="Search by name, email or ID..."
               className="pl-10 h-11 rounded-xl bg-background/50"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -220,7 +220,7 @@ function UserManagement() {
             <Button variant="outline" className="rounded-xl h-11 border-border/50">Export CSV</Button>
           </div>
         </div>
-        
+
         <Table>
           <TableHeader>
             <TableRow className="border-border/50 hover:bg-transparent">
@@ -250,11 +250,11 @@ function UserManagement() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge 
+                  <Badge
                     variant={user.status === "Active" ? "default" : "secondary"}
                     className={
-                      user.status === "Active" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : 
-                      user.status === "Blocked" ? "bg-rose-500/10 text-rose-600 border-rose-500/20" : ""
+                      user.status === "Active" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" :
+                        user.status === "Blocked" ? "bg-rose-500/10 text-rose-600 border-rose-500/20" : ""
                     }
                   >
                     {user.status}
@@ -268,25 +268,25 @@ function UserManagement() {
                 </TableCell>
                 <TableCell className="text-right pr-6">
                   <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       className="h-9 w-9 p-0 hover:bg-forest/10 hover:text-forest"
                       onClick={() => handleViewProfile(user)}
                     >
                       <Eye className="w-4 h-4" />
                     </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       className={`h-9 w-9 p-0 ${user.status === "Blocked" ? "text-emerald-600 hover:bg-emerald-100" : "text-amber-600 hover:bg-amber-100"}`}
                       onClick={() => handleBlockUser(user.id)}
                     >
                       <Ban className="w-4 h-4" />
                     </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       className="h-9 w-9 p-0 hover:bg-destructive/10 hover:text-destructive"
                       onClick={() => handleDeleteUser(user.id)}
                     >
@@ -334,53 +334,53 @@ function UserManagement() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 bg-muted/20 rounded-2xl border border-border/50 space-y-1">
-                     <div className="flex items-center gap-2 text-muted-foreground">
-                        <Calendar className="w-3.5 h-3.5" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Joined Date</span>
-                     </div>
-                     <p className="font-bold">{selectedUser.joined}</p>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span className="text-[10px] font-bold uppercase tracking-widest">Joined Date</span>
+                    </div>
+                    <p className="font-bold">{selectedUser.joined}</p>
                   </div>
                   <div className="p-4 bg-muted/20 rounded-2xl border border-border/50 space-y-1">
-                     <div className="flex items-center gap-2 text-muted-foreground">
-                        <CreditCard className="w-3.5 h-3.5" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Total Spent</span>
-                     </div>
-                     <p className="font-bold">{selectedUser.totalSpent}</p>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <CreditCard className="w-3.5 h-3.5" />
+                      <span className="text-[10px] font-bold uppercase tracking-widest">Total Spent</span>
+                    </div>
+                    <p className="font-bold">{selectedUser.totalSpent}</p>
                   </div>
                   <div className="p-4 bg-muted/20 rounded-2xl border border-border/50 space-y-1">
-                     <div className="flex items-center gap-2 text-muted-foreground">
-                        <ShieldCheck className="w-3.5 h-3.5" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Membership</span>
-                     </div>
-                     <p className="font-bold">{selectedUser.membership}</p>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <span className="text-[10px] font-bold uppercase tracking-widest">Membership</span>
+                    </div>
+                    <p className="font-bold">{selectedUser.membership}</p>
                   </div>
                   <div className="p-4 bg-muted/20 rounded-2xl border border-border/50 space-y-1">
-                     <div className="flex items-center gap-2 text-muted-foreground">
-                        <Globe className="w-3.5 h-3.5" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Last Activity</span>
-                     </div>
-                     <p className="font-bold">{selectedUser.lastActive}</p>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Globe className="w-3.5 h-3.5" />
+                      <span className="text-[10px] font-bold uppercase tracking-widest">Last Activity</span>
+                    </div>
+                    <p className="font-bold">{selectedUser.lastActive}</p>
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                   <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Account Actions</h4>
-                   <div className="flex gap-2">
-                      <Button 
-                        variant="outline" 
-                        className="flex-1 rounded-xl gap-2 h-11"
-                        onClick={() => { handleBlockUser(selectedUser.id); setIsProfileOpen(false); }}
-                      >
-                         <Ban className="w-4 h-4" /> {selectedUser.status === "Blocked" ? "Unblock" : "Block"}
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="flex-1 rounded-xl gap-2 h-11 text-destructive hover:bg-destructive/10"
-                        onClick={() => { handleDeleteUser(selectedUser.id); setIsProfileOpen(false); }}
-                      >
-                         <Trash2 className="w-4 h-4" /> Delete Account
-                      </Button>
-                   </div>
+                  <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Account Actions</h4>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      className="flex-1 rounded-xl gap-2 h-11"
+                      onClick={() => { handleBlockUser(selectedUser.id); setIsProfileOpen(false); }}
+                    >
+                      <Ban className="w-4 h-4" /> {selectedUser.status === "Blocked" ? "Unblock" : "Block"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="flex-1 rounded-xl gap-2 h-11 text-destructive hover:bg-destructive/10"
+                      onClick={() => { handleDeleteUser(selectedUser.id); setIsProfileOpen(false); }}
+                    >
+                      <Trash2 className="w-4 h-4" /> Delete Account
+                    </Button>
+                  </div>
                 </div>
               </div>
             </>
@@ -411,9 +411,9 @@ function StatsCard({ title, value, icon: Icon, trend, color }: any) {
         <div className="flex items-baseline gap-2">
           <div className="text-4xl font-bold font-display">{value}</div>
           {trend !== "0%" && (
-             <div className="text-emerald-500 text-sm font-medium flex items-center">
-               <ArrowUpRight className="w-3 h-3" /> {trend}
-             </div>
+            <div className="text-emerald-500 text-sm font-medium flex items-center">
+              <ArrowUpRight className="w-3 h-3" /> {trend}
+            </div>
           )}
         </div>
       </div>
