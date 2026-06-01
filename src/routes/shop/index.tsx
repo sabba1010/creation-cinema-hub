@@ -14,62 +14,29 @@ const CATEGORIES = [
   { id: "apparel", label: "Apparel", icon: Shirt },
 ];
 
-const PRODUCTS = [
-  {
-    id: "seed-of-wonder-book",
-    title: "The Seed of Wonder",
-    category: "books",
-    price: 18.99,
-    rating: 4.9,
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800",
-    desc: "A timeless exploration of divine presence in creation.",
-    externalLink: "https://amazon.com/dp/placeholder-book-1",
-    storeName: "Amazon",
-    accent: "gold"
-  },
-  {
-    id: "oms-signature-tee",
-    title: "OMS Signature T-Shirt",
-    category: "apparel",
-    price: 28.00,
-    rating: 4.8,
-    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=800",
-    desc: "Premium organic cotton tee with hand-drawn artwork.",
-    externalLink: "https://etsy.com/listing/placeholder-shirt-1",
-    storeName: "Etsy",
-    accent: "forest"
-  },
-  {
-    id: "nature-study-workbook",
-    title: "Nature Study Workbook",
-    category: "books",
-    price: 22.50,
-    rating: 4.9,
-    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=800",
-    desc: "Interactive guide for kids and families exploring nature.",
-    externalLink: "https://amazon.com/dp/placeholder-book-2",
-    storeName: "Amazon",
-    accent: "gold"
-  },
-  {
-    id: "creation-story-hoodie",
-    title: "Creation Story Hoodie",
-    category: "apparel",
-    price: 45.00,
-    rating: 4.7,
-    image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&q=80&w=800",
-    desc: "Soft-wash heavy cotton hoodie with cinematic graphics.",
-    externalLink: "https://etsy.com/listing/placeholder-hoodie-1",
-    storeName: "Etsy",
-    accent: "forest"
-  },
-];
+import { useEffect } from "react";
 
 function ShopLandingPage() {
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [products, setProducts] = useState<any[]>([]);
 
-  const filteredProducts = PRODUCTS.filter((p) => {
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/products");
+        const data = await res.json();
+        if (data.success) {
+          setProducts(data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch products", error);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  const filteredProducts = products.filter((p) => {
     const matchesTab = activeTab === "all" || p.category === activeTab;
     const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesTab && matchesSearch;
@@ -161,8 +128,8 @@ function ShopLandingPage() {
               <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {filteredProducts.map((product) => (
                   <a 
-                    key={product.id} 
-                    href={product.externalLink}
+                    key={product._id} 
+                    href={product.externalLink || "#"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="group flex flex-col"

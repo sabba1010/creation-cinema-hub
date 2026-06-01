@@ -1,4 +1,4 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { 
   ShoppingBag, 
@@ -16,7 +16,8 @@ import {
   Cpu,
   Shirt,
   Book,
-  Image as ImageIcon
+  Image as ImageIcon,
+  ExternalLink
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
@@ -37,30 +38,97 @@ export const Route = createFileRoute("/admin/shop")({
   component: ShopManagement,
 });
 
-// Synchronized with public Shop page
-const INITIAL_PRODUCTS = [
-  { id: 1, title: "The Seed of Wonder", category: "Books", price: 18.99, stock: 45, rating: 4.9, img: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=400&fit=crop" },
-  { id: 2, title: "OMS Signature Hoodie", category: "Apparel", price: 45.00, stock: 12, rating: 4.8, img: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=400&fit=crop" },
-  { id: 3, title: "Prayer Meditation Album", category: "Digital", price: 12.00, stock: 999, rating: 5.0, img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&h=400&fit=crop" },
-  { id: 4, title: "Creation Story Tee", category: "Apparel", price: 28.00, stock: 24, rating: 4.7, img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop" },
-  { id: 5, title: "Nature Study Workbook", category: "Books", price: 22.50, stock: 18, rating: 4.9, img: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop" },
-  { id: 6, title: "Ministry Digital Bundle", category: "Digital", price: 99.00, stock: 999, rating: 4.8, img: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=400&fit=crop" },
-];
+import { useEffect } from "react";
+
+// Initial state removed in favor of dynamic fetch
 
 function ShopManagement() {
-  const [products, setProducts] = useState(INITIAL_PRODUCTS);
+  const [products, setProducts] = useState<any[]>([]);
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
   const [isEditProductOpen, setIsEditProductOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  
+  // Form state
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("books");
+  const [price, setPrice] = useState("");
+  const [stock, setStock] = useState("");
+  const [desc, setDesc] = useState("");
+  const [externalLink, setExternalLink] = useState("");
+  const [image, setImage] = useState("");
+  const [storeName, setStoreName] = useState("Amazon");
 
-  const handleDelete = (id: number, title: string) => {
-    setProducts(products.filter(p => p.id !== id));
-    toast.error(`${title} removed from inventory`);
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/products");
+      const data = await res.json();
+      if (data.success) {
+        setProducts(data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching products", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const handleDelete = async (id: string, title: string) => {
+    try {
+      await fetch(`http://localhost:5000/api/products/${id}`, { method: 'DELETE' });
+      setProducts(products.filter(p => p._id !== id));
+      toast.error(`${title} removed from inventory`);
+    } catch (error) {
+      toast.error("Failed to delete product");
+    }
   };
 
   const handleEdit = (product: any) => {
     setSelectedProduct(product);
+    setTitle(product.title);
+    setCategory(product.category);
+    setPrice(product.price);
+    setStock(product.stock);
+    setDesc(product.desc);
+    setExternalLink(product.externalLink);
+    setImage(product.image);
+    setStoreName(product.storeName);
     setIsEditProductOpen(true);
+  };
+
+  const handleAddSubmit = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, category, price, stock, desc, externalLink, image, storeName })
+      });
+      if (res.ok) {
+        toast.success("Product listed successfully!");
+        setIsAddProductOpen(false);
+        fetchProducts();
+      }
+    } catch (error) {
+      toast.error("Failed to add product");
+    }
+  };
+
+  const handleEditSubmit = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/products/${selectedProduct._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, category, price, stock, desc, externalLink, image, storeName })
+      });
+      if (res.ok) {
+        toast.success("Inventory updated!");
+        setIsEditProductOpen(false);
+        fetchProducts();
+      }
+    } catch (error) {
+      toast.error("Failed to update product");
+    }
   };
 
   return (
@@ -100,9 +168,9 @@ function ShopManagement() {
         <div className="p-6">
            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {products.map((p) => (
-                <div key={p.id} className="group relative bg-background border border-border/50 rounded-[2rem] overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 flex flex-col">
+                <div key={p._id} className="group relative bg-background border border-border/50 rounded-[2rem] overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 flex flex-col">
                    <div className="aspect-square relative overflow-hidden bg-muted">
-                      <img src={p.img} alt={p.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                      <img src={p.image} alt={p.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                       <div className="absolute top-4 left-4">
                          <Badge className="bg-white/90 backdrop-blur text-forest-deep font-bold border-none text-[9px] uppercase tracking-widest px-3">
                             {p.category}
@@ -113,7 +181,7 @@ function ShopManagement() {
                             <Button variant="secondary" className="flex-1 rounded-xl h-10 font-bold text-[10px] uppercase tracking-widest gap-2" onClick={() => handleEdit(p)}>
                                <Edit3 className="w-3 h-3" /> Edit
                             </Button>
-                            <Button variant="destructive" size="icon" className="h-10 w-10 rounded-xl" onClick={() => handleDelete(p.id, p.title)}>
+                            <Button variant="destructive" size="icon" className="h-10 w-10 rounded-xl" onClick={() => handleDelete(p._id, p.title)}>
                                <Trash2 className="w-4 h-4" />
                             </Button>
                          </div>
@@ -130,6 +198,13 @@ function ShopManagement() {
                             <span className="h-1 w-1 rounded-full bg-border" />
                             <span className="flex items-center gap-1"><Star className="w-3 h-3 fill-gold text-gold" /> {p.rating}</span>
                          </div>
+                         {p.externalLink && p.externalLink !== "#" && (
+                            <div className="mt-2 text-[10px] text-primary/60 truncate max-w-[200px]">
+                               <a href={p.externalLink} target="_blank" rel="noreferrer" className="hover:underline flex items-center gap-1">
+                                  <ExternalLink className="w-3 h-3" /> {p.storeName || "Store"}
+                               </a>
+                            </div>
+                         )}
                       </div>
                    </div>
                 </div>
@@ -155,27 +230,27 @@ function ShopManagement() {
 
       {/* Add Product Dialog */}
       <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
-         <DialogContent className="sm:max-w-[500px] rounded-[2.5rem] border-border/50 bg-card/95 backdrop-blur-xl">
+         <DialogContent className="sm:max-w-[600px] rounded-[2.5rem] border-border/50 bg-card/95 backdrop-blur-xl">
             <DialogHeader>
                <DialogTitle className="text-2xl font-display font-bold">New Product Listing</DialogTitle>
                <DialogDescription>Add a new item to your online store.</DialogDescription>
             </DialogHeader>
-            <div className="space-y-6 py-4">
+            <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto px-1">
                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                      <Label>Product Name</Label>
-                     <Input placeholder="e.g. Creator's Journal" className="h-11 rounded-xl" />
+                     <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Creator's Journal" className="h-11 rounded-xl" />
                   </div>
                   <div className="space-y-2">
                      <Label>Category</Label>
-                     <Select>
+                     <Select value={category} onValueChange={setCategory}>
                         <SelectTrigger className="h-11 rounded-xl">
                            <SelectValue placeholder="Select..." />
                         </SelectTrigger>
                         <SelectContent className="rounded-xl">
-                           <SelectItem value="Books">Books</SelectItem>
-                           <SelectItem value="Apparel">Apparel</SelectItem>
-                           <SelectItem value="Digital">Digital</SelectItem>
+                           <SelectItem value="books">Books</SelectItem>
+                           <SelectItem value="apparel">Apparel</SelectItem>
+                           <SelectItem value="digital">Digital</SelectItem>
                         </SelectContent>
                      </Select>
                   </div>
@@ -183,21 +258,37 @@ function ShopManagement() {
                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                      <Label>Price ($)</Label>
-                     <Input type="number" placeholder="0.00" className="h-11 rounded-xl" />
+                     <Input value={price} onChange={e => setPrice(e.target.value)} type="number" placeholder="0.00" className="h-11 rounded-xl" />
                   </div>
                   <div className="space-y-2">
                      <Label>Initial Stock</Label>
-                     <Input type="number" placeholder="0" className="h-11 rounded-xl" />
+                     <Input value={stock} onChange={e => setStock(e.target.value)} type="number" placeholder="0" className="h-11 rounded-xl" />
                   </div>
                </div>
                <div className="space-y-2">
-                  <Label>Product Image</Label>
-                  <div className="border-2 border-dashed border-border rounded-2xl p-8 text-center hover:bg-muted/50 transition-all cursor-pointer">
-                     <ImageIcon className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                     <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Upload JPG/PNG</span>
+                  <Label>Description</Label>
+                  <Input value={desc} onChange={e => setDesc(e.target.value)} placeholder="Product description..." className="h-11 rounded-xl" />
+               </div>
+               <div className="space-y-2">
+                  <Label>Product Image URL</Label>
+                  <Input value={image} onChange={e => setImage(e.target.value)} placeholder="https://..." className="h-11 rounded-xl" />
+                  {image && (
+                     <div className="mt-2 rounded-xl overflow-hidden border border-border/50 bg-muted/50 h-32 w-32 relative">
+                        <img src={image} alt="Preview" className="object-cover w-full h-full" />
+                     </div>
+                  )}
+               </div>
+               <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                     <Label>External Link</Label>
+                     <Input value={externalLink} onChange={e => setExternalLink(e.target.value)} placeholder="https://amazon.com/..." className="h-11 rounded-xl" />
+                  </div>
+                  <div className="space-y-2">
+                     <Label>Store Name</Label>
+                     <Input value={storeName} onChange={e => setStoreName(e.target.value)} placeholder="e.g. Amazon, Etsy" className="h-11 rounded-xl" />
                   </div>
                </div>
-               <Button className="w-full bg-forest h-12 rounded-xl shadow-lg font-bold uppercase tracking-widest text-[11px]" onClick={() => { toast.success("Product listed successfully!"); setIsAddProductOpen(false); }}>
+               <Button className="w-full bg-forest h-12 rounded-xl shadow-lg font-bold uppercase tracking-widest text-[11px] mt-4" onClick={handleAddSubmit}>
                   Create Listing
                </Button>
             </div>
@@ -206,27 +297,65 @@ function ShopManagement() {
 
       {/* Edit Product Dialog */}
       <Dialog open={isEditProductOpen} onOpenChange={setIsEditProductOpen}>
-         <DialogContent className="sm:max-w-[500px] rounded-[2.5rem] border-border/50 bg-card/95 backdrop-blur-xl">
+         <DialogContent className="sm:max-w-[600px] rounded-[2.5rem] border-border/50 bg-card/95 backdrop-blur-xl">
             <DialogHeader>
                <DialogTitle className="text-2xl font-display font-bold">Edit Product</DialogTitle>
                <DialogDescription>Update details for "{selectedProduct?.title}"</DialogDescription>
             </DialogHeader>
-            <div className="space-y-6 py-4">
-               <div className="space-y-2">
-                  <Label>Product Name</Label>
-                  <Input defaultValue={selectedProduct?.title} className="h-11 rounded-xl" />
+            <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto px-1">
+               <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                     <Label>Product Name</Label>
+                     <Input value={title} onChange={e => setTitle(e.target.value)} className="h-11 rounded-xl" />
+                  </div>
+                  <div className="space-y-2">
+                     <Label>Category</Label>
+                     <Select value={category} onValueChange={setCategory}>
+                        <SelectTrigger className="h-11 rounded-xl">
+                           <SelectValue placeholder="Select..." />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl">
+                           <SelectItem value="books">Books</SelectItem>
+                           <SelectItem value="apparel">Apparel</SelectItem>
+                           <SelectItem value="digital">Digital</SelectItem>
+                        </SelectContent>
+                     </Select>
+                  </div>
                </div>
                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                      <Label>Price ($)</Label>
-                     <Input defaultValue={selectedProduct?.price} className="h-11 rounded-xl" />
+                     <Input value={price} onChange={e => setPrice(e.target.value)} type="number" className="h-11 rounded-xl" />
                   </div>
                   <div className="space-y-2">
                      <Label>Stock Level</Label>
-                     <Input defaultValue={selectedProduct?.stock} className="h-11 rounded-xl" />
+                     <Input value={stock} onChange={e => setStock(e.target.value)} type="number" className="h-11 rounded-xl" />
                   </div>
                </div>
-               <Button className="w-full bg-forest h-12 rounded-xl shadow-lg font-bold uppercase tracking-widest text-[11px]" onClick={() => { toast.success("Inventory updated!"); setIsEditProductOpen(false); }}>
+               <div className="space-y-2">
+                  <Label>Description</Label>
+                  <Input value={desc} onChange={e => setDesc(e.target.value)} className="h-11 rounded-xl" />
+               </div>
+               <div className="space-y-2">
+                  <Label>Product Image URL</Label>
+                  <Input value={image} onChange={e => setImage(e.target.value)} className="h-11 rounded-xl" />
+                  {image && (
+                     <div className="mt-2 rounded-xl overflow-hidden border border-border/50 bg-muted/50 h-32 w-32 relative">
+                        <img src={image} alt="Preview" className="object-cover w-full h-full" />
+                     </div>
+                  )}
+               </div>
+               <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                     <Label>External Link</Label>
+                     <Input value={externalLink} onChange={e => setExternalLink(e.target.value)} className="h-11 rounded-xl" />
+                  </div>
+                  <div className="space-y-2">
+                     <Label>Store Name</Label>
+                     <Input value={storeName} onChange={e => setStoreName(e.target.value)} className="h-11 rounded-xl" />
+                  </div>
+               </div>
+               <Button className="w-full bg-forest h-12 rounded-xl shadow-lg font-bold uppercase tracking-widest text-[11px] mt-4" onClick={handleEditSubmit}>
                   Save Changes
                </Button>
             </div>
