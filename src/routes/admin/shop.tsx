@@ -145,10 +145,10 @@ function ShopManagement() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-4">
-        <StatsCard title="Total Products" value="12" icon={Package} color="forest" />
-        <StatsCard title="Active Categories" value="3" icon={Tag} color="gold" />
-        <StatsCard title="Monthly Sales" value="$4,280" icon={ShoppingCart} color="sky" />
-        <StatsCard title="Average Rating" value="4.8" icon={Star} color="forest" />
+        <StatsCard title="Total Products" value={products.length.toString()} icon={Package} color="forest" />
+        <StatsCard title="Active Categories" value={new Set(products.map(p => p.category)).size.toString()} icon={Tag} color="gold" />
+        <StatsCard title="Total Inventory" value={products.reduce((acc, p) => acc + (Number(p.stock) || 0), 0).toString()} icon={ShoppingCart} color="sky" />
+        <StatsCard title="Average Rating" value={products.length > 0 ? (products.reduce((acc, p) => acc + (Number(p.rating) || 5), 0) / products.length).toFixed(1) : "0.0"} icon={Star} color="forest" />
       </div>
 
       <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
