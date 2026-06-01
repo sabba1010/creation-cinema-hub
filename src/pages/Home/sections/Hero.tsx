@@ -1,20 +1,51 @@
-﻿import { Play, Compass } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Play, Compass } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { HERO_CONTENT } from "../../../data/home-data";
 
 import heroImg from "@/assets/hero-family.jpg";
 
 export function Hero() {
+  const [mediaUrl, setMediaUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/settings");
+        const data = await res.json();
+        if (data.success && data.data.home_hero_media) {
+          setMediaUrl(data.data.home_hero_media);
+        }
+      } catch (err) {
+        console.error("Failed to fetch settings", err);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  const isVideo = mediaUrl?.match(/\.(mp4|webm|ogg)$/i);
+
   return (
     <section className="relative isolate min-h-[100svh] w-full overflow-hidden flex flex-col justify-center">
-      {/* Background Image */}
-      <img
-        src={heroImg}
-        alt="A family overlooking mountains at golden hour"
-        width={1920}
-        height={1280}
-        className="absolute inset-0 h-full w-full object-cover"
-      />
+      {/* Background Image / Video */}
+      {isVideo ? (
+        <video
+          src={mediaUrl}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      ) : (
+        <img
+          src={mediaUrl || heroImg}
+          alt="A family overlooking mountains at golden hour"
+          width={1920}
+          height={1280}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      )}
 
       {/* Sophisticated Overlays */}
       <div className="absolute inset-0 bg-black/30" />

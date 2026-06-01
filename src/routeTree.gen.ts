@@ -52,6 +52,7 @@ import { Route as FilmsFilmIdRouteImport } from './routes/films/$filmId'
 import { Route as BooksBookIdRouteImport } from './routes/books/$bookId'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminShopRouteImport } from './routes/admin/shop'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminResourcesRouteImport } from './routes/admin/resources'
 import { Route as AdminPrayerRouteImport } from './routes/admin/prayer'
 import { Route as AdminPodcastRouteImport } from './routes/admin/podcast'
@@ -280,6 +281,11 @@ const AdminShopRoute = AdminShopRouteImport.update({
   path: '/shop',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminResourcesRoute = AdminResourcesRouteImport.update({
   id: '/resources',
   path: '/resources',
@@ -369,6 +375,7 @@ export interface FileRoutesByFullPath {
   '/admin/podcast': typeof AdminPodcastRoute
   '/admin/prayer': typeof AdminPrayerRoute
   '/admin/resources': typeof AdminResourcesRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/shop': typeof AdminShopRoute
   '/admin/users': typeof AdminUsersRoute
   '/books/$bookId': typeof BooksBookIdRoute
@@ -418,6 +425,7 @@ export interface FileRoutesByTo {
   '/admin/podcast': typeof AdminPodcastRoute
   '/admin/prayer': typeof AdminPrayerRoute
   '/admin/resources': typeof AdminResourcesRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/shop': typeof AdminShopRoute
   '/admin/users': typeof AdminUsersRoute
   '/books/$bookId': typeof BooksBookIdRoute
@@ -476,6 +484,7 @@ export interface FileRoutesById {
   '/admin/podcast': typeof AdminPodcastRoute
   '/admin/prayer': typeof AdminPrayerRoute
   '/admin/resources': typeof AdminResourcesRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/shop': typeof AdminShopRoute
   '/admin/users': typeof AdminUsersRoute
   '/books/$bookId': typeof BooksBookIdRoute
@@ -535,6 +544,7 @@ export interface FileRouteTypes {
     | '/admin/podcast'
     | '/admin/prayer'
     | '/admin/resources'
+    | '/admin/settings'
     | '/admin/shop'
     | '/admin/users'
     | '/books/$bookId'
@@ -584,6 +594,7 @@ export interface FileRouteTypes {
     | '/admin/podcast'
     | '/admin/prayer'
     | '/admin/resources'
+    | '/admin/settings'
     | '/admin/shop'
     | '/admin/users'
     | '/books/$bookId'
@@ -641,6 +652,7 @@ export interface FileRouteTypes {
     | '/admin/podcast'
     | '/admin/prayer'
     | '/admin/resources'
+    | '/admin/settings'
     | '/admin/shop'
     | '/admin/users'
     | '/books/$bookId'
@@ -1002,6 +1014,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminShopRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/resources': {
       id: '/admin/resources'
       path: '/resources'
@@ -1110,6 +1129,7 @@ interface AdminRouteChildren {
   AdminPodcastRoute: typeof AdminPodcastRoute
   AdminPrayerRoute: typeof AdminPrayerRoute
   AdminResourcesRoute: typeof AdminResourcesRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
   AdminShopRoute: typeof AdminShopRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -1126,6 +1146,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPodcastRoute: AdminPodcastRoute,
   AdminPrayerRoute: AdminPrayerRoute,
   AdminResourcesRoute: AdminResourcesRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
   AdminShopRoute: AdminShopRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
