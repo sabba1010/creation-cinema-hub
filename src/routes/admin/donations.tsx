@@ -1,5 +1,5 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { 
   Heart, 
   Users, 
@@ -32,16 +32,32 @@ export const Route = createFileRoute("/admin/donations")({
   component: DonationManagement,
 });
 
-const INITIAL_DONATIONS = [
-  { id: 1, donor: "Johnathan Wright", email: "j.wright@example.com", amount: 50, type: "Monthly", date: "Today, 10:45 AM", status: "Completed" },
-  { id: 2, donor: "Sarah Miller", email: "sarah.m@outlook.com", amount: 250, type: "One-time", date: "Yesterday, 04:20 PM", status: "Completed" },
-  { id: 3, donor: "David Chen", email: "d.chen@church.org", amount: 100, type: "Monthly", date: "May 12, 2026", status: "Completed" },
-  { id: 4, donor: "Maria Garcia", email: "m.garcia@gmail.com", amount: 25, type: "One-time", date: "May 11, 2026", status: "Completed" },
-  { id: 5, donor: "Alex Thompson", email: "alex.t@ministry.com", amount: 500, type: "One-time", date: "May 10, 2026", status: "Completed" },
-];
 
 function DonationManagement() {
-  const [donations, setDonations] = useState(INITIAL_DONATIONS);
+  const [donations, setDonations] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDonations = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/donations");
+        const data = await res.json();
+        if (data.success) {
+          setDonations(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching donations:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchDonations();
+  }, []);
+
+  const totalRaised = donations.reduce((sum, d) => sum + d.amount, 0);
+  const totalDonors = new Set(donations.map(d => d.email)).size;
+  const monthlyGiving = donations.filter(d => d.type === 'Monthly').reduce((sum, d) => sum + d.amount, 0);
+  const avgDonation = donations.length > 0 ? (totalRaised / donations.length) : 0;
 
   return (
     <div className="space-y-8 animate-fade-up">
@@ -63,10 +79,10 @@ function DonationManagement() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-4">
-        <StatsCard title="Total Raised" value="$42,850" sub="This Month" icon={DollarSign} color="forest" />
-        <StatsCard title="Total Donors" value="1,240" sub="+12 new today" icon={Users} color="gold" />
-        <StatsCard title="Monthly Giving" value="$18,400" sub="Recurring Revenue" icon={Heart} color="sky" />
-        <StatsCard title="Avg. Donation" value="$65.00" sub="Per Transaction" icon={TrendingUp} color="forest" />
+        <StatsCard title="Total Raised" value={`$${totalRaised.toLocaleString()}`} sub="All time" icon={DollarSign} color="forest" />
+        <StatsCard title="Total Donors" value={totalDonors.toString()} sub="Unique" icon={Users} color="gold" />
+        <StatsCard title="Monthly Giving" value={`$${monthlyGiving.toLocaleString()}`} sub="Recurring Revenue" icon={Heart} color="sky" />
+        <StatsCard title="Avg. Donation" value={`$${avgDonation.toFixed(2)}`} sub="Per Transaction" icon={TrendingUp} color="forest" />
       </div>
 
       <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
@@ -95,16 +111,25 @@ function DonationManagement() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {donations.map((d) => (
-              <TableRow key={d.id} className="border-border/50 group hover:bg-muted/10 transition-colors">
+            {isLoading ? (
+              <TableRow><TableCell colSpan={6} className="text-center py-8">Loading...</TableCell></TableRow>
+            ) : donations.map((d) => (
+              <TableRow key={d._id} className="border-border/50 group hover:bg-muted/10 transition-colors">
                 <TableCell className="pl-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-forest/5 flex items-center justify-center text-forest font-bold border border-forest/10">
-                      {d.donor.charAt(0)}
+                      {d.firstName ? d.firstName.charAt(0) : '?'}
                     </div>
                     <div>
-                      <div className="font-bold text-base">{d.donor}</div>
+                      <div className="font-bold text-base">{d.firstName} {d.lastName}</div>
                       <div className="text-[10px] text-muted-foreground uppercase tracking-widest">{d.email}</div>
+                      <div className="text-[9px] font-medium text-muted-foreground mt-1">
+                        {d.isRegisteredUser ? (
+                          <span className="text-forest">Account created: {new Date(d.accountCreatedAt).toLocaleDateString()}</span>
+                        ) : (
+                          <span className="text-muted-foreground/60">Guest Donation</span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </TableCell>
@@ -117,7 +142,7 @@ function DonationManagement() {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-sm">
-                   {d.date}
+                   {new Date(d.createdAt).toLocaleDateString()}
                 </TableCell>
                 <TableCell>
                    <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] uppercase font-black">
@@ -144,41 +169,7 @@ function DonationManagement() {
         </div>
       </Card>
 
-      {/* Simple Goal Summary */}
-      <div className="grid md:grid-cols-2 gap-6">
-         <Card className="border-border/50 bg-forest-deep text-cream p-8 rounded-[2.5rem] relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-12 opacity-5 rotate-12 group-hover:rotate-0 transition-transform">
-               <HandHeart className="w-48 h-48" />
-            </div>
-            <div className="space-y-6 relative">
-               <div className="space-y-2">
-                  <h3 className="text-2xl font-display font-bold italic">Monthly Goal Progress</h3>
-                  <p className="text-cream/60 text-sm">We are aiming for $50k in recurring support this month.</p>
-               </div>
-               <div className="space-y-3">
-                  <div className="flex justify-between font-bold text-sm">
-                     <span>$18,400 raised</span>
-                     <span className="text-gold">36%</span>
-                  </div>
-                  <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                     <div className="h-full bg-gold shadow-glow" style={{ width: '36%' }} />
-                  </div>
-               </div>
-            </div>
-         </Card>
 
-         <Card className="border-border/50 bg-card p-8 rounded-[2.5rem] flex flex-col justify-between">
-            <div className="space-y-4">
-               <h3 className="text-2xl font-display font-bold text-forest-deep">Donor Retention</h3>
-               <p className="text-sm text-muted-foreground leading-relaxed">
-                  **78% of your donors** from last month have continued their support. This is 5% higher than the industry average!
-               </p>
-            </div>
-            <Button variant="outline" className="w-full mt-6 rounded-xl h-11 border-forest/20 text-forest font-bold text-xs uppercase tracking-widest gap-2">
-               View Retention Report <ChevronRight className="w-4 h-4" />
-            </Button>
-         </Card>
-      </div>
     </div>
   );
 }
