@@ -189,27 +189,17 @@ function FilmsManagement() {
     if (!file) return;
 
     setIsUploading(true);
-    const fd = new FormData();
-    fd.append("image", file);
-
-    try {
-      const res = await fetch("https://movie-backend-drab.vercel.app/api/upload", {
-        method: "POST",
-        body: fd,
-      });
-      const data = await res.json();
-      if (data.success) {
-        setFormData({ ...formData, thumbnail: `https://movie-backend-drab.vercel.app${data.url}` });
-        toast.success("Image uploaded successfully!");
-      } else {
-        toast.error(data.message || "Upload failed");
-      }
-    } catch (err) {
-      console.error("Upload error:", err);
-      toast.error("Network error during upload");
-    } finally {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData({ ...formData, thumbnail: reader.result as string });
       setIsUploading(false);
-    }
+      toast.success("Image attached successfully!");
+    };
+    reader.onerror = () => {
+      toast.error("Failed to process image");
+      setIsUploading(false);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSaveFilm = async (e: React.FormEvent) => {

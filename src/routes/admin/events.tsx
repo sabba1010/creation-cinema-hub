@@ -111,27 +111,17 @@ function EventsManagement() {
     if (!file) return;
 
     setIsUploading(true);
-    const formData = new FormData();
-    formData.append("image", file);
-
-    try {
-      const res = await fetch("https://movie-backend-drab.vercel.app/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-      if (data.success) {
-        setEventForm({ ...eventForm, image: `https://movie-backend-drab.vercel.app${data.url}` });
-        toast.success("Image uploaded successfully!");
-      } else {
-        toast.error(data.message || "Upload failed");
-      }
-    } catch (err) {
-      console.error("Upload error:", err);
-      toast.error("Network error during upload");
-    } finally {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setEventForm({ ...eventForm, image: reader.result as string });
       setIsUploading(false);
-    }
+      toast.success("Image attached successfully!");
+    };
+    reader.onerror = () => {
+      toast.error("Failed to process image");
+      setIsUploading(false);
+    };
+    reader.readAsDataURL(file);
   };
 
   useEffect(() => {
