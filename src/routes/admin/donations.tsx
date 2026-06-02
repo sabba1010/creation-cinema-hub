@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { 
-  Heart, 
-  Users, 
+import {
+  Heart,
+  Users,
   TrendingUp,
   Search,
   Filter,
@@ -17,13 +17,13 @@ import {
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from "../../components/ui/table";
 import { Input } from "../../components/ui/input";
 import { toast } from "sonner";
@@ -40,7 +40,7 @@ function DonationManagement() {
   useEffect(() => {
     const fetchDonations = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/donations");
+        const res = await fetch("https://movie-backend-drab.vercel.app/api/donations");
         const data = await res.json();
         if (data.success) {
           setDonations(data.data);
@@ -98,7 +98,7 @@ function DonationManagement() {
             </Button>
           </div>
         </div>
-        
+
         <Table>
           <TableHeader className="bg-muted/30">
             <TableRow className="border-border/50">
@@ -142,12 +142,12 @@ function DonationManagement() {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-sm">
-                   {new Date(d.createdAt).toLocaleDateString()}
+                  {new Date(d.createdAt).toLocaleDateString()}
                 </TableCell>
                 <TableCell>
-                   <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] uppercase font-black">
-                      {d.status}
-                   </Badge>
+                  <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] uppercase font-black">
+                    {d.status}
+                  </Badge>
                 </TableCell>
                 <TableCell className="text-right pr-6">
                   <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

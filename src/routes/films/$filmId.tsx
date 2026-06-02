@@ -67,7 +67,7 @@ function IndividualFilmPage() {
 
       // Save purchase to backend
       try {
-        await fetch(`http://localhost:5000/api/purchases`, {
+        await fetch(`https://movie-backend-drab.vercel.app/api/purchases`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -93,7 +93,7 @@ function IndividualFilmPage() {
   };
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/films/${filmId}`)
+    fetch(`https://movie-backend-drab.vercel.app/api/films/${filmId}`)
       .then(res => res.json())
       .then(data => {
         if (data.success) {
@@ -141,7 +141,7 @@ function IndividualFilmPage() {
     checkAccess();
 
     // Initial load
-    fetch("http://localhost:5000/api/settings")
+    fetch("https://movie-backend-drab.vercel.app/api/settings")
       .then(res => res.json())
       .then(data => {
         if (data.success && data.data.global_rent_duration) {
@@ -208,7 +208,7 @@ function IndividualFilmPage() {
         try { authorName = JSON.parse(userData).name || "Guest User"; } catch (e) { }
       }
 
-      const res = await fetch(`http://localhost:5000/api/films/${filmId}/reviews`, {
+      const res = await fetch(`https://movie-backend-drab.vercel.app/api/films/${filmId}/reviews`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -348,7 +348,7 @@ function IndividualFilmPage() {
                       onClick={() => handlePurchase("rent")}
                       disabled={accessInfo?.type === "buy"}
                       className={`px-6 py-3 rounded-xl border transition-all text-[10px] font-bold uppercase tracking-widest ${accessInfo?.type === "buy" ? "opacity-50 cursor-not-allowed border-white/5 text-white/20" :
-                          purchaseStatus === "rent" ? "bg-emerald-500 text-white border-emerald-500" : "border-white/10 text-cream hover:bg-white/5"
+                        purchaseStatus === "rent" ? "bg-emerald-500 text-white border-emerald-500" : "border-white/10 text-cream hover:bg-white/5"
                         }`}
                     >
                       {purchaseStatus === "rent" ? "Rented!" : "Rent"}
