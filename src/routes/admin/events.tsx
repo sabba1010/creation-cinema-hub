@@ -81,7 +81,17 @@ function EventsManagement() {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
   // Form States
-  const [eventForm, setEventForm] = useState({
+  const [eventForm, setEventForm] = useState<{
+    name: string;
+    subtitle: string;
+    date: string;
+    location: string;
+    price: string;
+    capacity: string;
+    description: string;
+    image: string;
+    categories: { name: string; price: number; available: number }[];
+  }>({
     name: "",
     subtitle: "",
     date: "",
@@ -90,6 +100,7 @@ function EventsManagement() {
     capacity: "500",
     description: "",
     image: "",
+    categories: [],
   });
 
   const [promoForm, setPromoForm] = useState({ code: "", discount: "", expiry: "2026-12-31" });
@@ -154,6 +165,7 @@ function EventsManagement() {
             status: t.status,
             checkedIn: t.checkedIn,
             city: t.city,
+            category: t.category,
             _id: t._id
           })));
         }
@@ -220,6 +232,7 @@ function EventsManagement() {
       capacity: String(event.capacity),
       description: event.description || "",
       image: event.image || "",
+      categories: event.categories || [],
     });
     setIsEventDialogOpen(true);
   };
@@ -268,6 +281,7 @@ function EventsManagement() {
                 capacity: "500",
                 description: "",
                 image: "",
+                categories: [],
               });
               setIsEventDialogOpen(true);
             }}
@@ -409,6 +423,7 @@ function EventsManagement() {
                     </TableCell>
                     <TableCell className="text-sm">
                       {t.eventName || t.eventId}
+                      {t.category && <div className="text-[10px] text-muted-foreground">Cat: {t.category}</div>}
                     </TableCell>
                     <TableCell className="text-sm">{t.city}</TableCell>
                     <TableCell>
@@ -536,6 +551,67 @@ function EventsManagement() {
                   className="w-full min-h-[100px] p-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-forest/30 outline-none"
                   placeholder="Tell your audience about the event..."
                 />
+              </div>
+              <div className="col-span-2 space-y-4 pt-4 border-t border-border/30">
+                <div className="flex items-center justify-between">
+                  <Label className="text-lg">Ticket Categories</Label>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setEventForm({
+                    ...eventForm,
+                    categories: [...eventForm.categories, { name: "", price: 0, available: 0 }]
+                  })}>
+                    <Plus className="w-4 h-4 mr-1" /> Add Category
+                  </Button>
+                </div>
+                {eventForm.categories.map((cat, idx) => (
+                  <div key={idx} className="flex gap-2 items-end bg-muted/10 p-3 rounded-xl border border-border/50">
+                    <div className="flex-1 space-y-1">
+                      <Label className="text-xs text-muted-foreground">Category Name</Label>
+                      <Input
+                        value={cat.name}
+                        onChange={(e) => {
+                          const newCats = [...eventForm.categories];
+                          newCats[idx].name = e.target.value;
+                          setEventForm({ ...eventForm, categories: newCats });
+                        }}
+                        placeholder="e.g. VIP"
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                    <div className="w-24 space-y-1">
+                      <Label className="text-xs text-muted-foreground">Price ($)</Label>
+                      <Input
+                        type="number"
+                        value={cat.price}
+                        onChange={(e) => {
+                          const newCats = [...eventForm.categories];
+                          newCats[idx].price = Number(e.target.value);
+                          setEventForm({ ...eventForm, categories: newCats });
+                        }}
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                    <div className="w-24 space-y-1">
+                      <Label className="text-xs text-muted-foreground">Available</Label>
+                      <Input
+                        type="number"
+                        value={cat.available}
+                        onChange={(e) => {
+                          const newCats = [...eventForm.categories];
+                          newCats[idx].available = Number(e.target.value);
+                          setEventForm({ ...eventForm, categories: newCats });
+                        }}
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                    <Button type="button" variant="ghost" size="sm" className="h-9 w-9 p-0 text-destructive mb-[2px]" onClick={() => {
+                      const newCats = [...eventForm.categories];
+                      newCats.splice(idx, 1);
+                      setEventForm({ ...eventForm, categories: newCats });
+                    }}>
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
               </div>
             </div>
             <DialogFooter>

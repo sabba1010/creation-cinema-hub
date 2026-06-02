@@ -194,6 +194,12 @@ function ProfilePage() {
                               <span>{ticket.city}</span>
                               <span>•</span>
                               <span>{ticket.showtimeId}</span>
+                              {ticket.category && (
+                                <>
+                                  <span>•</span>
+                                  <span>{ticket.category}</span>
+                                </>
+                              )}
                             </div>
                             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary mt-2">ID: {ticket.ticketId}</p>
                           </div>
@@ -311,8 +317,16 @@ function ProfilePage() {
                           <div className="font-bold">{userData?.name || "Guest"}</div>
                         </div>
                         <div>
+                          <div className="text-[10px] font-bold uppercase tracking-widest opacity-50 mb-1">Category</div>
+                          <div className="font-bold">{selectedTicket.category || 'General'}</div>
+                        </div>
+                        <div>
                           <div className="text-[10px] font-bold uppercase tracking-widest opacity-50 mb-1">Status</div>
                           <div className="font-bold">{selectedTicket.status}</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] font-bold uppercase tracking-widest opacity-50 mb-1">Price Paid</div>
+                          <div className="font-bold">${selectedTicket.pricePaid || '0.00'}</div>
                         </div>
                       </div>
                     </div>

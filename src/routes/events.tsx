@@ -84,8 +84,8 @@ function ShowtimeCard({ showtime, onBook }: { showtime: Showtime; onBook: () => 
         onClick={onBook}
         disabled={showtime.status === "sold-out"}
         className={`w-full py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 ${showtime.status === "sold-out"
-            ? "bg-white/5 text-cream/30 cursor-not-allowed"
-            : "bg-gold text-forest-deep hover:bg-gold/90 shadow-lg"
+          ? "bg-white/5 text-cream/30 cursor-not-allowed"
+          : "bg-gold text-forest-deep hover:bg-gold/90 shadow-lg"
           }`}
       >
         {showtime.status === "sold-out" ? "Sold Out" : "Register / Book →"}
@@ -223,6 +223,8 @@ function EventsPage() {
   const [pendingBookingDetails, setPendingBookingDetails] = useState<{ city: string, showtimeId: string } | null>(null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [paymentForm, setPaymentForm] = useState({ name: "", cardNumber: "", expiry: "", cvc: "" });
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
+  const [ticketQuantity, setTicketQuantity] = useState<number>(1);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -253,6 +255,8 @@ function EventsPage() {
       return;
     }
     setPendingBookingDetails({ city, showtimeId });
+    setTicketQuantity(1);
+    setSelectedCategoryName(selectedEvent?.categories?.[0]?.name || "");
     setIsPaymentModalOpen(true);
   };
 
@@ -264,6 +268,8 @@ function EventsPage() {
       return;
     }
     setPendingBookingDetails({ city: "Global", showtimeId: "General" });
+    setTicketQuantity(1);
+    setSelectedCategoryName(selectedEvent?.categories?.[0]?.name || "");
     setIsPaymentModalOpen(true);
   };
 
@@ -287,7 +293,9 @@ function EventsPage() {
         body: JSON.stringify({
           eventId: selectedEventId,
           city: pendingBookingDetails.city,
-          showtimeId: pendingBookingDetails.showtimeId
+          showtimeId: pendingBookingDetails.showtimeId,
+          categoryName: selectedCategoryName,
+          quantity: ticketQuantity
         })
       });
       const data = await res.json();
@@ -310,6 +318,16 @@ function EventsPage() {
     whatsapp: MessageCircle,
     chat: MessageCircle,
   };
+
+  let ticketPriceValue = 0;
+  if (selectedEvent?.categories && selectedEvent.categories.length > 0) {
+    const cat = selectedEvent.categories.find((c: any) => c.name === selectedCategoryName);
+    if (cat) ticketPriceValue = cat.price;
+  } else {
+    ticketPriceValue = parseFloat((selectedEvent?.price || "0").replace(/[^0-9.]/g, ''));
+  }
+  const totalDue = ticketPriceValue * ticketQuantity;
+  const formattedTotal = totalDue > 0 ? `$${totalDue.toFixed(2)}` : "Free";
 
   return (
     <div className="bg-[#050704] min-h-screen flex flex-col text-cream selection:bg-gold/30">
@@ -372,8 +390,8 @@ function EventsPage() {
                   key={ev.id}
                   onClick={() => setSelectedEventId(ev.id)}
                   className={`flex-shrink-0 px-5 py-4 text-xs font-bold uppercase tracking-widest border-b-2 transition-all whitespace-nowrap ${selectedEventId === ev.id
-                      ? "border-gold text-gold"
-                      : "border-transparent text-cream/40 hover:text-cream/70"
+                    ? "border-gold text-gold"
+                    : "border-transparent text-cream/40 hover:text-cream/70"
                     }`}
                 >
                   {ev.name}
@@ -584,9 +602,39 @@ function EventsPage() {
                   <div className="text-xs text-cream/50 uppercase tracking-widest mb-1">Order Summary</div>
                   <div className="font-bold text-lg text-cream">{selectedEvent?.name}</div>
                   <div className="text-sm text-cream/70">{pendingBookingDetails?.city} • {pendingBookingDetails?.showtimeId}</div>
+
+                  {selectedEvent?.categories && selectedEvent.categories.length > 0 && (
+                    <div className="mt-4">
+                      <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50 mb-1 block">Select Category</label>
+                      <select
+                        value={selectedCategoryName}
+                        onChange={(e) => setSelectedCategoryName(e.target.value)}
+                        className="w-full h-11 bg-[#0a1a0a] border border-white/10 rounded-xl px-4 text-sm text-cream focus:outline-none focus:border-gold/50 transition-colors"
+                      >
+                        {selectedEvent.categories.map((c: any) => (
+                          <option key={c.name} value={c.name} className="bg-forest-deep text-cream" disabled={c.available < ticketQuantity}>
+                            {c.name} - ${c.price} ({c.available} available)
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  <div className="mt-4">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50 mb-1 block">Quantity</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max={selectedEvent?.categories?.find((c: any) => c.name === selectedCategoryName)?.available || selectedEvent?.capacity || 10}
+                      value={ticketQuantity}
+                      onChange={(e) => setTicketQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-full h-11 bg-[#0a1a0a] border border-white/10 rounded-xl px-4 text-sm text-cream focus:outline-none focus:border-gold/50 transition-colors"
+                    />
+                  </div>
+
                   <div className="mt-4 pt-4 border-t border-white/10 flex justify-between items-center text-cream">
                     <span>Total due</span>
-                    <span className="font-bold text-xl text-gold">{selectedEvent?.price || 'Free'}</span>
+                    <span className="font-bold text-xl text-gold">{formattedTotal}</span>
                   </div>
                 </div>
 
@@ -646,7 +694,7 @@ function EventsPage() {
                   {isProcessingPayment ? (
                     <span className="animate-pulse">Processing...</span>
                   ) : (
-                    <>Pay {selectedEvent?.price || 'Now'} →</>
+                    <>Pay {formattedTotal} →</>
                   )}
                 </button>
               </form>
