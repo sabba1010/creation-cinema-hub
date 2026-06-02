@@ -115,13 +115,13 @@ function EventsManagement() {
     formData.append("image", file);
 
     try {
-      const res = await fetch("https://movie-backend-drab.vercel.app/api/upload", {
+      const res = await fetch("http://localhost:5000/api/upload", {
         method: "POST",
         body: formData,
       });
       const data = await res.json();
       if (data.success) {
-        setEventForm({ ...eventForm, image: `https://movie-backend-drab.vercel.app${data.url}` });
+        setEventForm({ ...eventForm, image: `http://localhost:5000${data.url}` });
         toast.success("Image uploaded successfully!");
       } else {
         toast.error(data.message || "Upload failed");
@@ -137,7 +137,7 @@ function EventsManagement() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await fetch("https://movie-backend-drab.vercel.app/api/events");
+        const res = await fetch("http://localhost:5000/api/events");
         const data = await res.json();
         if (data.success) {
           setEvents(data.data.map((e: any) => ({ ...e, id: e._id })));
@@ -150,7 +150,7 @@ function EventsManagement() {
       const token = localStorage.getItem("user_token");
       if (!token) return;
       try {
-        const res = await fetch("https://movie-backend-drab.vercel.app/api/tickets", {
+        const res = await fetch("http://localhost:5000/api/tickets", {
           headers: {
             "Authorization": `Bearer ${token}`
           }
@@ -181,12 +181,20 @@ function EventsManagement() {
     e.preventDefault();
     const token = localStorage.getItem("user_token");
 
+    const priceNum = parseFloat(eventForm.price.replace("$", "")) || 0;
+    const capacityNum = parseInt(eventForm.capacity) || 0;
+    const fullCategories = [
+      { name: "General", price: priceNum, available: capacityNum },
+      ...eventForm.categories.filter(c => c.name !== "General")
+    ];
+
     try {
       if (editingEvent) {
-        const res = await fetch(`https://movie-backend-drab.vercel.app/api/events/${editingEvent.id}`, {
+        const payload = { ...eventForm, categories: fullCategories };
+        const res = await fetch(`http://localhost:5000/api/events/${editingEvent.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-          body: JSON.stringify(eventForm)
+          body: JSON.stringify(payload)
         });
         const data = await res.json();
         if (data.success) {
@@ -199,9 +207,10 @@ function EventsManagement() {
         const payload = {
           ...eventForm,
           price: eventForm.price.startsWith("$") ? eventForm.price : `$${eventForm.price}`,
-          capacity: parseInt(eventForm.capacity) || 0
+          capacity: capacityNum,
+          categories: fullCategories
         };
-        const res = await fetch(`https://movie-backend-drab.vercel.app/api/events`, {
+        const res = await fetch(`http://localhost:5000/api/events`, {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
           body: JSON.stringify(payload)
@@ -223,16 +232,18 @@ function EventsManagement() {
 
   const handleEditEvent = (event: Event) => {
     setEditingEvent(event);
+    const generalCat = event.categories?.find(c => c.name === "General");
+    const extraCats = event.categories?.filter(c => c.name !== "General") || [];
     setEventForm({
       name: event.name,
       subtitle: event.subtitle || "",
       date: event.date,
       location: event.location,
-      price: event.price.replace("$", ""),
-      capacity: String(event.capacity),
+      price: generalCat ? String(generalCat.price) : event.price.replace("$", ""),
+      capacity: generalCat ? String(generalCat.available) : String(event.capacity),
       description: event.description || "",
       image: event.image || "",
-      categories: event.categories || [],
+      categories: extraCats,
     });
     setIsEventDialogOpen(true);
   };
@@ -305,7 +316,7 @@ function EventsManagement() {
               <Card key={event.id} className="group border-border/50 bg-card/50 backdrop-blur-sm shadow-card hover:shadow-elevated transition-all overflow-hidden">
                 <div className="aspect-video relative overflow-hidden">
                   <img
-                    src={event.image?.startsWith('http') ? event.image : event.image?.startsWith('/uploads') ? `https://movie-backend-drab.vercel.app${event.image}` : event.image}
+                    src={event.image?.startsWith('http') ? event.image : event.image?.startsWith('/uploads') ? `http://localhost:5000${event.image}` : event.image}
                     alt={event.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
@@ -331,7 +342,7 @@ function EventsManagement() {
                           if (confirm("Are you sure you want to delete this event?")) {
                             try {
                               const token = localStorage.getItem("user_token");
-                              const res = await fetch(`https://movie-backend-drab.vercel.app/api/events/${event.id}`, {
+                              const res = await fetch(`http://localhost:5000/api/events/${event.id}`, {
                                 method: "DELETE",
                                 headers: { "Authorization": `Bearer ${token}` }
                               });
@@ -442,7 +453,7 @@ function EventsManagement() {
                         onClick={async () => {
                           try {
                             const token = localStorage.getItem("user_token");
-                            const res = await fetch(`https://movie-backend-drab.vercel.app/api/tickets/${t._id}/checkin`, {
+                            const res = await fetch(`http://localhost:5000/api/tickets/${t._id}/checkin`, {
                               method: 'PUT',
                               headers: { 'Authorization': `Bearer ${token}` }
                             });
@@ -538,7 +549,7 @@ function EventsManagement() {
                     disabled={isUploading}
                   />
                   {eventForm.image && (
-                    <img src={eventForm.image.startsWith('http') || eventForm.image.startsWith('/') ? eventForm.image : `https://movie-backend-drab.vercel.app${eventForm.image}`} alt="Preview" className="h-11 w-11 object-cover rounded-md border border-border" />
+                    <img src={eventForm.image.startsWith('http') || eventForm.image.startsWith('/') ? eventForm.image : `http://localhost:5000${eventForm.image}`} alt="Preview" className="h-11 w-11 object-cover rounded-md border border-border" />
                   )}
                 </div>
                 {isUploading && <p className="text-xs text-muted-foreground">Uploading image...</p>}
@@ -554,7 +565,7 @@ function EventsManagement() {
               </div>
               <div className="col-span-2 space-y-4 pt-4 border-t border-border/30">
                 <div className="flex items-center justify-between">
-                  <Label className="text-lg">Ticket Categories</Label>
+                  <Label className="text-lg">Additional Categories (Optional)</Label>
                   <Button type="button" variant="outline" size="sm" onClick={() => setEventForm({
                     ...eventForm,
                     categories: [...eventForm.categories, { name: "", price: 0, available: 0 }]

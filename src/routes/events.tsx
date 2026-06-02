@@ -229,7 +229,7 @@ function EventsPage() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await fetch("https://movie-backend-drab.vercel.app/api/events");
+        const res = await fetch("http://localhost:5000/api/events");
         const data = await res.json();
         if (data.success && data.data.length > 0) {
           const mapped = data.data.map((e: any) => ({ ...e, id: e._id }));
@@ -284,7 +284,7 @@ function EventsPage() {
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     try {
-      const res = await fetch("https://movie-backend-drab.vercel.app/api/tickets", {
+      const res = await fetch("http://localhost:5000/api/tickets", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -412,7 +412,7 @@ function EventsPage() {
                 {selectedEvent.image && selectedEvent.image !== 'no-photo.jpg' && (
                   <div className="w-full h-[300px] sm:h-[400px] rounded-[2rem] overflow-hidden border border-white/10 mb-8 shadow-2xl">
                     <img
-                      src={selectedEvent.image?.startsWith('http') ? selectedEvent.image : `https://movie-backend-drab.vercel.app${selectedEvent.image}`}
+                      src={selectedEvent.image?.startsWith('http') ? selectedEvent.image : `http://localhost:5000${selectedEvent.image}`}
                       alt={selectedEvent.name}
                       className="w-full h-full object-cover"
                     />

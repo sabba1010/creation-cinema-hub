@@ -22,7 +22,7 @@ function FilmsLandingPage() {
   };
 
   useEffect(() => {
-    fetch("https://movie-backend-drab.vercel.app/api/films")
+    fetch("http://localhost:5000/api/films")
       .then(res => res.json())
       .then(data => {
         if (data.success) {
