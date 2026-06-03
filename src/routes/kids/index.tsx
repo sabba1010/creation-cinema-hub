@@ -347,8 +347,8 @@ function KidsLandingPage() {
                       key={topicKey}
                       onClick={() => setActiveTopic(topicKey)}
                       className={`flex items-center gap-4 p-5 rounded-[1.8rem] transition-all text-left border ${isActive
-                          ? "bg-forest-deep text-cream border-forest-deep shadow-lg scale-[1.02]"
-                          : "bg-white border-[#EFECE3] text-forest-deep hover:bg-[#FAF7EE]"
+                        ? "bg-forest-deep text-cream border-forest-deep shadow-lg scale-[1.02]"
+                        : "bg-white border-[#EFECE3] text-forest-deep hover:bg-[#FAF7EE]"
                         }`}
                     >
                       <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${isActive ? "bg-white/10 text-gold" : `${topic.bg} ${topic.color}`
@@ -383,12 +383,12 @@ function KidsLandingPage() {
                 <div className="mt-6 md:mt-0 w-full overflow-hidden">
                   <div
                     ref={scrollRef}
-                    className="flex gap-6 overflow-x-auto pb-4 snap-x pl-1 pr-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                    className="flex gap-6 overflow-x-auto pb-4 snap-x pl-1 pr-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden items-stretch"
                   >
                     {seriesList.filter(s => s.topic === activeTopic).length > 0 ? (
                       seriesList.filter(s => s.topic === activeTopic).map(s => (
-                        <div key={s._id || s.id} className="shrink-0 w-[280px] sm:w-[320px] bg-white rounded-[2rem] overflow-hidden border border-[#EFECE3] shadow-sm hover:shadow-md group transition-all snap-start">
-                          <div className="relative aspect-[4/3] overflow-hidden">
+                        <div key={s._id || s.id} className="shrink-0 w-[360px] bg-white rounded-[2rem] overflow-hidden border border-[#EFECE3] shadow-sm hover:shadow-md group transition-all snap-start flex flex-col">
+                          <div className="relative h-52 overflow-hidden shrink-0">
                             <img
                               src={s.image || s.img}
                               alt={s.name || s.title}
@@ -399,10 +399,10 @@ function KidsLandingPage() {
                             />
                             <div className="absolute inset-0 bg-black/5" />
                           </div>
-                          <div className="p-6 space-y-4">
+                          <div className="p-6 flex flex-col flex-grow gap-3">
                             <h4 className="font-display text-xl font-bold text-forest-deep group-hover:text-gold transition-colors leading-tight">{s.name || s.title}</h4>
-                            <p className="text-muted-foreground text-xs leading-relaxed line-clamp-2">{s.description || s.desc}</p>
-                            <Link to="/kids/watch/$seriesId" params={{ seriesId: (s._id || s.id).toString() }} className="inline-flex items-center gap-1.5 text-xs font-bold text-forest-deep hover:text-gold transition-colors pt-2">
+                            <p className="text-muted-foreground text-xs leading-relaxed line-clamp-2 flex-grow">{s.description || s.desc}</p>
+                            <Link to="/kids/watch/$seriesId" params={{ seriesId: (s._id || s.id).toString() }} className="inline-flex items-center gap-1.5 text-xs font-bold text-forest-deep hover:text-gold transition-colors pt-2 border-t border-[#EFECE3] mt-auto">
                               Preview Video <Play className="h-3 w-3 fill-current" />
                             </Link>
                           </div>
