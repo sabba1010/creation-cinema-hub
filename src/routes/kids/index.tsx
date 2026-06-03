@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Play,
   Sparkles,
@@ -30,37 +30,46 @@ export const Route = createFileRoute("/kids/")({
 function KidsLandingPage() {
   const [activeTopic, setActiveTopic] = useState("Kindness");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [seriesList, setSeriesList] = useState<any[]>([]);
+  const [heroBanner, setHeroBanner] = useState("https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=2000");
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const SERIES = [
-    {
-      title: "Friendly Forest",
-      episodes: 12,
-      desc: "Animal friends learn social skills and biblical virtues like patience, kindness, and truthfulness.",
-      img: "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&q=80&w=600",
-      color: "bg-forest-deep text-cream"
-    },
-    {
-      title: "Star Sailors",
-      episodes: 8,
-      desc: "Explore space and science through the lens of faith, fostering wonder for God's vast creation.",
-      img: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&q=80&w=600",
-      color: "bg-gold text-forest-deep"
-    },
-    {
-      title: "Miracle Makers",
-      episodes: 15,
-      desc: "Inspiring stories of heroes of faith who made a difference through prayer, courage, and action.",
-      img: "https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&q=80&w=600",
-      color: "bg-earth text-cream"
-    },
-    {
-      title: "Bible Buddies",
-      episodes: 24,
-      desc: "Action-packed animations bringing key biblical events and heroes to life for young minds.",
-      img: "https://images.unsplash.com/photo-1519340241574-211915c54970?auto=format&fit=crop&q=80&w=600",
-      color: "bg-sage text-cream"
-    },
-  ];
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (scrollRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+        }
+      }
+    }, 3500);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const fetchKidsData = async () => {
+      try {
+        const seriesRes = await fetch("https://movie-backend-drab.vercel.app/api/kids/series");
+        const seriesData = await seriesRes.json();
+        if (Array.isArray(seriesData)) {
+          setSeriesList(seriesData.filter((s: any) => s.status === 'Active'));
+        } else {
+          setSeriesList([]);
+        }
+
+        const settingsRes = await fetch("https://movie-backend-drab.vercel.app/api/kids/settings");
+        const settingsData = await settingsRes.json();
+        if (settingsData && settingsData.value) {
+          setHeroBanner(settingsData.value);
+        }
+      } catch (error) {
+        console.error("Error fetching kids data:", error);
+      }
+    };
+    fetchKidsData();
+  }, []);
 
   const TOPIC_DETAILS: Record<string, {
     name: string;
@@ -241,11 +250,17 @@ function KidsLandingPage() {
             <div className="relative">
               <div className="absolute -inset-4 bg-gold/10 rounded-[3rem] blur-xl" />
               <div className="relative aspect-video rounded-[3rem] overflow-hidden shadow-2xl border-[12px] border-white/5 bg-forest-deep/50">
-                <img src="https://images.unsplash.com/photo-1489824904134-891ab64532f1?auto=format&fit=crop&q=80&w=1200" alt="Kids Flix" className="w-full h-full object-cover opacity-80" />
+                <img src={heroBanner} alt="Kids Flix" className="w-full h-full object-cover opacity-80" />
                 <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
-                  <Link to="/kids/watch" className="h-20 w-20 rounded-full bg-gold text-forest-deep flex items-center justify-center shadow-2xl hover:scale-110 transition-transform">
-                    <Play className="h-8 w-8 fill-current ml-1" />
-                  </Link>
+                  {seriesList.length > 0 ? (
+                    <Link to="/kids/watch/$seriesId" params={{ seriesId: (seriesList[0]._id || seriesList[0].id).toString() }} className="h-20 w-20 rounded-full bg-gold text-forest-deep flex items-center justify-center shadow-2xl hover:scale-110 transition-transform">
+                      <Play className="h-8 w-8 ml-2 fill-current" />
+                    </Link>
+                  ) : (
+                    <div className="h-20 w-20 rounded-full bg-gold/50 text-forest-deep/50 flex items-center justify-center shadow-xl">
+                      <Play className="h-8 w-8 ml-2 fill-current" />
+                    </div>
+                  )}
                 </div>
               </div>
               {/* Floating Badges */}
@@ -331,15 +346,13 @@ function KidsLandingPage() {
                     <button
                       key={topicKey}
                       onClick={() => setActiveTopic(topicKey)}
-                      className={`flex items-center gap-4 p-5 rounded-[1.8rem] transition-all text-left border ${
-                        isActive
+                      className={`flex items-center gap-4 p-5 rounded-[1.8rem] transition-all text-left border ${isActive
                           ? "bg-forest-deep text-cream border-forest-deep shadow-lg scale-[1.02]"
                           : "bg-white border-[#EFECE3] text-forest-deep hover:bg-[#FAF7EE]"
-                      }`}
+                        }`}
                     >
-                      <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${
-                        isActive ? "bg-white/10 text-gold" : `${topic.bg} ${topic.color}`
-                      }`}>
+                      <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${isActive ? "bg-white/10 text-gold" : `${topic.bg} ${topic.color}`
+                        }`}>
                         <Icon className="h-5 w-5" />
                       </div>
                       <span className="font-bold text-sm tracking-wide">{topic.name}</span>
@@ -356,7 +369,7 @@ function KidsLandingPage() {
                     <h3 className="font-display text-4xl font-bold text-forest-deep">{currentTopic.name}</h3>
                   </div>
                   <p className="text-muted-foreground text-sm leading-relaxed">{currentTopic.description}</p>
-                  
+
                   {/* Scripture Box */}
                   <div className="bg-white/80 backdrop-blur p-6 rounded-2xl border border-[#EFECE3] space-y-2">
                     <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-forest-deep/60">
@@ -366,21 +379,40 @@ function KidsLandingPage() {
                   </div>
                 </div>
 
-                {/* Featured Story Preview */}
-                <div className="bg-white rounded-[2.5rem] overflow-hidden border border-[#EFECE3] shadow-md group">
-                  <div className="relative aspect-video overflow-hidden">
-                    <img src={currentTopic.storyImg} alt={currentTopic.featuredStory} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-black/10" />
-                    <div className="absolute top-4 right-4 bg-gold text-forest-deep text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
-                      Featured Adventure
-                    </div>
-                  </div>
-                  <div className="p-6 space-y-3">
-                    <h4 className="font-display text-lg font-bold text-forest-deep">{currentTopic.featuredStory}</h4>
-                    <p className="text-muted-foreground text-xs leading-relaxed">{currentTopic.storyDesc}</p>
-                    <Link to="/kids/watch" className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-gold transition-colors pt-2">
-                      Preview Video <Play className="h-3.5 w-3.5 fill-current" />
-                    </Link>
+                {/* Series for this topic */}
+                <div className="mt-6 md:mt-0 w-full overflow-hidden">
+                  <div
+                    ref={scrollRef}
+                    className="flex gap-6 overflow-x-auto pb-4 snap-x pl-1 pr-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                  >
+                    {seriesList.filter(s => s.topic === activeTopic).length > 0 ? (
+                      seriesList.filter(s => s.topic === activeTopic).map(s => (
+                        <div key={s._id || s.id} className="shrink-0 w-[280px] sm:w-[320px] bg-white rounded-[2rem] overflow-hidden border border-[#EFECE3] shadow-sm hover:shadow-md group transition-all snap-start">
+                          <div className="relative aspect-[4/3] overflow-hidden">
+                            <img
+                              src={s.image || s.img}
+                              alt={s.name || s.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1502086223501-7ea2443054f1?w=400&h=200&fit=crop";
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-black/5" />
+                          </div>
+                          <div className="p-6 space-y-4">
+                            <h4 className="font-display text-xl font-bold text-forest-deep group-hover:text-gold transition-colors leading-tight">{s.name || s.title}</h4>
+                            <p className="text-muted-foreground text-xs leading-relaxed line-clamp-2">{s.description || s.desc}</p>
+                            <Link to="/kids/watch/$seriesId" params={{ seriesId: (s._id || s.id).toString() }} className="inline-flex items-center gap-1.5 text-xs font-bold text-forest-deep hover:text-gold transition-colors pt-2">
+                              Preview Video <Play className="h-3 w-3 fill-current" />
+                            </Link>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="w-full py-12 text-center bg-white/50 rounded-[2rem] border border-[#EFECE3] border-dashed">
+                        <p className="text-muted-foreground text-sm font-medium">More series coming soon for {activeTopic}!</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -403,22 +435,34 @@ function KidsLandingPage() {
               </Link>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {SERIES.map((s, i) => (
-                <div key={i} className="group bg-white rounded-[2.5rem] border border-[#EFECE3] overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-full">
+              {seriesList.length === 0 && (
+                <div className="col-span-full py-16 text-center text-muted-foreground/70 text-lg font-medium">
+                  Exciting new series are coming soon! Stay tuned.
+                </div>
+              )}
+              {seriesList.map((s, i) => (
+                <div key={s._id || i} className="group bg-white rounded-[2.5rem] border border-[#EFECE3] overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-full">
                   <div className="relative aspect-[4/3] overflow-hidden">
-                    <img src={s.img} alt={s.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <img
+                      src={s.image || s.img}
+                      alt={s.name || s.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1502086223501-7ea2443054f1?w=400&h=200&fit=crop";
+                      }}
+                    />
                     <div className="absolute bottom-4 left-4">
-                      <span className={`inline-block px-3 py-1 rounded-full ${s.color} text-[10px] font-bold uppercase tracking-widest shadow-sm`}>
-                        {s.episodes} Episodes
+                      <span className={`inline-block px-3 py-1 rounded-full ${s.color || 'bg-forest-deep text-cream'} text-[10px] font-bold uppercase tracking-widest shadow-sm`}>
+                        {s.episodeCount ?? s.episodes ?? 0} Episodes
                       </span>
                     </div>
                   </div>
                   <div className="p-6 flex-grow flex flex-col justify-between gap-4">
                     <div className="space-y-2">
-                      <h3 className="text-xl font-display font-bold text-forest-deep group-hover:text-gold transition-colors">{s.title}</h3>
-                      <p className="text-muted-foreground text-xs leading-relaxed line-clamp-3">{s.desc}</p>
+                      <h3 className="text-xl font-display font-bold text-forest-deep group-hover:text-gold transition-colors">{s.name || s.title}</h3>
+                      <p className="text-muted-foreground text-xs leading-relaxed line-clamp-3">{s.description || s.desc}</p>
                     </div>
-                    <Link to="/kids/watch" className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-gold transition-colors mt-auto border-t border-cream/30 pt-4">
+                    <Link to="/kids/watch/$seriesId" params={{ seriesId: (s._id || s.id).toString() }} className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-gold transition-colors mt-auto border-t border-cream/30 pt-4">
                       View Episodes <ChevronRight className="h-3.5 w-3.5" />
                     </Link>
                   </div>
@@ -443,7 +487,7 @@ function KidsLandingPage() {
               <p className="text-cream/70 leading-relaxed text-sm sm:text-base">
                 We believe video is only the beginning. That's why every episode on Kids Bible Flix comes packed with teacher-vetted educational worksheets, memory verse coloring pages, and hands-on family connection prompts designed to take lesson materials off-screen and into everyday conversation.
               </p>
-              
+
               <div className="grid sm:grid-cols-2 gap-6">
                 {[
                   { title: "Discussion Cards", desc: "Open-ended questions tailored for dinner table chat or class lessons." },

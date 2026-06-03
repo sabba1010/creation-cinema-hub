@@ -420,7 +420,7 @@ function EventsPage() {
                 )}
                 <div>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {selectedEvent.tags?.map((tag) => (
+                    {selectedEvent.tags?.map((tag: string) => (
                       <span key={tag} className="text-[10px] font-black uppercase tracking-[0.25em] px-3 py-1 rounded-full bg-white/5 text-cream/60 border border-white/10">
                         {tag}
                       </span>
@@ -458,7 +458,7 @@ function EventsPage() {
                 </div>
                 {selectedEvent.includes && (
                   <ul className="space-y-2">
-                    {selectedEvent.includes.map((item) => (
+                    {selectedEvent.includes.map((item: string) => (
                       <li key={item} className="flex items-start gap-3 text-sm text-cream/70">
                         <CheckCircle className="h-4 w-4 text-gold flex-shrink-0 mt-0.5" />
                         {item}
@@ -491,7 +491,7 @@ function EventsPage() {
                   <span className="h-px flex-grow bg-white/10" />
                 </div>
                 <div className="space-y-4">
-                  {selectedEvent.cities.map((city) => (
+                  {selectedEvent.cities.map((city: CityScreening) => (
                     <CityPanel key={city.cityId} city={city} eventId={selectedEvent.id} onBookRequest={handleBookRequest} />
                   ))}
                 </div>
@@ -504,7 +504,7 @@ function EventsPage() {
                 <div className="text-[10px] font-black uppercase tracking-[0.4em] text-gold/70 mb-2">Need Help?</div>
                 <h3 className="font-display text-3xl text-cream mb-8">Event Support</h3>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {selectedEvent.support.map((contact) => {
+                  {selectedEvent.support.map((contact: { type: string; label: string; value: string; available: string }) => {
                     const Icon = supportIcons[contact.type] || Mail;
                     const href =
                       contact.type === "email"
@@ -541,7 +541,7 @@ function EventsPage() {
                 <div className="text-[10px] font-black uppercase tracking-[0.4em] text-gold/70 mb-2">FAQ</div>
                 <h3 className="font-display text-3xl text-cream mb-8">Frequently Asked Questions</h3>
                 <div className="space-y-3 max-w-3xl">
-                  {selectedEvent.faq.map((item, i) => (
+                  {selectedEvent.faq.map((item: { q: string; a: string }, i: number) => (
                     <div key={i} className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
                       <button
                         onClick={() => setOpenFaq(openFaq === i ? null : i)}

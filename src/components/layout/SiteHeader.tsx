@@ -25,8 +25,17 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === "/";
+
+  useEffect(() => {
+    const auth = typeof window !== 'undefined' && (
+      localStorage.getItem("user_auth") === "true" || 
+      localStorage.getItem("admin_auth") === "true"
+    );
+    setIsLoggedIn(!!auth);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -151,7 +160,7 @@ export function SiteHeader() {
           </Link>
 
           <Link 
-            to={localStorage.getItem("user_auth") === "true" || localStorage.getItem("admin_auth") === "true" ? "/profile" : "/login"} 
+            to={isLoggedIn ? "/profile" : "/login"} 
             aria-label="Account" 
             className="hidden sm:block text-[#faf7ee]/80 hover:text-[#faf7ee] transition"
           >

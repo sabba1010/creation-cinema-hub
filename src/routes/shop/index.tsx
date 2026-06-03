@@ -101,8 +101,8 @@ function ShopLandingPage() {
                 key={cat.id}
                 onClick={() => setActiveTab(cat.id)}
                 className={`group flex items-center gap-2.5 px-6 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-widest transition-all ${activeTab === cat.id
-                    ? "bg-forest-deep text-white shadow-lg shadow-forest-deep/20"
-                    : "text-muted-foreground hover:text-forest-deep hover:bg-muted/50"
+                  ? "bg-forest-deep text-white shadow-lg shadow-forest-deep/20"
+                  : "text-muted-foreground hover:text-forest-deep hover:bg-muted/50"
                   }`}
               >
                 <cat.icon className={`h-3.5 w-3.5 transition-colors ${activeTab === cat.id ? "text-gold" : "text-muted-foreground group-hover:text-forest-deep"}`} />

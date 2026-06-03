@@ -41,7 +41,6 @@ import { Route as ShopProductIdRouteImport } from './routes/shop/$productId'
 import { Route as ResourcesResourceIdRouteImport } from './routes/resources/$resourceId'
 import { Route as PrayerVideoRouteImport } from './routes/prayer/video'
 import { Route as PrayerDashboardRouteImport } from './routes/prayer/dashboard'
-import { Route as KidsWatchRouteImport } from './routes/kids/watch'
 import { Route as KidsTopicsRouteImport } from './routes/kids/topics'
 import { Route as KidsSubscribeRouteImport } from './routes/kids/subscribe'
 import { Route as KidsSeriesRouteImport } from './routes/kids/series'
@@ -65,6 +64,8 @@ import { Route as AdminEventsRouteImport } from './routes/admin/events'
 import { Route as AdminDonationsRouteImport } from './routes/admin/donations'
 import { Route as PrayerSeriesSeriesIdRouteImport } from './routes/prayer/series/$seriesId'
 import { Route as PodcastSeasonSeasonIdRouteImport } from './routes/podcast/season/$seasonId'
+import { Route as KidsWatchSeriesIdRouteImport } from './routes/kids/watch.$seriesId'
+import { Route as AdminKidsSeriesSeriesIdRouteImport } from './routes/admin/kids-series.$seriesId'
 
 const TeamRoute = TeamRouteImport.update({
   id: '/team',
@@ -226,11 +227,6 @@ const PrayerDashboardRoute = PrayerDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => PrayerRoute,
 } as any)
-const KidsWatchRoute = KidsWatchRouteImport.update({
-  id: '/kids/watch',
-  path: '/kids/watch',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const KidsTopicsRoute = KidsTopicsRouteImport.update({
   id: '/kids/topics',
   path: '/kids/topics',
@@ -346,6 +342,16 @@ const PodcastSeasonSeasonIdRoute = PodcastSeasonSeasonIdRouteImport.update({
   path: '/season/$seasonId',
   getParentRoute: () => PodcastRoute,
 } as any)
+const KidsWatchSeriesIdRoute = KidsWatchSeriesIdRouteImport.update({
+  id: '/kids/watch/$seriesId',
+  path: '/kids/watch/$seriesId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminKidsSeriesSeriesIdRoute = AdminKidsSeriesSeriesIdRouteImport.update({
+  id: '/kids-series/$seriesId',
+  path: '/kids-series/$seriesId',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -386,7 +392,6 @@ export interface FileRoutesByFullPath {
   '/kids/series': typeof KidsSeriesRoute
   '/kids/subscribe': typeof KidsSubscribeRoute
   '/kids/topics': typeof KidsTopicsRoute
-  '/kids/watch': typeof KidsWatchRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
@@ -402,6 +407,8 @@ export interface FileRoutesByFullPath {
   '/resources/': typeof ResourcesIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/support/': typeof SupportIndexRoute
+  '/admin/kids-series/$seriesId': typeof AdminKidsSeriesSeriesIdRoute
+  '/kids/watch/$seriesId': typeof KidsWatchSeriesIdRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
   '/prayer/series/$seriesId': typeof PrayerSeriesSeriesIdRoute
 }
@@ -436,7 +443,6 @@ export interface FileRoutesByTo {
   '/kids/series': typeof KidsSeriesRoute
   '/kids/subscribe': typeof KidsSubscribeRoute
   '/kids/topics': typeof KidsTopicsRoute
-  '/kids/watch': typeof KidsWatchRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
@@ -452,6 +458,8 @@ export interface FileRoutesByTo {
   '/resources': typeof ResourcesIndexRoute
   '/shop': typeof ShopIndexRoute
   '/support': typeof SupportIndexRoute
+  '/admin/kids-series/$seriesId': typeof AdminKidsSeriesSeriesIdRoute
+  '/kids/watch/$seriesId': typeof KidsWatchSeriesIdRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
   '/prayer/series/$seriesId': typeof PrayerSeriesSeriesIdRoute
 }
@@ -495,7 +503,6 @@ export interface FileRoutesById {
   '/kids/series': typeof KidsSeriesRoute
   '/kids/subscribe': typeof KidsSubscribeRoute
   '/kids/topics': typeof KidsTopicsRoute
-  '/kids/watch': typeof KidsWatchRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
@@ -511,6 +518,8 @@ export interface FileRoutesById {
   '/resources/': typeof ResourcesIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/support/': typeof SupportIndexRoute
+  '/admin/kids-series/$seriesId': typeof AdminKidsSeriesSeriesIdRoute
+  '/kids/watch/$seriesId': typeof KidsWatchSeriesIdRoute
   '/podcast/season/$seasonId': typeof PodcastSeasonSeasonIdRoute
   '/prayer/series/$seriesId': typeof PrayerSeriesSeriesIdRoute
 }
@@ -555,7 +564,6 @@ export interface FileRouteTypes {
     | '/kids/series'
     | '/kids/subscribe'
     | '/kids/topics'
-    | '/kids/watch'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
@@ -571,6 +579,8 @@ export interface FileRouteTypes {
     | '/resources/'
     | '/shop/'
     | '/support/'
+    | '/admin/kids-series/$seriesId'
+    | '/kids/watch/$seriesId'
     | '/podcast/season/$seasonId'
     | '/prayer/series/$seriesId'
   fileRoutesByTo: FileRoutesByTo
@@ -605,7 +615,6 @@ export interface FileRouteTypes {
     | '/kids/series'
     | '/kids/subscribe'
     | '/kids/topics'
-    | '/kids/watch'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
@@ -621,6 +630,8 @@ export interface FileRouteTypes {
     | '/resources'
     | '/shop'
     | '/support'
+    | '/admin/kids-series/$seriesId'
+    | '/kids/watch/$seriesId'
     | '/podcast/season/$seasonId'
     | '/prayer/series/$seriesId'
   id:
@@ -663,7 +674,6 @@ export interface FileRouteTypes {
     | '/kids/series'
     | '/kids/subscribe'
     | '/kids/topics'
-    | '/kids/watch'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
@@ -679,6 +689,8 @@ export interface FileRouteTypes {
     | '/resources/'
     | '/shop/'
     | '/support/'
+    | '/admin/kids-series/$seriesId'
+    | '/kids/watch/$seriesId'
     | '/podcast/season/$seasonId'
     | '/prayer/series/$seriesId'
   fileRoutesById: FileRoutesById
@@ -705,10 +717,10 @@ export interface RootRouteChildren {
   KidsSeriesRoute: typeof KidsSeriesRoute
   KidsSubscribeRoute: typeof KidsSubscribeRoute
   KidsTopicsRoute: typeof KidsTopicsRoute
-  KidsWatchRoute: typeof KidsWatchRoute
   ContactIndexRoute: typeof ContactIndexRoute
   KidsIndexRoute: typeof KidsIndexRoute
   SupportIndexRoute: typeof SupportIndexRoute
+  KidsWatchSeriesIdRoute: typeof KidsWatchSeriesIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -937,13 +949,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrayerDashboardRouteImport
       parentRoute: typeof PrayerRoute
     }
-    '/kids/watch': {
-      id: '/kids/watch'
-      path: '/kids/watch'
-      fullPath: '/kids/watch'
-      preLoaderRoute: typeof KidsWatchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/kids/topics': {
       id: '/kids/topics'
       path: '/kids/topics'
@@ -1105,6 +1110,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PodcastSeasonSeasonIdRouteImport
       parentRoute: typeof PodcastRoute
     }
+    '/kids/watch/$seriesId': {
+      id: '/kids/watch/$seriesId'
+      path: '/kids/watch/$seriesId'
+      fullPath: '/kids/watch/$seriesId'
+      preLoaderRoute: typeof KidsWatchSeriesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/kids-series/$seriesId': {
+      id: '/admin/kids-series/$seriesId'
+      path: '/kids-series/$seriesId'
+      fullPath: '/admin/kids-series/$seriesId'
+      preLoaderRoute: typeof AdminKidsSeriesSeriesIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
@@ -1133,6 +1152,7 @@ interface AdminRouteChildren {
   AdminShopRoute: typeof AdminShopRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminKidsSeriesSeriesIdRoute: typeof AdminKidsSeriesSeriesIdRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -1150,6 +1170,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminShopRoute: AdminShopRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminKidsSeriesSeriesIdRoute: AdminKidsSeriesSeriesIdRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -1260,10 +1281,10 @@ const rootRouteChildren: RootRouteChildren = {
   KidsSeriesRoute: KidsSeriesRoute,
   KidsSubscribeRoute: KidsSubscribeRoute,
   KidsTopicsRoute: KidsTopicsRoute,
-  KidsWatchRoute: KidsWatchRoute,
   ContactIndexRoute: ContactIndexRoute,
   KidsIndexRoute: KidsIndexRoute,
   SupportIndexRoute: SupportIndexRoute,
+  KidsWatchSeriesIdRoute: KidsWatchSeriesIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
