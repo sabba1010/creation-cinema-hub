@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Play, ArrowLeft, Share2, ChevronRight, Sparkles, Star, Lock } from "lucide-react";
+import { Play, ArrowLeft, Share2, ChevronRight, Sparkles, Star, Lock, Mic2 } from "lucide-react";
 
 export const Route = createFileRoute("/kids/watch/$seriesId")({
   component: KidsWatchPage,

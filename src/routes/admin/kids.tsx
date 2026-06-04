@@ -115,7 +115,7 @@ function KidsManagement() {
 
   const fetchSeries = async () => {
     try {
-      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/series");
+      const res = await fetch("http://localhost:5000/api/kids/series");
       const data = await res.json();
       if (Array.isArray(data)) {
         setSeries(data);
@@ -133,7 +133,7 @@ function KidsManagement() {
 
   const fetchSettings = async () => {
     try {
-      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/settings");
+      const res = await fetch("http://localhost:5000/api/kids/settings");
       const data = await res.json();
       if (data && data.value) setHeroBanner(data.value);
     } catch (err) {
@@ -150,8 +150,8 @@ function KidsManagement() {
     e.preventDefault();
     try {
       const url = editingSeriesId
-        ? `https://movie-backend-drab.vercel.app/api/kids/series/${editingSeriesId}`
-        : "https://movie-backend-drab.vercel.app/api/kids/series";
+        ? `http://localhost:5000/api/kids/series/${editingSeriesId}`
+        : "http://localhost:5000/api/kids/series";
       const method = editingSeriesId ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -240,7 +240,7 @@ function KidsManagement() {
     if (!result.isConfirmed) return;
 
     try {
-      await fetch(`https://movie-backend-drab.vercel.app/api/kids/series/${id}`, { method: "DELETE" });
+      await fetch(`http://localhost:5000/api/kids/series/${id}`, { method: "DELETE" });
       fetchSeries();
       Swal.fire({
         title: 'Deleted!',

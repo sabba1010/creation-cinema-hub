@@ -1,236 +1,296 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Mail, Phone, MapPin, MessageSquare, HelpCircle, Users, Heart, Calendar, Briefcase, ChevronDown, Send, CheckCircle2 } from "lucide-react";
+import { Mail, MessageCircle, MapPin, Phone, HelpCircle, ChevronDown, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import Swal from 'sweetalert2';
 
 export const Route = createFileRoute("/contact/")({
   component: ContactPage,
 });
 
+const API = "https://movie-backend-drab.vercel.app";
+
+const CATEGORIES = [
+  "General questions",
+  "Donor inquiries",
+  "Event/ticket support",
+  "Shop/order questions",
+  "School/church questions",
+  "Media inquiries",
+  "Partnership inquiries"
+];
+
+const FAQS = [
+  {
+    question: "Do you offer physical copies of your resources?",
+    answer: "Currently, all our resources are digital downloads to ensure they remain free and instantly accessible worldwide. You are welcome to print them at home or locally!"
+  },
+  {
+    question: "Is there a limit to how many resources I can download?",
+    answer: "No! All our downloadable guides, devotions, and curricula are completely free. Download as many as you need to equip your family or ministry."
+  },
+  {
+    question: "How can I support the One Mustard Seed ministry?",
+    answer: "We are deeply grateful for your support. You can visit our Donations page to set up a one-time or recurring gift that helps us continue creating high-quality, free Christian media."
+  },
+  {
+    question: "Are your films available outside the US?",
+    answer: "Yes, our digital screening licenses and online streaming options are available globally."
+  },
+  {
+    question: "Can we show your content at our church?",
+    answer: "Yes! We offer specific licensing options for church screenings and events. Please select 'Event/ticket support' or 'School/church questions' in the contact form for more details."
+  }
+];
+
+const TEAM = [
+  {
+    name: "Sarah Jenkins",
+    role: "Executive Director",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=400",
+    email: "sarah@onemustardseed.com"
+  },
+  {
+    name: "David Chen",
+    role: "Ministry Coordinator",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
+    email: "david@onemustardseed.com"
+  },
+  {
+    name: "Emily Rodriguez",
+    role: "Media & Partnerships",
+    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=400",
+    email: "emily@onemustardseed.com"
+  }
+];
+
 function ContactPage() {
-  const [activeFaq, setActiveFaq] = useState<number | null>(null);
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    category: "",
+    message: ""
+  });
 
-  const FAQS = [
-    { q: "How can I support One Mustard Seed?", a: "You can support us through one-time or monthly donations on our Support page, or by becoming a corporate sponsor for our film projects." },
-    { q: "Is KidsBibleFlix safe for all ages?", a: "Yes! Every piece of content is hand-vetted by our pastoral and educational teams to ensure it is 100% safe, ad-free, and rooted in Scripture." },
-    { q: "Can we host a screening of your films?", a: "Absolutely! We offer community and church screening licenses for all our major releases. Contact our Event Support team for details." },
-    { q: "Where can I find study guides for the films?", a: "Study guides and curriculum resources are available in our Resources hub. Many are free to download!" },
-  ];
-
-  const TEAM = [
-    { name: "Dr. Elias Thorne", role: "Executive Director", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400" },
-    { name: "Sarah Jenkins", role: "Creative Director", img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=400" },
-    { name: "Pastor Mark Chen", role: "Spiritual Oversight", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400" },
-    { name: "Elena Rodriguez", role: "Head of Kids Content", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=400" },
-  ];
-
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormSubmitted(true);
-    setTimeout(() => setFormSubmitted(false), 5000);
+    if (!formData.firstName || !formData.email || !formData.category || !formData.message) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing Fields',
+        text: 'Please fill out all required fields before submitting.',
+        confirmButtonColor: '#1a2f24'
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const res = await fetch(`${API}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Message Sent!',
+          text: 'Thank you for reaching out. We will get back to you shortly.',
+          confirmButtonColor: '#D4AF37'
+        });
+        setFormData({ firstName: "", lastName: "", email: "", category: "", message: "" });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: data.message || 'Something went wrong!',
+          confirmButtonColor: '#1a2f24'
+        });
+      }
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Network Error',
+        text: 'Please check your connection and try again.',
+        confirmButtonColor: '#1a2f24'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="bg-[#FAF7EE] min-h-screen flex flex-col">
+    <div className="bg-[#FAF7EE] min-h-screen flex flex-col font-sans">
       <SiteHeader />
+
       <main className="flex-grow pt-24">
         {/* Hero Section */}
-        <section className="relative py-24 bg-forest-deep text-cream overflow-hidden">
-           <div className="absolute inset-0 opacity-10">
-              <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&q=80&w=2000" alt="Team" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-forest-deep via-forest-deep/60 to-transparent" />
-           </div>
-           <div className="relative mx-auto max-w-7xl px-6 text-center">
-              <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-gold mb-6 block">We're Here for You</span>
-              <h1 className="font-display text-5xl sm:text-7xl font-medium tracking-tight mb-8">
-                 Get in <span className="italic text-gold">Touch</span>
-              </h1>
-              <p className="mx-auto max-w-2xl text-lg text-cream/70 leading-relaxed">
-                 Whether you have a question about our films, want to partner with us, or just need prayer, we'd love to hear from you.
-              </p>
-           </div>
+        <section className="bg-forest-deep text-cream py-20 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1528312635006-8ea0bc49ecaa?auto=format&fit=crop&q=80&w=1200')] bg-cover bg-center opacity-10 mix-blend-overlay"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-forest-deep/90"></div>
+          <div className="relative mx-auto max-w-7xl px-6 text-center space-y-6">
+            <h1 className="font-display text-5xl md:text-6xl font-bold tracking-tight">
+              Get in <span className="italic text-gold">Touch</span>
+            </h1>
+            <p className="max-w-2xl mx-auto text-cream/80 text-lg leading-relaxed">
+              Have a question or want to partner with us? Check our FAQ first—if you still need help, our team is ready to connect.
+            </p>
+          </div>
         </section>
 
-        {/* Contact Info & Form */}
-        <section className="py-24">
-           <div className="mx-auto max-w-7xl px-6 grid lg:grid-cols-[400px_1fr] gap-20 items-start">
-              {/* Left Side: Info */}
-              <div className="space-y-12">
-                 <div className="space-y-8">
-                    <div className="flex items-start gap-6">
-                       <div className="h-12 w-12 rounded-2xl bg-forest-deep text-gold flex items-center justify-center shrink-0">
-                          <Mail className="h-5 w-5" />
-                       </div>
-                       <div>
-                          <h3 className="font-bold text-forest-deep uppercase tracking-widest text-xs mb-1">Email Us</h3>
-                          <p className="text-forest-deep/60">hello@onemustardseed.com</p>
-                       </div>
-                    </div>
-                    <div className="flex items-start gap-6">
-                       <div className="h-12 w-12 rounded-2xl bg-forest-deep text-gold flex items-center justify-center shrink-0">
-                          <Phone className="h-5 w-5" />
-                       </div>
-                       <div>
-                          <h3 className="font-bold text-forest-deep uppercase tracking-widest text-xs mb-1">Call Us</h3>
-                          <p className="text-forest-deep/60">+1 (800) 555-SEED</p>
-                       </div>
-                    </div>
-                    <div className="flex items-start gap-6">
-                       <div className="h-12 w-12 rounded-2xl bg-forest-deep text-gold flex items-center justify-center shrink-0">
-                          <MapPin className="h-5 w-5" />
-                       </div>
-                       <div>
-                          <h3 className="font-bold text-forest-deep uppercase tracking-widest text-xs mb-1">Visit Us</h3>
-                          <p className="text-forest-deep/60">Luminara Plaza, OMS Square<br />San Francisco, CA 94103</p>
-                       </div>
-                    </div>
-                 </div>
+        <section className="py-20">
+          <div className="mx-auto max-w-7xl px-6 grid lg:grid-cols-12 gap-16 items-start">
 
-                 <div className="p-8 rounded-3xl bg-forest-deep/5 border border-forest-deep/10">
-                    <h4 className="font-bold text-forest-deep mb-4 flex items-center gap-2">
-                       <MessageSquare className="h-4 w-4 text-gold" />
-                       Response Time
-                    </h4>
-                    <p className="text-sm text-forest-deep/60 leading-relaxed">
-                       Our team typically responds within 24-48 business hours. For urgent media inquiries, please use the specialized form.
-                    </p>
-                 </div>
+            {/* Left Column: FAQ & Team */}
+            <div className="lg:col-span-6 space-y-8">
+
+              {/* FAQ Section */}
+              <div className="space-y-8">
+                <div className="space-y-3">
+                  <h2 className="text-3xl font-display font-bold text-forest-deep flex items-center gap-3">
+                    <HelpCircle className="w-8 h-8 text-gold" /> Frequently Asked Questions
+                  </h2>
+                  <p className="text-forest-deep/60">Find quick answers to common questions about our ministry and resources.</p>
+                </div>
+
+                <div className="w-full space-y-4">
+                  {FAQS.map((faq, idx) => (
+                    <details key={idx} className="group bg-white rounded-2xl border-none shadow-sm px-2 [&_summary::-webkit-details-marker]:hidden">
+                      <summary className="flex cursor-pointer items-center justify-between px-4 py-5 font-bold text-forest-deep hover:text-primary transition-colors">
+                        {faq.question}
+                        <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200 group-open:rotate-180" />
+                      </summary>
+                      <div className="px-4 pb-5 text-forest-deep/70 leading-relaxed text-sm">
+                        {faq.answer}
+                      </div>
+                    </details>
+                  ))}
+                </div>
               </div>
 
-              {/* Right Side: Form */}
-              <div className="relative p-10 rounded-[3rem] bg-white border border-forest-deep/5 shadow-2xl">
-                 {formSubmitted && (
-                   <div className="absolute inset-0 bg-white z-10 flex flex-col items-center justify-center text-center p-12 animate-in fade-in zoom-in duration-500">
-                      <div className="h-20 w-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-6">
-                         <CheckCircle2 className="h-10 w-10" />
+              {/* Team Section */}
+              <div className="space-y-6 pt-4 border-t border-cream/20">
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-display font-bold text-forest-deep">Meet the Team</h3>
+                  <p className="text-forest-deep/60 text-sm">Dedicated to equipping families with faithful media.</p>
+                </div>
+
+                <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  {TEAM.map((member, i) => (
+                    <div key={i} className="group bg-white rounded-3xl p-4 shadow-sm border border-cream/50 text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                      <div className="w-24 h-24 mx-auto rounded-full overflow-hidden mb-4 border-4 border-[#FAF7EE]">
+                        <img src={member.image} alt={member.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                       </div>
-                      <h3 className="text-3xl font-display font-medium text-forest-deep mb-4">Message Sent!</h3>
-                      <p className="text-forest-deep/60">Thank you for reaching out. We've received your inquiry and will be in touch soon.</p>
-                      <button onClick={() => setFormSubmitted(false)} className="mt-8 text-xs font-bold uppercase tracking-widest text-gold hover:text-forest-deep transition">Send another message</button>
-                   </div>
-                 )}
-
-                 <form onSubmit={handleFormSubmit} className="space-y-8">
-                    <div className="grid sm:grid-cols-2 gap-6">
-                       <div className="space-y-2">
-                          <label className="text-[10px] font-bold uppercase tracking-widest text-forest-deep/40 ml-1">Your Name</label>
-                          <input required type="text" className="w-full bg-[#FAF7EE] border border-forest-deep/5 rounded-2xl px-6 py-4 text-forest-deep focus:outline-none focus:border-gold/50 transition-all" />
-                       </div>
-                       <div className="space-y-2">
-                          <label className="text-[10px] font-bold uppercase tracking-widest text-forest-deep/40 ml-1">Email Address</label>
-                          <input required type="email" className="w-full bg-[#FAF7EE] border border-forest-deep/5 rounded-2xl px-6 py-4 text-forest-deep focus:outline-none focus:border-gold/50 transition-all" />
-                       </div>
+                      <h4 className="font-bold text-forest-deep text-sm">{member.name}</h4>
+                      <p className="text-gold font-bold text-[10px] uppercase tracking-widest mb-3">{member.role}</p>
+                      <a href={`mailto:${member.email}`} className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-forest/5 text-forest hover:bg-forest hover:text-white transition-colors">
+                        <Mail className="w-3.5 h-3.5" />
+                      </a>
                     </div>
+                  ))}
+                </div>
+              </div>
 
+            </div>
+
+            {/* Right Column: Contact Form */}
+            <div className="lg:col-span-6 relative">
+              <div className="sticky top-24 bg-white rounded-[2.5rem] p-8 md:p-10 shadow-2xl border border-cream/20">
+                <div className="space-y-2 mb-8 text-center">
+                  <div className="w-12 h-12 bg-forest/5 rounded-2xl flex items-center justify-center mx-auto mb-4 text-forest">
+                    <MessageCircle className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-2xl font-display font-bold text-forest-deep">Send a Message</h3>
+                  <p className="text-sm text-forest-deep/60">Select a category below to ensure your message reaches the right team member.</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                       <label className="text-[10px] font-bold uppercase tracking-widest text-forest-deep/40 ml-1">Inquiry Type</label>
-                       <select className="w-full bg-[#FAF7EE] border border-forest-deep/5 rounded-2xl px-6 py-4 text-forest-deep focus:outline-none focus:border-gold/50 transition-all appearance-none cursor-pointer">
-                          <option>General Inquiry</option>
-                          <option>Donor Inquiry</option>
-                          <option>Event Support</option>
-                          <option>Partnership Inquiry</option>
-                          <option>Media/Press</option>
-                       </select>
+                      <Label className="text-xs uppercase tracking-widest text-forest-deep/60">First Name *</Label>
+                      <Input
+                        required
+                        placeholder="John"
+                        className="h-12 rounded-xl bg-forest/5 border-transparent focus:bg-white transition-colors"
+                        value={formData.firstName}
+                        onChange={e => setFormData({ ...formData, firstName: e.target.value })}
+                      />
                     </div>
-
                     <div className="space-y-2">
-                       <label className="text-[10px] font-bold uppercase tracking-widest text-forest-deep/40 ml-1">Your Message</label>
-                       <textarea required rows={5} className="w-full bg-[#FAF7EE] border border-forest-deep/5 rounded-2xl px-6 py-4 text-forest-deep focus:outline-none focus:border-gold/50 transition-all resize-none"></textarea>
+                      <Label className="text-xs uppercase tracking-widest text-forest-deep/60">Last Name *</Label>
+                      <Input
+                        required
+                        placeholder="Doe"
+                        className="h-12 rounded-xl bg-forest/5 border-transparent focus:bg-white transition-colors"
+                        value={formData.lastName}
+                        onChange={e => setFormData({ ...formData, lastName: e.target.value })}
+                      />
                     </div>
+                  </div>
 
-                    <button type="submit" className="w-full py-5 rounded-2xl bg-forest-deep text-gold font-bold text-sm uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3">
-                       Send Message <Send className="h-4 w-4" />
-                    </button>
-                 </form>
-              </div>
-           </div>
-        </section>
+                  <div className="space-y-2">
+                    <Label className="text-xs uppercase tracking-widest text-forest-deep/60">Email Address *</Label>
+                    <Input
+                      required
+                      type="email"
+                      placeholder="john@example.com"
+                      className="h-12 rounded-xl bg-forest/5 border-transparent focus:bg-white transition-colors"
+                      value={formData.email}
+                      onChange={e => setFormData({ ...formData, email: e.target.value })}
+                    />
+                  </div>
 
-        {/* Inquiry Hubs */}
-        <section className="py-24 bg-forest-deep/5">
-           <div className="mx-auto max-w-7xl px-6">
-              <div className="text-center mb-16">
-                 <h2 className="font-display text-4xl font-bold text-forest-deep tracking-tight mb-4">Specific <span className="italic text-gold font-medium">Inquiries</span></h2>
-                 <p className="text-forest-deep/60">Connect directly with our specialized teams.</p>
-              </div>
-              <div className="grid sm:grid-cols-3 gap-8">
-                 {[
-                   { title: "Donor Support", icon: Heart, desc: "Inquiries regarding donations, receipts, and legacy giving." },
-                   { title: "Event Support", icon: Calendar, desc: "Planning a screening or live event at your church or school?" },
-                   { title: "Partnerships", icon: Briefcase, desc: "Discuss co-branding, sponsorship, or distribution opportunities." },
-                 ].map((hub, i) => (
-                   <div key={i} className="p-10 rounded-[3rem] bg-white border border-forest-deep/5 shadow-sm hover:shadow-xl transition-all group cursor-pointer">
-                      <div className="h-16 w-16 rounded-2xl bg-forest-deep/5 text-forest-deep flex items-center justify-center mb-6 group-hover:bg-forest-deep group-hover:text-gold transition-colors">
-                         <hub.icon className="h-8 w-8" />
-                      </div>
-                      <h3 className="text-xl font-bold text-forest-deep mb-3">{hub.title}</h3>
-                      <p className="text-sm text-forest-deep/60 leading-relaxed mb-6">{hub.desc}</p>
-                      <span className="text-xs font-bold uppercase tracking-widest text-gold group-hover:translate-x-2 transition-transform inline-block">Learn More &rarr;</span>
-                   </div>
-                 ))}
-              </div>
-           </div>
-        </section>
+                  <div className="space-y-2">
+                    <Label className="text-xs uppercase tracking-widest text-forest-deep/60">Inquiry Category *</Label>
+                    <Select required value={formData.category} onValueChange={val => setFormData({ ...formData, category: val })}>
+                      <SelectTrigger className="h-12 rounded-xl bg-forest/5 border-transparent font-medium">
+                        <SelectValue placeholder="Select a topic..." />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        {CATEGORIES.map(cat => (
+                          <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-        {/* Team Profiles */}
-        <section className="py-24">
-           <div className="mx-auto max-w-7xl px-6">
-              <div className="flex items-end justify-between mb-16">
-                 <div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-gold mb-2 block">Our Leadership</span>
-                    <h2 className="font-display text-4xl font-bold text-forest-deep tracking-tight">Meet the <span className="italic text-gold font-medium">Team</span></h2>
-                 </div>
-                 <button className="text-sm font-bold text-forest-deep/40 hover:text-gold flex items-center gap-2 transition-colors">
-                    All Staff <Users className="h-4 w-4" />
-                 </button>
-              </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                 {TEAM.map((member, i) => (
-                   <div key={i} className="group">
-                      <div className="relative aspect-[3/4] rounded-[3rem] overflow-hidden mb-6 shadow-card">
-                         <img src={member.img} alt={member.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" />
-                         <div className="absolute inset-0 bg-forest-deep/20 group-hover:bg-transparent transition-all" />
-                      </div>
-                      <h3 className="text-xl font-bold text-forest-deep">{member.name}</h3>
-                      <p className="text-xs font-bold uppercase tracking-widest text-gold mt-1">{member.role}</p>
-                   </div>
-                 ))}
-              </div>
-           </div>
-        </section>
+                  <div className="space-y-2">
+                    <Label className="text-xs uppercase tracking-widest text-forest-deep/60">Your Message *</Label>
+                    <textarea
+                      required
+                      placeholder="How can we help you today?"
+                      className="w-full min-h-[120px] p-4 rounded-xl bg-forest/5 border border-transparent focus:border-forest/20 focus:bg-white focus:outline-none transition-colors resize-y text-sm"
+                      value={formData.message}
+                      onChange={e => setFormData({ ...formData, message: e.target.value })}
+                    />
+                  </div>
 
-        {/* FAQ Section */}
-        <section className="py-24 bg-white border-t border-forest-deep/5">
-           <div className="mx-auto max-w-3xl px-6">
-              <div className="text-center mb-16">
-                 <div className="h-16 w-16 rounded-full bg-forest-deep/5 text-forest-deep flex items-center justify-center mx-auto mb-6">
-                    <HelpCircle className="h-8 w-8" />
-                 </div>
-                 <h2 className="font-display text-4xl font-bold text-forest-deep tracking-tight mb-4">Frequently Asked <span className="italic text-gold font-medium">Questions</span></h2>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full h-14 bg-gold hover:bg-gold/90 text-forest-deep font-bold text-sm tracking-widest uppercase rounded-xl shadow-lg mt-4"
+                  >
+                    {isSubmitting ? "Sending..." : "Submit Inquiry"}
+                  </Button>
+                </form>
               </div>
-              <div className="space-y-4">
-                 {FAQS.map((faq, i) => (
-                   <div key={i} className="rounded-3xl border border-forest-deep/5 overflow-hidden transition-all">
-                      <button 
-                        onClick={() => setActiveFaq(activeFaq === i ? null : i)}
-                        className="w-full px-8 py-6 flex items-center justify-between text-left hover:bg-[#FAF7EE] transition-colors"
-                      >
-                         <span className="font-bold text-forest-deep">{faq.q}</span>
-                         <ChevronDown className={`h-5 w-5 text-gold transition-transform duration-300 ${activeFaq === i ? "rotate-180" : ""}`} />
-                      </button>
-                      <div className={`transition-all duration-500 ease-in-out ${activeFaq === i ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}>
-                         <div className="px-8 pb-8 text-forest-deep/60 text-sm leading-relaxed">
-                            {faq.a}
-                         </div>
-                      </div>
-                   </div>
-                 ))}
-              </div>
-           </div>
+            </div>
+
+          </div>
         </section>
       </main>
+
       <SiteFooter />
     </div>
   );

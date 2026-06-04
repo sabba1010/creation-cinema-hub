@@ -184,7 +184,7 @@ function ResourcesLandingPage() {
                   >
                     <div className="relative aspect-video overflow-hidden bg-forest/5 flex items-center justify-center">
                       {res.featuredImage ? (
-                        <img src={res.featuredImage} alt={res.title} className={`w-full h-full object-cover transition-transform duration-1000 ${res.isActive !== false ? 'group-hover:scale-110' : 'opacity-50 grayscale'}`} />
+                        <img src={res.featuredImage?.startsWith('/') ? `${API}${res.featuredImage}` : res.featuredImage} alt={res.title} className={`w-full h-full object-cover transition-transform duration-1000 ${res.isActive !== false ? 'group-hover:scale-110' : 'opacity-50 grayscale'}`} />
                       ) : (
                         <FileText className={`w-16 h-16 text-forest/20 ${res.isActive === false ? 'opacity-50 grayscale' : ''}`} />
                       )}

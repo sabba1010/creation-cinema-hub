@@ -1,8 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { CheckCircle2, ShieldCheck, Heart, Users, CreditCard, Sparkles, Star } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import Swal from "sweetalert2";
 
 export const Route = createFileRoute("/kids/subscribe")({
    component: KidsSubscribePage,
