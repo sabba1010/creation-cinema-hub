@@ -1,8 +1,10 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Play, FileVideo, Mic2, ChevronRight, LayoutGrid, Lock, Sparkles } from "lucide-react";
+import { Play, Search, Filter, Tv, ChevronRight, Sparkles, Mic2, FileVideo, Clock, Star } from "lucide-react";
 import { useState, useEffect } from "react";
+import { Badge } from "../../components/ui/badge";
+import { LayoutGrid } from "lucide-react";
 
 export const Route = createFileRoute("/kids/library")({
   component: KidsLibraryPage,
@@ -17,9 +19,9 @@ function KidsLibraryPage() {
 
   useEffect(() => {
     // Check if user has active subscription
-    const isAuth = localStorage.getItem("user_auth") === "true" || localStorage.getItem("admin_auth") === "true";
+    const token = localStorage.getItem("token");
     const access = localStorage.getItem("kbf_access");
-    if (isAuth && access) {
+    if (token && access) {
       setHasAccess(true);
     }
   }, []);
@@ -41,51 +43,9 @@ function KidsLibraryPage() {
     fetchSeries();
   }, []);
 
+  // Currently, all uploaded series are considered Video content.
+  // In the future, you could add a 'type' field to the Series schema to differentiate.
   const filteredContent = seriesList.filter(() => activeTab === "Video");
-
-  // Paywall Gate
-  if (!hasAccess) {
-    return (
-      <div className="bg-[#FAF7EE] min-h-screen flex flex-col">
-        <SiteHeader />
-        <main className="flex-grow pt-24 flex items-center justify-center">
-          <div className="mx-auto max-w-2xl px-6 text-center py-24">
-            <div className="w-24 h-24 rounded-full bg-forest-deep/5 flex items-center justify-center mx-auto mb-8">
-              <Lock className="h-12 w-12 text-forest-deep/30" />
-            </div>
-            <div className="inline-flex items-center gap-2 bg-gold/10 px-4 py-2 rounded-full border border-gold/20 mb-8">
-              <Sparkles className="h-4 w-4 text-gold" />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-gold">Premium Content</span>
-            </div>
-            <h1 className="font-display text-4xl sm:text-5xl font-bold text-forest-deep tracking-tight mb-6">
-              Unlock the Full <span className="italic text-gold">Library</span>
-            </h1>
-            <p className="text-forest-deep/60 text-lg leading-relaxed mb-10">
-              Get unlimited access to the entire KidsBibleFlix library — hundreds of faith-filled videos and audio adventures, new releases every week, no ads, ever.
-            </p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Link
-                to="/kids/subscribe"
-                className="bg-forest-deep text-gold px-10 py-5 rounded-3xl font-bold text-sm uppercase tracking-widest shadow-xl hover:scale-[1.02] transition-all"
-              >
-                View Plans — From $4.99/mo
-              </Link>
-              <Link
-                to="/login"
-                className="bg-white border border-forest-deep/10 text-forest-deep px-10 py-5 rounded-3xl font-bold text-sm uppercase tracking-widest hover:bg-cream transition-all"
-              >
-                Sign In
-              </Link>
-            </div>
-            <p className="text-xs text-forest-deep/40 mt-8 font-bold uppercase tracking-widest">
-              Or get <Link to="/kids/subscribe" className="text-gold underline underline-offset-4">Lifetime Access for $99</Link> — pay once, watch forever.
-            </p>
-          </div>
-        </main>
-        <SiteFooter />
-      </div>
-    );
-  }
 
   return (
     <div className="bg-[#FAF7EE] min-h-screen flex flex-col">
@@ -138,7 +98,9 @@ function KidsLibraryPage() {
                         src={s.image || s.img}
                         alt={s.name || s.title}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1502086223501-7ea2443054f1?w=400&h=200&fit=crop"; }}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1502086223501-7ea2443054f1?w=400&h=200&fit=crop";
+                        }}
                       />
                       <div className="absolute inset-0 bg-forest-deep/20 group-hover:bg-transparent transition-all" />
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all scale-90 group-hover:scale-100">
@@ -153,9 +115,13 @@ function KidsLibraryPage() {
                     <div className="p-8 space-y-4 flex-grow flex flex-col">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-gold">{s.topic || "Series"}</span>
+                        <div className="flex items-center gap-1 text-[10px] text-forest-deep/40 font-bold uppercase">
+                          <Tv className="w-3 h-3" />
+                          Video Content
+                        </div>
                       </div>
                       <h3 className="text-2xl font-display font-bold text-forest-deep group-hover:text-gold transition-colors">{s.name || s.title}</h3>
-                      <p className="text-forest-deep/60 text-xs leading-relaxed line-clamp-2 mt-2">{s.description || s.desc}</p>
+                      <p className="text-muted-foreground text-xs leading-relaxed line-clamp-2 mt-2">{s.description || s.desc}</p>
                       <div className="pt-4 mt-auto flex items-center justify-between border-t border-cream/10">
                         <span className="text-xs font-bold text-forest-deep/40">Watch Now</span>
                         <ChevronRight className="h-4 w-4 text-gold group-hover:translate-x-1 transition-transform" />
@@ -165,7 +131,7 @@ function KidsLibraryPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-20 text-forest-deep/40 font-medium text-lg border-2 border-dashed border-cream/20 rounded-[2rem] bg-white/50">
+              <div className="text-center py-20 text-muted-foreground font-medium text-lg border-2 border-dashed border-cream/20 rounded-[2rem] bg-white/50">
                 {activeTab === "Audio" ? "Audio content is coming soon!" : "No series available yet. Check back later!"}
               </div>
             )}

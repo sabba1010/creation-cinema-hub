@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Play, ArrowLeft, Share2, ChevronRight, Sparkles, Star, Lock, Mic2 } from "lucide-react";
+import { Play, ArrowLeft, Share2, ChevronRight, Sparkles, Star, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/kids/watch/$seriesId")({
   component: KidsWatchPage,
@@ -17,9 +17,9 @@ function KidsWatchPage() {
   const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
-    const isAuth = localStorage.getItem("user_auth") === "true" || localStorage.getItem("admin_auth") === "true";
+    const token = localStorage.getItem("token");
     const access = localStorage.getItem("kbf_access");
-    if (isAuth && access) setHasAccess(true);
+    if (token && access) setHasAccess(true);
   }, []);
 
   useEffect(() => {
@@ -66,54 +66,8 @@ function KidsWatchPage() {
         <SiteHeader />
         <main className="flex-grow pt-32 pb-20 flex items-center justify-center">
           <div className="animate-pulse flex flex-col items-center gap-4">
-            <div className="h-12 w-12 rounded-full border-4 border-gold border-t-transparent animate-spin" />
-            <p className="text-forest-deep/40 font-medium uppercase tracking-widest text-sm">Loading Adventure...</p>
-          </div>
-        </main>
-        <SiteFooter />
-      </div>
-    );
-  }
-
-  // Paywall Gate — show after series data is loaded so we can display context
-  if (!hasAccess) {
-    return (
-      <div className="bg-[#FAF7EE] min-h-screen flex flex-col">
-        <SiteHeader />
-        <main className="flex-grow pt-24">
-          {/* Blurred Preview Header */}
-          <div className="relative h-80 overflow-hidden">
-            <img src={series.img} alt={series.name} className="w-full h-full object-cover blur-sm opacity-40 scale-105" />
-            <div className="absolute inset-0 bg-forest-deep/60" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-cream">
-                <div className="w-20 h-20 rounded-full bg-white/10 border-2 border-white/20 flex items-center justify-center mx-auto mb-4">
-                  <Lock className="h-10 w-10 text-gold" />
-                </div>
-                <h1 className="font-display text-4xl font-bold mb-2">{series.name}</h1>
-                <p className="text-cream/60 text-sm">{series.topic} · {episodes.length > 0 ? `${episodes.length} Episodes` : "Full Series"}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mx-auto max-w-2xl px-6 py-16 text-center">
-            <h2 className="font-display text-3xl font-bold text-forest-deep mb-4">
-              Subscribe to <span className="italic text-gold">Watch</span>
-            </h2>
-            <p className="text-forest-deep/60 leading-relaxed mb-10">
-              Get unlimited access to this series and the entire KidsBibleFlix library with a subscription — starting at just $4.99/mo, or unlock forever for a one-time $99.
-            </p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Link to="/kids/subscribe" className="bg-forest-deep text-gold px-10 py-5 rounded-3xl font-bold text-sm uppercase tracking-widest shadow-xl hover:scale-[1.02] transition-all">
-                View Plans
-              </Link>
-              <Link to="/login" className="bg-white border border-forest-deep/10 text-forest-deep px-10 py-5 rounded-3xl font-bold text-sm uppercase tracking-widest hover:bg-cream transition-all">
-                Sign In
-              </Link>
-            </div>
-            <p className="text-xs text-forest-deep/40 mt-6 font-bold uppercase tracking-widest">
-              <Link to="/kids/subscribe" className="text-gold underline underline-offset-4">Get Lifetime Access for $99</Link> — pay once, watch everything forever.
-            </p>
+            <div className="h-12 w-12 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+            <p className="text-muted-foreground font-medium uppercase tracking-widest text-sm">Loading Adventure...</p>
           </div>
         </main>
         <SiteFooter />
