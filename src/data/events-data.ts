@@ -1,4 +1,4 @@
-﻿// ─── Events Data System ────────────────────────────────────────────────────
+// ─── Events Data System ────────────────────────────────────────────────────
 
 export interface Showtime {
   id: string;
@@ -66,6 +66,7 @@ export interface Event {
   support?: SupportContact[];
   includes?: string[];
   faq?: { q: string; a: string }[];
+  categories?: { name: string; price: number; available: number }[];
 }
 
 // ─── Event Data ─────────────────────────────────────────────────────────────

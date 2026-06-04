@@ -16,7 +16,6 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrayerRouteImport } from './routes/prayer'
 import { Route as PodcastRouteImport } from './routes/podcast'
-import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as MissionRouteImport } from './routes/mission'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as FilmsRouteImport } from './routes/films'
@@ -31,6 +30,7 @@ import { Route as ShopIndexRouteImport } from './routes/shop/index'
 import { Route as ResourcesIndexRouteImport } from './routes/resources/index'
 import { Route as PrayerIndexRouteImport } from './routes/prayer/index'
 import { Route as PodcastIndexRouteImport } from './routes/podcast/index'
+import { Route as NewsletterIndexRouteImport } from './routes/newsletter.index'
 import { Route as KidsIndexRouteImport } from './routes/kids/index'
 import { Route as FilmsIndexRouteImport } from './routes/films/index'
 import { Route as ContactIndexRouteImport } from './routes/contact/index'
@@ -41,6 +41,7 @@ import { Route as ShopProductIdRouteImport } from './routes/shop/$productId'
 import { Route as ResourcesResourceIdRouteImport } from './routes/resources/$resourceId'
 import { Route as PrayerVideoRouteImport } from './routes/prayer/video'
 import { Route as PrayerDashboardRouteImport } from './routes/prayer/dashboard'
+import { Route as NewsletterIdRouteImport } from './routes/newsletter.$id'
 import { Route as KidsTopicsRouteImport } from './routes/kids/topics'
 import { Route as KidsSubscribeRouteImport } from './routes/kids/subscribe'
 import { Route as KidsSeriesRouteImport } from './routes/kids/series'
@@ -100,11 +101,6 @@ const PrayerRoute = PrayerRouteImport.update({
 const PodcastRoute = PodcastRouteImport.update({
   id: '/podcast',
   path: '/podcast',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NewsletterRoute = NewsletterRouteImport.update({
-  id: '/newsletter',
-  path: '/newsletter',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MissionRoute = MissionRouteImport.update({
@@ -177,6 +173,11 @@ const PodcastIndexRoute = PodcastIndexRouteImport.update({
   path: '/',
   getParentRoute: () => PodcastRoute,
 } as any)
+const NewsletterIndexRoute = NewsletterIndexRouteImport.update({
+  id: '/newsletter/',
+  path: '/newsletter/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KidsIndexRoute = KidsIndexRouteImport.update({
   id: '/kids/',
   path: '/kids/',
@@ -226,6 +227,11 @@ const PrayerDashboardRoute = PrayerDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => PrayerRoute,
+} as any)
+const NewsletterIdRoute = NewsletterIdRouteImport.update({
+  id: '/newsletter/$id',
+  path: '/newsletter/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const KidsTopicsRoute = KidsTopicsRouteImport.update({
   id: '/kids/topics',
@@ -363,7 +369,6 @@ export interface FileRoutesByFullPath {
   '/films': typeof FilmsRouteWithChildren
   '/login': typeof LoginRoute
   '/mission': typeof MissionRoute
-  '/newsletter': typeof NewsletterRoute
   '/podcast': typeof PodcastRouteWithChildren
   '/prayer': typeof PrayerRouteWithChildren
   '/profile': typeof ProfileRoute
@@ -392,6 +397,7 @@ export interface FileRoutesByFullPath {
   '/kids/series': typeof KidsSeriesRoute
   '/kids/subscribe': typeof KidsSubscribeRoute
   '/kids/topics': typeof KidsTopicsRoute
+  '/newsletter/$id': typeof NewsletterIdRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
@@ -402,6 +408,7 @@ export interface FileRoutesByFullPath {
   '/contact/': typeof ContactIndexRoute
   '/films/': typeof FilmsIndexRoute
   '/kids/': typeof KidsIndexRoute
+  '/newsletter/': typeof NewsletterIndexRoute
   '/podcast/': typeof PodcastIndexRoute
   '/prayer/': typeof PrayerIndexRoute
   '/resources/': typeof ResourcesIndexRoute
@@ -418,7 +425,6 @@ export interface FileRoutesByTo {
   '/events': typeof EventsRoute
   '/login': typeof LoginRoute
   '/mission': typeof MissionRoute
-  '/newsletter': typeof NewsletterRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
   '/team': typeof TeamRoute
@@ -443,6 +449,7 @@ export interface FileRoutesByTo {
   '/kids/series': typeof KidsSeriesRoute
   '/kids/subscribe': typeof KidsSubscribeRoute
   '/kids/topics': typeof KidsTopicsRoute
+  '/newsletter/$id': typeof NewsletterIdRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
@@ -453,6 +460,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactIndexRoute
   '/films': typeof FilmsIndexRoute
   '/kids': typeof KidsIndexRoute
+  '/newsletter': typeof NewsletterIndexRoute
   '/podcast': typeof PodcastIndexRoute
   '/prayer': typeof PrayerIndexRoute
   '/resources': typeof ResourcesIndexRoute
@@ -474,7 +482,6 @@ export interface FileRoutesById {
   '/films': typeof FilmsRouteWithChildren
   '/login': typeof LoginRoute
   '/mission': typeof MissionRoute
-  '/newsletter': typeof NewsletterRoute
   '/podcast': typeof PodcastRouteWithChildren
   '/prayer': typeof PrayerRouteWithChildren
   '/profile': typeof ProfileRoute
@@ -503,6 +510,7 @@ export interface FileRoutesById {
   '/kids/series': typeof KidsSeriesRoute
   '/kids/subscribe': typeof KidsSubscribeRoute
   '/kids/topics': typeof KidsTopicsRoute
+  '/newsletter/$id': typeof NewsletterIdRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
@@ -513,6 +521,7 @@ export interface FileRoutesById {
   '/contact/': typeof ContactIndexRoute
   '/films/': typeof FilmsIndexRoute
   '/kids/': typeof KidsIndexRoute
+  '/newsletter/': typeof NewsletterIndexRoute
   '/podcast/': typeof PodcastIndexRoute
   '/prayer/': typeof PrayerIndexRoute
   '/resources/': typeof ResourcesIndexRoute
@@ -535,7 +544,6 @@ export interface FileRouteTypes {
     | '/films'
     | '/login'
     | '/mission'
-    | '/newsletter'
     | '/podcast'
     | '/prayer'
     | '/profile'
@@ -564,6 +572,7 @@ export interface FileRouteTypes {
     | '/kids/series'
     | '/kids/subscribe'
     | '/kids/topics'
+    | '/newsletter/$id'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
@@ -574,6 +583,7 @@ export interface FileRouteTypes {
     | '/contact/'
     | '/films/'
     | '/kids/'
+    | '/newsletter/'
     | '/podcast/'
     | '/prayer/'
     | '/resources/'
@@ -590,7 +600,6 @@ export interface FileRouteTypes {
     | '/events'
     | '/login'
     | '/mission'
-    | '/newsletter'
     | '/profile'
     | '/register'
     | '/team'
@@ -615,6 +624,7 @@ export interface FileRouteTypes {
     | '/kids/series'
     | '/kids/subscribe'
     | '/kids/topics'
+    | '/newsletter/$id'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
@@ -625,6 +635,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/films'
     | '/kids'
+    | '/newsletter'
     | '/podcast'
     | '/prayer'
     | '/resources'
@@ -645,7 +656,6 @@ export interface FileRouteTypes {
     | '/films'
     | '/login'
     | '/mission'
-    | '/newsletter'
     | '/podcast'
     | '/prayer'
     | '/profile'
@@ -674,6 +684,7 @@ export interface FileRouteTypes {
     | '/kids/series'
     | '/kids/subscribe'
     | '/kids/topics'
+    | '/newsletter/$id'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
@@ -684,6 +695,7 @@ export interface FileRouteTypes {
     | '/contact/'
     | '/films/'
     | '/kids/'
+    | '/newsletter/'
     | '/podcast/'
     | '/prayer/'
     | '/resources/'
@@ -705,7 +717,6 @@ export interface RootRouteChildren {
   FilmsRoute: typeof FilmsRouteWithChildren
   LoginRoute: typeof LoginRoute
   MissionRoute: typeof MissionRoute
-  NewsletterRoute: typeof NewsletterRoute
   PodcastRoute: typeof PodcastRouteWithChildren
   PrayerRoute: typeof PrayerRouteWithChildren
   ProfileRoute: typeof ProfileRoute
@@ -717,8 +728,10 @@ export interface RootRouteChildren {
   KidsSeriesRoute: typeof KidsSeriesRoute
   KidsSubscribeRoute: typeof KidsSubscribeRoute
   KidsTopicsRoute: typeof KidsTopicsRoute
+  NewsletterIdRoute: typeof NewsletterIdRoute
   ContactIndexRoute: typeof ContactIndexRoute
   KidsIndexRoute: typeof KidsIndexRoute
+  NewsletterIndexRoute: typeof NewsletterIndexRoute
   SupportIndexRoute: typeof SupportIndexRoute
   KidsWatchSeriesIdRoute: typeof KidsWatchSeriesIdRoute
 }
@@ -772,13 +785,6 @@ declare module '@tanstack/react-router' {
       path: '/podcast'
       fullPath: '/podcast'
       preLoaderRoute: typeof PodcastRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/newsletter': {
-      id: '/newsletter'
-      path: '/newsletter'
-      fullPath: '/newsletter'
-      preLoaderRoute: typeof NewsletterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mission': {
@@ -879,6 +885,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PodcastIndexRouteImport
       parentRoute: typeof PodcastRoute
     }
+    '/newsletter/': {
+      id: '/newsletter/'
+      path: '/newsletter'
+      fullPath: '/newsletter/'
+      preLoaderRoute: typeof NewsletterIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/kids/': {
       id: '/kids/'
       path: '/kids'
@@ -948,6 +961,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/prayer/dashboard'
       preLoaderRoute: typeof PrayerDashboardRouteImport
       parentRoute: typeof PrayerRoute
+    }
+    '/newsletter/$id': {
+      id: '/newsletter/$id'
+      path: '/newsletter/$id'
+      fullPath: '/newsletter/$id'
+      preLoaderRoute: typeof NewsletterIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/kids/topics': {
       id: '/kids/topics'
@@ -1269,7 +1289,6 @@ const rootRouteChildren: RootRouteChildren = {
   FilmsRoute: FilmsRouteWithChildren,
   LoginRoute: LoginRoute,
   MissionRoute: MissionRoute,
-  NewsletterRoute: NewsletterRoute,
   PodcastRoute: PodcastRouteWithChildren,
   PrayerRoute: PrayerRouteWithChildren,
   ProfileRoute: ProfileRoute,
@@ -1281,8 +1300,10 @@ const rootRouteChildren: RootRouteChildren = {
   KidsSeriesRoute: KidsSeriesRoute,
   KidsSubscribeRoute: KidsSubscribeRoute,
   KidsTopicsRoute: KidsTopicsRoute,
+  NewsletterIdRoute: NewsletterIdRoute,
   ContactIndexRoute: ContactIndexRoute,
   KidsIndexRoute: KidsIndexRoute,
+  NewsletterIndexRoute: NewsletterIndexRoute,
   SupportIndexRoute: SupportIndexRoute,
   KidsWatchSeriesIdRoute: KidsWatchSeriesIdRoute,
 }

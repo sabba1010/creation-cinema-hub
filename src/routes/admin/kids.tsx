@@ -96,6 +96,8 @@ function KidsManagement() {
   const [topics, setTopics] = useState(INITIAL_TOPICS);
   const [content, setContent] = useState(INITIAL_CONTENT);
   const [lifetimeUsers, setLifetimeUsers] = useState(INITIAL_LIFETIME);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("series");
 
   // Dialog States
   const [isSeriesDialogOpen, setIsSeriesDialogOpen] = useState(false);
@@ -313,15 +315,26 @@ function KidsManagement() {
         <StatsCard title="Lifetime Users" value={(lifetimeUsers?.length || 0).toString()} icon={Star} color="gold" />
       </div>
 
-      <Tabs defaultValue="series" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-card/50 border border-border/50 p-1 rounded-xl">
           <TabsTrigger value="series" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Series</TabsTrigger>
           <TabsTrigger value="topics" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Categories</TabsTrigger>
-          <TabsTrigger value="library" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Video</TabsTrigger>
           <TabsTrigger value="lifetime" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Lifetime Access</TabsTrigger>
         </TabsList>
 
         <TabsContent value="series" className="m-0 mt-8">
+          {selectedCategory && (
+            <div className="flex items-center gap-3 mb-4 p-3 rounded-xl bg-forest/5 border border-forest/20 w-fit">
+              <span className="text-sm text-muted-foreground">Filtered by:</span>
+              <span className="font-bold text-forest">{selectedCategory}</span>
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className="flex items-center gap-1.5 ml-1 px-3 py-1 rounded-full bg-red-500/10 text-red-600 border border-red-400/30 text-xs font-bold hover:bg-red-500/20 hover:border-red-500/50 transition-all active:scale-95"
+              >
+                ✕ Clear filter
+              </button>
+            </div>
+          )}
           {isLoading ? (
             <div className="flex justify-center items-center py-20">
               <div className="animate-spin h-10 w-10 border-4 border-forest border-t-transparent rounded-full" />
@@ -335,7 +348,7 @@ function KidsManagement() {
                 <Plus className="w-8 h-8 mb-4 transition-transform group-hover:scale-110" />
                 <span className="font-bold font-display tracking-wider text-sm">Add New Series</span>
               </button>
-              {(series || []).map((item) => (
+              {(series || []).filter(item => !selectedCategory || item.topic === selectedCategory).map((item) => (
                 <Card key={item._id || item.id || Math.random()} className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card hover:shadow-elevated transition-all group overflow-hidden flex flex-col">
                   <div className="h-32 bg-muted relative overflow-hidden">
                     <img
@@ -408,77 +421,32 @@ function KidsManagement() {
                   <TableHead className="font-bold">Icon</TableHead>
                   <TableHead className="font-bold">Series Count</TableHead>
                   <TableHead className="font-bold">Status</TableHead>
-                  <TableHead className="text-right font-bold">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {topics.map(t => (
-                  <TableRow key={t.id} className="border-border/50 group">
-                    <TableCell className="font-bold text-base">{t.name}</TableCell>
-                    <TableCell><t.icon className="w-5 h-5 text-forest" /></TableCell>
-                    <TableCell>{t.count} Series</TableCell>
-                    <TableCell>
-                      <button onClick={() => toggleTopicStatus(t.id)} className="transition-transform hover:scale-105 active:scale-95">
-                        <Badge className={`cursor-pointer ${t.status === 'Active' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/20' : 'bg-amber-500/10 text-amber-600 border-amber-500/20 hover:bg-amber-500/20'}`}>
-                          {t.status}
-                        </Badge>
-                      </button>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 p-2 text-muted-foreground hover:text-foreground transition-colors"
-                        onClick={() => toggleTopicStatus(t.id)}
-                      >
-                        {t.status === "Active" ? "Make Pending" : "Make Active"}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {topics.map(t => {
+                  const realCount = series.filter(s => s.topic === t.name).length;
+                  return (
+                    <TableRow
+                      key={t.id}
+                      className="border-border/50 group cursor-pointer hover:bg-muted/10 transition-colors"
+                      onClick={() => { setSelectedCategory(t.name); setActiveTab("series"); }}
+                    >
+                      <TableCell className="font-bold text-base">{t.name}</TableCell>
+                      <TableCell><t.icon className="w-5 h-5 text-forest" /></TableCell>
+                      <TableCell>{realCount} Series</TableCell>
+                      <TableCell>
+                        <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">Active</Badge>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </Card>
         </TabsContent>
 
-        <TabsContent value="library" className="space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input placeholder="Search library..." className="pl-10 h-11 rounded-xl bg-card/50 border-border/50" />
-            </div>
-            <Button variant="outline" className="h-11 rounded-xl gap-2"><Filter className="w-4 h-4" /> Filter</Button>
-          </div>
-          <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
-            <Table>
-              <TableHeader className="bg-muted/30">
-                <TableRow className="border-border/50">
-                  <TableHead className="font-bold">Title</TableHead>
-                  <TableHead className="font-bold">Type</TableHead>
-                  <TableHead className="font-bold">Series</TableHead>
-                  <TableHead className="font-bold">Duration</TableHead>
-                  <TableHead className="font-bold text-right">Views</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {content.map(c => (
-                  <TableRow key={c.id} className="border-border/50">
-                    <TableCell className="font-bold">{c.title}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="gap-1.5 font-bold uppercase text-[9px] tracking-widest">
-                        {c.type === "Video" ? <FileVideo className="w-3 h-3" /> : <Mic2 className="w-3 h-3" />}
-                        {c.type}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground text-sm">{c.series}</TableCell>
-                    <TableCell className="font-mono text-xs">{c.length}</TableCell>
-                    <TableCell className="text-right font-medium">{c.views.toLocaleString()}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Card>
-        </TabsContent>
+
 
         <TabsContent value="lifetime">
           <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
@@ -608,15 +576,7 @@ function KidsManagement() {
                   }}
                 />
               </div>
-              <div className="space-y-2">
-                <Label>Trailer Video (Vimeo Link)</Label>
-                <Input
-                  placeholder="https://vimeo.com/..."
-                  className="h-11 rounded-xl"
-                  value={seriesForm.trailer}
-                  onChange={e => setSeriesForm({ ...seriesForm, trailer: e.target.value })}
-                />
-              </div>
+
               {seriesForm.trailer && (
                 <div className="space-y-4 border-l-4 border-gold pl-4 py-2 my-4 bg-cream/10 rounded-r-xl">
                   <div className="space-y-2">
