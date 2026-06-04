@@ -17,9 +17,9 @@ function KidsLibraryPage() {
 
   useEffect(() => {
     // Check if user has active subscription
-    const token = localStorage.getItem("token");
+    const isAuth = localStorage.getItem("user_auth") === "true" || localStorage.getItem("admin_auth") === "true";
     const access = localStorage.getItem("kbf_access");
-    if (token && access) {
+    if (isAuth && access) {
       setHasAccess(true);
     }
   }, []);

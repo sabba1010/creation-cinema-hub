@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { ArrowLeft, Play, Settings, Plus, FileVideo, Trash2 } from "lucide-react";
+import { ArrowLeft, Play, Settings, Plus, FileVideo, Trash2, Mic2 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
@@ -15,7 +15,7 @@ function AdminSeriesPage() {
   const { seriesId } = Route.useParams();
 
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
-  const [uploadForm, setUploadForm] = useState({ title: "", description: "", vimeoLink: "" });
+  const [uploadForm, setUploadForm] = useState({ title: "", description: "", vimeoLink: "", audioLink: "" });
   const [editingEpId, setEditingEpId] = useState<string | null>(null);
   const [activeEpisodeId, setActiveEpisodeId] = useState<string | null>(null);
 
@@ -54,7 +54,8 @@ function AdminSeriesPage() {
           title: ep.title,
           description: ep.description,
           img: ep.image || fallbackImg,
-          link: ep.vimeoLink || ep.trailer || ""
+          link: ep.vimeoLink || ep.trailer || "",
+          audioLink: ep.audioLink || ""
         })));
       }
     } catch (err) {
@@ -86,6 +87,7 @@ function AdminSeriesPage() {
           title: uploadForm.title,
           description: uploadForm.description,
           vimeoLink: uploadForm.vimeoLink,
+          audioLink: uploadForm.audioLink,
           length: "00:00",
           image: series?.img || ""
         })
@@ -93,7 +95,7 @@ function AdminSeriesPage() {
 
       if (res.ok) {
         setIsUploadDialogOpen(false);
-        setUploadForm({ title: "", description: "", vimeoLink: "" });
+        setUploadForm({ title: "", description: "", vimeoLink: "", audioLink: "" });
         setEditingEpId(null);
         await fetchEpisodes(series?.img);
         Swal.fire({
@@ -140,6 +142,7 @@ function AdminSeriesPage() {
   const displayTitle = activeEp ? activeEp.title : series.name;
   const displayDesc = activeEp ? activeEp.description : series.desc;
   const videoSrc = activeEp?.link || series.trailer;
+  const audioSrc = activeEp?.audioLink || series.audioLink;
 
   return (
     <div className="space-y-8 animate-fade-up">
@@ -155,7 +158,7 @@ function AdminSeriesPage() {
         </div>
         <Button className="bg-forest h-11 rounded-xl gap-2 shadow-md" onClick={() => {
           setEditingEpId(null);
-          setUploadForm({ title: "", description: "", vimeoLink: "" });
+          setUploadForm({ title: "", description: "", vimeoLink: "", audioLink: "" });
           setIsUploadDialogOpen(true);
         }}>
           <Plus className="w-4 h-4" />
@@ -175,6 +178,19 @@ function AdminSeriesPage() {
                 allow="autoplay; fullscreen; picture-in-picture"
                 allowFullScreen
               />
+            ) : audioSrc ? (
+              <div className="absolute inset-0 w-full h-full bg-forest-deep flex flex-col items-center justify-center p-6 text-cream">
+                <img
+                  src={series.img}
+                  alt={series.name}
+                  className="absolute inset-0 w-full h-full object-cover opacity-20"
+                />
+                <div className="relative z-10 flex flex-col items-center w-full max-w-md">
+                  <Mic2 className="h-20 w-20 text-gold mb-6 opacity-90 drop-shadow-lg" />
+                  <h3 className="text-2xl font-bold mb-8 text-center drop-shadow-md">{displayTitle}</h3>
+                  <audio controls src={audioSrc} className="w-full shadow-2xl rounded-full" />
+                </div>
+              </div>
             ) : (
               <>
                 <img
@@ -258,7 +274,7 @@ function AdminSeriesPage() {
                       <button onClick={(e) => {
                         e.stopPropagation();
                         setEditingEpId(ep.id);
-                        setUploadForm({ title: ep.title, description: ep.description || "", vimeoLink: ep.link });
+                        setUploadForm({ title: ep.title, description: ep.description || "", vimeoLink: ep.link, audioLink: ep.audioLink || "" });
                         setIsUploadDialogOpen(true);
                       }} className="text-xs text-forest hover:underline font-medium flex items-center gap-1">
                         <Settings className="w-3 h-3" /> Edit
@@ -313,14 +329,42 @@ function AdminSeriesPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Vimeo Link</Label>
+                <Label>Vimeo Link (Video)</Label>
                 <Input
                   placeholder="https://vimeo.com/..."
                   className="h-11 rounded-xl"
                   value={uploadForm.vimeoLink}
                   onChange={e => setUploadForm({ ...uploadForm, vimeoLink: e.target.value })}
-                  required
+                  disabled={!!uploadForm.audioLink}
                 />
+              </div>
+              <div className="space-y-2">
+                <Label>Audio Content (Optional)</Label>
+                <Input
+                  type="file"
+                  accept="audio/*"
+                  className="h-11 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-forest/10 file:text-forest hover:file:bg-forest/20 transition-all cursor-pointer disabled:opacity-50"
+                  onChange={e => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setUploadForm({ ...uploadForm, audioLink: reader.result as string });
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  disabled={!!uploadForm.vimeoLink}
+                />
+                {uploadForm.audioLink && (
+                  <button
+                    type="button"
+                    className="text-xs text-red-500 hover:underline font-bold"
+                    onClick={() => setUploadForm({ ...uploadForm, audioLink: "" })}
+                  >
+                    Remove Selected Audio
+                  </button>
+                )}
               </div>
             </div>
             <Button type="submit" className="w-full bg-forest h-11 rounded-xl">

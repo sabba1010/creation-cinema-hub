@@ -12,7 +12,7 @@ export function SiteFooter() {
   return (
     <footer className="relative overflow-hidden bg-forest-deep text-cream">
       <div className="absolute inset-0 opacity-[0.07] [background-image:radial-gradient(circle_at_20%_20%,var(--gold),transparent_55%),radial-gradient(circle_at_80%_60%,var(--sky),transparent_50%)]" />
-      <div className="relative mx-auto max-w-7xl px-6 py-20">
+      <div className="relative mx-auto max-w-[1440px] px-6 py-20">
         <div className="grid gap-12 lg:grid-cols-[1.3fr_2fr_1.2fr]">
           <div>
             <div className="flex items-center gap-3">

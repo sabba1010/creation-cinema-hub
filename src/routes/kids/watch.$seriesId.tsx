@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Play, ArrowLeft, Share2, ChevronRight, Sparkles, Star, Lock } from "lucide-react";
+import { Play, ArrowLeft, Share2, ChevronRight, Sparkles, Star, Lock, Mic2 } from "lucide-react";
 
 export const Route = createFileRoute("/kids/watch/$seriesId")({
   component: KidsWatchPage,
@@ -17,9 +17,9 @@ function KidsWatchPage() {
   const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const isAuth = localStorage.getItem("user_auth") === "true" || localStorage.getItem("admin_auth") === "true";
     const access = localStorage.getItem("kbf_access");
-    if (token && access) setHasAccess(true);
+    if (isAuth && access) setHasAccess(true);
   }, []);
 
   useEffect(() => {
@@ -125,6 +125,7 @@ function KidsWatchPage() {
   const currentTitle = activeEpisode?.title || series.name;
   const currentDesc = activeEpisode?.description || series.desc;
   const currentLink = activeEpisode?.link || series.trailer;
+  const currentAudio = activeEpisode?.audioLink || series.audioLink;
 
   return (
     <div className="bg-[#FAFAFA] min-h-screen flex flex-col">
@@ -156,6 +157,19 @@ function KidsWatchPage() {
                     allow="autoplay; fullscreen; picture-in-picture"
                     allowFullScreen
                   />
+                ) : currentAudio ? (
+                  <div className="absolute inset-0 w-full h-full bg-forest-deep flex flex-col items-center justify-center p-6 text-cream">
+                    <img
+                      src={activeEpisode?.img || series.img}
+                      alt={currentTitle}
+                      className="absolute inset-0 w-full h-full object-cover opacity-20"
+                    />
+                    <div className="relative z-10 flex flex-col items-center w-full max-w-md">
+                      <Mic2 className="h-20 w-20 text-gold mb-6 opacity-90 drop-shadow-lg" />
+                      <h3 className="text-2xl font-bold mb-8 text-center drop-shadow-md">{currentTitle}</h3>
+                      <audio controls src={currentAudio} className="w-full shadow-2xl rounded-full" />
+                    </div>
+                  </div>
                 ) : (
                   <>
                     <img
@@ -166,7 +180,7 @@ function KidsWatchPage() {
                     />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="bg-black/60 px-6 py-3 rounded-full text-white font-bold tracking-widest uppercase text-sm">
-                        Video Unavailable
+                        Content Unavailable
                       </div>
                     </div>
                   </>

@@ -123,9 +123,9 @@ function KidsManagement() {
 
   // Form States
   const [heroBanner, setHeroBanner] = useState("https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=2000");
-  const [seriesForm, setSeriesForm] = useState({ name: "", description: "", image: "", trailer: "", trailerTitle: "", trailerDescription: "", topic: "Kindness" });
+  const [seriesForm, setSeriesForm] = useState({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness" });
   const [grantForm, setGrantForm] = useState({ name: "", email: "", source: "Manual Grant" });
-  const [uploadForm, setUploadForm] = useState({ title: "", description: "", vimeoLink: "", seriesId: "" });
+  const [uploadForm, setUploadForm] = useState({ title: "", description: "", vimeoLink: "", audioLink: "", seriesId: "" });
   const [editingSeriesId, setEditingSeriesId] = useState<string | null>(null);
 
   const fetchSeries = async () => {
@@ -178,6 +178,9 @@ function KidsManagement() {
           topic: seriesForm.topic,
           image: seriesForm.image || "https://images.unsplash.com/photo-1502086223501-7ea2443054f1?w=400&h=200&fit=crop",
           trailer: seriesForm.trailer,
+          audioLink: seriesForm.audioLink,
+          audioTitle: seriesForm.audioTitle,
+          audioDescription: seriesForm.audioDescription,
           trailerTitle: seriesForm.trailerTitle,
           trailerDescription: seriesForm.trailerDescription,
           status: "Active"
@@ -185,7 +188,7 @@ function KidsManagement() {
       });
       if (res.ok) {
         setIsSeriesDialogOpen(false);
-        setSeriesForm({ name: "", description: "", image: "", trailer: "", trailerTitle: "", trailerDescription: "", topic: "Kindness" });
+        setSeriesForm({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness" });
         setEditingSeriesId(null);
         Swal.fire({
           title: 'Success!',
@@ -214,6 +217,9 @@ function KidsManagement() {
       topic: item.topic || "Kindness",
       image: item.image || item.img || "",
       trailer: item.trailer || "",
+      audioLink: item.audioLink || "",
+      audioTitle: "",
+      audioDescription: "",
       trailerTitle: "",
       trailerDescription: ""
     });
@@ -358,7 +364,7 @@ function KidsManagement() {
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               <button
-                onClick={() => { setEditingSeriesId(null); setSeriesForm({ name: "", description: "", image: "", trailer: "", trailerTitle: "", trailerDescription: "", topic: "Kindness" }); setIsSeriesDialogOpen(true); }}
+                onClick={() => { setEditingSeriesId(null); setSeriesForm({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness" }); setIsSeriesDialogOpen(true); }}
                 className="h-full min-h-[280px] rounded-[2rem] border-2 border-dashed border-[#EFECE3] flex flex-col items-center justify-center text-muted-foreground hover:bg-white/50 hover:border-forest hover:text-forest transition-all group"
               >
                 <Plus className="w-8 h-8 mb-4 transition-transform group-hover:scale-110" />
@@ -637,7 +643,7 @@ function KidsManagement() {
         setIsSeriesDialogOpen(open);
         if (!open) {
           setEditingSeriesId(null);
-          setSeriesForm({ name: "", description: "", image: "", trailer: "", trailerTitle: "", trailerDescription: "", topic: "Kindness" });
+          setSeriesForm({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness" });
         }
       }}>
         <DialogContent className="sm:max-w-[600px] rounded-[2.5rem]">
@@ -682,6 +688,57 @@ function KidsManagement() {
                       reader.readAsDataURL(file);
                     }
                   }}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Audio Content (Optional)</Label>
+                <Input
+                  type="file"
+                  accept="audio/*"
+                  className="h-11 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-forest/10 file:text-forest hover:file:bg-forest/20 transition-all cursor-pointer"
+                  onChange={e => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setSeriesForm({ ...seriesForm, audioLink: reader.result as string });
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+              </div>
+
+              {seriesForm.audioLink && (
+                <div className="space-y-4 border-l-4 border-gold pl-4 py-2 my-4 bg-cream/10 rounded-r-xl">
+                  <div className="space-y-2">
+                    <Label className="text-forest-deep font-bold">Intro Audio Title</Label>
+                    <Input
+                      placeholder="e.g. Introduction Audio"
+                      className="h-11 rounded-xl"
+                      value={seriesForm.audioTitle}
+                      onChange={e => setSeriesForm({ ...seriesForm, audioTitle: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-forest-deep font-bold">Intro Audio Description</Label>
+                    <textarea
+                      placeholder="Brief description of this intro audio"
+                      className="flex min-h-[80px] w-full rounded-xl border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      value={seriesForm.audioDescription}
+                      onChange={e => setSeriesForm({ ...seriesForm, audioDescription: e.target.value })}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label>Trailer Vimeo Link (Optional)</Label>
+                <Input
+                  placeholder="https://vimeo.com/..."
+                  className="h-11 rounded-xl"
+                  value={seriesForm.trailer}
+                  onChange={e => setSeriesForm({ ...seriesForm, trailer: e.target.value })}
                 />
               </div>
 
@@ -761,13 +818,30 @@ function KidsManagement() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Vimeo Link</Label>
+                <Label>Vimeo Link (Video)</Label>
                 <Input
                   placeholder="https://vimeo.com/..."
                   className="h-11 rounded-xl"
                   value={uploadForm.vimeoLink}
                   onChange={e => setUploadForm({ ...uploadForm, vimeoLink: e.target.value })}
-                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Audio Content (Optional)</Label>
+                <Input
+                  type="file"
+                  accept="audio/*"
+                  className="h-11 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-forest/10 file:text-forest hover:file:bg-forest/20 transition-all cursor-pointer"
+                  onChange={e => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setUploadForm({ ...uploadForm, audioLink: reader.result as string });
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
                 />
               </div>
               <div className="space-y-2">

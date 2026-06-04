@@ -72,8 +72,8 @@ function KidsSubscribePage() {
 
 
   const handleSubscribe = async (plan: string, price: string) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    const isAuth = localStorage.getItem("user_auth") === "true" || localStorage.getItem("admin_auth") === "true";
+    if (!isAuth) {
       const result = await Swal.fire({
         icon: "info",
         title: "Sign In Required",

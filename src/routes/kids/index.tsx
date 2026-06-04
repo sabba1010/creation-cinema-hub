@@ -20,7 +20,11 @@ import {
   Anchor,
   BookOpen,
   Download,
-  Info
+  Info,
+  Users,
+  Film,
+  Headphones,
+  Video
 } from "lucide-react";
 
 export const Route = createFileRoute("/kids/")({
@@ -324,6 +328,88 @@ function KidsLandingPage() {
           </div>
         </section>
 
+        {/* Content Types & Age Range Section */}
+        <section className="py-24 bg-forest-deep text-cream relative overflow-hidden">
+          <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-[800px] h-[800px] bg-gold/5 rounded-full blur-[120px] pointer-events-none" />
+          <div className="mx-auto max-w-7xl px-6 relative z-10">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+              {/* Content Types */}
+              <div className="flex flex-col justify-center">
+                <div className="mb-12">
+                  <div className="inline-flex items-center gap-2 bg-gold/10 px-4 py-2 rounded-full mb-6">
+                    <Sparkles className="h-4 w-4 text-gold" />
+                    <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold">What's Inside</span>
+                  </div>
+                  <h2 className="font-display text-4xl sm:text-5xl font-bold tracking-tight">Discover Our <span className="italic text-gold font-medium">Library</span></h2>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4 lg:gap-6">
+                  {[
+                    { icon: Tv, title: "Live-Action Shows", desc: "Engaging, real-life character-building series." },
+                    { icon: Headphones, title: "Audio Stories", desc: "Screen-free adventures perfect for bedtime or travel." },
+                    { icon: Video, title: "Creation Case Episodes", desc: "Our flagship series exploring the wonders of God's world." },
+                    { icon: Film, title: "Other OMS Resources", desc: "A curated collection of exclusive video and audio content." }
+                  ].map((item, idx) => (
+                    <div key={idx} className="group relative bg-white/5 border border-white/10 rounded-[2rem] p-5 sm:p-6 hover:bg-white/10 hover:border-gold/30 transition-all duration-500 overflow-hidden cursor-default">
+                      <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-10 transform translate-x-4 -translate-y-4 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-700">
+                        <item.icon className="w-32 h-32 text-gold" />
+                      </div>
+                      <div className="relative z-10">
+                        <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-gold/20 to-gold/5 text-gold flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+                          <item.icon className="h-6 w-6" />
+                        </div>
+                        <h4 className="font-bold text-white text-xl mb-3">{item.title}</h4>
+                        <p className="text-cream/60 text-sm leading-relaxed">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Intended Age Range */}
+              <div className="relative h-full w-full max-w-[600px] mx-auto lg:mx-0">
+                <div className="absolute inset-0 bg-gold rounded-[3rem] blur-2xl opacity-30 animate-pulse" />
+                <div className="relative bg-gradient-to-br from-gold via-[#D4AF37] to-[#B38F22] text-forest-deep rounded-[3rem] p-10 sm:p-14 shadow-2xl h-full flex flex-col justify-center overflow-hidden border border-white/20">
+
+                  {/* Decorative Background Elements */}
+                  <div className="absolute top-0 right-0 p-8 opacity-[0.15] mix-blend-overlay pointer-events-none">
+                    <Users className="w-64 h-64 transform rotate-12 translate-x-10 -translate-y-10" />
+                  </div>
+                  <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-white/20 rounded-full blur-3xl pointer-events-none" />
+
+                  <div className="relative z-10">
+                    <div className="h-16 w-16 bg-white/20 backdrop-blur-md text-forest-deep rounded-2xl flex items-center justify-center mb-8 border border-white/30 shadow-inner">
+                      <Users className="h-8 w-8" />
+                    </div>
+                    <h3 className="font-display text-4xl font-bold mb-10 text-forest-deep drop-shadow-sm">Who It's For</h3>
+
+                    <div className="space-y-8">
+                      <div className="group cursor-default bg-white/20 backdrop-blur-md p-6 rounded-3xl border border-white/30 hover:bg-white/30 transition-all duration-300 shadow-sm">
+                        <div className="flex items-center gap-3 mb-4">
+                          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-forest-deep bg-white/40 px-3 py-1 rounded-full shadow-sm">Primary Audience</span>
+                        </div>
+                        <div className="font-display text-5xl font-black text-forest-deep mb-2 tracking-tighter drop-shadow-sm">
+                          6–14 <span className="text-3xl text-forest-deep/80 font-bold tracking-normal ml-1">yrs</span>
+                        </div>
+                        <p className="text-forest-deep/90 text-sm leading-relaxed font-medium">Targeted narratives, deeper biblical truths, and engaging character lessons.</p>
+                      </div>
+
+                      <div className="group cursor-default px-2">
+                        <div className="flex items-center gap-3 mb-3">
+                          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-forest-deep/70">Broader Audience</span>
+                        </div>
+                        <div className="font-display text-3xl font-bold text-forest-deep mb-2 drop-shadow-sm">All Kids & Families</div>
+                        <p className="text-forest-deep/80 text-sm leading-relaxed font-medium">Wholesome content that the entire family can enjoy together without worry.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
         {/* Interactive Topic Browser (Browse Topics & Themes) */}
         <section className="py-24 bg-white border-t border-b border-[#EFECE3]">
           <div className="mx-auto max-w-7xl px-6">
@@ -513,7 +599,28 @@ function KidsLandingPage() {
                     <h3 className="font-display text-lg text-white">Connection Guide Sample</h3>
                     <p className="text-xs text-cream/40">Friendly Forest • Episode 4</p>
                   </div>
-                  <button className="h-10 w-10 bg-gold rounded-full flex items-center justify-center text-forest-deep shadow hover:scale-105 transition-transform">
+                  <button
+                    onClick={() => {
+                      // Fetch the file from the backend and trigger download
+                      const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
+                      fetch(`${API_URL}/api/kids/sample-guide`)
+                        .then(res => res.blob())
+                        .then(blob => {
+                          const url = window.URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.style.display = 'none';
+                          a.href = url;
+                          a.download = "Friendly_Forest_Episode_4_Guide.txt";
+                          document.body.appendChild(a);
+                          a.click();
+                          window.URL.revokeObjectURL(url);
+                          document.body.removeChild(a);
+                        })
+                        .catch(err => console.error("Download failed", err));
+                    }}
+                    className="h-10 w-10 bg-gold rounded-full flex items-center justify-center text-forest-deep shadow hover:scale-105 transition-transform"
+                    title="Download Sample Guide"
+                  >
                     <Download className="h-4 w-4" />
                   </button>
                 </div>
@@ -594,7 +701,7 @@ function KidsLandingPage() {
                 </div>
                 <div className="hidden lg:block relative">
                   <div className="absolute -inset-10 bg-gold/10 blur-3xl rounded-full" />
-                  <img src="https://images.unsplash.com/photo-1512418490979-92798ccc1380?auto=format&fit=crop&q=80&w=800" alt="Family" className="relative rounded-[2rem] shadow-2xl rotate-3 border-4 border-white/10" />
+                  <img src="https://images.unsplash.com/photo-1594616838951-c155f8d978a0?auto=format&fit=crop&q=80&w=800" alt="Family watching together" className="relative rounded-[2rem] shadow-2xl rotate-3 border-4 border-white/10" />
                 </div>
               </div>
             </div>

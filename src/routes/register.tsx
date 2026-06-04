@@ -135,6 +135,7 @@ function RegisterPage() {
                 {isLoading ? "Creating account..." : "Sign Up"}
               </Button>
 
+              {/* 
               <div className="relative w-full py-2">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-border/50"></div>
@@ -152,6 +153,7 @@ function RegisterPage() {
                   <Github className="h-4 w-4" /> GitHub
                 </Button>
               </div>
+              */}
             </CardFooter>
           </form>
         </Card>

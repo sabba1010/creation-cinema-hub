@@ -51,7 +51,7 @@ export function SiteHeader() {
           : "bg-transparent"
         }`}
     >
-      <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
+      <div className="mx-auto flex h-24 max-w-[1440px] items-center justify-between px-6">
         <Link to="/" className="flex items-center gap-3 group">
           <span className="font-display text-lg sm:text-xl font-bold tracking-tight text-[#faf7ee] whitespace-nowrap">
             ONE MUSTARD SEED
@@ -159,13 +159,30 @@ export function SiteHeader() {
             </span>
           </Link>
 
-          <Link 
-            to={isLoggedIn ? "/profile" : "/login"} 
-            aria-label="Account" 
-            className="hidden sm:block text-[#faf7ee]/80 hover:text-[#faf7ee] transition"
-          >
-            <User className="h-6 w-6" strokeWidth={2} />
-          </Link>
+          {isLoggedIn ? (
+            <Link 
+              to="/profile" 
+              aria-label="Account" 
+              className="hidden sm:block text-[#faf7ee]/80 hover:text-[#faf7ee] transition"
+            >
+              <User className="h-6 w-6" strokeWidth={2} />
+            </Link>
+          ) : (
+            <div className="hidden sm:flex items-center gap-3">
+              <Link 
+                to="/login"
+                className="text-[10px] font-bold tracking-[0.2em] text-[#faf7ee]/80 hover:text-[#faf7ee] transition px-2"
+              >
+                LOGIN
+              </Link>
+              <Link 
+                to="/register"
+                className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-[#faf7ee] text-[10px] font-bold tracking-[0.2em] transition-all border border-white/10 whitespace-nowrap"
+              >
+                SIGN UP
+              </Link>
+            </div>
+          )}
 
           <button onClick={() => setOpen((s) => !s)} aria-label="Menu" className="lg:hidden text-[#faf7ee]">
             {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -175,7 +192,7 @@ export function SiteHeader() {
 
       {open && (
         <div className="lg:hidden border-t border-cream/10 bg-forest-deep/95 backdrop-blur-xl max-h-[80vh] overflow-y-auto">
-          <nav className="mx-auto flex max-w-7xl flex-col px-6 py-6 space-y-6">
+          <nav className="mx-auto flex max-w-[1440px] flex-col px-6 py-6 space-y-6">
             {NAV_GROUPS.map((group) => (
               <div key={group.label} className="space-y-3">
                 <div className="text-[10px] font-bold tracking-[0.3em] text-gold uppercase opacity-50">{group.label}</div>

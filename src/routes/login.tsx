@@ -38,7 +38,7 @@ function LoginPage() {
           localStorage.setItem("user_token", data.token);
           localStorage.setItem("user_data", JSON.stringify(data.user));
           toast.success("Welcome to the Admin Portal");
-          navigate({ to: "/admin/" });
+          navigate({ to: "/admin" });
         } else {
           localStorage.setItem("user_auth", "true");
           localStorage.setItem("user_token", data.token);
@@ -130,6 +130,7 @@ function LoginPage() {
                 {isLoading ? "Signing in..." : "Continue"}
               </Button>
 
+              {/* 
               <div className="relative w-full py-2">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-border/50"></div>
@@ -147,6 +148,7 @@ function LoginPage() {
                   <Github className="h-4 w-4" /> GitHub
                 </Button>
               </div>
+              */}
             </CardFooter>
           </form>
         </Card>
