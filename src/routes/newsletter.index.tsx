@@ -45,8 +45,12 @@ function NewsletterPage() {
     nl.date?.includes(search)
   ).slice(0, 8);
 
-  const imgSrc = (url: string) =>
-    !url ? "" : url.startsWith("http") ? url : `${API}${url}`;
+  const imgSrc = (url: string) => {
+    if (!url) return "";
+    if (url.startsWith("data:")) return url;         // base64
+    if (url.startsWith("http")) return url;           // full URL
+    return `${API}${url}`;                            // /uploads/... path
+  };
 
   return (
     <div className="bg-background min-h-screen">

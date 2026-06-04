@@ -62,7 +62,8 @@ function NewsletterManagement() {
   const openEdit = (nl: any) => {
     setEditingId(nl._id);
     setForm({ title: nl.title, description: nl.description, category: nl.category, date: nl.date, status: nl.status, featuredImage: nl.featuredImage || "" });
-    setFeaturedPreview(nl.featuredImage ? (nl.featuredImage.startsWith("http") ? nl.featuredImage : `${API}${nl.featuredImage}`) : "");
+    // Handle all image types: base64, full http URL, or old /uploads path
+    setFeaturedPreview(nl.featuredImage || "");
     setBlocks(nl.blocks || []);
     setIsEditorOpen(true);
   };
@@ -89,12 +90,18 @@ function NewsletterManagement() {
     setBlocks(p => p.map(b => b.id === id ? { ...b, _file: file, url } : b));
   };
 
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
+
   const uploadBlockImage = async (file: File): Promise<string> => {
-    const fd = new FormData();
-    fd.append("image", file);
-    const r = await fetch(`${API}/api/newsletter/upload/block-image`, { method: "POST", body: fd });
-    const d = await r.json();
-    return d.url;
+    // Return base64 string directly to be stored in MongoDB
+    return await fileToBase64(file);
   };
 
   const handleSave = async () => {
@@ -110,14 +117,24 @@ function NewsletterManagement() {
       return rest;
     }));
 
-    const fd = new FormData();
-    fd.append("data", JSON.stringify({ ...form, blocks: processedBlocks }));
-    if (featuredFile) fd.append("featuredImage", featuredFile);
+    const payload = { ...form, blocks: processedBlocks };
+    if (featuredFile) {
+      payload.featuredImage = await fileToBase64(featuredFile);
+    }
 
     const url = editingId ? `${API}/api/newsletter/${editingId}` : `${API}/api/newsletter`;
     const method = editingId ? "PUT" : "POST";
 
     try {
+      // We wrap the payload inside { data: JSON.stringify(payload) } 
+      // if the backend still strictly expects req.body.data to be parsed.
+      // However, it's safer to send FormData with the data field to keep backend compatibility,
+      // OR update backend to handle direct JSON. The backend has: const data = JSON.parse(req.body.data || '{}');
+      // So let's send it as a JSON string inside a JSON body? No, backend expects FormData for req.body.data IF multer is used.
+      // Wait, if multer is configured `upload.fields(...)`, it can parse FormData. Let's still use FormData but don't send files.
+      const fd = new FormData();
+      fd.append("data", JSON.stringify(payload));
+      
       const r = await fetch(url, { method, body: fd });
       if (r.ok) {
         toast.success(editingId ? "Newsletter updated!" : "Newsletter created!");
@@ -247,7 +264,14 @@ function NewsletterManagement() {
                 <TableCell className="pl-6 py-4">
                   <div className="flex items-center gap-3">
                     {nl.featuredImage ? (
-                      <img src={nl.featuredImage.startsWith("http") ? nl.featuredImage : `${API}${nl.featuredImage}`} className="w-10 h-10 rounded-xl object-cover border border-border/30" alt="" />
+                      <img
+                        src={
+                          nl.featuredImage.startsWith("data:") || nl.featuredImage.startsWith("http")
+                            ? nl.featuredImage
+                            : `${API}${nl.featuredImage}`
+                        }
+                        className="w-10 h-10 rounded-xl object-cover border border-border/30" alt=""
+                      />
                     ) : (
                       <div className="w-10 h-10 rounded-xl bg-forest/5 flex items-center justify-center"><FileText className="w-5 h-5 text-forest/40" /></div>
                     )}
@@ -375,9 +399,26 @@ function NewsletterManagement() {
 
                         {block.type === "photo" && (
                           <div className="space-y-2">
+                            {/* Show existing saved image as current preview */}
+                            {block.url && !block._file && (
+                              <div className="space-y-1">
+                                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Current Image (will be kept if no new file chosen)</p>
+                                <img
+                                  src={block.url.startsWith('data:') || block.url.startsWith('http') ? block.url : `${API}${block.url}`}
+                                  className="h-40 w-full object-cover rounded-xl border border-border/30"
+                                  alt="current"
+                                />
+                              </div>
+                            )}
+                            {/* Show new file preview when a new image is chosen */}
+                            {block._file && block.url && (
+                              <div className="space-y-1">
+                                <p className="text-[10px] text-emerald-600 uppercase font-bold tracking-widest">New image selected ✓</p>
+                                <img src={block.url} className="h-40 w-full object-cover rounded-xl border border-emerald-300" alt="new preview" />
+                              </div>
+                            )}
                             <Input type="file" accept="image/*" className="h-10 rounded-xl file:mr-3 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-forest/10 file:text-forest cursor-pointer"
                               onChange={e => { const f = e.target.files?.[0]; if (f) handlePhotoFile(block.id, f); }} />
-                            {block.url && <img src={block.url} className="h-40 w-full object-cover rounded-xl border border-border/30" alt="preview" />}
                             <Input placeholder="Caption (optional)" value={block.caption || ""} onChange={e => upd(block.id, "caption", e.target.value)} className="h-10 rounded-xl" />
                           </div>
                         )}

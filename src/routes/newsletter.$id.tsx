@@ -202,7 +202,11 @@ function NewsletterDetailPage() {
                     <figure className="my-12">
                       <div className="rounded-2xl overflow-hidden shadow-xl border border-border/30 group/img">
                         <img
-                          src={block.url.startsWith("http") ? block.url : `${API}${block.url}`}
+                          src={
+                            block.url.startsWith("data:") || block.url.startsWith("http")
+                              ? block.url
+                              : `${API}${block.url}`
+                          }
                           alt={block.caption || "Newsletter Photo"}
                           className="w-full h-auto transition-transform duration-700 group-hover/img:scale-[1.03]"
                         />
