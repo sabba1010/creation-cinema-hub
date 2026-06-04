@@ -28,7 +28,12 @@ import {
   Settings,
   Sun,
   Cloud,
-  Anchor
+  Anchor,
+  DollarSign,
+  ToggleLeft,
+  ToggleRight,
+  PlusCircle,
+  Infinity
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
@@ -98,6 +103,16 @@ function KidsManagement() {
   const [lifetimeUsers, setLifetimeUsers] = useState(INITIAL_LIFETIME);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("series");
+
+  // Subscription Plans State
+  const [plans, setPlans] = useState([
+    { id: 1, name: "Monthly Premium", price: "$4.99", period: "/ Month", active: true, canToggle: false },
+    { id: 2, name: "Annual Premium", price: "$47.99", period: "/ Year", active: true, canToggle: true },
+    { id: 3, name: "Lifetime Access", price: "$99", period: "One-time", active: true, canToggle: true },
+    { id: 4, name: "Ministry Partner", price: "$14.99", period: "/ Month", active: true, canToggle: true },
+  ]);
+  const [newPlan, setNewPlan] = useState({ name: "", price: "", period: "/ Month" });
+  const [showNewPlan, setShowNewPlan] = useState(false);
 
   // Dialog States
   const [isSeriesDialogOpen, setIsSeriesDialogOpen] = useState(false);
@@ -320,6 +335,7 @@ function KidsManagement() {
           <TabsTrigger value="series" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Series</TabsTrigger>
           <TabsTrigger value="topics" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Categories</TabsTrigger>
           <TabsTrigger value="lifetime" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Lifetime Access</TabsTrigger>
+          <TabsTrigger value="plans" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Subscription Plans</TabsTrigger>
         </TabsList>
 
         <TabsContent value="series" className="m-0 mt-8">
@@ -492,6 +508,98 @@ function KidsManagement() {
             </Table>
           </Card>
         </TabsContent>
+
+        {/* Subscription Plans Tab */}
+        <TabsContent value="plans" className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="font-display text-xl font-bold">Subscription Plans</h2>
+              <p className="text-sm text-muted-foreground">Manage what plans are visible and available on the subscribe page.</p>
+            </div>
+            <Button onClick={() => setShowNewPlan(!showNewPlan)} variant="outline" className="h-11 rounded-xl gap-2">
+              <PlusCircle className="w-4 h-4" /> Add Future Plan
+            </Button>
+          </div>
+
+          {showNewPlan && (
+            <Card className="border-border/50 bg-card/50 shadow-card p-6">
+              <h3 className="font-bold mb-4 flex items-center gap-2"><DollarSign className="w-4 h-4 text-gold" /> New Subscription Tier</h3>
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label>Plan Name</Label>
+                  <Input placeholder="e.g. Family Plan" className="h-11 rounded-xl" value={newPlan.name} onChange={e => setNewPlan({ ...newPlan, name: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Price</Label>
+                  <Input placeholder="e.g. $9.99" className="h-11 rounded-xl" value={newPlan.price} onChange={e => setNewPlan({ ...newPlan, price: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Billing Period</Label>
+                  <Select value={newPlan.period} onValueChange={v => setNewPlan({ ...newPlan, period: v })}>
+                    <SelectTrigger className="h-11 rounded-xl"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="/ Month">Monthly</SelectItem>
+                      <SelectItem value="/ Year">Annual</SelectItem>
+                      <SelectItem value="One-time">One-time</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <Button
+                className="mt-4 bg-forest h-11 rounded-xl"
+                onClick={() => {
+                  if (!newPlan.name || !newPlan.price) return;
+                  setPlans([...plans, { id: Date.now(), ...newPlan, active: false, canToggle: true }]);
+                  setNewPlan({ name: "", price: "", period: "/ Month" });
+                  setShowNewPlan(false);
+                  toast.success("New plan added! Toggle it active when ready.");
+                }}
+              >
+                Save Plan
+              </Button>
+            </Card>
+          )}
+
+          <div className="grid sm:grid-cols-2 gap-6">
+            {plans.map(plan => (
+              <Card key={plan.id} className={`border-border/50 bg-card/50 shadow-card p-6 transition-all ${!plan.active ? 'opacity-50' : ''}`}>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      {plan.period === "One-time" ? <Infinity className="w-4 h-4 text-gold" /> : <DollarSign className="w-4 h-4 text-forest" />}
+                      <h3 className="font-bold text-base">{plan.name}</h3>
+                    </div>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-3xl font-black text-foreground">{plan.price}</span>
+                      <span className="text-xs text-muted-foreground font-bold uppercase tracking-widest">{plan.period}</span>
+                    </div>
+                  </div>
+                  {plan.canToggle ? (
+                    <button
+                      onClick={() => {
+                        setPlans(plans.map(p => p.id === plan.id ? { ...p, active: !p.active } : p));
+                        toast.success(`${plan.name} ${plan.active ? 'disabled' : 'enabled'}!`);
+                      }}
+                      title={plan.active ? 'Disable this plan' : 'Enable this plan'}
+                    >
+                      {plan.active
+                        ? <ToggleRight className="w-8 h-8 text-emerald-500" />
+                        : <ToggleLeft className="w-8 h-8 text-muted-foreground" />}
+                    </button>
+                  ) : (
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-forest bg-forest/10 px-3 py-1 rounded-full">Required</span>
+                  )}
+                </div>
+                <div className="mt-4 pt-4 border-t border-border/30">
+                  <Badge className={`text-[10px] uppercase tracking-widest ${plan.active ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 'bg-muted text-muted-foreground'}`}>
+                    {plan.active ? 'Live on subscribe page' : 'Hidden from users'}
+                  </Badge>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
       </Tabs>
 
       {/* Dialogs */}
