@@ -20,6 +20,7 @@ import { Route as MissionRouteImport } from './routes/mission'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as FilmsRouteImport } from './routes/films'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as BooksRouteImport } from './routes/books'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -123,6 +124,11 @@ const EventsRoute = EventsRouteImport.update({
   path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CartRoute = CartRouteImport.update({
   id: '/cart',
   path: '/cart',
@@ -189,9 +195,9 @@ const FilmsIndexRoute = FilmsIndexRouteImport.update({
   getParentRoute: () => FilmsRoute,
 } as any)
 const ContactIndexRoute = ContactIndexRouteImport.update({
-  id: '/contact/',
-  path: '/contact/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => ContactRoute,
 } as any)
 const BooksIndexRoute = BooksIndexRouteImport.update({
   id: '/',
@@ -365,6 +371,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/books': typeof BooksRouteWithChildren
   '/cart': typeof CartRoute
+  '/contact': typeof ContactRouteWithChildren
   '/events': typeof EventsRoute
   '/films': typeof FilmsRouteWithChildren
   '/login': typeof LoginRoute
@@ -478,6 +485,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/books': typeof BooksRouteWithChildren
   '/cart': typeof CartRoute
+  '/contact': typeof ContactRouteWithChildren
   '/events': typeof EventsRoute
   '/films': typeof FilmsRouteWithChildren
   '/login': typeof LoginRoute
@@ -540,6 +548,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/books'
     | '/cart'
+    | '/contact'
     | '/events'
     | '/films'
     | '/login'
@@ -652,6 +661,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/books'
     | '/cart'
+    | '/contact'
     | '/events'
     | '/films'
     | '/login'
@@ -713,6 +723,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   BooksRoute: typeof BooksRouteWithChildren
   CartRoute: typeof CartRoute
+  ContactRoute: typeof ContactRouteWithChildren
   EventsRoute: typeof EventsRoute
   FilmsRoute: typeof FilmsRouteWithChildren
   LoginRoute: typeof LoginRoute
@@ -729,7 +740,6 @@ export interface RootRouteChildren {
   KidsSubscribeRoute: typeof KidsSubscribeRoute
   KidsTopicsRoute: typeof KidsTopicsRoute
   NewsletterIdRoute: typeof NewsletterIdRoute
-  ContactIndexRoute: typeof ContactIndexRoute
   KidsIndexRoute: typeof KidsIndexRoute
   NewsletterIndexRoute: typeof NewsletterIndexRoute
   SupportIndexRoute: typeof SupportIndexRoute
@@ -813,6 +823,13 @@ declare module '@tanstack/react-router' {
       path: '/events'
       fullPath: '/events'
       preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cart': {
@@ -908,10 +925,10 @@ declare module '@tanstack/react-router' {
     }
     '/contact/': {
       id: '/contact/'
-      path: '/contact'
+      path: '/'
       fullPath: '/contact/'
       preLoaderRoute: typeof ContactIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ContactRoute
     }
     '/books/': {
       id: '/books/'
@@ -1207,6 +1224,17 @@ const BooksRouteChildren: BooksRouteChildren = {
 
 const BooksRouteWithChildren = BooksRoute._addFileChildren(BooksRouteChildren)
 
+interface ContactRouteChildren {
+  ContactIndexRoute: typeof ContactIndexRoute
+}
+
+const ContactRouteChildren: ContactRouteChildren = {
+  ContactIndexRoute: ContactIndexRoute,
+}
+
+const ContactRouteWithChildren =
+  ContactRoute._addFileChildren(ContactRouteChildren)
+
 interface FilmsRouteChildren {
   FilmsFilmIdRoute: typeof FilmsFilmIdRoute
   FilmsTrailerRoute: typeof FilmsTrailerRoute
@@ -1285,6 +1313,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   BooksRoute: BooksRouteWithChildren,
   CartRoute: CartRoute,
+  ContactRoute: ContactRouteWithChildren,
   EventsRoute: EventsRoute,
   FilmsRoute: FilmsRouteWithChildren,
   LoginRoute: LoginRoute,
@@ -1301,7 +1330,6 @@ const rootRouteChildren: RootRouteChildren = {
   KidsSubscribeRoute: KidsSubscribeRoute,
   KidsTopicsRoute: KidsTopicsRoute,
   NewsletterIdRoute: NewsletterIdRoute,
-  ContactIndexRoute: ContactIndexRoute,
   KidsIndexRoute: KidsIndexRoute,
   NewsletterIndexRoute: NewsletterIndexRoute,
   SupportIndexRoute: SupportIndexRoute,
