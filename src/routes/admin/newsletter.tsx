@@ -134,7 +134,7 @@ function NewsletterManagement() {
       // Wait, if multer is configured `upload.fields(...)`, it can parse FormData. Let's still use FormData but don't send files.
       const fd = new FormData();
       fd.append("data", JSON.stringify(payload));
-      
+
       const r = await fetch(url, { method, body: fd });
       if (r.ok) {
         toast.success(editingId ? "Newsletter updated!" : "Newsletter created!");
