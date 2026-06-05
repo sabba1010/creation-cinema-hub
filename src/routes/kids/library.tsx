@@ -43,9 +43,18 @@ function KidsLibraryPage() {
     fetchSeries();
   }, []);
 
-  // Currently, all uploaded series are considered Video content.
-  // In the future, you could add a 'type' field to the Series schema to differentiate.
-  const filteredContent = seriesList.filter(() => activeTab === "Video");
+  // Detect type of content each series has:
+  //   - hasVideo: series has a trailer/vimeo link, OR has at least one episode with a vimeoLink
+  //   - hasAudio: series has an audioLink, OR has at least one episode with an audioLink
+  // We use the top-level fields from the series object (set when series is created).
+  // A series can appear in BOTH tabs if it has both.
+  const filteredContent = seriesList.filter((s) => {
+    const hasVideo = !!(s.trailer);
+    const hasAudio = !!(s.audioLink);
+    if (activeTab === "Video") return hasVideo || (!hasVideo && !hasAudio); // default to video if neither
+    if (activeTab === "Audio") return hasAudio;
+    return true;
+  });
 
   return (
     <div className="bg-[#FAF7EE] min-h-screen flex flex-col">
@@ -116,14 +125,19 @@ function KidsLibraryPage() {
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-gold">{s.topic || "Series"}</span>
                         <div className="flex items-center gap-1 text-[10px] text-forest-deep/40 font-bold uppercase">
-                          <Tv className="w-3 h-3" />
-                          Video Content
+                          {activeTab === "Audio" ? (
+                            <><Mic2 className="w-3 h-3" /> Audio Series</>
+                          ) : (
+                            <><Tv className="w-3 h-3" /> Video Series</>
+                          )}
                         </div>
                       </div>
                       <h3 className="text-2xl font-display font-bold text-forest-deep group-hover:text-gold transition-colors">{s.name || s.title}</h3>
                       <p className="text-muted-foreground text-xs leading-relaxed line-clamp-2 mt-2">{s.description || s.desc}</p>
                       <div className="pt-4 mt-auto flex items-center justify-between border-t border-cream/10">
-                        <span className="text-xs font-bold text-forest-deep/40">Watch Now</span>
+                        <span className="text-xs font-bold text-forest-deep/40">
+                          {activeTab === "Audio" ? "Listen Now" : "Watch Now"}
+                        </span>
                         <ChevronRight className="h-4 w-4 text-gold group-hover:translate-x-1 transition-transform" />
                       </div>
                     </div>

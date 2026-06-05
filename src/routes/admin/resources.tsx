@@ -2,8 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import {
   FileText, Plus, Download, Mail, Search, MoreVertical,
-  HardDrive, FileDown, Users, Trash2, Edit, CloudUpload, Lock, Filter
+  HardDrive, FileDown, Users, Trash2, Edit, CloudUpload, Lock, Filter, TrendingUp, Trophy
 } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
@@ -103,7 +104,7 @@ function ResourceManagement() {
         featuredImage = await fileToBase64(image);
       }
 
-      const payload = {
+      const payload: any = {
         ...formData,
       };
       if (fileUrl) payload.fileUrl = fileUrl;
@@ -252,15 +253,18 @@ function ResourceManagement() {
 
       <div className="grid gap-6 md:grid-cols-4">
         <StatsCard title="Total Files" value={resources.length.toString()} icon={FileText} color="forest" />
-        <StatsCard title="Total Downloads" value={resources.reduce((a, b) => a + (b.downloadsCount || 0), 0).toString()} icon={Download} color="gold" />
+        <StatsCard title="Active Files" value={resources.filter(r => r.isActive !== false).length.toString()} icon={HardDrive} color="gold" />
         <StatsCard title="Total Leads" value={leads.length.toString()} icon={Mail} color="sky" />
-        <StatsCard title="Featured" value={resources.filter(r => r.isFeatured).length.toString()} icon={HardDrive} color="forest" />
+        <StatsCard title="Total Downloads" value={resources.reduce((a, b) => a + (b.downloadsCount || 0), 0).toString()} icon={Download} color="forest" />
       </div>
 
       <Tabs defaultValue="files" onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-card/50 border border-border/50 p-1 rounded-xl">
           <TabsTrigger value="files" className="rounded-lg px-8 data-[state=active]:bg-forest data-[state=active]:text-white transition-all">Files & Assets</TabsTrigger>
           <TabsTrigger value="leads" className="rounded-lg px-8 data-[state=active]:bg-forest data-[state=active]:text-white transition-all">Lead Generation</TabsTrigger>
+          <TabsTrigger value="analytics" className="rounded-lg px-8 data-[state=active]:bg-forest data-[state=active]:text-white transition-all flex items-center gap-2">
+            <TrendingUp className="w-4 h-4" /> Analytics
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="files" className="space-y-4">
@@ -354,6 +358,92 @@ function ResourceManagement() {
             <Button onClick={exportLeads} className="w-full mt-10 bg-forest h-12 rounded-xl shadow-lg gap-2">
               <FileDown className="w-4 h-4" /> Export All Leads
             </Button>
+          </Card>
+        </TabsContent>
+
+        {/* ── Analytics Tab ── */}
+        <TabsContent value="analytics" className="space-y-8">
+          {/* Top Resources Chart */}
+          <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded-xl bg-forest/10 flex items-center justify-center">
+                  <Download className="w-5 h-5 text-forest" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg font-display">Most Downloaded Resources</CardTitle>
+                  <CardDescription className="text-xs">Total downloads per resource file</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-2">
+              {resources.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                  <TrendingUp className="w-10 h-10 mb-3 opacity-20" />
+                  <p className="text-sm">No download data yet. Upload a resource to get started!</p>
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={[...resources].sort((a, b) => (b.downloadsCount || 0) - (a.downloadsCount || 0))} margin={{ top: 20, right: 30, left: -16, bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                    <XAxis dataKey="title" tick={{ fontSize: 11, fontWeight: 600 }} tickLine={false} axisLine={false} tickFormatter={(v) => v.length > 15 ? v.slice(0, 15) + '…' : v} />
+                    <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+                    <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid hsl(var(--border))', background: 'hsl(var(--card))' }} formatter={(v: any) => [`${v.toLocaleString()} downloads`, 'Downloads']} />
+                    <Bar dataKey="downloadsCount" radius={[8, 8, 0, 0]}>
+                      {resources.map((_, idx) => (
+                        <Cell key={idx} fill={idx === 0 ? '#2C4A3B' : idx === 1 ? '#4a7c5e' : idx === 2 ? '#C9A84C' : '#94a3b8'} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Ranked Leaderboard */}
+          <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
+            <CardHeader>
+              <CardTitle className="font-display text-lg flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-amber-500" /> Resource Leaderboard
+              </CardTitle>
+              <CardDescription>Top resources ranked by popularity</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader className="bg-muted/30">
+                  <TableRow className="border-border/50">
+                    <TableHead className="font-bold w-12 pl-6">#</TableHead>
+                    <TableHead className="font-bold">Resource Name</TableHead>
+                    <TableHead className="font-bold">Category</TableHead>
+                    <TableHead className="font-bold text-right pr-6">Downloads</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {[...resources].sort((a, b) => (b.downloadsCount || 0) - (a.downloadsCount || 0)).map((file, idx) => (
+                    <TableRow key={file._id} className="border-border/50 hover:bg-muted/5 transition-colors">
+                      <TableCell className="pl-6 font-black text-lg">
+                        {idx === 0 ? <span className="text-amber-500">🥇</span> : idx === 1 ? <span className="text-slate-400">🥈</span> : idx === 2 ? <span className="text-amber-700">🥉</span> : <span className="text-muted-foreground text-sm font-bold">{idx + 1}</span>}
+                      </TableCell>
+                      <TableCell className="font-semibold">{file.title}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="text-[9px] uppercase tracking-widest">{file.category}</Badge>
+                      </TableCell>
+                      <TableCell className="text-right pr-6">
+                        <span className="inline-flex items-center gap-1.5 font-bold text-foreground">
+                          <Download className="w-3.5 h-3.5 text-blue-500" />
+                          {file.downloadsCount || 0}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {resources.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center py-8 text-muted-foreground italic">No resources available.</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
           </Card>
         </TabsContent>
       </Tabs>

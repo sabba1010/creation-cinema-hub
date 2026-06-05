@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Play, ArrowLeft, Share2, ChevronRight, Sparkles, Star, Lock, Mic2 } from "lucide-react";
+import { Play, ArrowLeft, Share2, ChevronRight, Sparkles, Star, Lock, Mic2, Eye } from "lucide-react";
 
 export const Route = createFileRoute("/kids/watch/$seriesId")({
   component: KidsWatchPage,
@@ -15,6 +15,10 @@ function KidsWatchPage() {
   const [episodes, setEpisodes] = useState<any[]>([]);
   const [activeEpisodeId, setActiveEpisodeId] = useState<string | null>(null);
   const [hasAccess, setHasAccess] = useState(false);
+  // tracks views: { episodeId -> viewCount }
+  const [episodeViews, setEpisodeViews] = useState<Record<string, number>>({});
+  // session dedup so re-selecting same episode doesn't re-count
+  const viewedThisSession = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -60,6 +64,29 @@ function KidsWatchPage() {
     if (seriesId) fetchAll();
   }, [seriesId]);
 
+  // Track a view whenever the active episode changes
+  useEffect(() => {
+    if (!activeEpisodeId || viewedThisSession.current.has(activeEpisodeId)) return;
+    viewedThisSession.current.add(activeEpisodeId);
+
+    fetch(`https://movie-backend-drab.vercel.app/api/kids/episodes/${activeEpisodeId}/view`, { method: 'POST' })
+      .then(r => r.json())
+      .then(data => {
+        if (typeof data.views === 'number') {
+          setEpisodeViews(prev => ({ ...prev, [activeEpisodeId]: data.views }));
+        }
+      })
+      .catch(() => {/* silent */ });
+  }, [activeEpisodeId]);
+
+  // Seed initial view counts from fetched episodes
+  useEffect(() => {
+    if (episodes.length === 0) return;
+    const initial: Record<string, number> = {};
+    episodes.forEach(ep => { initial[ep.id] = ep.views || 0; });
+    setEpisodeViews(initial);
+  }, [episodes]);
+
   if (!series) {
     return (
       <div className="bg-[#FAFAFA] min-h-screen flex flex-col">
@@ -86,17 +113,16 @@ function KidsWatchPage() {
       <SiteHeader />
       <main className="flex-grow pt-24 bg-white">
         <div className="mx-auto max-w-[1600px] px-6 py-8">
-          <div className="mb-8 flex items-center justify-between">
-            <Link to="/kids" className="flex items-center gap-2 text-sm font-bold text-gray-400 uppercase tracking-widest hover:text-blue-600 transition-all">
-              <ArrowLeft className="h-4 w-4" /> Back to KidsFlix
+          <div className="mb-8 relative flex items-center justify-center min-h-[40px]">
+            <Link to="/kids/library" className="absolute left-0 flex items-center gap-2 text-sm font-bold text-gray-400 uppercase tracking-widest hover:text-blue-600 transition-all">
+              <ArrowLeft className="h-4 w-4" /> Back to Library
             </Link>
-            <div className="hidden sm:flex items-center gap-4">
-              <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 bg-yellow-400 rounded-full">Now Playing</span>
-              <h1 className="font-display text-xl font-bold text-gray-900">{series.name}: {currentTitle}</h1>
+            <div className="hidden sm:flex items-center justify-center gap-4 w-full max-w-[60%]">
+              <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 bg-yellow-400 rounded-full shrink-0">Now Playing</span>
+              <h1 className="font-display text-xl font-bold text-gray-900 truncate">
+                {series.name}{series.name !== currentTitle ? `: ${currentTitle}` : ''}
+              </h1>
             </div>
-            <button className="h-10 w-10 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center hover:bg-gray-200 transition">
-              <Share2 className="h-5 w-5" />
-            </button>
           </div>
 
           <div className="grid lg:grid-cols-[1fr_400px] gap-8">
@@ -148,9 +174,9 @@ function KidsWatchPage() {
                     <p className="text-blue-600 font-bold uppercase tracking-[0.2em] text-xs">{currentTitle}</p>
                   </div>
                   <div className="flex gap-4">
-                    <button className="h-14 w-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition">
+                    {/* <button className="h-14 w-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition">
                       <Share2 className="h-6 w-6" />
-                    </button>
+                    </button> */}
                   </div>
                 </div>
                 <p className="text-gray-500 leading-relaxed max-w-3xl whitespace-pre-wrap">
@@ -165,6 +191,15 @@ function KidsWatchPage() {
                     <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 block mb-1">Total Episodes</span>
                     <span className="font-bold text-emerald-600">{episodes.length}</span>
                   </div>
+                  {activeEpisode && (
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 block mb-1">Episode Views</span>
+                      <span className="font-bold text-blue-500 flex items-center gap-1">
+                        <Eye className="h-4 w-4" />
+                        {(episodeViews[activeEpisode.id] ?? activeEpisode.views ?? 0).toLocaleString()}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -210,6 +245,10 @@ function KidsWatchPage() {
                         {ep.description && (
                           <p className="text-xs text-gray-400 mt-1 line-clamp-2">{ep.description}</p>
                         )}
+                        <span className="inline-flex items-center gap-1 mt-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                          <Eye className="h-3 w-3" />
+                          {(episodeViews[ep.id] ?? ep.views ?? 0).toLocaleString()} views
+                        </span>
                       </div>
                     </div>
                   ))}

@@ -26,15 +26,17 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === "/";
 
   useEffect(() => {
-    const auth = typeof window !== 'undefined' && (
-      localStorage.getItem("user_auth") === "true" || 
-      localStorage.getItem("admin_auth") === "true"
-    );
-    setIsLoggedIn(!!auth);
+    if (typeof window !== 'undefined') {
+      const userAuth = localStorage.getItem("user_auth") === "true";
+      const adminAuth = localStorage.getItem("admin_auth") === "true";
+      setIsLoggedIn(userAuth || adminAuth);
+      setIsAdmin(adminAuth);
+    }
   }, []);
 
   useEffect(() => {
@@ -161,7 +163,7 @@ export function SiteHeader() {
 
           {isLoggedIn ? (
             <Link 
-              to="/profile" 
+              to={isAdmin ? "/admin" : "/profile"} 
               aria-label="Account" 
               className="hidden sm:block text-[#faf7ee]/80 hover:text-[#faf7ee] transition"
             >

@@ -56,15 +56,15 @@ export function AdminSidebar() {
   return (
     <Sidebar className="border-r border-border/50 bg-card/50 backdrop-blur-md overflow-x-hidden box-border">
       <SidebarHeader className="p-6 border-b border-border/50">
-        <div className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
           <div className="h-10 w-10 bg-forest rounded-2xl flex items-center justify-center shadow-lg shadow-forest/20">
             <Globe className="text-white h-6 w-6" />
           </div>
           <div>
-            <h1 className="font-display font-bold text-lg leading-tight">OMS Admin</h1>
+            <h1 className="font-display font-bold text-lg leading-tight text-foreground">OMS Admin</h1>
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-70">Management Hub</p>
           </div>
-        </div>
+        </Link>
       </SidebarHeader>
       
       <SidebarContent className="p-4 space-y-6 overflow-x-hidden box-border">

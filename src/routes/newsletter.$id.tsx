@@ -114,13 +114,13 @@ function NewsletterDetailPage() {
             <img
               src={imageBase}
               alt={nl.title}
-              className="w-full h-full object-cover opacity-25 scale-105"
+              className="w-full h-full object-cover opacity-60 scale-105"
             />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-forest-deep to-[#050704]" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050704]/90 via-[#050704]/50 to-[#050704]" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#050704] via-transparent to-[#050704] opacity-80" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050704]/60 via-[#050704]/20 to-[#050704]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#050704]/50 via-transparent to-[#050704]/50" />
         </div>
 
         <div className="max-w-5xl mx-auto px-6 relative z-10 flex flex-col items-center text-center animate-fade-up">
@@ -184,47 +184,75 @@ function NewsletterDetailPage() {
               </div>
             )}
 
-            {/* Content blocks */}
-            <div className="space-y-12">
-              {(nl.blocks || []).map((block: any, i: number) => (
-                <div key={block._id || i} className="animate-fade-up" style={{ animationDelay: `${i * 80}ms` }}>
+            {/* Content blocks — photo blocks are grouped into gallery grids */}
+            {(() => {
+              const blocks: any[] = nl.blocks || [];
+              const rendered: React.ReactNode[] = [];
+              let i = 0;
+              while (i < blocks.length) {
+                const block = blocks[i];
 
-                  {block.type === "text" && (
-                    <div className="prose prose-lg md:prose-xl lg:prose-2xl prose-slate max-w-none prose-p:text-foreground/80 prose-p:leading-[2.2]">
-                      {block.content.split('\n').map((para: string, pIdx: number) => {
-                        if (!para.trim()) return <br key={pIdx} />;
-                        return <p key={pIdx} className="text-xl md:text-[1.35rem]">{para}</p>;
+                // ── Group consecutive photo blocks into a gallery ──
+                if (block.type === "photo" && block.url) {
+                  const photoGroup: any[] = [];
+                  while (i < blocks.length && blocks[i].type === "photo" && blocks[i].url) {
+                    photoGroup.push(blocks[i]);
+                    i++;
+                  }
+                  const count = photoGroup.length;
+                  const gridCols =
+                    count === 1 ? "grid-cols-1" :
+                      count === 2 ? "grid-cols-1 sm:grid-cols-2" :
+                        count === 3 ? "grid-cols-1 sm:grid-cols-3" :
+                          "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4";
+
+                  rendered.push(
+                    <div key={`gallery-${i}`} className={`my-12 grid ${gridCols} gap-4 items-start`}>
+                      {photoGroup.map((p: any, pIdx: number) => {
+                        const src = p.url.startsWith("data:") || p.url.startsWith("http") ? p.url : `${API}${p.url}`;
+                        return (
+                          <figure key={pIdx} className="group/img rounded-2xl shadow-xl border border-border/30 bg-card overflow-hidden">
+                            {/* No forced aspect-ratio — image shows at its full natural height/width */}
+                            <div className="overflow-hidden">
+                              <img
+                                src={src}
+                                alt={p.caption || `Photo ${pIdx + 1}`}
+                                className="w-full h-auto block transition-transform duration-700 group-hover/img:scale-[1.04]"
+                              />
+                            </div>
+                            {p.caption && (
+                              <figcaption className="py-3 px-4 text-center flex items-center justify-center gap-2">
+                                <div className="h-px w-6 bg-gold/40" />
+                                <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">{p.caption}</span>
+                                <div className="h-px w-6 bg-gold/40" />
+                              </figcaption>
+                            )}
+                          </figure>
+                        );
                       })}
                     </div>
-                  )}
+                  );
+                  continue;
+                }
 
-                  {block.type === "photo" && block.url && (
-                    <figure className="my-12">
-                      <div className="rounded-2xl overflow-hidden shadow-xl border border-border/30 group/img">
-                        <img
-                          src={
-                            block.url.startsWith("data:") || block.url.startsWith("http")
-                              ? block.url
-                              : `${API}${block.url}`
-                          }
-                          alt={block.caption || "Newsletter Photo"}
-                          className="w-full h-auto transition-transform duration-700 group-hover/img:scale-[1.03]"
-                        />
+                // ── Text block ──
+                if (block.type === "text") {
+                  rendered.push(
+                    <div key={block._id || i} className="animate-fade-up" style={{ animationDelay: `${i * 80}ms` }}>
+                      <div className="prose prose-lg md:prose-xl lg:prose-2xl prose-slate max-w-none prose-p:text-foreground/80 prose-p:leading-[2.2]">
+                        {block.content.split('\n').map((para: string, pIdx: number) => {
+                          if (!para.trim()) return <br key={pIdx} />;
+                          return <p key={pIdx} className="text-xl md:text-[1.35rem]">{para}</p>;
+                        })}
                       </div>
-                      {block.caption && (
-                        <figcaption className="mt-4 text-center flex items-center justify-center gap-3">
-                          <div className="h-px w-8 bg-gold/40" />
-                          <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                            {block.caption}
-                          </span>
-                          <div className="h-px w-8 bg-gold/40" />
-                        </figcaption>
-                      )}
-                    </figure>
-                  )}
+                    </div>
+                  );
+                }
 
-                  {block.type === "video" && block.vimeoUrl && (
-                    <div className="my-12 rounded-2xl overflow-hidden shadow-xl border border-border/30 bg-card">
+                // ── Video block ──
+                if (block.type === "video" && block.vimeoUrl) {
+                  rendered.push(
+                    <div key={block._id || i} className="animate-fade-up my-12 rounded-2xl overflow-hidden shadow-xl border border-border/30 bg-card" style={{ animationDelay: `${i * 80}ms` }}>
                       <div className="relative aspect-video bg-black">
                         <iframe
                           src={getVimeoEmbedUrl(block.vimeoUrl)}
@@ -247,10 +275,13 @@ function NewsletterDetailPage() {
                         </div>
                       )}
                     </div>
-                  )}
+                  );
+                }
 
-                  {block.type === "news" && (
-                    <div className="my-12 bg-gradient-to-br from-forest/5 to-gold/5 border border-forest/15 rounded-2xl p-8 md:p-10 relative overflow-hidden group/news transition-all hover:-translate-y-1 hover:shadow-lg">
+                // ── News block ──
+                if (block.type === "news") {
+                  rendered.push(
+                    <div key={block._id || i} className="animate-fade-up my-12 bg-gradient-to-br from-forest/5 to-gold/5 border border-forest/15 rounded-2xl p-8 md:p-10 relative overflow-hidden group/news transition-all hover:-translate-y-1 hover:shadow-lg" style={{ animationDelay: `${i * 80}ms` }}>
                       <div className="absolute top-0 right-0 p-6 opacity-5 group-hover/news:scale-110 transition-transform duration-700 pointer-events-none">
                         <FileText className="w-48 h-48 text-forest" />
                       </div>
@@ -267,11 +298,13 @@ function NewsletterDetailPage() {
                         )}
                       </div>
                     </div>
-                  )}
+                  );
+                }
 
-                </div>
-              ))}
-            </div>
+                i++;
+              }
+              return <div className="space-y-12">{rendered}</div>;
+            })()}
 
           </div>{/* end reading column */}
 

@@ -1,6 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
+} from "recharts";
+import {
   Baby,
   Plus,
   Layers,
@@ -28,7 +31,10 @@ import {
   Settings,
   Sun,
   Cloud,
-  Anchor
+  Anchor,
+  Eye,
+  TrendingUp,
+  Trophy
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
@@ -98,6 +104,13 @@ function KidsManagement() {
   const [lifetimeUsers, setLifetimeUsers] = useState(INITIAL_LIFETIME);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("series");
+  // Analytics state
+  const [analytics, setAnalytics] = useState<{ totalViews: number; seriesAnalytics: any[]; topEpisodes: any[] }>({
+    totalViews: 0,
+    seriesAnalytics: [],
+    topEpisodes: []
+  });
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
 
   // Dialog States
   const [isSeriesDialogOpen, setIsSeriesDialogOpen] = useState(false);
@@ -115,7 +128,7 @@ function KidsManagement() {
 
   const fetchSeries = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/kids/series");
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/series");
       const data = await res.json();
       if (Array.isArray(data)) {
         setSeries(data);
@@ -133,7 +146,7 @@ function KidsManagement() {
 
   const fetchSettings = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/kids/settings");
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/settings");
       const data = await res.json();
       if (data && data.value) setHeroBanner(data.value);
     } catch (err) {
@@ -141,17 +154,31 @@ function KidsManagement() {
     }
   };
 
+  const fetchAnalytics = async () => {
+    try {
+      setAnalyticsLoading(true);
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/analytics");
+      const data = await res.json();
+      if (data && !data.message) setAnalytics(data);
+    } catch (err) {
+      console.error("Error fetching analytics", err);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchSeries();
     fetchSettings();
+    fetchAnalytics();
   }, []);
 
   const handleAddSeries = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const url = editingSeriesId
-        ? `http://localhost:5000/api/kids/series/${editingSeriesId}`
-        : "http://localhost:5000/api/kids/series";
+        ? `https://movie-backend-drab.vercel.app/api/kids/series/${editingSeriesId}`
+        : "https://movie-backend-drab.vercel.app/api/kids/series";
       const method = editingSeriesId ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -240,7 +267,7 @@ function KidsManagement() {
     if (!result.isConfirmed) return;
 
     try {
-      await fetch(`http://localhost:5000/api/kids/series/${id}`, { method: "DELETE" });
+      await fetch(`https://movie-backend-drab.vercel.app/api/kids/series/${id}`, { method: "DELETE" });
       fetchSeries();
       Swal.fire({
         title: 'Deleted!',
@@ -314,18 +341,22 @@ function KidsManagement() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-5">
         <StatsCard title="Series" value={(series?.length || 0).toString()} icon={Layers} color="gold" />
         <StatsCard title="Categories" value={(topics?.length || 0).toString()} icon={Heart} color="forest" />
         <StatsCard title="Total Content" value={(content?.length || 0).toString()} icon={Play} color="sky" />
         <StatsCard title="Lifetime Users" value={(lifetimeUsers?.length || 0).toString()} icon={Star} color="gold" />
+        <StatsCard title="Total Views" value={analyticsLoading ? "..." : analytics.totalViews.toLocaleString()} icon={Eye} color="sky" />
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs value={activeTab} onValueChange={(v) => { setActiveTab(v); if (v === 'analytics') fetchAnalytics(); }} className="space-y-6">
         <TabsList className="bg-card/50 border border-border/50 p-1 rounded-xl">
           <TabsTrigger value="series" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Series</TabsTrigger>
           <TabsTrigger value="topics" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Categories</TabsTrigger>
           <TabsTrigger value="lifetime" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Lifetime Access</TabsTrigger>
+          <TabsTrigger value="analytics" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white flex items-center gap-2">
+            <TrendingUp className="w-4 h-4" /> Analytics
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="series" className="m-0 mt-8">
@@ -392,8 +423,8 @@ function KidsManagement() {
                     </div>
                     <div className="flex items-center justify-between pt-2 border-t border-border/30">
                       <div className="flex items-center gap-1.5 text-sm font-medium">
-                        <UserCheck className="w-3.5 h-3.5 text-forest" />
-                        {(item.subscribers || 0).toLocaleString()} Viewers
+                        <Eye className="w-3.5 h-3.5 text-blue-500" />
+                        {(item.totalViews || 0).toLocaleString()} Views
                       </div>
                       <button onClick={() => toggleSeriesStatus(item._id, item.status)} className="transition-transform hover:scale-105 active:scale-95">
                         <Badge variant="outline" className={`text-[10px] uppercase tracking-tighter cursor-pointer ${item.status === 'Active' ? 'border-forest/50 text-forest hover:bg-forest/5' : 'border-muted-foreground/50 text-muted-foreground hover:bg-muted-foreground/5'}`}>
@@ -498,6 +529,170 @@ function KidsManagement() {
             </Table>
           </Card>
         </TabsContent>
+
+        {/* ── Analytics Tab ── */}
+        <TabsContent value="analytics" className="m-0 mt-8 space-y-8">
+          {analyticsLoading ? (
+            <div className="flex justify-center items-center py-24">
+              <div className="animate-spin h-10 w-10 border-4 border-forest border-t-transparent rounded-full" />
+            </div>
+          ) : (
+            <>
+              {/* Hero total views card */}
+              <Card className="border-border/50 bg-gradient-to-br from-forest/10 via-card to-gold/5 shadow-card p-8 flex flex-col md:flex-row md:items-center gap-6">
+                <div className="h-16 w-16 rounded-2xl bg-forest flex items-center justify-center shadow-lg shadow-forest/20 shrink-0">
+                  <Eye className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground mb-1">All-Time Total</p>
+                  <div className="text-5xl font-display font-bold text-foreground">{analytics.totalViews.toLocaleString()}</div>
+                  <p className="text-sm text-muted-foreground mt-1">Combined views across all series and episodes</p>
+                </div>
+              </Card>
+
+              {/* Two charts side by side */}
+              <div className="grid gap-8 lg:grid-cols-2">
+
+                {/* Series Views Chart */}
+                <Card className="border-border/50 bg-card/50 shadow-card overflow-hidden">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="h-9 w-9 rounded-xl bg-forest/10 flex items-center justify-center">
+                        <TrendingUp className="w-5 h-5 text-forest" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg font-display">Most Watched Series</CardTitle>
+                        <CardDescription className="text-xs">Total views per series</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-2">
+                    {analytics.seriesAnalytics.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                        <TrendingUp className="w-10 h-10 mb-3 opacity-20" />
+                        <p className="text-sm">No view data yet. Share your series!</p>
+                      </div>
+                    ) : (
+                      <ResponsiveContainer width="100%" height={260}>
+                        <BarChart data={analytics.seriesAnalytics} margin={{ top: 8, right: 8, left: -16, bottom: 8 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                          <XAxis dataKey="name" tick={{ fontSize: 11, fontWeight: 600 }} tickLine={false} axisLine={false}
+                            tickFormatter={(v) => v.length > 10 ? v.slice(0, 10) + '…' : v} />
+                          <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+                          <Tooltip
+                            contentStyle={{ borderRadius: '12px', border: '1px solid hsl(var(--border))', background: 'hsl(var(--card))' }}
+                            formatter={(v: any) => [`${v.toLocaleString()} views`, 'Views']}
+                          />
+                          <Bar dataKey="views" radius={[8, 8, 0, 0]}>
+                            {analytics.seriesAnalytics.map((_: any, idx: number) => (
+                              <Cell key={idx} fill={idx === 0 ? '#2C4A3B' : idx === 1 ? '#4a7c5e' : idx === 2 ? '#C9A84C' : '#94a3b8'} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Top Episodes Chart */}
+                <Card className="border-border/50 bg-card/50 shadow-card overflow-hidden">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="h-9 w-9 rounded-xl bg-gold/10 flex items-center justify-center">
+                        <Trophy className="w-5 h-5 text-amber-600" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg font-display">Top Episodes</CardTitle>
+                        <CardDescription className="text-xs">Most played episodes across all series</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-2">
+                    {analytics.topEpisodes.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                        <Trophy className="w-10 h-10 mb-3 opacity-20" />
+                        <p className="text-sm">No episodes have been played yet.</p>
+                      </div>
+                    ) : (
+                      <ResponsiveContainer width="100%" height={260}>
+                        <BarChart data={analytics.topEpisodes} layout="vertical" margin={{ top: 4, right: 16, left: 0, bottom: 4 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
+                          <XAxis type="number" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+                          <YAxis type="category" dataKey="title" tick={{ fontSize: 11, fontWeight: 600 }} tickLine={false} axisLine={false} width={110}
+                            tickFormatter={(v) => v.length > 14 ? v.slice(0, 14) + '…' : v} />
+                          <Tooltip
+                            contentStyle={{ borderRadius: '12px', border: '1px solid hsl(var(--border))', background: 'hsl(var(--card))' }}
+                            formatter={(v: any, _: any, props: any) => [`${v.toLocaleString()} views — ${props.payload.series}`, 'Episode']}
+                          />
+                          <Bar dataKey="views" radius={[0, 8, 8, 0]}>
+                            {analytics.topEpisodes.map((_: any, idx: number) => (
+                              <Cell key={idx} fill={idx === 0 ? '#C9A84C' : idx === 1 ? '#d4a843' : idx === 2 ? '#e0b85c' : '#94a3b8'} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Ranked leaderboard table */}
+              <Card className="border-border/50 bg-card/50 shadow-card overflow-hidden">
+                <CardHeader>
+                  <CardTitle className="font-display text-lg flex items-center gap-2">
+                    <Trophy className="w-5 h-5 text-amber-500" /> Episode Leaderboard
+                  </CardTitle>
+                  <CardDescription>Top 10 most-watched episodes ranked by total plays</CardDescription>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader className="bg-muted/30">
+                      <TableRow className="border-border/50">
+                        <TableHead className="font-bold w-12 pl-6">#</TableHead>
+                        <TableHead className="font-bold">Episode</TableHead>
+                        <TableHead className="font-bold">Series</TableHead>
+                        <TableHead className="font-bold text-right pr-6">Views</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {analytics.topEpisodes.map((ep: any, idx: number) => (
+                        <TableRow key={idx} className="border-border/50 hover:bg-muted/5 transition-colors">
+                          <TableCell className="pl-6 font-black text-lg">
+                            {idx === 0 ? (
+                              <span className="text-amber-500">🥇</span>
+                            ) : idx === 1 ? (
+                              <span className="text-slate-400">🥈</span>
+                            ) : idx === 2 ? (
+                              <span className="text-amber-700">🥉</span>
+                            ) : (
+                              <span className="text-muted-foreground text-sm font-bold">{idx + 1}</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="font-semibold">{ep.title}</TableCell>
+                          <TableCell>
+                            <Badge className="bg-forest/10 text-forest border-forest/20 text-[10px]">{ep.series}</Badge>
+                          </TableCell>
+                          <TableCell className="text-right pr-6">
+                            <span className="inline-flex items-center gap-1.5 font-bold text-foreground">
+                              <Eye className="w-3.5 h-3.5 text-blue-500" />
+                              {ep.views.toLocaleString()}
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {analytics.topEpisodes.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={4} className="text-center py-8 text-muted-foreground italic">No views recorded yet.</TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </>
+          )}
+        </TabsContent>
+
       </Tabs>
 
       {/* Dialogs */}
