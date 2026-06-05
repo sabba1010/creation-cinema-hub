@@ -3,18 +3,13 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Play, Download, BookOpen, Share2, ArrowLeft, Clock, Calendar } from "lucide-react";
 import { usePodcast } from "../../podcast";
-
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/podcast/season/$seasonId")({
   component: SeasonDetailsPage,
 });
 
-const EPISODES = [
-  { id: "1", title: "The Architecture of Light", duration: "42:15", date: "May 12, 2026", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-  { id: "2", title: "Rhythms of the Deep", duration: "38:40", date: "May 19, 2026", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-  { id: "3", title: "Whispers in the Wind", duration: "45:10", date: "May 26, 2026", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
-  { id: "4", title: "The Soil's Secret Language", duration: "40:05", date: "June 02, 2026", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
-];
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 const RESOURCES = [
   { title: "Study Guide PDF", type: "Document", size: "2.4 MB" },
@@ -25,7 +20,45 @@ const RESOURCES = [
 function SeasonDetailsPage() {
   const { seasonId } = Route.useParams();
   const { playEpisode } = usePodcast();
+  const [season, setSeason] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    fetch(`${API_URL}/api/podcast/seasons/${seasonId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setSeason(data.data);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
+  }, [seasonId]);
+
+  if (isLoading) {
+    return (
+      <div className="bg-background min-h-screen flex flex-col">
+        <SiteHeader />
+        <main className="flex-grow pt-24 flex items-center justify-center">
+          <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full" />
+        </main>
+        <SiteFooter />
+      </div>
+    );
+  }
+
+  if (!season) {
+    return (
+      <div className="bg-background min-h-screen flex flex-col">
+        <SiteHeader />
+        <main className="flex-grow pt-24 flex flex-col items-center justify-center">
+          <h1 className="text-3xl font-display">Season Not Found</h1>
+          <Link to="/podcast" className="mt-4 text-primary hover:underline">Go back to Podcast</Link>
+        </main>
+        <SiteFooter />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-background min-h-screen flex flex-col">
@@ -37,20 +70,21 @@ function SeasonDetailsPage() {
             <Link to="/podcast" className="inline-flex items-center gap-2 text-sm font-bold text-primary uppercase tracking-widest mb-10 hover:gap-3 transition-all">
               <ArrowLeft className="h-4 w-4" /> Back to Podcast
             </Link>
-            
+
             <div className="grid lg:grid-cols-[1.2fr_2fr] gap-12 items-end">
               <div className="relative aspect-square rounded-[2rem] overflow-hidden shadow-2xl">
-                <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800" alt="Season Cover" className="w-full h-full object-cover" />
+                <img src={season.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"} alt="Season Cover" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"; }} />
               </div>
               <div className="pb-4">
-                <span className="text-xs font-bold uppercase tracking-[0.3em] text-primary/70">Series One</span>
-                <h1 className="mt-4 font-display text-5xl sm:text-7xl font-medium tracking-tight text-foreground">
-                  The Wonder of <span className="italic text-primary">Creation</span>
+                <span className="text-xs font-bold uppercase tracking-[0.3em] text-primary/70">Podcast Season</span>
+                <h1 className="mt-4 font-display text-5xl sm:text-7xl font-medium tracking-tight text-foreground" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
+                  {season.title}
                 </h1>
+                <p className="mt-4 text-muted-foreground text-lg">{season.description}</p>
                 <div className="mt-8 flex flex-wrap gap-6 text-sm font-medium text-muted-foreground">
-                  <span className="flex items-center gap-2"><Calendar className="h-4 w-4" /> Season {seasonId} • 2026</span>
-                  <span className="flex items-center gap-2"><Clock className="h-4 w-4" /> 12 Episodes</span>
-                  <span className="flex items-center gap-2 uppercase tracking-widest text-xs font-bold text-foreground">Completed</span>
+                  <span className="flex items-center gap-2"><Calendar className="h-4 w-4" /> {new Date(season.createdAt).getFullYear()}</span>
+                  <span className="flex items-center gap-2"><Clock className="h-4 w-4" /> {season.episodesCount || 0} Episodes</span>
+                  <span className="flex items-center gap-2 uppercase tracking-widest text-xs font-bold text-foreground">{season.status}</span>
                 </div>
               </div>
             </div>
@@ -62,34 +96,52 @@ function SeasonDetailsPage() {
           <div className="space-y-12">
             <h2 className="font-display text-3xl font-medium text-foreground">Episodes</h2>
             <div className="space-y-4">
-              {EPISODES.map((ep) => (
-                <div key={ep.id} className="group flex items-center justify-between p-6 rounded-3xl bg-card border border-border hover:border-primary/20 hover:shadow-lg transition-all">
-                  <div className="flex items-center gap-6">
-                    <button 
-                      onClick={() => playEpisode({ ...ep, seasonTitle: `Season ${seasonId}`, coverImage: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800" })}
-                      className="h-12 w-12 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all cursor-pointer"
-                    >
-                      <Play className="h-5 w-5 fill-current" />
-                    </button>
-                    <div>
-                      <h4 className="font-display text-xl text-foreground group-hover:text-primary transition-colors">{ep.id}. {ep.title}</h4>
-                      <p className="mt-1 text-sm text-muted-foreground">{ep.date} • {ep.duration}</p>
+              {season.episodes?.length > 0 ? (
+                season.episodes.map((ep: any, index: number) => (
+                  <div key={ep._id} className="group flex items-center justify-between p-6 rounded-3xl bg-card border border-border hover:border-primary/20 hover:shadow-lg transition-all">
+                    <div className="flex items-center gap-6">
+                      <button
+                        onClick={() => {
+                          playEpisode({
+                            id: ep._id,
+                            title: ep.title,
+                            duration: ep.duration,
+                            date: new Date(ep.createdAt).toLocaleDateString(),
+                            audioUrl: ep.audioUrl,
+                            seasonTitle: season.title,
+                            coverImage: season.image
+                          });
+                          // Record the listen
+                          fetch(`${API_URL}/api/podcast/episodes/${ep._id}/listen`, { method: 'POST' }).catch(console.error);
+                        }}
+                        className="h-12 w-12 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all cursor-pointer"
+                      >
+                        <Play className="h-5 w-5 fill-current" />
+                      </button>
+                      <div>
+                        <h4 className="font-display text-xl text-foreground group-hover:text-primary transition-colors">{index + 1}. {ep.title}</h4>
+                        {ep.description && (
+                          <p className="mt-2 text-sm text-muted-foreground line-clamp-2 max-w-2xl">{ep.description}</p>
+                        )}
+                        <p className="mt-1 text-sm text-muted-foreground">{new Date(ep.createdAt).toLocaleDateString()} • {ep.duration}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {/* Download and Share buttons temporarily hidden
+                      <button className="h-10 w-10 grid place-items-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition">
+                        <Download className="h-5 w-5" />
+                      </button>
+                      <button className="h-10 w-10 grid place-items-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition">
+                        <Share2 className="h-5 w-5" />
+                      </button>
+                      */}
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <button className="h-10 w-10 grid place-items-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition">
-                      <Download className="h-5 w-5" />
-                    </button>
-                    <button className="h-10 w-10 grid place-items-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition">
-                      <Share2 className="h-5 w-5" />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-muted-foreground">No episodes available yet.</p>
+              )}
             </div>
-            <button className="w-full py-4 rounded-2xl bg-muted/50 text-sm font-bold uppercase tracking-widest text-muted-foreground hover:bg-muted transition">
-              Load More Episodes
-            </button>
           </div>
 
           {/* Sidebar / Bonus Resources */}
