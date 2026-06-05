@@ -21,15 +21,17 @@ function IndividualFilmPage() {
   const [hasAccess, setHasAccess] = useState(false);
   const [accessInfo, setAccessInfo] = useState<{ type: "buy" | "rent", expiresAt: number | null } | null>(null);
   const [timeLeft, setTimeLeft] = useState<string>("");
-  const [checkoutName, setCheckoutName] = useState(() => {
-    const userData = localStorage.getItem("user_data");
-    if (userData) {
-      try {
-        return JSON.parse(userData).name || "";
-      } catch (e) { }
+  const [checkoutName, setCheckoutName] = useState("");
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const userData = window.localStorage.getItem("user_data");
+      if (userData) {
+        try {
+          setCheckoutName(JSON.parse(userData).name || "");
+        } catch (e) { }
+      }
     }
-    return "";
-  });
+  }, []);
   const [globalRentDuration, setGlobalRentDuration] = useState("48");
   const [ratingInput, setRatingInput] = useState(5);
   const [reviews, setReviews] = useState<any[]>([]);
