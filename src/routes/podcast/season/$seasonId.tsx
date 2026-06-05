@@ -4,6 +4,10 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Play, Download, BookOpen, Share2, ArrowLeft, Clock, Calendar } from "lucide-react";
 import { usePodcast } from "../../podcast";
 import { useEffect, useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/podcast/season/$seasonId")({
   component: SeasonDetailsPage,
@@ -22,6 +26,53 @@ function SeasonDetailsPage() {
   const { playEpisode } = usePodcast();
   const [season, setSeason] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Email capture state
+  const [isDownloadOpen, setIsDownloadOpen] = useState(false);
+  const [downloadEmail, setDownloadEmail] = useState("");
+  const [selectedResource, setSelectedResource] = useState<any>(null);
+
+  const handleShare = async (title: string, text: string, url: string) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text, url });
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      navigator.clipboard.writeText(url);
+      toast.success("Link copied to clipboard!");
+    }
+  };
+
+  const handleDownloadResource = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!downloadEmail || !selectedResource) return;
+
+    try {
+      const res = await fetch(`${API_URL}/api/podcast/seasons/${seasonId}/resources/download`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: downloadEmail, fileUrl: selectedResource.fileUrl })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setIsDownloadOpen(false);
+        // Trigger download
+        const link = document.createElement('a');
+        link.href = data.url;
+        link.download = selectedResource.title;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        toast.success("Download started!");
+      } else {
+        toast.error("Download failed");
+      }
+    } catch (err) {
+      toast.error("Error downloading resource");
+    }
+  };
 
   useEffect(() => {
     fetch(`${API_URL}/api/podcast/seasons/${seasonId}`)
@@ -127,14 +178,15 @@ function SeasonDetailsPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      {/* Download and Share buttons temporarily hidden
-                      <button className="h-10 w-10 grid place-items-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition">
+                      <a href={ep.audioUrl} download target="_blank" rel="noreferrer" className="h-10 w-10 grid place-items-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">
                         <Download className="h-5 w-5" />
-                      </button>
-                      <button className="h-10 w-10 grid place-items-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition">
+                      </a>
+                      <button
+                        onClick={() => handleShare(ep.title, `Listen to ${ep.title} from ${season.title}`, window.location.href)}
+                        className="h-10 w-10 grid place-items-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition"
+                      >
                         <Share2 className="h-5 w-5" />
                       </button>
-                      */}
                     </div>
                   </div>
                 ))
@@ -149,22 +201,32 @@ function SeasonDetailsPage() {
             <div>
               <h2 className="font-display text-3xl font-medium text-foreground mb-8">Bonus <span className="italic text-primary">Resources</span></h2>
               <div className="space-y-4">
-                {RESOURCES.map((res, i) => (
-                  <div key={i} className="flex items-center justify-between p-5 rounded-2xl bg-cream/5 border border-border group hover:border-primary/20 transition-all">
-                    <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 grid place-items-center rounded-xl bg-primary/5 text-primary">
-                        <BookOpen className="h-5 w-5" />
+                {season.resources?.length > 0 ? (
+                  season.resources.map((res: any, i: number) => (
+                    <div key={i} className="flex items-center justify-between p-5 rounded-2xl bg-cream/5 border border-border group hover:border-primary/20 transition-all">
+                      <div className="flex items-center gap-4">
+                        <div className="h-10 w-10 grid place-items-center rounded-xl bg-primary/5 text-primary">
+                          <BookOpen className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold text-foreground">{res.title}</h4>
+                          <p className="text-xs text-muted-foreground">{res.size || 'Attachment'}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="text-sm font-bold text-foreground">{res.title}</h4>
-                        <p className="text-xs text-muted-foreground">{res.type} • {res.size}</p>
-                      </div>
+                      <button
+                        onClick={() => {
+                          setSelectedResource(res);
+                          setIsDownloadOpen(true);
+                        }}
+                        className="text-primary hover:text-primary/70 h-8 w-8 grid place-items-center rounded-lg hover:bg-primary/10 transition-colors"
+                      >
+                        <Download className="h-4 w-4" />
+                      </button>
                     </div>
-                    <button className="text-primary hover:text-primary/70">
-                      <Download className="h-4 w-4" />
-                    </button>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground">No resources available for this season.</p>
+                )}
               </div>
             </div>
 
@@ -179,6 +241,32 @@ function SeasonDetailsPage() {
           </div>
         </div>
       </main>
+
+      <Dialog open={isDownloadOpen} onOpenChange={setIsDownloadOpen}>
+        <DialogContent className="sm:max-w-md rounded-[2.5rem]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-display font-bold">Download Resource</DialogTitle>
+            <DialogDescription>
+              Enter your email to download "{selectedResource?.title}". We'll keep you updated on future resources.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleDownloadResource} className="space-y-6 pt-4">
+            <div className="space-y-2">
+              <Input
+                type="email"
+                placeholder="Enter your email address"
+                value={downloadEmail}
+                onChange={(e) => setDownloadEmail(e.target.value)}
+                required
+                className="h-12 rounded-xl"
+              />
+            </div>
+            <Button type="submit" className="w-full h-12 rounded-xl bg-primary text-primary-foreground text-sm font-bold uppercase tracking-widest hover:bg-primary/90">
+              Get Download Link
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
       <SiteFooter />
     </div>
   );

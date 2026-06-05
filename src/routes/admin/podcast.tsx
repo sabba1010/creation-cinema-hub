@@ -68,7 +68,7 @@ function PodcastManagement() {
   const [isEditSeasonOpen, setIsEditSeasonOpen] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState<any>(null);
 
-  const [seasonForm, setSeasonForm] = useState({ title: "", description: "", status: "Active", image: "" });
+  const [seasonForm, setSeasonForm] = useState({ title: "", description: "", status: "Active", image: "", spotifyUrl: "", applePodcastsUrl: "" });
 
   const fetchSeasons = async () => {
     setIsLoading(true);
@@ -102,7 +102,7 @@ function PodcastManagement() {
       if (res.ok) {
         toast.success("Season created successfully!");
         setIsNewSeasonOpen(false);
-        setSeasonForm({ title: "", description: "", status: "Active", image: "" });
+        setSeasonForm({ title: "", description: "", status: "Active", image: "", spotifyUrl: "", applePodcastsUrl: "" });
         fetchSeasons();
       } else {
         toast.error("Failed to create season");
@@ -160,7 +160,14 @@ function PodcastManagement() {
 
   const handleEditClick = (season: any) => {
     setSelectedSeason(season);
-    setSeasonForm({ title: season.title, description: season.description, status: season.status, image: season.image });
+    setSeasonForm({
+      title: season.title,
+      description: season.description,
+      status: season.status,
+      image: season.image,
+      spotifyUrl: season.spotifyUrl || "",
+      applePodcastsUrl: season.applePodcastsUrl || ""
+    });
     setIsEditSeasonOpen(true);
   };
 
@@ -199,7 +206,7 @@ function PodcastManagement() {
           <p className="text-muted-foreground">Control your seasons and publish new episodes.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="h-11 rounded-xl border-border/50 gap-2" onClick={() => { setSeasonForm({ title: "", description: "", status: "Active", image: "" }); setIsNewSeasonOpen(true); }}>
+          <Button variant="outline" className="h-11 rounded-xl border-border/50 gap-2" onClick={() => { setSeasonForm({ title: "", description: "", status: "Active", image: "", spotifyUrl: "", applePodcastsUrl: "" }); setIsNewSeasonOpen(true); }}>
             <Plus className="w-4 h-4" />
             New Season
           </Button>
@@ -241,7 +248,7 @@ function PodcastManagement() {
                     <span className="flex items-center gap-2"><Headphones className="w-3 h-3 text-gold" /> {season.listensCount || 0}</span>
                   </div>
                   <div className="flex gap-2">
-                    <Link to={`/admin/podcast-season/${season._id}`} className="flex-1">
+                    <Link to="/admin/podcast-season/$seasonId" params={{ seasonId: season._id }} className="flex-1">
                       <Button
                         variant="outline"
                         size="sm"
@@ -272,7 +279,7 @@ function PodcastManagement() {
             ))}
 
             <button
-              onClick={() => { setSeasonForm({ title: "", description: "", status: "Active", image: "" }); setIsNewSeasonOpen(true); }}
+              onClick={() => { setSeasonForm({ title: "", description: "", status: "Active", image: "", spotifyUrl: "", applePodcastsUrl: "" }); setIsNewSeasonOpen(true); }}
               className="border-2 border-dashed border-border/50 rounded-[2.5rem] p-10 flex flex-col items-center justify-center gap-4 text-muted-foreground hover:bg-forest/5 hover:border-forest/50 hover:text-forest transition-all group"
             >
               <div className="h-14 w-14 rounded-2xl bg-muted/20 flex items-center justify-center group-hover:bg-forest/10 transition-all group-hover:rotate-90">
@@ -289,7 +296,7 @@ function PodcastManagement() {
 
       {/* New Season Dialog */}
       <Dialog open={isNewSeasonOpen} onOpenChange={setIsNewSeasonOpen}>
-        <DialogContent className="sm:max-w-[450px] rounded-[2.5rem] border-border/50 bg-card/95 backdrop-blur-xl">
+        <DialogContent className="sm:max-w-[550px] rounded-[2.5rem] border-border/50 bg-card/95 backdrop-blur-xl">
           <DialogHeader>
             <DialogTitle className="text-2xl font-display font-bold">New Podcast Season</DialogTitle>
             <DialogDescription>Define a new collection for your episodes.</DialogDescription>
@@ -322,6 +329,16 @@ function PodcastManagement() {
                 <Input type="file" accept="image/*" className="h-11 rounded-xl file:text-xs" onChange={e => handleImageUpload(e, setSeasonForm, 'image')} />
               </div>
             </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Spotify Link (Optional)</Label>
+                <Input placeholder="https://open.spotify.com/..." className="h-11 rounded-xl" value={seasonForm.spotifyUrl} onChange={e => setSeasonForm({ ...seasonForm, spotifyUrl: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Apple Podcasts Link (Optional)</Label>
+                <Input placeholder="https://podcasts.apple.com/..." className="h-11 rounded-xl" value={seasonForm.applePodcastsUrl} onChange={e => setSeasonForm({ ...seasonForm, applePodcastsUrl: e.target.value })} />
+              </div>
+            </div>
             <Button className="w-full bg-forest h-12 rounded-xl shadow-lg font-bold uppercase tracking-widest text-[11px]" onClick={handleCreateSeason}>
               Create Season
             </Button>
@@ -332,7 +349,7 @@ function PodcastManagement() {
 
       {/* Edit Season Dialog */}
       <Dialog open={isEditSeasonOpen} onOpenChange={setIsEditSeasonOpen}>
-        <DialogContent className="sm:max-w-[450px] rounded-[2.5rem] border-border/50 bg-card/95 backdrop-blur-xl">
+        <DialogContent className="sm:max-w-[550px] rounded-[2.5rem] border-border/50 bg-card/95 backdrop-blur-xl">
           <DialogHeader>
             <DialogTitle className="text-2xl font-display font-bold">Edit Season</DialogTitle>
             <DialogDescription>Modify settings for "{selectedSeason?.title}"</DialogDescription>
@@ -363,6 +380,16 @@ function PodcastManagement() {
               <div className="space-y-2">
                 <Label>Cover Art</Label>
                 <Input type="file" accept="image/*" className="h-11 rounded-xl file:text-xs" onChange={e => handleImageUpload(e, setSeasonForm, 'image')} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Spotify Link</Label>
+                <Input placeholder="https://open.spotify.com/..." className="h-11 rounded-xl" value={seasonForm.spotifyUrl} onChange={e => setSeasonForm({ ...seasonForm, spotifyUrl: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Apple Podcasts Link</Label>
+                <Input placeholder="https://podcasts.apple.com/..." className="h-11 rounded-xl" value={seasonForm.applePodcastsUrl} onChange={e => setSeasonForm({ ...seasonForm, applePodcastsUrl: e.target.value })} />
               </div>
             </div>
             <Button className="w-full bg-forest h-12 rounded-xl shadow-lg font-bold uppercase tracking-widest text-[11px]" onClick={handleUpdateSeason}>

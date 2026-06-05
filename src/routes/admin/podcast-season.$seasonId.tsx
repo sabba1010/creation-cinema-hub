@@ -22,6 +22,8 @@ function AdminPodcastSeasonPage() {
   const [uploadForm, setUploadForm] = useState({ title: "", description: "", audioUrl: "", duration: "" });
   const [editingEpId, setEditingEpId] = useState<string | null>(null);
 
+  const [resourceForm, setResourceForm] = useState({ title: "", fileUrl: "", size: "" });
+
   const [season, setSeason] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -136,6 +138,70 @@ function AdminPodcastSeasonPage() {
     }
   };
 
+  const handleAddResource = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resourceForm.fileUrl) return toast.error("Please upload a file first");
+
+    try {
+      const updatedResources = [...(season.resources || []), resourceForm];
+      const res = await fetch(`${API_URL}/api/podcast/seasons/${seasonId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        },
+        body: JSON.stringify({ resources: updatedResources })
+      });
+      if (res.ok) {
+        toast.success("Resource added successfully");
+        setResourceForm({ title: "", fileUrl: "", size: "" });
+        fetchSeasonData();
+      }
+    } catch (err) {
+      toast.error("Failed to add resource");
+    }
+  };
+
+  const handleRemoveResource = async (index: number) => {
+    try {
+      const updatedResources = [...(season.resources || [])];
+      updatedResources.splice(index, 1);
+      const res = await fetch(`${API_URL}/api/podcast/seasons/${seasonId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        },
+        body: JSON.stringify({ resources: updatedResources })
+      });
+      if (res.ok) {
+        toast.success("Resource removed");
+        fetchSeasonData();
+      }
+    } catch (err) {
+      toast.error("Failed to remove resource");
+    }
+  };
+
+  const handleResourceUpload = async (e: any) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      const toastId = toast.loading("Uploading resource...");
+      try {
+        const res = await fetch(`${API_URL}/api/upload`, { method: 'POST', body: formData });
+        const data = await res.json();
+        if (data.success) {
+          setResourceForm({ ...resourceForm, fileUrl: `${API_URL}${data.url}`, size: `${(file.size / (1024 * 1024)).toFixed(1)} MB` });
+          toast.success("Upload complete!", { id: toastId });
+        }
+      } catch (err) {
+        toast.error("Upload error", { id: toastId });
+      }
+    }
+  };
+
   if (isLoading) return (
     <div className="flex items-center justify-center h-64">
       <div className="animate-spin h-10 w-10 border-4 border-forest border-t-transparent rounded-full" />
@@ -200,13 +266,42 @@ function AdminPodcastSeasonPage() {
             <div className="mt-8 pt-8 border-t border-border/50 flex flex-wrap gap-8">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block mb-1">Total Episodes</span>
-                <span className="font-bold text-foreground">{season.episodes?.length || 0}</span>
+                <span className="font-bold text-foreground">{season.episodesCount || 0}</span>
               </div>
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block mb-1">Total Listens</span>
                 <span className="font-bold text-foreground">{season.listensCount || 0}</span>
               </div>
             </div>
+          </div>
+
+          <div className="p-10 rounded-[3rem] bg-card border border-border/50 shadow-sm transition-all duration-500">
+            <h2 className="font-display text-2xl font-bold text-foreground mb-6">Bonus Resources</h2>
+            <div className="space-y-4 mb-8">
+              {season.resources?.map((res: any, idx: number) => (
+                <div key={idx} className="flex items-center justify-between p-4 rounded-xl border border-border/50 bg-muted/20">
+                  <div>
+                    <p className="font-bold text-sm">{res.title}</p>
+                    <p className="text-xs text-muted-foreground">{res.size || 'Unknown size'}</p>
+                  </div>
+                  <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10" onClick={() => handleRemoveResource(idx)}>
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+              {(!season.resources || season.resources.length === 0) && (
+                <p className="text-sm text-muted-foreground italic">No resources attached yet.</p>
+              )}
+            </div>
+
+            <form onSubmit={handleAddResource} className="space-y-4 border-t border-border/50 pt-6">
+              <h3 className="font-bold text-sm uppercase tracking-widest text-muted-foreground mb-4">Add New Resource</h3>
+              <div className="grid grid-cols-[2fr_1fr] gap-4">
+                <Input placeholder="Resource Title (e.g. Study Guide)" value={resourceForm.title} onChange={e => setResourceForm({ ...resourceForm, title: e.target.value })} required className="h-10 rounded-lg" />
+                <Input type="file" onChange={handleResourceUpload} required={!resourceForm.fileUrl} className="h-10 rounded-lg file:text-xs" />
+              </div>
+              <Button type="submit" className="w-full bg-forest h-10 rounded-lg" disabled={!resourceForm.fileUrl && !resourceForm.title}>Upload Resource</Button>
+            </form>
           </div>
         </div>
 

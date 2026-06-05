@@ -173,20 +173,28 @@ function PodcastLandingPage() {
               Tune in and follow our podcast on your favorite app. Available on all major platforms:
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
-              {PLATFORMS.map((p) => (
-                <a
-                  key={p.name}
-                  href={p.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`flex items-center justify-center gap-3 px-5 py-4 rounded-2xl border border-border bg-background transition-all duration-300 hover:scale-[1.03] hover:shadow-md cursor-pointer ${p.color}`}
-                >
-                  <div className="h-7 w-7 rounded-full bg-white flex items-center justify-center p-1 shadow-sm flex-shrink-0">
-                    <img src={p.icon} alt={p.name} className="h-5 w-5 object-contain" />
-                  </div>
-                  <span className="font-semibold text-sm">{p.name}</span>
-                </a>
-              ))}
+              {PLATFORMS.map((p) => {
+                let dynamicUrl = p.url;
+                if (seasons.length > 0) {
+                  if (p.name === "Spotify" && seasons[0].spotifyUrl) dynamicUrl = seasons[0].spotifyUrl;
+                  if (p.name === "Apple Podcasts" && seasons[0].applePodcastsUrl) dynamicUrl = seasons[0].applePodcastsUrl;
+                }
+
+                return (
+                  <a
+                    key={p.name}
+                    href={dynamicUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`flex items-center justify-center gap-3 px-5 py-4 rounded-2xl border border-border bg-background transition-all duration-300 hover:scale-[1.03] hover:shadow-md cursor-pointer ${p.color}`}
+                  >
+                    <div className="h-7 w-7 rounded-full bg-white flex items-center justify-center p-1 shadow-sm flex-shrink-0">
+                      <img src={p.icon} alt={p.name} className="h-5 w-5 object-contain" />
+                    </div>
+                    <span className="font-semibold text-sm">{p.name}</span>
+                  </a>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -248,8 +256,8 @@ function PodcastLandingPage() {
                   key={tab.id}
                   onClick={() => setActiveForm(tab.id as any)}
                   className={`px-6 py-3 rounded-full text-sm font-bold uppercase tracking-widest transition-all ${activeForm === tab.id
-                      ? "bg-primary text-primary-foreground shadow-lg scale-105"
-                      : "bg-background border border-border text-foreground hover:bg-muted"
+                    ? "bg-primary text-primary-foreground shadow-lg scale-105"
+                    : "bg-background border border-border text-foreground hover:bg-muted"
                     }`}
                 >
                   {tab.label}
