@@ -101,7 +101,7 @@ function KidsManagement() {
   const [series, setSeries] = useState<any[]>([]);
   const [topics, setTopics] = useState(INITIAL_TOPICS);
   const [content, setContent] = useState(INITIAL_CONTENT);
-  const [lifetimeUsers, setLifetimeUsers] = useState(INITIAL_LIFETIME);
+  const [lifetimeUsers, setLifetimeUsers] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("series");
   // Analytics state
@@ -117,12 +117,19 @@ function KidsManagement() {
   const [isGrantDialogOpen, setIsGrantDialogOpen] = useState(false);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
+  const [isPlanDialogOpen, setIsPlanDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   // Form States
   const [heroBanner, setHeroBanner] = useState("https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=2000");
-  const [seriesForm, setSeriesForm] = useState({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness" });
-  const [grantForm, setGrantForm] = useState({ name: "", email: "", source: "Manual Grant" });
+  const [planSettings, setPlanSettings] = useState({
+    lifetimeEnabled: true, lifetimePrice: 99,
+    monthlyEnabled: true, monthlyPrice: 4.99,
+    yearlyEnabled: true, yearlyPrice: 49.99,
+    trialDays: 7,
+  });
+  const [seriesForm, setSeriesForm] = useState({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness", contentType: "Live-action" });
+  const [grantForm, setGrantForm] = useState({ name: "", email: "", source: "Manual Grant", plan: "lifetime" });
   const [uploadForm, setUploadForm] = useState({ title: "", description: "", vimeoLink: "", audioLink: "", seriesId: "" });
   const [editingSeriesId, setEditingSeriesId] = useState<string | null>(null);
 
@@ -154,10 +161,74 @@ function KidsManagement() {
     }
   };
 
+  const handleSaveSettings = async () => {
+    try {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/settings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        },
+        body: JSON.stringify({ value: heroBanner })
+      });
+      if (res.ok) {
+        toast.success("Settings saved successfully!");
+        setIsSettingsDialogOpen(false);
+      }
+    } catch (err) {
+      toast.error("Failed to save settings");
+    }
+  };
+
+  const fetchPlanSettings = async () => {
+    try {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/plans");
+      const data = await res.json();
+      if (data && data.data) setPlanSettings(data.data);
+    } catch (err) {
+      console.error("Error fetching plans", err);
+    }
+  };
+
+  const handleSavePlans = async () => {
+    try {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/plans", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        },
+        body: JSON.stringify(planSettings)
+      });
+      if (res.ok) {
+        toast.success("Plan settings saved successfully!");
+        setIsPlanDialogOpen(false);
+      }
+    } catch (err) {
+      toast.error("Failed to save plans");
+    }
+  };
+
+  const fetchPurchases = async () => {
+    try {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/purchases", {
+        headers: { "Authorization": `Bearer ${localStorage.getItem("user_token")}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setLifetimeUsers(data.data);
+      }
+    } catch (err) {
+      console.error("Error fetching purchases", err);
+    }
+  };
+
   const fetchAnalytics = async () => {
     try {
       setAnalyticsLoading(true);
-      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/analytics");
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/analytics", {
+        headers: { "Authorization": `Bearer ${localStorage.getItem("user_token")}` }
+      });
       const data = await res.json();
       if (data && !data.message) setAnalytics(data);
     } catch (err) {
@@ -170,7 +241,9 @@ function KidsManagement() {
   useEffect(() => {
     fetchSeries();
     fetchSettings();
+    fetchPlanSettings();
     fetchAnalytics();
+    fetchPurchases();
   }, []);
 
   const handleAddSeries = async (e: React.FormEvent) => {
@@ -183,11 +256,15 @@ function KidsManagement() {
 
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        },
         body: JSON.stringify({
           name: seriesForm.name,
           description: seriesForm.description,
           topic: seriesForm.topic,
+          contentType: seriesForm.contentType,
           image: seriesForm.image || "https://images.unsplash.com/photo-1502086223501-7ea2443054f1?w=400&h=200&fit=crop",
           trailer: seriesForm.trailer,
           audioLink: seriesForm.audioLink,
@@ -200,7 +277,7 @@ function KidsManagement() {
       });
       if (res.ok) {
         setIsSeriesDialogOpen(false);
-        setSeriesForm({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness" });
+        setSeriesForm({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness", contentType: "Live-action" });
         setEditingSeriesId(null);
         Swal.fire({
           title: 'Success!',
@@ -227,6 +304,7 @@ function KidsManagement() {
       name: item.name || "",
       description: item.description || item.desc || "",
       topic: item.topic || "Kindness",
+      contentType: item.contentType || "Live-action",
       image: item.image || item.img || "",
       trailer: item.trailer || "",
       audioLink: item.audioLink || "",
@@ -243,7 +321,10 @@ function KidsManagement() {
       const newStatus = currentStatus === "Active" ? "Draft" : "Active";
       await fetch(`https://movie-backend-drab.vercel.app/api/kids/series/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        },
         body: JSON.stringify({ status: newStatus })
       });
       fetchSeries();
@@ -267,7 +348,10 @@ function KidsManagement() {
     if (!result.isConfirmed) return;
 
     try {
-      await fetch(`https://movie-backend-drab.vercel.app/api/kids/series/${id}`, { method: "DELETE" });
+      await fetch(`https://movie-backend-drab.vercel.app/api/kids/series/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${localStorage.getItem("user_token")}` }
+      });
       fetchSeries();
       Swal.fire({
         title: 'Deleted!',
@@ -288,34 +372,97 @@ function KidsManagement() {
     toast.success("Category status updated!");
   };
 
-  const handleUploadContent = (e: React.FormEvent) => {
+  const handleUploadContent = async (e: React.FormEvent) => {
     e.preventDefault();
-    const seriesName = series.find(s => (s._id || s.id).toString() === uploadForm.seriesId)?.name || "Unknown Series";
-    const newC = {
-      id: Date.now(),
-      title: uploadForm.title,
-      type: "Video",
-      series: seriesName,
-      length: "00:00",
-      views: 0,
-    };
-    setContent([newC, ...content]);
-    setIsUploadDialogOpen(false);
-    toast.success(`Episode ${uploadForm.title} added to ${seriesName}!`);
+    try {
+      const res = await fetch(`https://movie-backend-drab.vercel.app/api/kids/series/${uploadForm.seriesId}/episodes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        },
+        body: JSON.stringify({
+          title: uploadForm.title,
+          description: uploadForm.description,
+          vimeoLink: uploadForm.vimeoLink,
+          audioLink: uploadForm.audioLink,
+          length: "00:00"
+        })
+      });
+      if (res.ok) {
+        setIsUploadDialogOpen(false);
+        setUploadForm({ title: "", description: "", vimeoLink: "", audioLink: "", seriesId: "" });
+        toast.success(`Episode added successfully!`);
+        fetchSeries(); // refresh to get updated counts
+      }
+    } catch (err) {
+      toast.error("Failed to add episode");
+    }
   };
 
-  const handleGrantLifetime = (e: React.FormEvent) => {
+  const handleGrantLifetime = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newUser = {
-      id: Date.now(),
-      name: grantForm.name,
-      email: grantForm.email,
-      joined: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      source: grantForm.source
-    };
-    setLifetimeUsers([newUser, ...lifetimeUsers]);
-    setIsGrantDialogOpen(false);
-    toast.success(`Lifetime access granted to ${grantForm.name}`);
+    try {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/grant-access", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        },
+        body: JSON.stringify({
+          name: grantForm.name,
+          email: grantForm.email,
+          plan: grantForm.plan,
+          source: grantForm.source,
+          notes: "Granted via admin dashboard"
+        })
+      });
+      if (res.ok) {
+        setIsGrantDialogOpen(false);
+        setGrantForm({ name: "", email: "", source: "Manual Grant", plan: "lifetime" });
+        await Swal.fire({
+          title: 'Success!',
+          text: `Access granted to ${grantForm.name}`,
+          icon: 'success',
+          confirmButtonColor: '#2C4A3B'
+        });
+        fetchPurchases();
+      } else {
+        const data = await res.json();
+        toast.error(data.message || "Failed to grant access");
+      }
+    } catch (err) {
+      toast.error("Failed to grant access");
+    }
+  };
+
+  const handleRevokeAccess = async (id: string) => {
+    const result = await Swal.fire({
+      title: 'Revoke Access?',
+      text: "This will remove the user's KidsBibleFlix subscription.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#2C4A3B',
+      confirmButtonText: 'Yes, revoke it!'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch(`https://movie-backend-drab.vercel.app/api/kids/purchases/${id}`, {
+          method: "DELETE",
+          headers: { "Authorization": `Bearer ${localStorage.getItem("user_token")}` }
+        });
+        if (res.ok) {
+          toast.success("Access revoked");
+          fetchPurchases();
+        } else {
+          toast.error("Failed to revoke access");
+        }
+      } catch (err) {
+        toast.error("Error revoking access");
+      }
+    }
   };
 
   return (
@@ -326,6 +473,10 @@ function KidsManagement() {
           <p className="text-muted-foreground">Manage kid-safe streaming content, series, topics, and memberships.</p>
         </div>
         <div className="flex gap-2">
+          <Button variant="outline" className="h-11 rounded-xl border-border/50 gap-2 font-bold" onClick={() => setIsPlanDialogOpen(true)}>
+            <Settings className="w-4 h-4" />
+            Manage Plans
+          </Button>
           <Button variant="outline" className="h-11 rounded-xl border-border/50 gap-2" onClick={() => setIsSettingsDialogOpen(true)}>
             <Settings className="w-4 h-4" />
             Page Settings
@@ -353,7 +504,7 @@ function KidsManagement() {
         <TabsList className="bg-card/50 border border-border/50 p-1 rounded-xl">
           <TabsTrigger value="series" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Series</TabsTrigger>
           <TabsTrigger value="topics" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Categories</TabsTrigger>
-          <TabsTrigger value="lifetime" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Lifetime Access</TabsTrigger>
+          <TabsTrigger value="lifetime" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white">Access</TabsTrigger>
           <TabsTrigger value="analytics" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white flex items-center gap-2">
             <TrendingUp className="w-4 h-4" /> Analytics
           </TabsTrigger>
@@ -379,7 +530,7 @@ function KidsManagement() {
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               <button
-                onClick={() => { setEditingSeriesId(null); setSeriesForm({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness" }); setIsSeriesDialogOpen(true); }}
+                onClick={() => { setEditingSeriesId(null); setSeriesForm({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness", contentType: "Live-action" }); setIsSeriesDialogOpen(true); }}
                 className="h-full min-h-[280px] rounded-[2rem] border-2 border-dashed border-[#EFECE3] flex flex-col items-center justify-center text-muted-foreground hover:bg-white/50 hover:border-forest hover:text-forest transition-all group"
               >
                 <Plus className="w-8 h-8 mb-4 transition-transform group-hover:scale-110" />
@@ -419,7 +570,10 @@ function KidsManagement() {
                     <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{item.description || item.desc}</p>
                     <div className="flex items-center justify-between">
                       <div className="text-xs text-muted-foreground uppercase tracking-wider font-bold">{item.episodeCount ?? item.episodes ?? 0} Episodes</div>
-                      <Badge className="bg-forest/10 text-forest border-forest/20 text-[10px]">{item.topic}</Badge>
+                      <div className="flex gap-1">
+                        <Badge variant="outline" className="text-[9px] uppercase">{item.contentType || 'Live-action'}</Badge>
+                        <Badge className="bg-forest/10 text-forest border-forest/20 text-[10px]">{item.topic}</Badge>
+                      </div>
                     </div>
                     <div className="flex items-center justify-between pt-2 border-t border-border/30">
                       <div className="flex items-center gap-1.5 text-sm font-medium">
@@ -494,7 +648,7 @@ function KidsManagement() {
               </div>
               <Button className="bg-gold text-forest-deep font-bold h-11 rounded-xl px-6 hover:bg-gold/90 transition-all active:scale-95 shadow-md" onClick={() => setIsGrantDialogOpen(true)}>
                 <UserPlus className="w-4 h-4 mr-2" />
-                Grant Lifetime Access
+                Grant Access
               </Button>
             </div>
             <Table>
@@ -509,19 +663,24 @@ function KidsManagement() {
               </TableHeader>
               <TableBody>
                 {lifetimeUsers.map((user) => (
-                  <TableRow key={user.id} className="border-border/50 group hover:bg-muted/5 transition-colors">
+                  <TableRow key={user._id} className="border-border/50 group hover:bg-muted/5 transition-colors">
                     <TableCell className="font-medium text-base">{user.name}</TableCell>
                     <TableCell className="text-muted-foreground">{user.email}</TableCell>
-                    <TableCell>{user.joined}</TableCell>
+                    <TableCell>{new Date(user.purchasedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className="font-bold border-gold/30 text-gold-foreground bg-gold/5 uppercase text-[9px] tracking-widest">
-                        {user.source}
+                        {user.plan}
+                      </Badge>
+                      <Badge className="ml-2 text-[9px] uppercase font-bold" variant={user.status === 'active' ? 'default' : 'secondary'}>
+                        {user.status}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                        Revoke Access
-                      </Button>
+                      {user.status === 'active' && (
+                        <Button onClick={() => handleRevokeAccess(user._id)} variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                          Revoke Access
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -721,7 +880,7 @@ function KidsManagement() {
               />
               <p className="text-xs text-muted-foreground mt-2">Upload a new image from your computer to change the main car banner on the public Kids page.</p>
             </div>
-            <Button className="w-full bg-forest h-11 rounded-xl" onClick={() => setIsSettingsDialogOpen(false)}>Save Changes</Button>
+            <Button className="w-full bg-forest h-11 rounded-xl" onClick={handleSaveSettings}>Save Changes</Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -730,7 +889,7 @@ function KidsManagement() {
         setIsSeriesDialogOpen(open);
         if (!open) {
           setEditingSeriesId(null);
-          setSeriesForm({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness" });
+          setSeriesForm({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness", contentType: "Live-action" });
         }
       }}>
         <DialogContent className="sm:max-w-[600px] rounded-[2.5rem]">
@@ -851,23 +1010,39 @@ function KidsManagement() {
                   </div>
                 </div>
               )}
-              <div className="space-y-2">
-                <Label>Category (Character Virtue)</Label>
-                <Select value={seriesForm.topic} onValueChange={val => setSeriesForm({ ...seriesForm, topic: val })}>
-                  <SelectTrigger className="h-11 rounded-xl">
-                    <SelectValue placeholder="Select topic" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    <SelectItem value="Kindness">Kindness</SelectItem>
-                    <SelectItem value="Courage">Courage</SelectItem>
-                    <SelectItem value="Creation">Creation</SelectItem>
-                    <SelectItem value="Worship">Worship</SelectItem>
-                    <SelectItem value="Honesty">Honesty</SelectItem>
-                    <SelectItem value="Joy">Joy</SelectItem>
-                    <SelectItem value="Peace">Peace</SelectItem>
-                    <SelectItem value="Faith">Faith</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Category (Character Virtue)</Label>
+                  <Select value={seriesForm.topic} onValueChange={val => setSeriesForm({ ...seriesForm, topic: val })}>
+                    <SelectTrigger className="h-11 rounded-xl">
+                      <SelectValue placeholder="Select topic" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="Kindness">Kindness</SelectItem>
+                      <SelectItem value="Courage">Courage</SelectItem>
+                      <SelectItem value="Creation">Creation</SelectItem>
+                      <SelectItem value="Worship">Worship</SelectItem>
+                      <SelectItem value="Honesty">Honesty</SelectItem>
+                      <SelectItem value="Joy">Joy</SelectItem>
+                      <SelectItem value="Peace">Peace</SelectItem>
+                      <SelectItem value="Faith">Faith</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Content Type</Label>
+                  <Select value={seriesForm.contentType} onValueChange={val => setSeriesForm({ ...seriesForm, contentType: val })}>
+                    <SelectTrigger className="h-11 rounded-xl">
+                      <SelectValue placeholder="Select format" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="Live-action">Live-action</SelectItem>
+                      <SelectItem value="Audio">Audio Story</SelectItem>
+                      <SelectItem value="Creation Case">Creation Case</SelectItem>
+                      <SelectItem value="OMS">OMS Resource</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
             <DialogFooter>
@@ -946,6 +1121,106 @@ function KidsManagement() {
               </div>
             </div>
             <Button type="submit" className="w-full bg-forest h-11 rounded-xl">Save Episode</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isPlanDialogOpen} onOpenChange={setIsPlanDialogOpen}>
+        <DialogContent className="sm:max-w-[500px] rounded-[2.5rem]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-display font-bold">Manage Subscription Plans</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            <div className="grid grid-cols-2 gap-4 border border-border/50 p-4 rounded-2xl">
+              <div>
+                <Label className="font-bold mb-2 block">Monthly Plan</Label>
+                <div className="flex items-center gap-2 mb-2">
+                  <input type="checkbox" checked={planSettings.monthlyEnabled} onChange={(e) => setPlanSettings({ ...planSettings, monthlyEnabled: e.target.checked })} /> Enabled
+                </div>
+                <Input type="number" step="0.01" value={planSettings.monthlyPrice} onChange={(e) => setPlanSettings({ ...planSettings, monthlyPrice: Number(e.target.value) })} />
+              </div>
+              <div>
+                <Label className="font-bold mb-2 block">Yearly Plan</Label>
+                <div className="flex items-center gap-2 mb-2">
+                  <input type="checkbox" checked={planSettings.yearlyEnabled} onChange={(e) => setPlanSettings({ ...planSettings, yearlyEnabled: e.target.checked })} /> Enabled
+                </div>
+                <Input type="number" step="0.01" value={planSettings.yearlyPrice} onChange={(e) => setPlanSettings({ ...planSettings, yearlyPrice: Number(e.target.value) })} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 border border-border/50 p-4 rounded-2xl">
+              <div>
+                <Label className="font-bold mb-2 block">Lifetime Plan</Label>
+                <div className="flex items-center gap-2 mb-2">
+                  <input type="checkbox" checked={planSettings.lifetimeEnabled} onChange={(e) => setPlanSettings({ ...planSettings, lifetimeEnabled: e.target.checked })} /> Enabled
+                </div>
+                <Input type="number" step="0.01" value={planSettings.lifetimePrice} onChange={(e) => setPlanSettings({ ...planSettings, lifetimePrice: Number(e.target.value) })} />
+              </div>
+              <div>
+                <Label className="font-bold mb-2 block">Free Trial Days</Label>
+                <div className="flex items-center gap-2 mb-2 invisible">
+                  <input type="checkbox" checked={true} readOnly /> Enabled
+                </div>
+                <Input type="number" value={planSettings.trialDays} onChange={(e) => setPlanSettings({ ...planSettings, trialDays: Number(e.target.value) })} />
+              </div>
+            </div>
+            <Button className="w-full bg-forest h-11 rounded-xl" onClick={handleSavePlans}>Save Plans</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isGrantDialogOpen} onOpenChange={setIsGrantDialogOpen}>
+        <DialogContent className="sm:max-w-[500px] rounded-[2.5rem]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-display font-bold">Grant Free Access</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleGrantLifetime} className="space-y-6 py-4 text-left">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>User's Full Name</Label>
+                <Input
+                  placeholder="e.g. John Doe"
+                  className="h-11 rounded-xl"
+                  value={grantForm.name}
+                  onChange={e => setGrantForm({ ...grantForm, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>User's Email</Label>
+                <Input
+                  type="email"
+                  placeholder="john@example.com"
+                  className="h-11 rounded-xl"
+                  value={grantForm.email}
+                  onChange={e => setGrantForm({ ...grantForm, email: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Plan Type</Label>
+                  <Select value={grantForm.plan} onValueChange={val => setGrantForm({ ...grantForm, plan: val })}>
+                    <SelectTrigger className="h-11 rounded-xl">
+                      <SelectValue placeholder="Select plan" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="lifetime">Lifetime</SelectItem>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                      <SelectItem value="yearly">Yearly</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Source / Reason</Label>
+                  <Input
+                    placeholder="e.g. Promo Code"
+                    className="h-11 rounded-xl"
+                    value={grantForm.source}
+                    onChange={e => setGrantForm({ ...grantForm, source: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+            <Button type="submit" className="w-full bg-gold text-forest-deep h-11 rounded-xl font-bold">Grant Access</Button>
           </form>
         </DialogContent>
       </Dialog>

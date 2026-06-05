@@ -42,6 +42,7 @@ export const Route = createFileRoute("/admin/donations")({
 function DonationManagement() {
   const [donations, setDonations] = useState<any[]>([]);
   const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [kidsAnalytics, setKidsAnalytics] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const [newCampaign, setNewCampaign] = useState({ title: '', description: '', goalAmount: '', image: '' });
@@ -55,15 +56,20 @@ function DonationManagement() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [donationsRes, campaignsRes] = await Promise.all([
+        const [donationsRes, campaignsRes, kidsRes] = await Promise.all([
           fetch("https://movie-backend-drab.vercel.app/api/donations"),
-          fetch("https://movie-backend-drab.vercel.app/api/campaigns")
+          fetch("https://movie-backend-drab.vercel.app/api/campaigns"),
+          fetch("https://movie-backend-drab.vercel.app/api/kids/analytics", {
+            headers: { Authorization: `Bearer ${localStorage.getItem("user_token")}` }
+          })
         ]);
         const dData = await donationsRes.json();
         const cData = await campaignsRes.json();
+        const kData = await kidsRes.json();
 
         if (dData.success) setDonations(dData.data);
         if (cData.success) setCampaigns(cData.data);
+        if (kData && !kData.message) setKidsAnalytics(kData);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -181,10 +187,13 @@ function DonationManagement() {
     }
   };
 
-  const totalRaised = donations.reduce((sum, d) => sum + d.amount, 0);
-  const totalDonors = new Set(donations.map(d => d.email)).size;
-  const monthlyGiving = donations.filter(d => d.type === 'Monthly').reduce((sum, d) => sum + d.amount, 0);
-  const avgDonation = donations.length > 0 ? (totalRaised / donations.length) : 0;
+  const kidsRevenue = kidsAnalytics?.totalRevenue || 0;
+  const kidsMonthly = (kidsAnalytics?.monthlyCount || 0) * 4.99; // approx monthly revenue from kids
+
+  const totalRaised = donations.reduce((sum, d) => sum + d.amount, 0) + kidsRevenue;
+  const totalDonors = new Set(donations.map(d => d.email)).size + (kidsAnalytics?.totalSubscribers || 0);
+  const monthlyGiving = donations.filter(d => d.type === 'Monthly').reduce((sum, d) => sum + d.amount, 0) + kidsMonthly;
+  const avgDonation = donations.length > 0 ? (donations.reduce((sum, d) => sum + d.amount, 0) / donations.length) : 0;
 
   return (
     <div className="space-y-8 animate-fade-up">
@@ -206,10 +215,10 @@ function DonationManagement() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-4">
-        <StatsCard title="Total Raised" value={`$${totalRaised.toLocaleString()}`} sub="All time" icon={DollarSign} color="forest" />
-        <StatsCard title="Total Donors" value={totalDonors.toString()} sub="Unique" icon={Users} color="gold" />
+        <StatsCard title="Total Raised" value={`$${totalRaised.toLocaleString()}`} sub="Incl. KidsBibleFlix" icon={DollarSign} color="forest" />
+        <StatsCard title="Total Donors" value={totalDonors.toString()} sub="Unique Supporters" icon={Users} color="gold" />
         <StatsCard title="Monthly Giving" value={`$${monthlyGiving.toLocaleString()}`} sub="Recurring Revenue" icon={Heart} color="sky" />
-        <StatsCard title="Avg. Donation" value={`$${avgDonation.toFixed(2)}`} sub="Per Transaction" icon={TrendingUp} color="forest" />
+        <StatsCard title="KidsBibleFlix Revenue" value={`$${kidsRevenue.toLocaleString()}`} sub="Streaming Platform" icon={TrendingUp} color="forest" />
       </div>
 
       <Tabs defaultValue="transactions" className="space-y-6">

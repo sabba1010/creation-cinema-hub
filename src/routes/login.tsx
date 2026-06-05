@@ -1,17 +1,24 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
-import { Mail, Lock, ChevronLeft, Github, Globe } from "lucide-react";
+import { Mail, Lock, ChevronLeft, Github, Globe, Baby } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
+  validateSearch: (search: Record<string, unknown>): { redirect?: string; theme?: string } => {
+    return {
+      redirect: search.redirect as string | undefined,
+      theme: search.theme as string | undefined,
+    }
+  },
   component: LoginPage,
 });
 
 function LoginPage() {
+  const { redirect, theme } = useSearch({ from: "/login" });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -43,8 +50,16 @@ function LoginPage() {
           localStorage.setItem("user_auth", "true");
           localStorage.setItem("user_token", data.token);
           localStorage.setItem("user_data", JSON.stringify(data.user));
-          toast.success("Welcome back to One Mustard Seed!");
-          navigate({ to: "/profile" });
+          if (theme === "kids") {
+            toast.success("Welcome to KidsBibleFlix!");
+          } else {
+            toast.success("Welcome back to One Mustard Seed!");
+          }
+          if (redirect) {
+            navigate({ to: redirect });
+          } else {
+            navigate({ to: "/profile" });
+          }
         }
       } else {
         toast.error(data.message || "Invalid credentials");
@@ -73,11 +88,26 @@ function LoginPage() {
 
       <div className="w-full max-w-[450px] space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
         <div className="text-center space-y-2">
-          <div className="inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-forest-deep text-cream shadow-xl mb-4">
-            <Globe className="h-8 w-8" />
-          </div>
-          <h1 className="font-display text-4xl font-medium">Welcome <span className="italic text-primary">Back</span></h1>
-          <p className="text-muted-foreground">Sign in to your One Mustard Seed account</p>
+          {theme === "kids" ? (
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-blue-500 text-white shadow-xl mb-4">
+              <Baby className="h-8 w-8" />
+            </div>
+          ) : (
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-forest-deep text-cream shadow-xl mb-4">
+              <Globe className="h-8 w-8" />
+            </div>
+          )}
+          {theme === "kids" ? (
+            <>
+              <h1 className="font-display text-4xl font-medium">Welcome to <span className="italic text-blue-500 font-bold">KidsBibleFlix</span></h1>
+              <p className="text-muted-foreground">Sign in to unlock kid-safe streaming content</p>
+            </>
+          ) : (
+            <>
+              <h1 className="font-display text-4xl font-medium">Welcome <span className="italic text-primary">Back</span></h1>
+              <p className="text-muted-foreground">Sign in to your One Mustard Seed account</p>
+            </>
+          )}
         </div>
 
         <Card className="border-border/50 bg-card/50 backdrop-blur-xl shadow-2xl rounded-[2.5rem] p-4">
@@ -124,7 +154,7 @@ function LoginPage() {
             <CardFooter className="flex flex-col gap-4">
               <Button
                 type="submit"
-                className="w-full h-12 rounded-xl bg-forest-deep text-cream font-bold uppercase tracking-widest shadow-lg hover:shadow-forest/20 transition-all active:scale-95"
+                className={`w-full h-12 rounded-xl text-white font-bold uppercase tracking-widest shadow-lg transition-all active:scale-95 ${theme === 'kids' ? 'bg-blue-500 hover:bg-blue-600 shadow-blue-500/20' : 'bg-forest-deep hover:shadow-forest/20'}`}
                 disabled={isLoading}
               >
                 {isLoading ? "Signing in..." : "Continue"}
@@ -155,7 +185,7 @@ function LoginPage() {
 
         <p className="text-center text-sm text-muted-foreground">
           Don't have an account?{" "}
-          <Link to="/register" className="font-bold text-primary hover:underline">Create an account</Link>
+          <Link to="/register" search={{ redirect, theme }} className="font-bold text-primary hover:underline">Create an account</Link>
         </p>
       </div>
     </div>

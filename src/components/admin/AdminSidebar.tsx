@@ -50,6 +50,9 @@ export function AdminSidebar() {
 
   const handleLogout = () => {
     localStorage.removeItem("admin_auth");
+    localStorage.removeItem("user_auth");
+    localStorage.removeItem("user_token");
+    localStorage.removeItem("user_data");
     window.location.href = "/login";
   };
 

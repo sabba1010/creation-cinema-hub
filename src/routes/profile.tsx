@@ -53,6 +53,8 @@ function ProfilePage() {
   const handleSignOut = () => {
     localStorage.removeItem("admin_auth");
     localStorage.removeItem("user_auth");
+    localStorage.removeItem("user_token");
+    localStorage.removeItem("user_data");
     toast.success("Successfully signed out");
     navigate({ to: "/login" });
   };
@@ -120,12 +122,35 @@ function ProfilePage() {
                     <h3 className="font-display text-3xl font-medium mb-8">Account <span className="italic text-primary">Overview</span></h3>
                     <div className="grid sm:grid-cols-2 gap-6">
                       <div className="p-8 rounded-[2rem] bg-card border border-border shadow-sm">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block mb-4">Subscription Status</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block mb-4">KidsBibleFlix Status</span>
                         <div className="flex items-center justify-between">
                           <div className="text-xl font-bold">Premium Access</div>
-                          <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-600 text-[10px] font-bold uppercase tracking-widest">Active</span>
+                          {userData?.kidsAccess ? (
+                            <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-600 text-[10px] font-bold uppercase tracking-widest">
+                              {userData?.kidsAccessType === 'lifetime' ? 'Lifetime' : 'Active'}
+                            </span>
+                          ) : (
+                            <span className="px-3 py-1 rounded-full bg-muted text-muted-foreground text-[10px] font-bold uppercase tracking-widest">
+                              Inactive
+                            </span>
+                          )}
                         </div>
-                        <p className="mt-4 text-xs text-muted-foreground leading-relaxed">Your next billing cycle begins on June 12, 2026.</p>
+                        {userData?.kidsAccess ? (
+                          <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
+                            {userData?.kidsAccessType === 'lifetime'
+                              ? "You have forever access to the KidsBibleFlix library."
+                              : userData?.kidsAccessExpiry
+                                ? `Your access is valid until ${new Date(userData.kidsAccessExpiry).toLocaleDateString()}.`
+                                : "Your subscription is currently active."}
+                          </p>
+                        ) : (
+                          <div className="mt-4">
+                            <p className="text-xs text-muted-foreground leading-relaxed mb-3">Subscribe to unlock the full kids library.</p>
+                            <Link to="/kids/subscribe" className="text-[10px] font-bold uppercase tracking-widest text-primary hover:text-primary/80 transition-colors">
+                              View Plans →
+                            </Link>
+                          </div>
+                        )}
                       </div>
                       <div className="p-8 rounded-[2rem] bg-card border border-border shadow-sm">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block mb-4">Ministry Impact</span>
