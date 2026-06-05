@@ -18,7 +18,8 @@ import {
   History,
   Lock,
   Globe,
-  Star
+  Star,
+  Download
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
@@ -52,6 +53,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "../../components/ui/dropdown-menu";
+import { HeroSliderManager } from "../../components/admin/HeroSliderManager";
 
 export const Route = createFileRoute("/admin/films")({
   component: FilmsManagement,
@@ -125,7 +127,6 @@ function FilmsManagement() {
   const [isUploading, setIsUploading] = useState(false);
   const [rentDuration, setRentDuration] = useState("48");
 
-  // Form State
   const [formData, setFormData] = useState({
     title: "",
     year: "2026",
@@ -135,7 +136,12 @@ function FilmsManagement() {
     rating: "9.5",
     trailer: "https://vimeo.com/...",
     movieLink: "https://vimeo.com/...",
-    thumbnail: ""
+    thumbnail: "",
+    desc: "",
+    screeningInfo: "",
+    promoFileUrl: "",
+    isFeatured: false,
+    isUpcoming: false,
   });
 
   useEffect(() => {
@@ -189,17 +195,29 @@ function FilmsManagement() {
     if (!file) return;
 
     setIsUploading(true);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData({ ...formData, thumbnail: reader.result as string });
+    const formDataObj = new FormData();
+    formDataObj.append("image", file);
+
+    try {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/upload", {
+        method: "POST",
+        body: formDataObj,
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Use full URL or relative depending on how the frontend displays it. 
+        // We will store the absolute URL so it works everywhere.
+        const fullUrl = `https://movie-backend-drab.vercel.app${data.url}`;
+        setFormData({ ...formData, thumbnail: fullUrl });
+        toast.success("Image uploaded to server!");
+      } else {
+        toast.error(data.message || "Upload failed");
+      }
+    } catch (err) {
+      toast.error("Network error during upload");
+    } finally {
       setIsUploading(false);
-      toast.success("Image attached successfully!");
-    };
-    reader.onerror = () => {
-      toast.error("Failed to process image");
-      setIsUploading(false);
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
   const handleSaveFilm = async (e: React.FormEvent) => {
@@ -253,7 +271,12 @@ function FilmsManagement() {
       rating: film.rating || "",
       trailer: film.trailer || "",
       movieLink: film.movieLink || "",
-      thumbnail: film.thumbnail || ""
+      thumbnail: film.thumbnail || "",
+      desc: film.desc || "",
+      screeningInfo: film.screeningInfo || "",
+      promoFileUrl: film.promoFileUrl || "",
+      isFeatured: film.isFeatured || false,
+      isUpcoming: film.isUpcoming || false,
     });
     setIsDialogOpen(true);
   };
@@ -276,6 +299,9 @@ function FilmsManagement() {
     }
   };
 
+  const totalViews = films.reduce((sum, film) => sum + (film.views || 0), 0);
+  const totalWatchHours = films.reduce((sum, film) => sum + (film.watchHours || 0), 0);
+
   return (
     <div className="space-y-8 animate-fade-up">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -294,7 +320,7 @@ function FilmsManagement() {
               Add New Film
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px] rounded-[2.5rem] border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl">
+          <DialogContent className="sm:max-w-[500px] rounded-[2.5rem] border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-2xl font-display font-bold">
                 {editingFilm ? "Edit Film" : "Add New Film"}
@@ -366,6 +392,43 @@ function FilmsManagement() {
                   {isUploading && <p className="text-xs text-muted-foreground">Uploading image...</p>}
                 </div>
                 <div className="col-span-2 space-y-2">
+                  <Label>Synopsis / Description</Label>
+                  <textarea
+                    placeholder="Brief synopsis for the film page..."
+                    className="w-full min-h-[80px] p-3 rounded-xl border border-input bg-transparent text-sm"
+                    value={formData.desc}
+                    onChange={e => setFormData({ ...formData, desc: e.target.value })}
+                  />
+                </div>
+                <div className="col-span-2 space-y-2">
+                  <Label>Screening Information</Label>
+                  <textarea
+                    placeholder="e.g. Available for group screenings. Contact us for licensing details."
+                    className="w-full min-h-[60px] p-3 rounded-xl border border-input bg-transparent text-sm"
+                    value={formData.screeningInfo}
+                    onChange={e => setFormData({ ...formData, screeningInfo: e.target.value })}
+                  />
+                </div>
+                <div className="col-span-2 space-y-2">
+                  <Label>Free Promo Download URL (optional)</Label>
+                  <Input
+                    className="h-11 rounded-xl"
+                    placeholder="e.g. https://... (PDF, press kit, etc.)"
+                    value={formData.promoFileUrl}
+                    onChange={e => setFormData({ ...formData, promoFileUrl: e.target.value })}
+                  />
+                </div>
+                <div className="col-span-2 flex gap-6">
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" checked={formData.isFeatured} onChange={e => setFormData({ ...formData, isFeatured: e.target.checked })} className="w-4 h-4 rounded" />
+                    <span className="text-sm font-semibold">Mark as Featured (shows prominently on landing)</span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" checked={formData.isUpcoming} onChange={e => setFormData({ ...formData, isUpcoming: e.target.checked })} className="w-4 h-4 rounded" />
+                    <span className="text-sm font-semibold">Mark as Upcoming / Coming Soon</span>
+                  </label>
+                </div>
+                <div className="col-span-2 space-y-2">
                   <Label>Trailer Link (Vimeo/YouTube)</Label>
                   <div className="relative">
                     <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -401,7 +464,7 @@ function FilmsManagement() {
         </Dialog>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card p-6 flex flex-col gap-2">
           <div className="p-3 bg-forest/10 rounded-2xl w-fit">
             <Clapperboard className="w-6 h-6 text-forest" />
@@ -413,8 +476,15 @@ function FilmsManagement() {
           <div className="p-3 bg-gold/10 rounded-2xl w-fit">
             <PlaySquare className="w-6 h-6 text-gold" />
           </div>
-          <div className="text-3xl font-bold font-display">15.2K</div>
+          <div className="text-3xl font-bold font-display">{totalViews > 999 ? (totalViews / 1000).toFixed(1) + 'K' : totalViews}</div>
           <div className="text-sm text-muted-foreground">Total Views</div>
+        </Card>
+        <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card p-6 flex flex-col gap-2">
+          <div className="p-3 bg-purple-500/10 rounded-2xl w-fit">
+            <Video className="w-6 h-6 text-purple-500" />
+          </div>
+          <div className="text-3xl font-bold font-display">{totalWatchHours > 999 ? (totalWatchHours / 1000).toFixed(1) + 'K' : totalWatchHours}h</div>
+          <div className="text-sm text-muted-foreground">Watch Hours</div>
         </Card>
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card p-6 flex flex-col gap-2">
           <div className="p-3 bg-sky/10 rounded-2xl w-fit">
@@ -547,6 +617,8 @@ function FilmsManagement() {
             </Table>
           </Card>
         </TabsContent>
+
+
 
         <TabsContent value="settings">
           <div className="grid gap-6 md:grid-cols-2">

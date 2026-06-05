@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Play, Film, Info, Calendar, Clock, Star, ArrowRight } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { Play, Film, Info, Calendar, Clock, Star, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import * as React from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import ReactPlayer from "react-player";
 
 export const Route = createFileRoute("/films/")({
   component: FilmsLandingPage,
@@ -10,16 +13,23 @@ export const Route = createFileRoute("/films/")({
 
 function FilmsLandingPage() {
   const [films, setFilms] = useState<any[]>([]);
+  const [sliders, setSliders] = useState<any[]>([]);
   const [activeFilter, setActiveFilter] = useState("All");
   const [isMuted, setIsMuted] = useState(true);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, duration: 30 });
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   const toggleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !videoRef.current.muted;
-      setIsMuted(videoRef.current.muted);
-    }
+    setIsMuted(!isMuted);
   };
+
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
 
   useEffect(() => {
     fetch("https://movie-backend-drab.vercel.app/api/films")
@@ -30,7 +40,18 @@ function FilmsLandingPage() {
         }
       })
       .catch(err => console.error(err));
+
+    fetch("https://movie-backend-drab.vercel.app/api/films/hero-sliders")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setSliders(data.data.filter((s: any) => s.isActive).sort((a: any, b: any) => a.order - b.order));
+        }
+      })
+      .catch(err => console.error(err));
   }, []);
+
+  const featuredFilm = films[0];
 
   const filteredFilms = activeFilter === "All"
     ? films
@@ -45,58 +66,118 @@ function FilmsLandingPage() {
       <SiteHeader />
       <main className="flex-grow">
         {/* Cinematic Video Header */}
-        <section className="relative h-[75vh] min-h-[500px] flex items-center overflow-hidden">
-          {/* Loop Video Background */}
-          <div className="absolute inset-0 w-full h-full bg-[#050704]">
-            <video
-              ref={videoRef}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover opacity-50 transition-opacity duration-1000"
-            >
-              <source
-                src="https://vjs.zencdn.net/v/oceans.mp4"
-                type="video/mp4"
-              />
-              Your browser does not support the video tag.
-            </video>
-            {/* Gradient Overlays */}
-            {/* Bottom Fade */}
-            <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#050704] to-transparent" />
-            {/* Left Vignette */}
-            <div className="absolute inset-y-0 left-0 w-full md:w-[60%] bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
-          </div>
+        <section className="relative h-[75vh] min-h-[500px] flex items-center overflow-hidden bg-[#050704]">
+          <div className="absolute inset-0 z-0" ref={emblaRef}>
+            <div className="flex h-full w-full">
+              {sliders.length > 0 ? sliders.map((slide, index) => (
+                <div key={slide._id || index} className="relative flex-[0_0_100%] h-full w-full min-w-0">
+                  {/* Loop Video Background */}
+                  <div className="absolute inset-0 w-full h-full bg-[#050704] pointer-events-none">
+                    {React.createElement(ReactPlayer as any, {
+                      url: slide.backgroundVideoUrl,
+                      playing: true,
+                      muted: isMuted,
+                      loop: true,
+                      width: "100%",
+                      height: "100%",
+                      style: { objectFit: 'cover', opacity: 0.5 },
+                      playsinline: true,
+                      config: { vimeo: { playerOptions: { background: true, muted: true, autoplay: true, playsinline: true, loop: true } } }
+                    })}
+                    {/* Gradient Overlays */}
+                    <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#050704] to-transparent" />
+                    <div className="absolute inset-y-0 left-0 w-full md:w-[60%] bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
+                  </div>
 
-          <div className="relative mx-auto max-w-7xl px-6 w-full z-10 pt-16">
-            <div className="max-w-2xl space-y-6">
-              <div className="inline-flex items-center gap-2 bg-gold/10 backdrop-blur border border-gold/20 px-3.5 py-1.5 rounded-full animate-fade-in">
-                <Film className="h-4 w-4 text-gold" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-gold">OMS Original Cinema</span>
-              </div>
-              <h1 className="font-display text-5xl sm:text-7xl font-bold tracking-tight text-cream leading-none">
-                Cinema <span className="italic text-gold font-medium">Hub</span>
-              </h1>
-              <p className="text-base sm:text-lg text-cream/80 leading-relaxed">
-                Explore the official library of original productions. High-definition documentaries and films exploring the design, majesty, and theological depth of God's great creation.
-              </p>
+                  <div className="relative mx-auto max-w-7xl px-6 w-full h-full flex flex-col justify-center z-10 pt-16">
+                    <div className="max-w-2xl space-y-6">
+                      <div className="inline-flex items-center gap-2 bg-gold/10 backdrop-blur border border-gold/20 px-3.5 py-1.5 rounded-full animate-fade-in">
+                        <Film className="h-4 w-4 text-gold" />
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-gold">{slide.badgeText}</span>
+                      </div>
+                      <h1 className="font-display text-5xl sm:text-7xl font-bold tracking-tight text-cream leading-none">
+                        {slide.title}
+                      </h1>
+                      <p className="text-base sm:text-lg text-cream/80 leading-relaxed">
+                        {slide.description}
+                      </p>
 
-              <div className="flex flex-wrap gap-4 pt-4">
-                <Link
-                  to="/films/$filmId"
-                  params={{ filmId: "the-seed" }}
-                  className="bg-gold text-forest-deep px-8 py-4 rounded-2xl font-bold text-sm uppercase tracking-widest shadow-xl hover:bg-gold/90 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
-                >
-                  <Play className="h-4 w-4 fill-current animate-pulse" /> Play Featured
-                </Link>
-                <Link
-                  to="/films/trailer"
-                  className="bg-white/10 backdrop-blur border border-white/10 px-8 py-4 rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-white/20 transition-all flex items-center gap-2"
-                >
-                  <Info className="h-4 w-4" /> Watch Trailer
-                </Link>
-              </div>
+                      <div className="flex flex-wrap gap-4 pt-4">
+                        {slide.primaryButtonLink && (
+                          <Link
+                            to={(slide.primaryButtonLink.trim() === "/films/$filmId" && featuredFilm ? "/films/$filmId" : slide.primaryButtonLink.trim()) as any}
+                            params={(slide.primaryButtonLink.trim() === "/films/$filmId" && featuredFilm ? { filmId: featuredFilm.id } : {}) as any}
+                            search={(slide.primaryButtonLink.trim().includes("/films/trailer") ? { video: slide.backgroundVideoUrl, title: slide.title, desc: slide.description } : undefined) as any}
+                            className="bg-gold text-forest-deep px-8 py-4 rounded-2xl font-bold text-sm uppercase tracking-widest shadow-xl hover:bg-gold/90 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
+                          >
+                            <Play className="h-4 w-4 fill-current animate-pulse" /> {slide.primaryButtonText}
+                          </Link>
+                        )}
+                        {slide.secondaryButtonLink && (
+                          <Link
+                            to={slide.secondaryButtonLink.trim() as any}
+                            search={(slide.secondaryButtonLink.trim().includes("/films/trailer") ? { video: slide.backgroundVideoUrl, title: slide.title, desc: slide.description } : undefined) as any}
+                            className="bg-white/10 backdrop-blur border border-white/10 px-8 py-4 rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-white/20 transition-all flex items-center gap-2"
+                          >
+                            <Info className="h-4 w-4" /> {slide.secondaryButtonText}
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )) : (
+                <div className="relative flex-[0_0_100%] h-full w-full min-w-0">
+                  <div className="absolute inset-0 w-full h-full bg-[#050704] pointer-events-none">
+                    <video
+                      autoPlay
+                      loop
+                      muted={isMuted}
+                      playsInline
+                      className="w-full h-full object-cover opacity-50 transition-opacity duration-1000"
+                    >
+                      <source
+                        src="https://vjs.zencdn.net/v/oceans.mp4"
+                        type="video/mp4"
+                      />
+                    </video>
+                    {/* Gradient Overlays */}
+                    <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#050704] to-transparent" />
+                    <div className="absolute inset-y-0 left-0 w-full md:w-[60%] bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
+                  </div>
+
+                  <div className="relative mx-auto max-w-7xl px-6 w-full h-full flex flex-col justify-center z-10 pt-16">
+                    <div className="max-w-2xl space-y-6">
+                      <div className="inline-flex items-center gap-2 bg-gold/10 backdrop-blur border border-gold/20 px-3.5 py-1.5 rounded-full animate-fade-in">
+                        <Film className="h-4 w-4 text-gold" />
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-gold">OMS Original Cinema</span>
+                      </div>
+                      <h1 className="font-display text-5xl sm:text-7xl font-bold tracking-tight text-cream leading-none">
+                        Cinema <span className="italic text-gold font-medium">Hub</span>
+                      </h1>
+                      <p className="text-base sm:text-lg text-cream/80 leading-relaxed">
+                        Explore the official library of original productions. High-definition documentaries and films exploring the design, majesty, and theological depth of God's great creation.
+                      </p>
+
+                      <div className="flex flex-wrap gap-4 pt-4">
+                        <Link
+                          to="/films/$filmId"
+                          params={{ filmId: featuredFilm?.id || "the-seed" }}
+                          className="bg-gold text-forest-deep px-8 py-4 rounded-2xl font-bold text-sm uppercase tracking-widest shadow-xl hover:bg-gold/90 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
+                        >
+                          <Play className="h-4 w-4 fill-current animate-pulse" /> Play Featured
+                        </Link>
+                        <Link
+                          to="/films/trailer"
+                          className="bg-white/10 backdrop-blur border border-white/10 px-8 py-4 rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-white/20 transition-all flex items-center gap-2"
+                        >
+                          <Info className="h-4 w-4" /> Watch Trailer
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

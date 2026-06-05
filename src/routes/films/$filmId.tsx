@@ -282,10 +282,21 @@ function IndividualFilmPage() {
           <div className="space-y-16">
             <div className="space-y-6">
               <h2 className="font-display text-3xl font-medium text-cream">Synopsis</h2>
-              <p className="text-lg text-cream/70 leading-relaxed">
-                Take a breathtaking journey into the microscopic architecture of life. "The Seed" explores the profound complexity found within a single unit of nature, drawing spiritual parallels between biological growth and the kingdom of God. Filmed over three years using advanced macro-cinematography techniques.
+              <p className="text-lg text-cream/70 leading-relaxed whitespace-pre-wrap">
+                {film.desc || 'Take a breathtaking journey into the microscopic architecture of life. "The Seed" explores the profound complexity found within a single unit of nature, drawing spiritual parallels between biological growth and the kingdom of God. Filmed over three years using advanced macro-cinematography techniques.'}
               </p>
             </div>
+
+            {film.screeningInfo && (
+              <div className="space-y-6">
+                <h2 className="font-display text-3xl font-medium text-cream">Screening & Licensing</h2>
+                <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                  <p className="text-base text-cream/70 leading-relaxed whitespace-pre-wrap">
+                    {film.screeningInfo}
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Video Action Buttons */}
             <div className="grid sm:grid-cols-2 gap-6">
@@ -374,6 +385,25 @@ function IndividualFilmPage() {
                 ))}
               </div>
             </div>
+            {film.promoFileUrl && (
+              <div className="space-y-6">
+                <h4 className="text-sm font-bold uppercase tracking-widest text-gold">Promo Materials</h4>
+                <a
+                  href={film.promoFileUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-gold/30 hover:bg-white/10 transition-all group"
+                >
+                  <div className="h-10 w-10 rounded-full bg-gold/10 flex items-center justify-center text-gold group-hover:scale-110 transition-transform">
+                    <Download className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-cream">Download Press Kit</div>
+                    <div className="text-[10px] uppercase tracking-widest text-cream/50">Posters, Stills & Info</div>
+                  </div>
+                </a>
+              </div>
+            )}
           </aside>
         </div>
 
