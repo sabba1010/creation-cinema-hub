@@ -1,4 +1,4 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { 
   Video, 
@@ -15,7 +15,9 @@ import {
   Edit,
   Mail,
   User,
-  Calendar as CalendarIcon
+  Calendar as CalendarIcon,
+  FileText,
+  Download
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
@@ -55,13 +57,13 @@ export const Route = createFileRoute("/admin/prayer")({
 });
 
 const INITIAL_VIDEOS = [
-  { id: 1, title: "Night 1: The Architecture of Light", duration: "45:00", uploads: "June 14, 2026", views: 1240, status: "Live" },
-  { id: 2, title: "Night 2: Rhythms of the Deep", duration: "38:20", uploads: "June 15, 2026", views: 980, status: "Published" },
-  { id: 3, title: "Night 3: Whispers in the Wind", duration: "42:15", uploads: "June 16, 2026", views: 450, status: "Published" },
-  { id: 4, title: "Night 4: The Soil's Secret", duration: "40:00", uploads: "June 17, 2026", views: 0, status: "Published" },
-  { id: 5, title: "Night 5: The Celestial Clockwork", duration: "44:10", uploads: "June 18, 2026", views: 0, status: "Scheduled" },
-  { id: 6, title: "Night 6: Life in Paradox", duration: "39:50", uploads: "June 19, 2026", views: 0, status: "Scheduled" },
-  { id: 7, title: "Night 7: The Sabbath Rest", duration: "55:00", uploads: "June 20, 2026", views: 0, status: "Scheduled" },
+  { id: 1, title: "Night 1: The Architecture of Light", duration: "45:00", uploads: "June 14, 2026", views: 1240, status: "Live", resources: "Study Guide PDF", downloads: "Audio MP3" },
+  { id: 2, title: "Night 2: Rhythms of the Deep", duration: "38:20", uploads: "June 15, 2026", views: 980, status: "Published", resources: "", downloads: "" },
+  { id: 3, title: "Night 3: Whispers in the Wind", duration: "42:15", uploads: "June 16, 2026", views: 450, status: "Published", resources: "", downloads: "" },
+  { id: 4, title: "Night 4: The Soil's Secret", duration: "40:00", uploads: "June 17, 2026", views: 0, status: "Published", resources: "Prayer Journal", downloads: "Video MP4" },
+  { id: 5, title: "Night 5: The Celestial Clockwork", duration: "44:10", uploads: "June 18, 2026", views: 0, status: "Scheduled", resources: "", downloads: "" },
+  { id: 6, title: "Night 6: Life in Paradox", duration: "39:50", uploads: "June 19, 2026", views: 0, status: "Scheduled", resources: "", downloads: "" },
+  { id: 7, title: "Night 7: The Sabbath Rest", duration: "55:00", uploads: "June 20, 2026", views: 0, status: "Scheduled", resources: "", downloads: "" },
 ];
 
 const INITIAL_USERS = [
@@ -79,7 +81,7 @@ function PrayerManagement() {
   const [isGrantDialogOpen, setIsGrantDialogOpen] = useState(false);
 
   // Form States
-  const [videoForm, setVideoForm] = useState({ title: "Day 4: Spiritual Warfare", duration: "40:00" });
+  const [videoForm, setVideoForm] = useState({ title: "Day 4: Spiritual Warfare", duration: "40:00", resources: "", downloads: "" });
   const [grantForm, setGrantForm] = useState({ name: "John Doe", email: "john@example.com" });
 
   const handleUploadVideo = (e: React.FormEvent) => {
@@ -88,8 +90,11 @@ function PrayerManagement() {
       id: Date.now(),
       title: videoForm.title,
       duration: videoForm.duration,
+      resources: videoForm.resources,
+      downloads: videoForm.downloads,
       uploads: new Date().toLocaleDateString(),
-      views: 0
+      views: 0,
+      status: "Scheduled"
     };
     setVideos([...videos, newVideo]);
     setIsVideoDialogOpen(false);
@@ -234,6 +239,30 @@ function PrayerManagement() {
                         />
                       </div>
                     </div>
+                    <div className="space-y-2">
+                      <Label>Daily Resources (Link or Description)</Label>
+                      <div className="relative">
+                        <FileText className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input 
+                          placeholder="Study Guide PDF Link..." 
+                          className="pl-10 h-11 rounded-xl"
+                          value={videoForm.resources}
+                          onChange={e => setVideoForm({...videoForm, resources: e.target.value})}
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Downloads (Link or Description)</Label>
+                      <div className="relative">
+                        <Download className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input 
+                          placeholder="Audio/Video Download Link..." 
+                          className="pl-10 h-11 rounded-xl"
+                          value={videoForm.downloads}
+                          onChange={e => setVideoForm({...videoForm, downloads: e.target.value})}
+                        />
+                      </div>
+                    </div>
                  </div>
                  <DialogFooter>
                     <Button type="submit" className="w-full bg-forest h-11 rounded-xl shadow-md">Start Upload</Button>
@@ -258,6 +287,7 @@ function PrayerManagement() {
               <TableRow className="border-border/50">
                 <TableHead>Video Title</TableHead>
                 <TableHead>Duration</TableHead>
+                <TableHead>Extras</TableHead>
                 <TableHead>Views</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -278,6 +308,23 @@ function PrayerManagement() {
                     </div>
                   </TableCell>
                   <TableCell>{video.duration}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      {video.resources && (
+                        <Badge variant="outline" className="gap-1 bg-blue-500/10 text-blue-600 border-blue-500/20" title={video.resources}>
+                          <FileText className="w-3 h-3" /> Res
+                        </Badge>
+                      )}
+                      {video.downloads && (
+                        <Badge variant="outline" className="gap-1 bg-purple-500/10 text-purple-600 border-purple-500/20" title={video.downloads}>
+                          <Download className="w-3 h-3" /> DL
+                        </Badge>
+                      )}
+                      {!video.resources && !video.downloads && (
+                        <span className="text-muted-foreground text-xs">-</span>
+                      )}
+                    </div>
+                  </TableCell>
                   <TableCell>{video.views}</TableCell>
                   <TableCell>
                     <Badge 
