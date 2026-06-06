@@ -566,7 +566,7 @@ function EventsPage() {
             )}
 
             {/* Host CTA */}
-            <div className="text-center py-16 space-y-6">
+            {/* <div className="text-center py-16 space-y-6">
               <div className="text-[10px] font-black uppercase tracking-[0.4em] text-gold/70">Host a Screening</div>
               <h3 className="font-display text-4xl text-cream">Bring the Event to Your City</h3>
               <p className="text-cream/50 max-w-xl mx-auto">
@@ -578,7 +578,7 @@ function EventsPage() {
               >
                 <Mail className="h-4 w-4" /> Contact Our Partners Team
               </a>
-            </div>
+            </div> */}
           </div>
         ) : (
           <div className="py-32 text-center text-cream/50 flex flex-col items-center justify-center space-y-4">
