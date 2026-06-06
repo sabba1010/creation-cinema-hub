@@ -24,7 +24,7 @@ function AdminSeriesPage() {
 
   const fetchSeriesData = async () => {
     try {
-      const res = await fetch(`https://movie-backend-drab.vercel.app/api/kids/series/${seriesId}`);
+      const res = await fetch(`http://localhost:5000/api/kids/series/${seriesId}`);
       if (res.ok) {
         const data = await res.json();
         const seriesObj = {
@@ -44,7 +44,7 @@ function AdminSeriesPage() {
 
   const fetchEpisodes = async (seriesImg?: string) => {
     try {
-      const res = await fetch(`https://movie-backend-drab.vercel.app/api/kids/series/${seriesId}/episodes`);
+      const res = await fetch(`http://localhost:5000/api/kids/series/${seriesId}/episodes`);
       if (res.ok) {
         const data = await res.json();
         const fallbackImg = seriesImg || "https://images.unsplash.com/photo-1502086223501-7ea2443054f1?w=800&h=400&fit=crop";
@@ -77,8 +77,8 @@ function AdminSeriesPage() {
     try {
       const method = editingEpId ? "PUT" : "POST";
       const url = editingEpId
-        ? `https://movie-backend-drab.vercel.app/api/kids/episodes/${editingEpId}`
-        : `https://movie-backend-drab.vercel.app/api/kids/series/${seriesId}/episodes`;
+        ? `http://localhost:5000/api/kids/episodes/${editingEpId}`
+        : `http://localhost:5000/api/kids/series/${seriesId}/episodes`;
 
       const res = await fetch(url, {
         method,
@@ -123,7 +123,7 @@ function AdminSeriesPage() {
     });
     if (!result.isConfirmed) return;
     try {
-      await fetch(`https://movie-backend-drab.vercel.app/api/kids/episodes/${id}`, { method: "DELETE" });
+      await fetch(`http://localhost:5000/api/kids/episodes/${id}`, { method: "DELETE" });
       await fetchEpisodes(series?.img);
       if (activeEpisodeId === id) setActiveEpisodeId(null);
       Swal.fire({ title: "Removed!", text: "Episode has been deleted.", icon: "success", confirmButtonColor: "#2C4A3B" });

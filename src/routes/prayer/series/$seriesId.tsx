@@ -22,7 +22,7 @@ import {
 import { PRAYER_SERIES } from "../../../data/prayer-data";
 import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export const Route = createFileRoute("/prayer/series/$seriesId")({
   component: PrayerSeriesPage,

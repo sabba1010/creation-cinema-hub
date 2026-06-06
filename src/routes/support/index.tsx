@@ -46,7 +46,7 @@ function SupportPage() {
    ];
 
    useEffect(() => {
-      fetch("https://movie-backend-drab.vercel.app/api/campaigns")
+      fetch("http://localhost:5000/api/campaigns")
          .then(res => res.json())
          .then(data => {
             if (data.success) {
@@ -65,7 +65,7 @@ function SupportPage() {
       const finalAmount = amount === "Custom" ? customAmount : amount;
 
       try {
-         const res = await fetch("https://movie-backend-drab.vercel.app/api/donations", {
+         const res = await fetch("http://localhost:5000/api/donations", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
