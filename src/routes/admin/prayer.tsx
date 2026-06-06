@@ -384,6 +384,7 @@ function PrayerManagement() {
                       onChange={e => setSeasonForm({ ...seasonForm, price: Number(e.target.value) })}
                     />
                   </div>
+                  {/*
                   <div className="space-y-2">
                     <Label>Sample Preview Video URL</Label>
                     <Input
@@ -393,6 +394,7 @@ function PrayerManagement() {
                       onChange={e => setSeasonForm({ ...seasonForm, samplePreviewVideo: e.target.value })}
                     />
                   </div>
+                  */}
                 </div>
                 <DialogFooter>
                   <Button type="submit" className="w-full bg-forest h-11 rounded-xl shadow-md">
