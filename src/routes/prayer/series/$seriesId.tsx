@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import {
@@ -22,6 +22,8 @@ import {
 import { PRAYER_SERIES } from "../../../data/prayer-data";
 import { toast } from "sonner";
 
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
+
 export const Route = createFileRoute("/prayer/series/$seriesId")({
   component: PrayerSeriesPage,
 });
@@ -29,7 +31,10 @@ export const Route = createFileRoute("/prayer/series/$seriesId")({
 function PrayerSeriesPage() {
   const { seriesId } = Route.useParams();
   const navigate = useNavigate();
-  const series = PRAYER_SERIES.find((s) => s.id === seriesId);
+
+  const [series, setSeries] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   const [activeTab, setActiveTab] = useState<"videos" | "resources" | "downloads">("videos");
   const [expandedDay, setExpandedDay] = useState<number | null>(1);
   const [hasAccess] = useState(() => {
@@ -39,19 +44,104 @@ function PrayerSeriesPage() {
     return false;
   });
 
+  useEffect(() => {
+    const fetchSeries = async () => {
+      try {
+        const [seaRes, epRes] = await Promise.all([
+          fetch(`${API_URL}/api/prayer/seasons/${seriesId}`),
+          fetch(`${API_URL}/api/prayer/seasons/${seriesId}/episodes`)
+        ]);
+
+        let fetchedSeries = null;
+        if (seaRes.ok && epRes.ok) {
+          const seaData = await seaRes.json();
+          const epData = await epRes.json();
+          if (seaData.success && seaData.data && epData.success) {
+            const s = seaData.data;
+            const eps = epData.data;
+
+            // Map the backend episodes to the unified format the UI expects
+            const videos = eps.map((ep: any) => ({
+              id: ep._id,
+              day: ep.day,
+              title: ep.title,
+              speaker: ep.speaker || "",
+              description: ep.description || "",
+              duration: ep.duration || "00:00",
+              thumbnail: ep.thumbnail || s.thumbnail || s.bannerImage,
+              videoUrl: ep.videoUrl,
+              locked: ep.day > 1
+            }));
+
+            const resources = eps.filter((ep: any) => ep.resourceTitle).map((ep: any) => ({
+              day: ep.day,
+              title: ep.resourceTitle,
+              scripture: ep.resourceScripture || "",
+              devotional: ep.resourceDevotional || "",
+              prayerPoints: ep.resourcePoints || []
+            }));
+
+            const downloads = eps.flatMap((ep: any) =>
+              (ep.downloads || []).map((dl: any) => ({
+                id: dl._id || Math.random().toString(),
+                title: `[Day ${ep.day}] ${dl.title}`,
+                type: dl.type || "PDF",
+                size: dl.size || "Unknown",
+                description: dl.description || "",
+                locked: ep.day > 1,
+                fileUrl: dl.fileUrl
+              }))
+            );
+
+            fetchedSeries = {
+              ...s,
+              id: s._id,
+              videos,
+              resources,
+              downloads
+            };
+          }
+        }
+
+        if (fetchedSeries) {
+          setSeries(fetchedSeries);
+        } else {
+          // Fallback to static mock data
+          const mockSeries = PRAYER_SERIES.find((s) => s.id === seriesId);
+          setSeries(mockSeries);
+        }
+      } catch (err) {
+        const mockSeries = PRAYER_SERIES.find((s) => s.id === seriesId);
+        setSeries(mockSeries);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSeries();
+  }, [seriesId]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin h-10 w-10 border-4 border-forest border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
   if (!series) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <h1 className="font-display text-4xl">Series Not Found</h1>
-          <Link to="/prayer" className="text-primary underline">← Back to Week of Prayer</Link>
+          <Link to="/prayer" className="text-primary underline">←  Back to Week of Prayer</Link>
         </div>
       </div>
     );
   }
 
-  const unlockedVideos = series.videos.filter((v) => !v.locked || hasAccess);
-  const accessedVideos = hasAccess ? series.videos : series.videos.filter((v) => !v.locked);
+  const unlockedVideos = series.videos?.filter((v: any) => !v.locked || hasAccess) || [];
+  const accessedVideos = hasAccess ? series.videos : series.videos?.filter((v: any) => !v.locked) || [];
 
   const handleGetAccess = () => {
     navigate({ to: "/prayer/checkout", search: { seriesId: series.id } } as any);
@@ -86,13 +176,12 @@ function PrayerSeriesPage() {
             </Link>
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <span
-                className={`text-[10px] font-black uppercase tracking-[0.3em] px-3 py-1.5 rounded-full ${
-                  series.status === "upcoming"
-                    ? "bg-gold text-forest-deep"
-                    : series.status === "active"
+                className={`text-[10px] font-black uppercase tracking-[0.3em] px-3 py-1.5 rounded-full ${series.status === "upcoming"
+                  ? "bg-gold text-forest-deep"
+                  : series.status === "active"
                     ? "bg-emerald-500 text-white"
                     : "bg-white/20 text-cream"
-                }`}
+                  }`}
               >
                 {series.status === "upcoming" ? "Coming Soon" : series.status === "active" ? "Available Now" : "Archive"}
               </span>
@@ -140,11 +229,10 @@ function PrayerSeriesPage() {
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`px-6 py-3 text-sm font-bold uppercase tracking-widest border-b-2 transition-all ${
-                        activeTab === tab
-                          ? "border-primary text-primary"
-                          : "border-transparent text-muted-foreground hover:text-foreground"
-                      }`}
+                      className={`px-6 py-3 text-sm font-bold uppercase tracking-widest border-b-2 transition-all ${activeTab === tab
+                        ? "border-primary text-primary"
+                        : "border-transparent text-muted-foreground hover:text-foreground"
+                        }`}
                     >
                       {tab === "videos" ? "Videos" : tab === "resources" ? "Daily Resources" : "Downloads"}
                     </button>
@@ -155,16 +243,15 @@ function PrayerSeriesPage() {
               {/* Videos Tab */}
               {activeTab === "videos" && (
                 <div className="space-y-4">
-                  {series.videos.map((video) => {
+                  {series.videos?.map((video: any) => {
                     const isAccessible = !video.locked || hasAccess;
                     return (
                       <div
                         key={video.id}
-                        className={`group flex gap-4 p-4 rounded-2xl border transition-all ${
-                          isAccessible
-                            ? "border-border bg-card hover:shadow-md cursor-pointer"
-                            : "border-border/50 bg-card/50 opacity-75"
-                        }`}
+                        className={`group flex gap-4 p-4 rounded-2xl border transition-all ${isAccessible
+                          ? "border-border bg-card hover:shadow-md cursor-pointer"
+                          : "border-border/50 bg-card/50 opacity-75"
+                          }`}
                         onClick={() => {
                           if (isAccessible) {
                             navigate({ to: "/prayer/video" } as any);
@@ -215,7 +302,7 @@ function PrayerSeriesPage() {
               {/* Resources Tab */}
               {activeTab === "resources" && (
                 <div className="space-y-4">
-                  {series.resources.map((resource) => {
+                  {series.resources?.map((resource: any) => {
                     const isOpen = expandedDay === resource.day;
                     const isLocked = resource.day > 2 && !hasAccess;
                     return (
@@ -281,7 +368,7 @@ function PrayerSeriesPage() {
               {/* Downloads Tab */}
               {activeTab === "downloads" && (
                 <div className="space-y-4">
-                  {series.downloads.map((dl) => {
+                  {series.downloads?.map((dl: any) => {
                     const isAccessible = !dl.locked || hasAccess;
                     const typeColors: Record<string, string> = {
                       PDF: "bg-red-500/10 text-red-600",
@@ -292,9 +379,8 @@ function PrayerSeriesPage() {
                     return (
                       <div
                         key={dl.id}
-                        className={`flex items-center gap-5 p-5 rounded-2xl border transition-all ${
-                          isAccessible ? "border-border bg-card hover:shadow-sm" : "border-border/50 bg-card/50 opacity-70"
-                        }`}
+                        className={`flex items-center gap-5 p-5 rounded-2xl border transition-all ${isAccessible ? "border-border bg-card hover:shadow-sm" : "border-border/50 bg-card/50 opacity-70"
+                          }`}
                       >
                         <div className={`h-12 w-12 rounded-xl flex items-center justify-center text-xs font-black flex-shrink-0 ${typeColors[dl.type] || "bg-muted text-muted-foreground"}`}>
                           {dl.type}
@@ -307,16 +393,19 @@ function PrayerSeriesPage() {
                         <button
                           onClick={() => {
                             if (isAccessible) {
-                              toast.success(`Downloading ${dl.title}...`);
+                              if (dl.fileUrl) {
+                                window.open(dl.fileUrl, '_blank');
+                              } else {
+                                toast.success(`Downloading ${dl.title}...`);
+                              }
                             } else {
                               toast.error("Purchase access to download this material");
                             }
                           }}
-                          className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
-                            isAccessible
-                              ? "bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95"
-                              : "bg-muted text-muted-foreground cursor-not-allowed"
-                          }`}
+                          className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${isAccessible
+                            ? "bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95"
+                            : "bg-muted text-muted-foreground cursor-not-allowed"
+                            }`}
                         >
                           {isAccessible ? (
                             <><Download className="h-3.5 w-3.5" /> Download</>
@@ -397,7 +486,7 @@ function PrayerSeriesPage() {
                   {[
                     { icon: Play, label: "5 Video Sessions", sub: "HD quality, replay anytime" },
                     { icon: BookOpen, label: "Daily Devotionals", sub: "Scripture, reflection & prayer" },
-                    { icon: Download, label: `${series.downloads.length} Downloads`, sub: "PDFs, slides & more" },
+                    { icon: Download, label: `${series.downloads?.length || 0} Downloads`, sub: "PDFs, slides & more" },
                     { icon: Users, label: "For Schools & Churches", sub: "Facilitator tools included" },
                     { icon: Clock, label: `${series.accessDays}-Day Access`, sub: "Watch at your own pace" },
                   ].map(({ icon: Icon, label, sub }) => (

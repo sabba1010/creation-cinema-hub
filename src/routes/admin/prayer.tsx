@@ -1,152 +1,196 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { 
-  Video, 
-  Plus, 
-  Clock, 
-  Shield, 
-  ShieldAlert, 
-  UserPlus, 
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import {
+  Video,
+  Plus,
+  Shield,
+  ShieldAlert,
+  UserPlus,
   History,
   MoreHorizontal,
-  CloudUpload,
-  Play,
-  Trash2,
   Edit,
   Mail,
   User,
-  Calendar as CalendarIcon,
-  FileText,
-  Download
+  Trash2,
+  Settings
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from "../../components/ui/table";
 import { Progress } from "../../components/ui/progress";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
   DialogFooter,
   DialogDescription
 } from "../../components/ui/dialog";
 import { Label } from "../../components/ui/label";
 import { toast } from "sonner";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
 } from "../../components/ui/dropdown-menu";
 
 export const Route = createFileRoute("/admin/prayer")({
   component: PrayerManagement,
 });
 
-const INITIAL_VIDEOS = [
-  { id: 1, title: "Night 1: The Architecture of Light", duration: "45:00", uploads: "June 14, 2026", views: 1240, status: "Live", resources: "Study Guide PDF", downloads: "Audio MP3" },
-  { id: 2, title: "Night 2: Rhythms of the Deep", duration: "38:20", uploads: "June 15, 2026", views: 980, status: "Published", resources: "", downloads: "" },
-  { id: 3, title: "Night 3: Whispers in the Wind", duration: "42:15", uploads: "June 16, 2026", views: 450, status: "Published", resources: "", downloads: "" },
-  { id: 4, title: "Night 4: The Soil's Secret", duration: "40:00", uploads: "June 17, 2026", views: 0, status: "Published", resources: "Prayer Journal", downloads: "Video MP4" },
-  { id: 5, title: "Night 5: The Celestial Clockwork", duration: "44:10", uploads: "June 18, 2026", views: 0, status: "Scheduled", resources: "", downloads: "" },
-  { id: 6, title: "Night 6: Life in Paradox", duration: "39:50", uploads: "June 19, 2026", views: 0, status: "Scheduled", resources: "", downloads: "" },
-  { id: 7, title: "Night 7: The Sabbath Rest", duration: "55:00", uploads: "June 20, 2026", views: 0, status: "Scheduled", resources: "", downloads: "" },
-];
-
-const INITIAL_USERS = [
-  { id: 1, name: "Sarah Jenkins", email: "sarah@example.com", status: "Active", expires: "June 30, 2026", progress: 65 },
-  { id: 2, name: "Michael Ross", email: "m.ross@example.com", status: "Expired", expires: "June 10, 2026", progress: 100 },
-  { id: 3, name: "David Miller", email: "dmiller@example.com", status: "Active", expires: "July 05, 2026", progress: 20 },
-];
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 function PrayerManagement() {
-  const [videos, setVideos] = useState(INITIAL_VIDEOS);
-  const [users, setUsers] = useState(INITIAL_USERS);
-  
+  const [seasons, setSeasons] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   // Dialog States
-  const [isVideoDialogOpen, setIsVideoDialogOpen] = useState(false);
+  const [isSeasonDialogOpen, setIsSeasonDialogOpen] = useState(false);
   const [isGrantDialogOpen, setIsGrantDialogOpen] = useState(false);
 
   // Form States
-  const [videoForm, setVideoForm] = useState({ title: "Day 4: Spiritual Warfare", duration: "40:00", resources: "", downloads: "" });
-  const [grantForm, setGrantForm] = useState({ name: "John Doe", email: "john@example.com" });
+  const [seasonForm, setSeasonForm] = useState({ title: "", theme: "", description: "", price: 29, samplePreviewVideo: "" });
+  const [grantForm, setGrantForm] = useState({ name: "", email: "" });
 
-  const handleUploadVideo = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newVideo = {
-      id: Date.now(),
-      title: videoForm.title,
-      duration: videoForm.duration,
-      resources: videoForm.resources,
-      downloads: videoForm.downloads,
-      uploads: new Date().toLocaleDateString(),
-      views: 0,
-      status: "Scheduled"
-    };
-    setVideos([...videos, newVideo]);
-    setIsVideoDialogOpen(false);
-    toast.success("Video uploaded successfully!");
+  const fetchData = async () => {
+    try {
+      const [seaRes, usrRes] = await Promise.all([
+        fetch(`${API_URL}/api/prayer/seasons`),
+        fetch(`${API_URL}/api/prayer/users`)
+      ]);
+      const seaData = await seaRes.json();
+      const usrData = await usrRes.json();
+      if (seaData.success) setSeasons(seaData.data);
+      if (usrData.success) setUsers(usrData.data);
+    } catch (err) {
+      toast.error("Failed to fetch data");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleGrantAccess = (e: React.FormEvent) => {
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleCreateSeason = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${API_URL}/api/prayer/seasons`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(seasonForm)
+      });
+      if (res.ok) {
+        setIsSeasonDialogOpen(false);
+        setSeasonForm({ title: "", theme: "", description: "", price: 29, samplePreviewVideo: "" });
+        toast.success("Season created successfully!");
+        fetchData();
+      } else {
+        toast.error("Failed to create season");
+      }
+    } catch (err) {
+      toast.error("Error creating season");
+    }
+  };
+
+  const handleGrantAccess = async (e: React.FormEvent) => {
     e.preventDefault();
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 14); // 2-week expiration
-    
-    const newUser = {
-      id: Date.now(),
-      name: grantForm.name,
-      email: grantForm.email,
-      status: "Active",
-      expires: expiryDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      progress: 0
-    };
-    setUsers([newUser, ...users]);
-    setIsGrantDialogOpen(false);
-    toast.success(`Access granted to ${grantForm.name}`);
-  };
 
-  const handleRevoke = (id: number) => {
-    setUsers(users.map(u => u.id === id ? { ...u, status: "Expired" } : u));
-    toast.error("Access revoked");
-  };
-
-  const handleExtend = (id: number) => {
-    setUsers(users.map(u => {
-      if (u.id === id) {
-        const current = new Date(u.expires);
-        current.setDate(current.getDate() + 7);
-        return { ...u, status: "Active", expires: current.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) };
+    try {
+      const res = await fetch(`${API_URL}/api/prayer/users`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: grantForm.name,
+          email: grantForm.email,
+          status: "Active",
+          expires: expiryDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        })
+      });
+      if (res.ok) {
+        setIsGrantDialogOpen(false);
+        setGrantForm({ name: "", email: "" });
+        toast.success(`Access granted to ${grantForm.name}`);
+        fetchData();
       }
-      return u;
-    }));
-    toast.success("Access extended by 7 days");
+    } catch (err) {
+      toast.error("Failed to grant access");
+    }
   };
 
-  const handleDeleteVideo = (id: number) => {
-    setVideos(videos.filter(v => v.id !== id));
-    toast.error("Video removed from program");
+  const handleRevoke = async (id: string) => {
+    try {
+      await fetch(`${API_URL}/api/prayer/users/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "Expired" })
+      });
+      toast.error("Access revoked");
+      fetchData();
+    } catch (err) {
+      toast.error("Failed to revoke access");
+    }
   };
+
+  const handleExtend = async (user: any) => {
+    try {
+      const current = new Date(user.expires);
+      current.setDate(current.getDate() + 7);
+      await fetch(`${API_URL}/api/prayer/users/${user._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: "Active",
+          expires: current.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        })
+      });
+      toast.success("Access extended by 7 days");
+      fetchData();
+    } catch (err) {
+      toast.error("Failed to extend access");
+    }
+  };
+
+  const handleDeleteSeason = async (id: string) => {
+    try {
+      await fetch(`${API_URL}/api/prayer/seasons/${id}`, { method: "DELETE" });
+      toast.error("Season deleted");
+      fetchData();
+    } catch (err) {
+      toast.error("Failed to delete season");
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin h-10 w-10 border-4 border-forest border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-fade-up">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-display font-bold text-foreground">Week Of Prayer</h1>
-          <p className="text-muted-foreground">Manage video content and access control for the prayer program.</p>
+          <p className="text-muted-foreground">Manage Week of Prayer seasons, episodes, and access control.</p>
         </div>
         <div className="flex gap-2">
           {/* Manual Grant Dialog */}
@@ -163,110 +207,97 @@ function PrayerManagement() {
                 <DialogDescription>Manually add a user to the program with a 2-week expiration.</DialogDescription>
               </DialogHeader>
               <form onSubmit={handleGrantAccess} className="space-y-6 py-4">
-                 <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>Full Name</Label>
-                      <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input 
-                          placeholder="John Doe" 
-                          className="pl-10 h-11 rounded-xl"
-                          value={grantForm.name}
-                          onChange={e => setGrantForm({...grantForm, name: e.target.value})}
-                          required
-                        />
-                      </div>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Full Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="John Doe"
+                        className="pl-10 h-11 rounded-xl"
+                        value={grantForm.name}
+                        onChange={e => setGrantForm({ ...grantForm, name: e.target.value })}
+                        required
+                      />
                     </div>
-                    <div className="space-y-2">
-                      <Label>Email Address</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input 
-                          type="email"
-                          placeholder="john@example.com" 
-                          className="pl-10 h-11 rounded-xl"
-                          value={grantForm.email}
-                          onChange={e => setGrantForm({...grantForm, email: e.target.value})}
-                          required
-                        />
-                      </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Email Address</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="email"
+                        placeholder="john@example.com"
+                        className="pl-10 h-11 rounded-xl"
+                        value={grantForm.email}
+                        onChange={e => setGrantForm({ ...grantForm, email: e.target.value })}
+                        required
+                      />
                     </div>
-                 </div>
-                 <DialogFooter>
-                    <Button type="submit" className="w-full bg-forest h-11 rounded-xl shadow-md">Grant 14-Day Access</Button>
-                 </DialogFooter>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button type="submit" className="w-full bg-forest h-11 rounded-xl shadow-md">Grant 14-Day Access</Button>
+                </DialogFooter>
               </form>
             </DialogContent>
           </Dialog>
 
-          {/* Upload Video Dialog */}
-          <Dialog open={isVideoDialogOpen} onOpenChange={setIsVideoDialogOpen}>
+          {/* Create Season Dialog */}
+          <Dialog open={isSeasonDialogOpen} onOpenChange={setIsSeasonDialogOpen}>
             <DialogTrigger asChild>
               <Button className="bg-forest h-11 rounded-xl gap-2 shadow-md">
-                <CloudUpload className="w-4 h-4" />
-                Upload Video
+                <Plus className="w-4 h-4" />
+                Create Season
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] rounded-[2rem]">
               <DialogHeader>
-                <DialogTitle className="text-2xl font-display font-bold">Upload Program Video</DialogTitle>
+                <DialogTitle className="text-2xl font-display font-bold">Create New Season</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleUploadVideo} className="space-y-6 py-4">
-                 <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>Video Title</Label>
-                      <div className="relative">
-                        <Video className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input 
-                          placeholder="Day 4: Spiritual Warfare" 
-                          className="pl-10 h-11 rounded-xl"
-                          value={videoForm.title}
-                          onChange={e => setVideoForm({...videoForm, title: e.target.value})}
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Duration (MM:SS)</Label>
-                      <div className="relative">
-                        <Clock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input 
-                          placeholder="40:00" 
-                          className="pl-10 h-11 rounded-xl"
-                          value={videoForm.duration}
-                          onChange={e => setVideoForm({...videoForm, duration: e.target.value})}
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Daily Resources (Link or Description)</Label>
-                      <div className="relative">
-                        <FileText className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input 
-                          placeholder="Study Guide PDF Link..." 
-                          className="pl-10 h-11 rounded-xl"
-                          value={videoForm.resources}
-                          onChange={e => setVideoForm({...videoForm, resources: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Downloads (Link or Description)</Label>
-                      <div className="relative">
-                        <Download className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input 
-                          placeholder="Audio/Video Download Link..." 
-                          className="pl-10 h-11 rounded-xl"
-                          value={videoForm.downloads}
-                          onChange={e => setVideoForm({...videoForm, downloads: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                 </div>
-                 <DialogFooter>
-                    <Button type="submit" className="w-full bg-forest h-11 rounded-xl shadow-md">Start Upload</Button>
-                 </DialogFooter>
+              <form onSubmit={handleCreateSeason} className="space-y-6 py-4">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Season Title</Label>
+                    <Input
+                      placeholder="Week of Prayer 2026"
+                      className="h-11 rounded-xl"
+                      value={seasonForm.title}
+                      onChange={e => setSeasonForm({ ...seasonForm, title: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Theme</Label>
+                    <Input
+                      placeholder="e.g. Rooted in Him"
+                      className="h-11 rounded-xl"
+                      value={seasonForm.theme}
+                      onChange={e => setSeasonForm({ ...seasonForm, theme: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Price ($)</Label>
+                    <Input
+                      type="number"
+                      className="h-11 rounded-xl"
+                      value={seasonForm.price}
+                      onChange={e => setSeasonForm({ ...seasonForm, price: Number(e.target.value) })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Sample Preview Video URL</Label>
+                    <Input
+                      placeholder="https://vimeo.com/..."
+                      className="h-11 rounded-xl"
+                      value={seasonForm.samplePreviewVideo}
+                      onChange={e => setSeasonForm({ ...seasonForm, samplePreviewVideo: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button type="submit" className="w-full bg-forest h-11 rounded-xl shadow-md">Create Season</Button>
+                </DialogFooter>
               </form>
             </DialogContent>
           </Dialog>
@@ -278,63 +309,37 @@ function PrayerManagement() {
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-xl font-display flex items-center gap-2">
               <Video className="w-5 h-5 text-forest" />
-              Program Content
+              Prayer Seasons
             </CardTitle>
-            <Badge className="bg-forest/10 text-forest border-forest/20">2-Week Expiration Enabled</Badge>
           </CardHeader>
           <Table>
             <TableHeader className="bg-muted/30">
               <TableRow className="border-border/50">
-                <TableHead>Video Title</TableHead>
-                <TableHead>Duration</TableHead>
-                <TableHead>Extras</TableHead>
-                <TableHead>Views</TableHead>
+                <TableHead>Season / Theme</TableHead>
+                <TableHead>Price</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {videos.map((video) => (
-                <TableRow key={video.id} className="border-border/50">
+              {seasons.map((season) => (
+                <TableRow key={season._id} className="border-border/50">
                   <TableCell className="font-medium">
-                    <div className="flex items-center gap-3">
-                      <div className="w-16 h-10 bg-muted rounded-md flex items-center justify-center relative group cursor-pointer overflow-hidden">
-                        <div className="absolute inset-0 bg-forest/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <Play className="w-4 h-4 text-forest fill-forest" />
-                        </div>
-                        <Video className="w-4 h-4 text-muted-foreground" />
-                      </div>
-                      {video.title}
+                    <div>
+                      <div className="font-bold text-foreground">{season.title}</div>
+                      <div className="text-xs text-muted-foreground">{season.theme}</div>
                     </div>
                   </TableCell>
-                  <TableCell>{video.duration}</TableCell>
+                  <TableCell>${season.price}</TableCell>
                   <TableCell>
-                    <div className="flex gap-2">
-                      {video.resources && (
-                        <Badge variant="outline" className="gap-1 bg-blue-500/10 text-blue-600 border-blue-500/20" title={video.resources}>
-                          <FileText className="w-3 h-3" /> Res
-                        </Badge>
-                      )}
-                      {video.downloads && (
-                        <Badge variant="outline" className="gap-1 bg-purple-500/10 text-purple-600 border-purple-500/20" title={video.downloads}>
-                          <Download className="w-3 h-3" /> DL
-                        </Badge>
-                      )}
-                      {!video.resources && !video.downloads && (
-                        <span className="text-muted-foreground text-xs">-</span>
-                      )}
-                    </div>
+                    <Badge variant="outline">{season.status}</Badge>
                   </TableCell>
-                  <TableCell>{video.views}</TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant={video.status === "Live" ? "default" : "secondary"}
-                      className={video.status === "Live" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 animate-pulse" : ""}
-                    >
-                      {video.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right flex justify-end gap-2">
+                    <Link to={`/admin/prayer-season/${season._id}`}>
+                      <Button variant="outline" size="sm" className="h-8 rounded-lg gap-2">
+                        <Settings className="w-4 h-4" /> Manage Episodes
+                      </Button>
+                    </Link>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0"><MoreHorizontal className="w-4 h-4" /></Button>
@@ -342,14 +347,19 @@ function PrayerManagement() {
                       <DropdownMenuContent align="end" className="rounded-xl border-border/50">
                         <DropdownMenuItem className="gap-2 cursor-pointer"><Edit className="w-4 h-4" /> Edit Info</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="gap-2 text-destructive cursor-pointer" onClick={() => handleDeleteVideo(video.id)}>
-                          <Trash2 className="w-4 h-4" /> Delete Video
+                        <DropdownMenuItem className="gap-2 text-destructive cursor-pointer" onClick={() => handleDeleteSeason(season._id)}>
+                          <Trash2 className="w-4 h-4" /> Delete Season
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}
+              {seasons.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">No seasons created yet.</TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </Card>
@@ -374,9 +384,9 @@ function PrayerManagement() {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Total Active Users</span>
-                  <span className="font-semibold">842</span>
+                  <span className="font-semibold">{users.filter(u => u.status === 'Active').length}</span>
                 </div>
-                <Progress value={84} className="h-2 bg-muted" />
+                <Progress value={Math.min(100, (users.filter(u => u.status === 'Active').length / (users.length || 1)) * 100)} className="h-2 bg-muted" />
               </div>
               <div className="pt-4 border-t border-border/30">
                 <Button className="w-full bg-gold text-gold-foreground hover:bg-gold/90 h-10 rounded-xl" onClick={() => toast.success("Policy updated for all active sessions")}>Extend All Access</Button>
@@ -388,7 +398,8 @@ function PrayerManagement() {
 
       <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card">
         <CardHeader>
-          <CardTitle className="text-xl font-display">Recent Access Grants</CardTitle>
+          <CardTitle className="text-xl font-display">Recent Purchases & Grants</CardTitle>
+          <CardDescription>Member account access area for purchased content</CardDescription>
         </CardHeader>
         <Table>
           <TableHeader className="bg-muted/30">
@@ -402,7 +413,7 @@ function PrayerManagement() {
           </TableHeader>
           <TableBody>
             {users.map((user) => (
-              <TableRow key={user.id} className="border-border/50">
+              <TableRow key={user._id} className="border-border/50">
                 <TableCell>
                   <div>
                     <div className="font-medium">{user.name}</div>
@@ -410,7 +421,7 @@ function PrayerManagement() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge 
+                  <Badge
                     variant={user.status === "Active" ? "default" : "secondary"}
                     className={user.status === "Active" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : ""}
                   >
@@ -425,25 +436,30 @@ function PrayerManagement() {
                 </TableCell>
                 <TableCell className="text-sm font-mono">{user.expires}</TableCell>
                 <TableCell className="text-right flex justify-end gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     className="h-8 px-3 rounded-lg text-xs gap-1 border-border/50 transition-all active:scale-95"
-                    onClick={() => handleExtend(user.id)}
+                    onClick={() => handleExtend(user)}
                   >
                     <History className="w-3 h-3" /> Extend
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     className="h-8 px-3 rounded-lg text-xs text-destructive hover:bg-destructive/10 transition-all active:scale-95"
-                    onClick={() => handleRevoke(user.id)}
+                    onClick={() => handleRevoke(user._id)}
                   >
                     <ShieldAlert className="w-3 h-3" /> Revoke
                   </Button>
                 </TableCell>
               </TableRow>
             ))}
+            {users.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">No recent grants.</TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </Card>
