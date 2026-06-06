@@ -75,7 +75,10 @@ function SeasonDetailsPage() {
   };
 
   useEffect(() => {
-    fetch(`${API_URL}/api/podcast/seasons/${seasonId}`)
+    const token = localStorage.getItem("user_token");
+    const headers: HeadersInit = token ? { "Authorization": `Bearer ${token}` } : {};
+
+    fetch(`${API_URL}/api/podcast/seasons/${seasonId}`, { headers })
       .then(res => res.json())
       .then(data => {
         if (data.success) {

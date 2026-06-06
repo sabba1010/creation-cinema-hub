@@ -30,7 +30,7 @@ export function Hero() {
       {/* Background Image / Video */}
       {isVideo ? (
         <video
-          src={mediaUrl}
+          src={mediaUrl ?? undefined}
           autoPlay
           loop
           muted

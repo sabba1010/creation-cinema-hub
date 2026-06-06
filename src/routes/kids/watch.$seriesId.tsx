@@ -53,8 +53,11 @@ function KidsWatchPage() {
   useEffect(() => {
     const fetchAll = async () => {
       try {
+        const token = localStorage.getItem("user_token");
+        const headers: HeadersInit = token ? { "Authorization": `Bearer ${token}` } : {};
+        
         // Step 1: Fetch series FIRST to get banner image for episode thumbnail fallback
-        const seriesRes = await fetch(`${API_URL}/api/kids/series/${seriesId}`);
+        const seriesRes = await fetch(`${API_URL}/api/kids/series/${seriesId}`, { headers });
         if (!seriesRes.ok) return;
         const seriesData = await seriesRes.json();
         const seriesObj = {
@@ -66,7 +69,7 @@ function KidsWatchPage() {
         setSeries(seriesObj);
 
         // Step 2: THEN fetch episodes, using series banner image as fallback thumbnail
-        const epRes = await fetch(`${API_URL}/api/kids/series/${seriesId}/episodes`);
+        const epRes = await fetch(`${API_URL}/api/kids/series/${seriesId}/episodes`, { headers });
         if (epRes.ok) {
           const data = await epRes.json();
           const mappedEpisodes = data.map((ep: any) => ({

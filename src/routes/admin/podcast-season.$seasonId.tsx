@@ -5,7 +5,7 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../../components/ui/dialog";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
 
@@ -30,7 +30,11 @@ function AdminPodcastSeasonPage() {
   const fetchSeasonData = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/podcast/seasons/${seasonId}`);
+      const res = await fetch(`${API_URL}/api/podcast/seasons/${seasonId}`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        }
+      });
       const data = await res.json();
       if (data.success) {
         setSeason(data.data);
@@ -364,6 +368,9 @@ function AdminPodcastSeasonPage() {
             <DialogTitle className="text-2xl font-display font-bold">
               {editingEpId ? "Edit Episode" : `Add Episode to ${season.title}`}
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              Episode details
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSaveEpisode} className="space-y-6 py-4 text-left">
             <div className="space-y-4">
