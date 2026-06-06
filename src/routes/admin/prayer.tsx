@@ -133,7 +133,7 @@ function PrayerManagement() {
 
     setIsUploading(true);
     const formDataObj = new FormData();
-    formDataObj.append("image", file);
+    formDataObj.append("file", file); // Must match upload.single('file') in backend
 
     try {
       const res = await fetch(`${API_URL}/api/upload`, {
@@ -426,9 +426,20 @@ function PrayerManagement() {
               {seasons.map((season) => (
                 <TableRow key={season._id} className="border-border/50">
                   <TableCell className="font-medium">
-                    <div>
-                      <div className="font-bold text-foreground">{season.title}</div>
-                      <div className="text-xs text-muted-foreground">{season.theme}</div>
+                    <div className="flex items-center gap-4">
+                      <div className="h-12 w-20 rounded-md overflow-hidden bg-muted flex-shrink-0 border border-border">
+                        {season.bannerImage ? (
+                          <img src={season.bannerImage} alt={season.title} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                            <Video className="w-4 h-4 opacity-50" />
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <div className="font-bold text-foreground">{season.title}</div>
+                        <div className="text-xs text-muted-foreground">{season.theme}</div>
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>${season.price}</TableCell>
