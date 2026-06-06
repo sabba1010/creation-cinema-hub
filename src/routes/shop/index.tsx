@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Star, Search, Tag, Shirt, Book, ExternalLink, ShoppingBag, ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/shop/")({
   component: ShopLandingPage,
@@ -14,7 +15,7 @@ const CATEGORIES = [
   { id: "apparel", label: "Apparel", icon: Shirt },
 ];
 
-import { useEffect } from "react";
+
 
 function ShopLandingPage() {
   const [activeTab, setActiveTab] = useState("all");
@@ -41,6 +42,28 @@ function ShopLandingPage() {
     const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesTab && matchesSearch;
   });
+
+  const handleAddToCart = (e: React.MouseEvent, product: any) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const currentCart = JSON.parse(localStorage.getItem('oms_cart') || '[]');
+    const existingIndex = currentCart.findIndex((p: any) => p.id === product._id);
+    if (existingIndex >= 0) {
+      currentCart[existingIndex].quantity += 1;
+    } else {
+      currentCart.push({
+        id: product._id,
+        name: product.title,
+        price: product.price,
+        quantity: 1,
+        image: product.image,
+        category: product.category
+      });
+    }
+    localStorage.setItem('oms_cart', JSON.stringify(currentCart));
+    toast.success(`${product.title} added to cart!`);
+    window.dispatchEvent(new Event('cart_updated'));
+  };
 
   return (
     <div className="bg-background min-h-screen flex flex-col">
@@ -126,12 +149,9 @@ function ShopLandingPage() {
             {filteredProducts.length > 0 ? (
               <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {filteredProducts.map((product) => (
-                  <a
+                  <div
                     key={product._id}
-                    href={product.externalLink || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex flex-col"
+                    className="group flex flex-col relative"
                   >
                     <div className="relative aspect-[3/4] overflow-hidden rounded-[2.5rem] bg-muted shadow-card transition-all duration-700 group-hover:-translate-y-3 group-hover:shadow-elevated">
                       <img
@@ -159,8 +179,24 @@ function ShopLandingPage() {
                             <span className="text-[10px] font-bold text-white/80">{product.rating}</span>
                           </div>
                         </div>
-                        <div className="w-full py-4 rounded-2xl bg-gold text-gold-foreground text-[10px] font-bold uppercase tracking-[0.2em] text-center shadow-lg transition-transform active:scale-95">
-                          Buy on {product.storeName}
+                        <div className="flex gap-2 w-full">
+                           <button 
+                             onClick={(e) => handleAddToCart(e, product)}
+                             className="flex-1 py-4 rounded-2xl bg-gold text-forest-deep text-[10px] font-bold uppercase tracking-[0.2em] text-center shadow-lg transition-transform active:scale-95"
+                           >
+                             Add to Cart
+                           </button>
+                           {product.externalLink && product.externalLink !== "#" && (
+                             <a 
+                               href={product.externalLink}
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               onClick={(e) => e.stopPropagation()}
+                               className="flex-1 py-4 rounded-2xl bg-white/10 backdrop-blur-sm text-white border border-white/20 text-[10px] font-bold uppercase tracking-[0.2em] text-center shadow-lg transition-transform hover:bg-white/20 flex items-center justify-center active:scale-95"
+                             >
+                               {product.storeName || "Buy"}
+                             </a>
+                           )}
                         </div>
                       </div>
                     </div>
@@ -177,7 +213,7 @@ function ShopLandingPage() {
                         View Details <ArrowRight className="h-3 w-3" />
                       </div>
                     </div>
-                  </a>
+                  </div>
                 ))}
               </div>
             ) : (

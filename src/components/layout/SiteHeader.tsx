@@ -27,6 +27,7 @@ export function SiteHeader() {
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   const location = useLocation();
   const isHome = location.pathname === "/";
 
@@ -44,6 +45,27 @@ export function SiteHeader() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const updateCartCount = () => {
+      const stored = localStorage.getItem('oms_cart');
+      if (stored) {
+        const items = JSON.parse(stored);
+        const count = items.reduce((acc: number, item: any) => acc + item.quantity, 0);
+        setCartCount(count);
+      } else {
+        setCartCount(0);
+      }
+    };
+    
+    updateCartCount();
+    window.addEventListener('storage', updateCartCount);
+    window.addEventListener('cart_updated', updateCartCount);
+    return () => {
+      window.removeEventListener('storage', updateCartCount);
+      window.removeEventListener('cart_updated', updateCartCount);
+    };
   }, []);
 
   return (
@@ -156,9 +178,11 @@ export function SiteHeader() {
             className="relative text-[#faf7ee]/80 hover:text-[#faf7ee] transition group"
           >
             <ShoppingBag className="h-5 w-5" strokeWidth={2.5} />
-            <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-gold text-forest-deep text-[8px] font-black flex items-center justify-center border-2 border-forest-deep group-hover:scale-110 transition-transform">
-              2
-            </span>
+            {cartCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-gold text-forest-deep text-[8px] font-black flex items-center justify-center border-2 border-forest-deep group-hover:scale-110 transition-transform">
+                {cartCount}
+              </span>
+            )}
           </Link>
 
           {isLoggedIn ? (

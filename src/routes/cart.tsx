@@ -1,48 +1,77 @@
-﻿import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ShoppingBag, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Truck } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/cart")({
   component: CartPage,
 });
 
-const INITIAL_ITEMS = [
-  {
-    id: 1,
-    name: "The Creation Case Box Set",
-    price: 49.99,
-    quantity: 1,
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=300",
-    category: "DVD & Digital"
-  },
-  {
-    id: 2,
-    name: "Faith & Science Study Guide",
-    price: 24.99,
-    quantity: 2,
-    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=300",
-    category: "Books"
-  }
-];
+import { useEffect } from "react";
 
 function CartPage() {
-  const [items, setItems] = useState(INITIAL_ITEMS);
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const updateQuantity = (id: number, delta: number) => {
-    setItems(items.map(item => 
+  useEffect(() => {
+    const loadCart = () => {
+      const stored = localStorage.getItem('oms_cart');
+      if (stored) {
+        setItems(JSON.parse(stored));
+      } else {
+        setItems([]);
+      }
+      setLoading(false);
+    };
+
+    loadCart();
+
+    // Listen for cross-tab updates or same-tab dispatch
+    window.addEventListener('storage', loadCart);
+    window.addEventListener('cart_updated', loadCart);
+    return () => {
+      window.removeEventListener('storage', loadCart);
+      window.removeEventListener('cart_updated', loadCart);
+    };
+  }, []);
+
+  const updateQuantity = (id: string, delta: number) => {
+    const newItems = items.map(item => 
       item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
-    ));
+    );
+    setItems(newItems);
+    localStorage.setItem('oms_cart', JSON.stringify(newItems));
+    window.dispatchEvent(new Event('cart_updated'));
   };
 
-  const removeItem = (id: number) => {
-    setItems(items.filter(item => item.id !== id));
+  const removeItem = (id: string) => {
+    const newItems = items.filter(item => item.id !== id);
+    setItems(newItems);
+    localStorage.setItem('oms_cart', JSON.stringify(newItems));
+    window.dispatchEvent(new Event('cart_updated'));
   };
 
   const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shipping = items.length > 0 ? 5.99 : 0;
   const total = subtotal + shipping;
+
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  const handleCheckout = () => {
+    setIsCheckingOut(true);
+    // Simulate API call
+    setTimeout(() => {
+      setItems([]);
+      localStorage.removeItem('oms_cart');
+      window.dispatchEvent(new Event('cart_updated'));
+      setIsCheckingOut(false);
+      toast.success("Order placed successfully!", {
+        description: "You will receive an email confirmation shortly."
+      });
+    }, 1500);
+  };
 
   return (
     <div className="bg-background min-h-screen flex flex-col">
@@ -59,7 +88,11 @@ function CartPage() {
             </div>
           </div>
 
-          {items.length > 0 ? (
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <div className="w-8 h-8 border-4 border-gold border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          ) : items.length > 0 ? (
             <div className="grid lg:grid-cols-3 gap-16 items-start">
               <div className="lg:col-span-2 space-y-8">
                 {items.map((item) => (
@@ -111,8 +144,14 @@ function CartPage() {
                       <span>${total.toFixed(2)}</span>
                     </div>
                   </div>
-                  <button className="w-full mt-10 py-5 rounded-2xl bg-gold text-forest-deep font-bold text-sm uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3">
-                    Checkout Now <ArrowRight className="h-4 w-4" />
+                  <button 
+                    onClick={handleCheckout}
+                    disabled={isCheckingOut}
+                    className="w-full mt-10 py-5 rounded-2xl bg-gold text-forest-deep font-bold text-sm uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:scale-100 disabled:active:scale-100"
+                  >
+                    {isCheckingOut ? "Processing..." : (
+                      <>Checkout Now <ArrowRight className="h-4 w-4" /></>
+                    )}
                   </button>
                 </div>
 
