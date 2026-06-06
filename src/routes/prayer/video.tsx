@@ -23,7 +23,7 @@ function VideoAccessPage() {
               <div className="relative aspect-video rounded-3xl overflow-hidden bg-black shadow-2xl group border border-white/5">
                 {url ? (
                   <ReactPlayer 
-                    url={url} 
+                    url={url.split('?')[0]} 
                     width="100%" 
                     height="100%" 
                     playing 

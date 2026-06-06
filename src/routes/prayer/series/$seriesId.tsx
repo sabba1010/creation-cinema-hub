@@ -166,14 +166,32 @@ function PrayerSeriesPage() {
               Close Video
             </button>
             <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black">
-              <ReactPlayer 
-                url={playingVideo.videoUrl} 
-                width="100%" 
-                height="100%" 
-                playing 
-                controls 
-                style={{ objectFit: 'contain' }}
-              />
+              {playingVideo.videoUrl && playingVideo.videoUrl.includes('vimeo.com') ? (
+                <iframe 
+                  src={`https://player.vimeo.com/video/${playingVideo.videoUrl.split('vimeo.com/')[1]?.split('?')[0]?.split('/')[0]}?autoplay=1&title=0&byline=0&portrait=0`}
+                  className="w-full h-full"
+                  frameBorder="0"
+                  allow="autoplay; fullscreen; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              ) : playingVideo.videoUrl && (playingVideo.videoUrl.includes('youtube.com') || playingVideo.videoUrl.includes('youtu.be')) ? (
+                <iframe 
+                  src={`https://www.youtube.com/embed/${playingVideo.videoUrl.includes('v=') ? playingVideo.videoUrl.split('v=')[1]?.split('&')[0] : playingVideo.videoUrl.split('youtu.be/')[1]?.split('?')[0]}?autoplay=1`}
+                  className="w-full h-full"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              ) : (
+                <ReactPlayer 
+                  url={playingVideo.videoUrl} 
+                  width="100%" 
+                  height="100%" 
+                  playing 
+                  controls 
+                  style={{ objectFit: 'contain' }}
+                />
+              )}
             </div>
             <div className="mt-6 text-left">
               <span className="text-gold text-xs font-bold uppercase tracking-widest mb-2 block">
@@ -195,14 +213,32 @@ function PrayerSeriesPage() {
         <div className="relative h-[55vh] min-h-[420px] overflow-hidden bg-black">
           {isPreviewPlaying && series.samplePreviewVideo ? (
             <div className="absolute inset-0 z-20">
-              <ReactPlayer 
-                url={series.samplePreviewVideo} 
-                width="100%" 
-                height="100%" 
-                playing 
-                controls 
-                style={{ objectFit: 'contain' }}
-              />
+              {series.samplePreviewVideo.includes('vimeo.com') ? (
+                <iframe 
+                  src={`https://player.vimeo.com/video/${series.samplePreviewVideo.split('vimeo.com/')[1]?.split('?')[0]?.split('/')[0]}?autoplay=1&background=0`}
+                  className="w-full h-full"
+                  frameBorder="0"
+                  allow="autoplay; fullscreen; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              ) : series.samplePreviewVideo.includes('youtube.com') || series.samplePreviewVideo.includes('youtu.be') ? (
+                <iframe 
+                  src={`https://www.youtube.com/embed/${series.samplePreviewVideo.includes('v=') ? series.samplePreviewVideo.split('v=')[1]?.split('&')[0] : series.samplePreviewVideo.split('youtu.be/')[1]?.split('?')[0]}?autoplay=1`}
+                  className="w-full h-full"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              ) : (
+                <ReactPlayer 
+                  url={series.samplePreviewVideo} 
+                  width="100%" 
+                  height="100%" 
+                  playing 
+                  controls 
+                  style={{ objectFit: 'contain' }}
+                />
+              )}
               <button 
                 onClick={() => setIsPreviewPlaying(false)} 
                 className="absolute top-6 right-6 z-30 bg-black/60 text-white hover:bg-black/80 px-4 py-2 rounded-xl text-sm font-bold tracking-widest uppercase transition-all"

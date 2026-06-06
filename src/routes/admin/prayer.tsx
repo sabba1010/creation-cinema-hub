@@ -61,6 +61,7 @@ function PrayerManagement() {
   // Dialog States
   const [isSeasonDialogOpen, setIsSeasonDialogOpen] = useState(false);
   const [isGrantDialogOpen, setIsGrantDialogOpen] = useState(false);
+  const [editingSeasonId, setEditingSeasonId] = useState<string | null>(null);
 
   // Form States
   const [seasonForm, setSeasonForm] = useState({ title: "", theme: "", description: "", price: 29, samplePreviewVideo: "", bannerImage: "", status: "active" });
@@ -87,25 +88,43 @@ function PrayerManagement() {
     fetchData();
   }, []);
 
-  const handleCreateSeason = async (e: React.FormEvent) => {
+  const handleSaveSeason = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${API_URL}/api/prayer/seasons`, {
-        method: "POST",
+      const url = editingSeasonId ? `${API_URL}/api/prayer/seasons/${editingSeasonId}` : `${API_URL}/api/prayer/seasons`;
+      const method = editingSeasonId ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(seasonForm)
       });
       if (res.ok) {
         setIsSeasonDialogOpen(false);
+        setEditingSeasonId(null);
         setSeasonForm({ title: "", theme: "", description: "", price: 29, samplePreviewVideo: "", bannerImage: "", status: "active" });
-        toast.success("Season created successfully!");
+        toast.success(`Season ${editingSeasonId ? 'updated' : 'created'} successfully!`);
         fetchData();
       } else {
-        toast.error("Failed to create season");
+        toast.error(`Failed to ${editingSeasonId ? 'update' : 'create'} season`);
       }
     } catch (err) {
-      toast.error("Error creating season");
+      toast.error("Error saving season");
     }
+  };
+
+  const openEditDialog = (season: any) => {
+    setEditingSeasonId(season._id);
+    setSeasonForm({
+      title: season.title || "",
+      theme: season.theme || "",
+      description: season.description || "",
+      price: season.price || 29,
+      samplePreviewVideo: season.samplePreviewVideo || "",
+      bannerImage: season.bannerImage || "",
+      status: season.status || "active"
+    });
+    setIsSeasonDialogOpen(true);
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -273,18 +292,32 @@ function PrayerManagement() {
           </Dialog>
 
           {/* Create Season Dialog */}
-          <Dialog open={isSeasonDialogOpen} onOpenChange={setIsSeasonDialogOpen}>
+          <Dialog open={isSeasonDialogOpen} onOpenChange={(open) => {
+            setIsSeasonDialogOpen(open);
+            if (!open) {
+              setEditingSeasonId(null);
+              setSeasonForm({ title: "", theme: "", description: "", price: 29, samplePreviewVideo: "", bannerImage: "", status: "active" });
+            }
+          }}>
             <DialogTrigger asChild>
-              <Button className="bg-forest h-11 rounded-xl gap-2 shadow-md">
+              <Button className="bg-forest h-11 rounded-xl gap-2 shadow-md" onClick={() => {
+                setEditingSeasonId(null);
+                setSeasonForm({ title: "", theme: "", description: "", price: 29, samplePreviewVideo: "", bannerImage: "", status: "active" });
+              }}>
                 <Plus className="w-4 h-4" />
                 Create Season
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] rounded-[2rem]">
+            <DialogContent className="sm:max-w-xl rounded-[2rem] border-border/50 max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle className="text-2xl font-display font-bold">Create New Season</DialogTitle>
+                <DialogTitle className="text-2xl font-display font-bold">
+                  {editingSeasonId ? 'Edit Season' : 'New Prayer Season'}
+                </DialogTitle>
+                <DialogDescription>
+                  {editingSeasonId ? 'Update details for this prayer season.' : 'Create a new Week of Prayer event series.'}
+                </DialogDescription>
               </DialogHeader>
-              <form onSubmit={handleCreateSeason} className="space-y-6 py-4">
+              <form onSubmit={handleSaveSeason} className="space-y-6 py-4">
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label>Season Title</Label>
@@ -362,7 +395,9 @@ function PrayerManagement() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button type="submit" className="w-full bg-forest h-11 rounded-xl shadow-md">Create Season</Button>
+                  <Button type="submit" className="w-full bg-forest h-11 rounded-xl shadow-md">
+                    {editingSeasonId ? 'Save Changes' : 'Create Season'}
+                  </Button>
                 </DialogFooter>
               </form>
             </DialogContent>
@@ -411,7 +446,9 @@ function PrayerManagement() {
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0"><MoreHorizontal className="w-4 h-4" /></Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="rounded-xl border-border/50">
-                        <DropdownMenuItem className="gap-2 cursor-pointer"><Edit className="w-4 h-4" /> Edit Info</DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => openEditDialog(season)}>
+                          <Edit className="w-4 h-4" /> Edit Info
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="gap-2 text-destructive cursor-pointer" onClick={() => handleDeleteSeason(season._id)}>
                           <Trash2 className="w-4 h-4" /> Delete Season
