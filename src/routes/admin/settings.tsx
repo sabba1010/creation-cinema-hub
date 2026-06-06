@@ -22,7 +22,7 @@ function SiteSettings() {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/settings");
+        const res = await fetch("https://movie-backend-drab.vercel.app/api/settings");
         const data = await res.json();
         if (data.success && data.data.home_hero_media) {
           setHeroImage(data.data.home_hero_media);
@@ -38,7 +38,7 @@ function SiteSettings() {
 
   const handleSave = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/settings", {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ key: "home_hero_media", value: heroImage }),

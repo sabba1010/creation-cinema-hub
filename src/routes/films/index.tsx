@@ -32,7 +32,7 @@ function FilmsLandingPage() {
   }, [emblaApi]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/films")
+    fetch("https://movie-backend-drab.vercel.app/api/films")
       .then(res => res.json())
       .then(data => {
         if (data.success) {
@@ -41,7 +41,7 @@ function FilmsLandingPage() {
       })
       .catch(err => console.error(err));
 
-    fetch("http://localhost:5000/api/films/hero-sliders")
+    fetch("https://movie-backend-drab.vercel.app/api/films/hero-sliders")
       .then(res => res.json())
       .then(data => {
         if (data.success) {

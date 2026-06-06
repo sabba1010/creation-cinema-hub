@@ -50,7 +50,7 @@ export const Route = createFileRoute("/admin/prayer")({
   component: PrayerManagement,
 });
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 function PrayerManagement() {
   const [seasons, setSeasons] = useState<any[]>([]);
@@ -340,8 +340,8 @@ function PrayerManagement() {
                   </div>
                   <div className="space-y-2">
                     <Label>Short Description</Label>
-                    <textarea 
-                      placeholder="About this season..." 
+                    <textarea
+                      placeholder="About this season..."
                       className="flex min-h-[80px] w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
                       value={seasonForm.description}
                       onChange={e => setSeasonForm({ ...seasonForm, description: e.target.value })}
@@ -349,7 +349,7 @@ function PrayerManagement() {
                   </div>
                   <div className="space-y-2">
                     <Label>Status</Label>
-                    <select 
+                    <select
                       className="flex h-11 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm"
                       value={seasonForm.status}
                       onChange={e => setSeasonForm({ ...seasonForm, status: e.target.value })}

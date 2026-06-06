@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 export const Route = createFileRoute("/prayer/series/$seriesId")({
   component: PrayerSeriesPage,
@@ -154,12 +154,12 @@ function PrayerSeriesPage() {
   return (
     <div className="bg-background min-h-screen flex flex-col">
       <SiteHeader />
-      
+
       {/* Video Modal Overlay */}
       {playingVideo && (
         <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 backdrop-blur-md">
           <div className="w-full max-w-6xl relative animate-in fade-in zoom-in-95 duration-300">
-            <button 
+            <button
               onClick={() => setPlayingVideo(null)}
               className="absolute -top-12 right-0 text-white/70 hover:text-white uppercase tracking-widest text-xs font-bold transition-colors flex items-center gap-2"
             >
@@ -167,7 +167,7 @@ function PrayerSeriesPage() {
             </button>
             <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black">
               {playingVideo.videoUrl && playingVideo.videoUrl.includes('vimeo.com') ? (
-                <iframe 
+                <iframe
                   src={`https://player.vimeo.com/video/${playingVideo.videoUrl.split('vimeo.com/')[1]?.split('?')[0]?.split('/')[0]}?autoplay=1&title=0&byline=0&portrait=0`}
                   className="w-full h-full"
                   frameBorder="0"
@@ -175,7 +175,7 @@ function PrayerSeriesPage() {
                   allowFullScreen
                 ></iframe>
               ) : playingVideo.videoUrl && (playingVideo.videoUrl.includes('youtube.com') || playingVideo.videoUrl.includes('youtu.be')) ? (
-                <iframe 
+                <iframe
                   src={`https://www.youtube.com/embed/${playingVideo.videoUrl.includes('v=') ? playingVideo.videoUrl.split('v=')[1]?.split('&')[0] : playingVideo.videoUrl.split('youtu.be/')[1]?.split('?')[0]}?autoplay=1`}
                   className="w-full h-full"
                   frameBorder="0"
@@ -183,12 +183,12 @@ function PrayerSeriesPage() {
                   allowFullScreen
                 ></iframe>
               ) : (
-                <ReactPlayer 
-                  url={playingVideo.videoUrl} 
-                  width="100%" 
-                  height="100%" 
-                  playing 
-                  controls 
+                <ReactPlayer
+                  url={playingVideo.videoUrl}
+                  width="100%"
+                  height="100%"
+                  playing
+                  controls
                   style={{ objectFit: 'contain' }}
                 />
               )}
@@ -214,7 +214,7 @@ function PrayerSeriesPage() {
           {isPreviewPlaying && series.samplePreviewVideo ? (
             <div className="absolute inset-0 z-20">
               {series.samplePreviewVideo.includes('vimeo.com') ? (
-                <iframe 
+                <iframe
                   src={`https://player.vimeo.com/video/${series.samplePreviewVideo.split('vimeo.com/')[1]?.split('?')[0]?.split('/')[0]}?autoplay=1&background=0`}
                   className="w-full h-full"
                   frameBorder="0"
@@ -222,7 +222,7 @@ function PrayerSeriesPage() {
                   allowFullScreen
                 ></iframe>
               ) : series.samplePreviewVideo.includes('youtube.com') || series.samplePreviewVideo.includes('youtu.be') ? (
-                <iframe 
+                <iframe
                   src={`https://www.youtube.com/embed/${series.samplePreviewVideo.includes('v=') ? series.samplePreviewVideo.split('v=')[1]?.split('&')[0] : series.samplePreviewVideo.split('youtu.be/')[1]?.split('?')[0]}?autoplay=1`}
                   className="w-full h-full"
                   frameBorder="0"
@@ -230,17 +230,17 @@ function PrayerSeriesPage() {
                   allowFullScreen
                 ></iframe>
               ) : (
-                <ReactPlayer 
-                  url={series.samplePreviewVideo} 
-                  width="100%" 
-                  height="100%" 
-                  playing 
-                  controls 
+                <ReactPlayer
+                  url={series.samplePreviewVideo}
+                  width="100%"
+                  height="100%"
+                  playing
+                  controls
                   style={{ objectFit: 'contain' }}
                 />
               )}
-              <button 
-                onClick={() => setIsPreviewPlaying(false)} 
+              <button
+                onClick={() => setIsPreviewPlaying(false)}
                 className="absolute top-6 right-6 z-30 bg-black/60 text-white hover:bg-black/80 px-4 py-2 rounded-xl text-sm font-bold tracking-widest uppercase transition-all"
               >
                 Close Video
@@ -283,7 +283,7 @@ function PrayerSeriesPage() {
             <p className="text-cream/75 text-lg max-w-2xl">{series.tagline || series.description}</p>
             {series.samplePreviewVideo && !isPreviewPlaying && (
               <div className="mt-6">
-                <button 
+                <button
                   onClick={() => setIsPreviewPlaying(true)}
                   className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 hover:bg-white/30 text-cream rounded-xl font-bold tracking-widest uppercase transition-all backdrop-blur-sm shadow-xl hover:scale-105 active:scale-95"
                 >

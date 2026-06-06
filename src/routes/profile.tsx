@@ -33,7 +33,7 @@ function ProfilePage() {
       // Fetch tickets
       const fetchTickets = async () => {
         try {
-          const res = await fetch("http://localhost:5000/api/tickets/my-tickets", {
+          const res = await fetch("https://movie-backend-drab.vercel.app/api/tickets/my-tickets", {
             headers: {
               "Authorization": `Bearer ${localStorage.getItem("user_token")}`
             }
@@ -211,7 +211,7 @@ function ProfilePage() {
                       {tickets.map(ticket => (
                         <div key={ticket._id} className="p-6 rounded-[2rem] bg-card border border-border flex flex-col md:flex-row gap-6 items-center shadow-sm hover:shadow-md transition-all">
                           {ticket.event?.image && ticket.event.image !== 'no-photo.jpg' && (
-                            <img src={ticket.event.image.startsWith('http') ? ticket.event.image : `http://localhost:5000${ticket.event.image}`} alt="Event" className="w-full md:w-48 h-32 object-cover rounded-2xl" />
+                            <img src={ticket.event.image.startsWith('http') ? ticket.event.image : `https://movie-backend-drab.vercel.app${ticket.event.image}`} alt="Event" className="w-full md:w-48 h-32 object-cover rounded-2xl" />
                           )}
                           <div className="flex-grow space-y-2 text-center md:text-left">
                             <h4 className="font-display font-medium text-2xl">{ticket.event?.name}</h4>

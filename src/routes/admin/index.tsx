@@ -63,17 +63,17 @@ function DashboardOverview() {
         const headers = { "Authorization": `Bearer ${token}` };
 
         // Fetch users
-        const usersRes = await fetch("http://localhost:5000/api/users", { headers });
+        const usersRes = await fetch("https://movie-backend-drab.vercel.app/api/users", { headers });
         const usersData = await usersRes.json();
         const usersCount = usersData.success ? usersData.data.length : 0;
 
         // Fetch events
-        const eventsRes = await fetch("http://localhost:5000/api/events");
+        const eventsRes = await fetch("https://movie-backend-drab.vercel.app/api/events");
         const eventsData = await eventsRes.json();
         const eventsCount = eventsData.success ? eventsData.data.length : 0;
 
         // Fetch tickets for revenue
-        const ticketsRes = await fetch("http://localhost:5000/api/tickets", { headers });
+        const ticketsRes = await fetch("https://movie-backend-drab.vercel.app/api/tickets", { headers });
         const ticketsData = await ticketsRes.json();
         let totalRevenue = 0;
         if (ticketsData.success) {
@@ -86,7 +86,7 @@ function DashboardOverview() {
         }
 
         // Fetch films
-        const filmsRes = await fetch("http://localhost:5000/api/films");
+        const filmsRes = await fetch("https://movie-backend-drab.vercel.app/api/films");
         const filmsData = await filmsRes.json();
         const filmsCount = filmsData.success ? filmsData.data.length : 0;
 

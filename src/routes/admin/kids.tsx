@@ -135,7 +135,7 @@ function KidsManagement() {
 
   const fetchSeries = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/kids/series", {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/series", {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("user_token")}`
         }
@@ -157,7 +157,7 @@ function KidsManagement() {
 
   const fetchSettings = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/kids/settings");
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/settings");
       const data = await res.json();
       if (data && data.value) setHeroBanner(data.value);
     } catch (err) {
@@ -167,7 +167,7 @@ function KidsManagement() {
 
   const handleSaveSettings = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/kids/settings", {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/settings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -186,7 +186,7 @@ function KidsManagement() {
 
   const fetchPlanSettings = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/kids/plans");
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/plans");
       const data = await res.json();
       if (data && data.data) setPlanSettings(data.data);
     } catch (err) {
@@ -196,7 +196,7 @@ function KidsManagement() {
 
   const handleSavePlans = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/kids/plans", {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/plans", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -215,7 +215,7 @@ function KidsManagement() {
 
   const fetchPurchases = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/kids/purchases", {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/purchases", {
         headers: { "Authorization": `Bearer ${localStorage.getItem("user_token")}` }
       });
       const data = await res.json();
@@ -230,7 +230,7 @@ function KidsManagement() {
   const fetchAnalytics = async () => {
     try {
       setAnalyticsLoading(true);
-      const res = await fetch("http://localhost:5000/api/kids/analytics", {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/analytics", {
         headers: { "Authorization": `Bearer ${localStorage.getItem("user_token")}` }
       });
       const data = await res.json();
@@ -254,8 +254,8 @@ function KidsManagement() {
     e.preventDefault();
     try {
       const url = editingSeriesId
-        ? `http://localhost:5000/api/kids/series/${editingSeriesId}`
-        : "http://localhost:5000/api/kids/series";
+        ? `https://movie-backend-drab.vercel.app/api/kids/series/${editingSeriesId}`
+        : "https://movie-backend-drab.vercel.app/api/kids/series";
       const method = editingSeriesId ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -323,7 +323,7 @@ function KidsManagement() {
   const toggleSeriesStatus = async (id: string, currentStatus: string) => {
     try {
       const newStatus = currentStatus === "Active" ? "Draft" : "Active";
-      await fetch(`http://localhost:5000/api/kids/series/${id}`, {
+      await fetch(`https://movie-backend-drab.vercel.app/api/kids/series/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -352,7 +352,7 @@ function KidsManagement() {
     if (!result.isConfirmed) return;
 
     try {
-      await fetch(`http://localhost:5000/api/kids/series/${id}`, {
+      await fetch(`https://movie-backend-drab.vercel.app/api/kids/series/${id}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${localStorage.getItem("user_token")}` }
       });
@@ -379,7 +379,7 @@ function KidsManagement() {
   const handleUploadContent = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch(`http://localhost:5000/api/kids/series/${uploadForm.seriesId}/episodes`, {
+      const res = await fetch(`https://movie-backend-drab.vercel.app/api/kids/series/${uploadForm.seriesId}/episodes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -407,7 +407,7 @@ function KidsManagement() {
   const handleGrantLifetime = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:5000/api/kids/grant-access", {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/kids/grant-access", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -453,7 +453,7 @@ function KidsManagement() {
 
     if (result.isConfirmed) {
       try {
-        const res = await fetch(`http://localhost:5000/api/kids/purchases/${id}`, {
+        const res = await fetch(`https://movie-backend-drab.vercel.app/api/kids/purchases/${id}`, {
           method: "DELETE",
           headers: { "Authorization": `Bearer ${localStorage.getItem("user_token")}` }
         });

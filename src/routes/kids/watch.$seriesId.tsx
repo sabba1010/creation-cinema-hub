@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Play, ArrowLeft, ChevronRight, Sparkles, Star, Lock, Mic2, Eye, Crown } from "lucide-react";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 export const Route = createFileRoute("/kids/watch/$seriesId")({
   component: KidsWatchPage,
@@ -55,7 +55,7 @@ function KidsWatchPage() {
       try {
         const token = localStorage.getItem("user_token");
         const headers: HeadersInit = token ? { "Authorization": `Bearer ${token}` } : {};
-        
+
         // Step 1: Fetch series FIRST to get banner image for episode thumbnail fallback
         const seriesRes = await fetch(`${API_URL}/api/kids/series/${seriesId}`, { headers });
         if (!seriesRes.ok) return;
