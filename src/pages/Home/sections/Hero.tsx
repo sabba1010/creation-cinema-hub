@@ -52,7 +52,7 @@ export function Hero() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.2),transparent_80%)]" />
 
-      <div className="relative mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-12 text-center">
+      <div className="relative mx-auto w-full max-w-[1440px] px-6 sm:px-8 lg:px-12 text-center">
         <div className="mx-auto max-w-4xl pt-8">
           <span className="inline-block px-4 py-1.5 mb-8 rounded-full border border-cream/20 bg-cream/5 text-[10px] font-bold tracking-[0.3em] text-cream/80 uppercase backdrop-blur-sm animate-fade-up">
             {HERO_CONTENT.subtitle}

@@ -1,4 +1,4 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Hero } from "../pages/Home/sections/Hero";
@@ -34,8 +34,8 @@ function Index() {
       <SiteHeader />
       <main>
         <Hero />
-        <Events />
         <FeaturedProjects />
+        <Events />
         <Films />
         <Support />
       </main>

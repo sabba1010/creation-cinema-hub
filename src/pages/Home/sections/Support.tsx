@@ -1,4 +1,4 @@
-﻿import { Heart, Globe, Users, BookOpenCheck } from "lucide-react";
+import { Heart, Globe, Users, BookOpenCheck } from "lucide-react";
 
 const support = "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=1600";
 
@@ -11,8 +11,8 @@ const STATS = [
 
 export function Support() {
   return (
-    <section id="support" className="relative overflow-hidden bg-cream py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="support" className="relative overflow-hidden bg-cream py-12 sm:py-16">
+      <div className="mx-auto max-w-[1440px] px-6">
         <div className="relative overflow-hidden rounded-[2.5rem] bg-forest-deep text-cream shadow-elevated">
           <img src={support} alt="Father reading the Bible with his son" width={1600} height={1024} loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-45" />
           <div className="absolute inset-0 bg-gradient-to-r from-forest-deep via-forest-deep/85 to-forest-deep/30" />

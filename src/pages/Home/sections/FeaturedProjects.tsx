@@ -1,11 +1,11 @@
-﻿import { Play } from "lucide-react";
+import { Play } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { FEATURED_PROJECTS } from "../../../data/home-data";
 
 export function FeaturedProjects() {
   return (
-    <section id="projects" className="relative bg-cream py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="projects" className="relative bg-cream py-12 sm:py-16">
+      <div className="mx-auto max-w-[1440px] px-6">
         <div className="flex items-end justify-between flex-wrap gap-4">
           <div>
             <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-earth">Featured</span>

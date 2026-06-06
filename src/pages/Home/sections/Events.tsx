@@ -1,4 +1,4 @@
-﻿import { Calendar, MapPin, Ticket, ArrowRight, Sparkles, Clock, Users } from "lucide-react";
+import { Calendar, MapPin, Ticket, ArrowRight, Sparkles, Clock, Users } from "lucide-react";
 import { INITIAL_EVENTS } from "../../../data/events-data";
 
 export function Events() {
@@ -6,8 +6,8 @@ export function Events() {
   const otherEvents = INITIAL_EVENTS.filter(e => e.id !== featuredEvent.id).slice(0, 3);
 
   return (
-    <section id="events" className="relative overflow-hidden bg-background py-24 sm:py-32">
-      <div className="relative mx-auto max-w-7xl px-6">
+    <section id="events" className="relative overflow-hidden bg-background py-12 sm:py-16">
+      <div className="relative mx-auto max-w-[1440px] px-6">
         {/* Dark Cinematic Island Card */}
         <div className="relative overflow-hidden rounded-[3.5rem] bg-[#050704] shadow-elevated group border border-white/5">
           {/* Internal Cinematic Background */}
@@ -16,7 +16,7 @@ export function Events() {
             <div className="absolute -left-20 -bottom-20 h-96 w-96 rounded-full bg-sky/5 blur-[120px]" />
           </div>
 
-          <div className="relative grid items-stretch gap-0 lg:grid-cols-2 min-h-[600px]">
+          <div className="relative grid items-stretch gap-0 lg:grid-cols-2 min-h-[400px]">
             
             {/* Visual Side */}
             <div className="relative h-full overflow-hidden">
@@ -34,8 +34,8 @@ export function Events() {
             </div>
 
             {/* Content Side */}
-            <div className="flex flex-col justify-center p-8 sm:p-16 lg:p-20 text-cream">
-              <div className="space-y-8">
+            <div className="flex flex-col justify-center p-8 sm:p-12 lg:p-14 text-cream">
+              <div className="space-y-6">
                 <div className="inline-block px-4 py-1 rounded-lg bg-gold/10 border border-gold/20 text-[10px] font-bold uppercase tracking-[0.4em] text-gold">
                    Upcoming Experience
                 </div>
@@ -58,7 +58,7 @@ export function Events() {
               </div>
 
               {/* Details Row */}
-              <div className="grid grid-cols-2 gap-10 mt-12 border-t border-white/5 pt-10">
+              <div className="grid grid-cols-2 gap-10 mt-8 border-t border-white/5 pt-8">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-gold/60">
                     <Calendar className="h-4 w-4" />
@@ -76,7 +76,7 @@ export function Events() {
               </div>
 
               {/* Countdown & CTA */}
-              <div className="mt-12 flex flex-col sm:flex-row items-center gap-8">
+              <div className="mt-8 flex flex-col sm:flex-row items-center gap-8">
                  <button className="group relative w-full sm:w-auto px-10 py-5 bg-gold text-gold-foreground rounded-full font-bold text-sm uppercase tracking-widest shadow-glow transition-all hover:scale-105 active:scale-95">
                     Reserve Spot <ArrowRight className="inline-block ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
                  </button>
