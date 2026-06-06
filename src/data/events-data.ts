@@ -66,7 +66,7 @@ export interface Event {
   support?: SupportContact[];
   includes?: string[];
   faq?: { q: string; a: string }[];
-  categories?: { name: string; price: number; available: number }[];
+  categories?: { name: string; price: number; available: number; facilities?: string }[];
 }
 
 // ─── Event Data ─────────────────────────────────────────────────────────────

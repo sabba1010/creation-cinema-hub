@@ -456,8 +456,31 @@ function EventsPage() {
                   <div className="font-display text-5xl font-medium text-gold">{selectedEvent.price}</div>
                   <div className="text-cream/50 text-sm mt-1">per person</div>
                 </div>
-                {selectedEvent.includes && (
-                  <ul className="space-y-2">
+                {/* Show Categories and Facilities */}
+                {selectedEvent.categories && selectedEvent.categories.length > 0 ? (
+                  <div className="space-y-4 pt-4 border-t border-white/10">
+                    <div className="text-[10px] font-black uppercase tracking-[0.35em] text-gold/70">Ticket Categories</div>
+                    {selectedEvent.categories.map((cat: any) => (
+                      <div key={cat.name} className="bg-white/5 rounded-xl p-4 border border-white/10">
+                        <div className="flex justify-between items-center mb-2">
+                          <div className="font-bold text-cream">{cat.name}</div>
+                          <div className="text-gold font-mono">${cat.price}</div>
+                        </div>
+                        {cat.facilities && (
+                          <ul className="space-y-1.5 mt-2">
+                            {cat.facilities.split(',').map((f: string, i: number) => (
+                              <li key={i} className="flex items-start gap-2 text-xs text-cream/70">
+                                <CheckCircle className="h-3 w-3 text-gold flex-shrink-0 mt-0.5" />
+                                <span>{f.trim()}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : selectedEvent.includes && (
+                  <ul className="space-y-2 pt-4 border-t border-white/10">
                     {selectedEvent.includes.map((item: string) => (
                       <li key={item} className="flex items-start gap-3 text-sm text-cream/70">
                         <CheckCircle className="h-4 w-4 text-gold flex-shrink-0 mt-0.5" />
@@ -604,19 +627,34 @@ function EventsPage() {
                   <div className="text-sm text-cream/70">{pendingBookingDetails?.city} • {pendingBookingDetails?.showtimeId}</div>
 
                   {selectedEvent?.categories && selectedEvent.categories.length > 0 && (
-                    <div className="mt-4">
-                      <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50 mb-1 block">Select Category</label>
-                      <select
-                        value={selectedCategoryName}
-                        onChange={(e) => setSelectedCategoryName(e.target.value)}
-                        className="w-full h-11 bg-[#0a1a0a] border border-white/10 rounded-xl px-4 text-sm text-cream focus:outline-none focus:border-gold/50 transition-colors"
-                      >
-                        {selectedEvent.categories.map((c: any) => (
-                          <option key={c.name} value={c.name} className="bg-forest-deep text-cream" disabled={c.available < ticketQuantity}>
-                            {c.name} - ${c.price} ({c.available} available)
-                          </option>
-                        ))}
-                      </select>
+                    <div className="mt-4 space-y-3">
+                      <div>
+                        <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50 mb-1 block">Select Category</label>
+                        <select
+                          value={selectedCategoryName}
+                          onChange={(e) => setSelectedCategoryName(e.target.value)}
+                          className="w-full h-11 bg-[#0a1a0a] border border-white/10 rounded-xl px-4 text-sm text-cream focus:outline-none focus:border-gold/50 transition-colors"
+                        >
+                          {selectedEvent.categories.map((c: any) => (
+                            <option key={c.name} value={c.name} className="bg-forest-deep text-cream" disabled={c.available < ticketQuantity}>
+                              {c.name} - ${c.price} ({c.available} available)
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      {selectedEvent.categories.find((c: any) => c.name === selectedCategoryName)?.facilities && (
+                        <div className="p-3 bg-white/5 rounded-xl border border-white/10">
+                          <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/70 mb-1.5">Category Includes</div>
+                          <ul className="space-y-1">
+                            {selectedEvent.categories.find((c: any) => c.name === selectedCategoryName)?.facilities?.split(',').map((f: string, i: number) => (
+                              <li key={i} className="flex items-start gap-2 text-xs text-cream/80">
+                                <CheckCircle className="h-3 w-3 text-gold flex-shrink-0 mt-0.5" />
+                                {f.trim()}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   )}
 

@@ -88,9 +88,10 @@ function EventsManagement() {
     location: string;
     price: string;
     capacity: string;
+    generalFacilities: string;
     description: string;
     image: string;
-    categories: { name: string; price: number; available: number }[];
+    categories: { name: string; price: number; available: number; facilities: string }[];
   }>({
     name: "",
     subtitle: "",
@@ -98,6 +99,7 @@ function EventsManagement() {
     location: "",
     price: "",
     capacity: "500",
+    generalFacilities: "",
     description: "",
     image: "",
     categories: [],
@@ -174,7 +176,7 @@ function EventsManagement() {
     const priceNum = parseFloat(eventForm.price.replace("$", "")) || 0;
     const capacityNum = parseInt(eventForm.capacity) || 0;
     const fullCategories = [
-      { name: "General", price: priceNum, available: capacityNum },
+      { name: "General", price: priceNum, available: capacityNum, facilities: eventForm.generalFacilities },
       ...eventForm.categories.filter(c => c.name !== "General")
     ];
 
@@ -231,9 +233,10 @@ function EventsManagement() {
       location: event.location,
       price: generalCat ? String(generalCat.price) : event.price.replace("$", ""),
       capacity: generalCat ? String(generalCat.available) : String(event.capacity),
+      generalFacilities: generalCat ? (generalCat.facilities || "") : "",
       description: event.description || "",
       image: event.image || "",
-      categories: extraCats,
+      categories: extraCats.map(c => ({...c, facilities: c.facilities || ""})),
     });
     setIsEventDialogOpen(true);
   };
@@ -280,6 +283,7 @@ function EventsManagement() {
                 location: "",
                 price: "",
                 capacity: "500",
+                generalFacilities: "",
                 description: "",
                 image: "",
                 categories: [],
@@ -518,7 +522,7 @@ function EventsManagement() {
                   className="h-11 rounded-xl" required
                 />
               </div>
-              <div className="col-span-2 space-y-2">
+              <div className="col-span-1 space-y-2">
                 <Label>Total Seats (Capacity)</Label>
                 <Input
                   type="number"
@@ -526,6 +530,15 @@ function EventsManagement() {
                   onChange={e => setEventForm({ ...eventForm, capacity: e.target.value })}
                   placeholder="e.g. 500"
                   className="h-11 rounded-xl" required
+                />
+              </div>
+              <div className="col-span-1 space-y-2">
+                <Label>Ticket Facilities</Label>
+                <Input
+                  value={eventForm.generalFacilities}
+                  onChange={e => setEventForm({ ...eventForm, generalFacilities: e.target.value })}
+                  placeholder="e.g. Entry, Basic Seating"
+                  className="h-11 rounded-xl"
                 />
               </div>
               <div className="col-span-2 space-y-2">
@@ -558,59 +571,74 @@ function EventsManagement() {
                   <Label className="text-lg">Additional Categories (Optional)</Label>
                   <Button type="button" variant="outline" size="sm" onClick={() => setEventForm({
                     ...eventForm,
-                    categories: [...eventForm.categories, { name: "", price: 0, available: 0 }]
+                    categories: [...eventForm.categories, { name: "", price: 0, available: 0, facilities: "" }]
                   })}>
                     <Plus className="w-4 h-4 mr-1" /> Add Category
                   </Button>
                 </div>
                 {eventForm.categories.map((cat, idx) => (
-                  <div key={idx} className="flex gap-2 items-end bg-muted/10 p-3 rounded-xl border border-border/50">
-                    <div className="flex-1 space-y-1">
-                      <Label className="text-xs text-muted-foreground">Category Name</Label>
+                  <div key={idx} className="flex flex-col gap-3 bg-muted/10 p-3 rounded-xl border border-border/50">
+                    <div className="flex gap-2 items-end">
+                      <div className="flex-1 space-y-1">
+                        <Label className="text-xs text-muted-foreground">Category Name</Label>
+                        <Input
+                          value={cat.name}
+                          onChange={(e) => {
+                            const newCats = [...eventForm.categories];
+                            newCats[idx].name = e.target.value;
+                            setEventForm({ ...eventForm, categories: newCats });
+                          }}
+                          placeholder="e.g. VIP"
+                          className="h-9 text-sm"
+                        />
+                      </div>
+                      <div className="w-24 space-y-1">
+                        <Label className="text-xs text-muted-foreground">Price ($)</Label>
+                        <Input
+                          type="number"
+                          value={cat.price}
+                          onChange={(e) => {
+                            const newCats = [...eventForm.categories];
+                            newCats[idx].price = Number(e.target.value);
+                            setEventForm({ ...eventForm, categories: newCats });
+                          }}
+                          className="h-9 text-sm"
+                        />
+                      </div>
+                      <div className="w-24 space-y-1">
+                        <Label className="text-xs text-muted-foreground">Available</Label>
+                        <Input
+                          type="number"
+                          value={cat.available}
+                          onChange={(e) => {
+                            const newCats = [...eventForm.categories];
+                            newCats[idx].available = Number(e.target.value);
+                            setEventForm({ ...eventForm, categories: newCats });
+                          }}
+                          className="h-9 text-sm"
+                        />
+                      </div>
+                      <Button type="button" variant="ghost" size="sm" className="h-9 w-9 p-0 text-destructive mb-[2px]" onClick={() => {
+                        const newCats = [...eventForm.categories];
+                        newCats.splice(idx, 1);
+                        setEventForm({ ...eventForm, categories: newCats });
+                      }}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">Facilities (comma separated)</Label>
                       <Input
-                        value={cat.name}
+                        value={cat.facilities || ""}
                         onChange={(e) => {
                           const newCats = [...eventForm.categories];
-                          newCats[idx].name = e.target.value;
+                          newCats[idx].facilities = e.target.value;
                           setEventForm({ ...eventForm, categories: newCats });
                         }}
-                        placeholder="e.g. VIP"
+                        placeholder="e.g. VIP Seating, Free Drinks, Front Row"
                         className="h-9 text-sm"
                       />
                     </div>
-                    <div className="w-24 space-y-1">
-                      <Label className="text-xs text-muted-foreground">Price ($)</Label>
-                      <Input
-                        type="number"
-                        value={cat.price}
-                        onChange={(e) => {
-                          const newCats = [...eventForm.categories];
-                          newCats[idx].price = Number(e.target.value);
-                          setEventForm({ ...eventForm, categories: newCats });
-                        }}
-                        className="h-9 text-sm"
-                      />
-                    </div>
-                    <div className="w-24 space-y-1">
-                      <Label className="text-xs text-muted-foreground">Available</Label>
-                      <Input
-                        type="number"
-                        value={cat.available}
-                        onChange={(e) => {
-                          const newCats = [...eventForm.categories];
-                          newCats[idx].available = Number(e.target.value);
-                          setEventForm({ ...eventForm, categories: newCats });
-                        }}
-                        className="h-9 text-sm"
-                      />
-                    </div>
-                    <Button type="button" variant="ghost" size="sm" className="h-9 w-9 p-0 text-destructive mb-[2px]" onClick={() => {
-                      const newCats = [...eventForm.categories];
-                      newCats.splice(idx, 1);
-                      setEventForm({ ...eventForm, categories: newCats });
-                    }}>
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
                   </div>
                 ))}
               </div>
