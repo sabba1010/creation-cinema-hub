@@ -56,13 +56,14 @@ function PrayerManagement() {
   const [seasons, setSeasons] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Dialog States
   const [isSeasonDialogOpen, setIsSeasonDialogOpen] = useState(false);
   const [isGrantDialogOpen, setIsGrantDialogOpen] = useState(false);
 
   // Form States
-  const [seasonForm, setSeasonForm] = useState({ title: "", theme: "", description: "", price: 29, samplePreviewVideo: "" });
+  const [seasonForm, setSeasonForm] = useState({ title: "", theme: "", description: "", price: 29, samplePreviewVideo: "", bannerImage: "", status: "active" });
   const [grantForm, setGrantForm] = useState({ name: "", email: "" });
 
   const fetchData = async () => {
@@ -96,7 +97,7 @@ function PrayerManagement() {
       });
       if (res.ok) {
         setIsSeasonDialogOpen(false);
-        setSeasonForm({ title: "", theme: "", description: "", price: 29, samplePreviewVideo: "" });
+        setSeasonForm({ title: "", theme: "", description: "", price: 29, samplePreviewVideo: "", bannerImage: "", status: "active" });
         toast.success("Season created successfully!");
         fetchData();
       } else {
@@ -104,6 +105,34 @@ function PrayerManagement() {
       }
     } catch (err) {
       toast.error("Error creating season");
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const formDataObj = new FormData();
+    formDataObj.append("image", file);
+
+    try {
+      const res = await fetch(`${API_URL}/api/upload`, {
+        method: "POST",
+        body: formDataObj,
+      });
+      const data = await res.json();
+      if (data.success) {
+        const fullUrl = `${API_URL}${data.url}`;
+        setSeasonForm(prev => ({ ...prev, bannerImage: fullUrl }));
+        toast.success("Image uploaded to server!");
+      } else {
+        toast.error(data.message || "Upload failed");
+      }
+    } catch (err) {
+      toast.error("Network error during upload");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -275,6 +304,43 @@ function PrayerManagement() {
                       value={seasonForm.theme}
                       onChange={e => setSeasonForm({ ...seasonForm, theme: e.target.value })}
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Short Description</Label>
+                    <textarea 
+                      placeholder="About this season..." 
+                      className="flex min-h-[80px] w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
+                      value={seasonForm.description}
+                      onChange={e => setSeasonForm({ ...seasonForm, description: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Status</Label>
+                    <select 
+                      className="flex h-11 w-full items-center justify-between rounded-xl border border-input bg-background px-3 py-2 text-sm"
+                      value={seasonForm.status}
+                      onChange={e => setSeasonForm({ ...seasonForm, status: e.target.value })}
+                    >
+                      <option value="active">Active (Available Now)</option>
+                      <option value="upcoming">Upcoming (Coming Soon)</option>
+                      <option value="archived">Archived</option>
+                    </select>
+                  </div>
+                  <div className="col-span-2 space-y-2">
+                    <Label>Banner Image Upload</Label>
+                    <div className="flex gap-4 items-center">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="h-11 rounded-xl flex-1 pt-2.5"
+                        disabled={isUploading}
+                      />
+                      {seasonForm.bannerImage && (
+                        <img src={seasonForm.bannerImage} alt="Preview" className="h-11 w-11 object-cover rounded-md border border-border" />
+                      )}
+                    </div>
+                    {isUploading && <p className="text-xs text-muted-foreground">Uploading image...</p>}
                   </div>
                   <div className="space-y-2">
                     <Label>Price ($)</Label>

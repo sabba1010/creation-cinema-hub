@@ -1,16 +1,64 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Calendar, Play, BookOpen, Download, Globe, ArrowRight, Users, CheckCircle } from "lucide-react";
-import { PRAYER_SERIES } from "../../data/prayer-data";
+
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 export const Route = createFileRoute("/prayer/")({
   component: PrayerLandingPage,
 });
 
 function PrayerLandingPage() {
-  const activeSeries = PRAYER_SERIES.filter((s) => s.status === "active");
-  const upcomingSeries = PRAYER_SERIES.filter((s) => s.status === "upcoming");
+  const [seasons, setSeasons] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSeasons = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/prayer/seasons`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) {
+            const mappedSeasons = data.data.map((s: any) => ({
+              id: s._id,
+              title: s.title,
+              theme: s.theme,
+              description: s.description || "",
+              price: s.price,
+              year: s.title.match(/\d{4}/) ? s.title.match(/\d{4}/)[0] : new Date(s.createdAt).getFullYear().toString(),
+              status: s.status,
+              accessDays: s.accessDays || 14,
+              startDate: s.startDate || "Coming Soon",
+              endDate: s.endDate || "",
+              bannerImage: s.bannerImage || "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80",
+              downloads: [] // Just for the count, the actual downloads are per-episode
+            }));
+            setSeasons(mappedSeasons);
+            setIsLoading(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch prayer seasons", err);
+      }
+      setIsLoading(false);
+    };
+
+    fetchSeasons();
+  }, []);
+
+  const activeSeries = seasons.filter((s) => s.status === "active" || s.status === "Published");
+  const upcomingSeries = seasons.filter((s) => s.status === "upcoming" || s.status === "Draft");
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center pt-24">
+        <div className="animate-spin h-10 w-10 border-4 border-forest border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-background min-h-screen flex flex-col">
@@ -55,6 +103,11 @@ function PrayerLandingPage() {
               <span className="h-px flex-grow bg-border" />
             </div>
             <div className="grid md:grid-cols-2 gap-8">
+              {activeSeries.length === 0 && (
+                <div className="col-span-full text-center py-12 text-muted-foreground border border-dashed rounded-2xl">
+                  No active seasons currently available.
+                </div>
+              )}
               {activeSeries.map((series) => (
                 <Link
                   key={series.id}
@@ -125,6 +178,11 @@ function PrayerLandingPage() {
               <span className="h-px flex-grow bg-border" />
             </div>
             <div className="grid md:grid-cols-2 gap-8">
+              {upcomingSeries.length === 0 && (
+                <div className="col-span-full text-center py-12 text-muted-foreground border border-dashed rounded-2xl">
+                  No upcoming seasons announced yet.
+                </div>
+              )}
               {upcomingSeries.map((series) => (
                 <div
                   key={series.id}

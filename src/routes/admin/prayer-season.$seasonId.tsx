@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { ArrowLeft, Play, Settings, Plus, Video, Trash2, FileText, Download } from "lucide-react";
+import { ArrowLeft, Play, Settings, Plus, Video, Trash2, FileText, Download, Edit } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../components/ui/dialog";
+import { Badge } from "../../components/ui/badge";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
 

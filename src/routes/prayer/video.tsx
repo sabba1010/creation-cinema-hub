@@ -1,13 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Play, MessageCircle, FileText, Share2, Settings, Maximize, Volume2, User, Users, Clock } from "lucide-react";
+import { Play, MessageCircle, FileText, Share2, Settings, Maximize, Volume2, User, Users, Clock, ArrowLeft } from "lucide-react";
+import ReactPlayer from "react-player";
 
 export const Route = createFileRoute("/prayer/video")({
   component: VideoAccessPage,
 });
 
 function VideoAccessPage() {
+  const search = Route.useSearch() as { url?: string; title?: string; day?: string; desc?: string };
+  const { url, title, day, desc } = search;
+
   return (
     <div className="bg-background min-h-screen flex flex-col">
       <SiteHeader />
@@ -17,37 +21,32 @@ function VideoAccessPage() {
             {/* Video Player Area */}
             <div className="space-y-8">
               <div className="relative aspect-video rounded-3xl overflow-hidden bg-black shadow-2xl group border border-white/5">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="h-20 w-20 rounded-full bg-gold/90 text-gold-foreground flex items-center justify-center cursor-pointer hover:scale-110 transition-transform shadow-glow">
-                    <Play className="h-8 w-8 fill-current" />
+                {url ? (
+                  <ReactPlayer 
+                    url={url} 
+                    width="100%" 
+                    height="100%" 
+                    playing 
+                    controls 
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center text-white/50">
+                    <p>No video URL provided for this episode.</p>
                   </div>
-                </div>
-                {/* Simulated Player Controls */}
-                <div className="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="h-1 w-full bg-white/20 rounded-full mb-4 overflow-hidden">
-                    <div className="h-full w-[35%] bg-gold" />
-                  </div>
-                  <div className="flex items-center justify-between text-white">
-                    <div className="flex items-center gap-6">
-                      <Play className="h-4 w-4 fill-current" />
-                      <Volume2 className="h-4 w-4" />
-                      <span className="text-xs font-medium">12:45 / 45:00</span>
-                    </div>
-                    <div className="flex items-center gap-6">
-                      <Settings className="h-4 w-4" />
-                      <Maximize className="h-4 w-4" />
-                    </div>
-                  </div>
-                </div>
+                )}
               </div>
 
               <div className="text-cream space-y-4">
+                <Link to="/prayer" className="inline-flex items-center gap-2 text-gold hover:text-gold/80 text-sm font-bold tracking-widest uppercase mb-4 transition-colors">
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Series
+                </Link>
                 <div className="flex items-center gap-3 text-gold text-xs font-bold uppercase tracking-widest">
-                  <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" /> Live Now • Night 01
+                  <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" /> Live Now • Day {day || "01"}
                 </div>
-                <h1 className="font-display text-3xl sm:text-4xl font-medium tracking-tight">The Architecture of Light</h1>
+                <h1 className="font-display text-3xl sm:text-4xl font-medium tracking-tight">{title || "Session Audio / Video"}</h1>
                 <p className="text-cream/60 leading-relaxed max-w-3xl">
-                  In our opening night, we explore the first creative act: "Let there be light." Join us as we reflect on the physical and spiritual implications of divine light in our lives.
+                  {desc || "Join us as we reflect on the physical and spiritual implications of divine light in our lives."}
                 </p>
                 
                 <div className="pt-6 flex flex-wrap gap-4">

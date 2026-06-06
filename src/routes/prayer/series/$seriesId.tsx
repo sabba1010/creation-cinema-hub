@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
+import ReactPlayer from "react-player";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import {
@@ -19,7 +20,6 @@ import {
   FileText,
   Zap,
 } from "lucide-react";
-import { PRAYER_SERIES } from "../../../data/prayer-data";
 import { toast } from "sonner";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -37,6 +37,8 @@ function PrayerSeriesPage() {
 
   const [activeTab, setActiveTab] = useState<"videos" | "resources" | "downloads">("videos");
   const [expandedDay, setExpandedDay] = useState<number | null>(1);
+  const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
+  const [playingVideo, setPlayingVideo] = useState<any>(null);
   const [hasAccess] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem(`prayer_access_${seriesId}`) === "true";
@@ -105,14 +107,9 @@ function PrayerSeriesPage() {
 
         if (fetchedSeries) {
           setSeries(fetchedSeries);
-        } else {
-          // Fallback to static mock data
-          const mockSeries = PRAYER_SERIES.find((s) => s.id === seriesId);
-          setSeries(mockSeries);
         }
       } catch (err) {
-        const mockSeries = PRAYER_SERIES.find((s) => s.id === seriesId);
-        setSeries(mockSeries);
+        console.error("Failed to fetch series details", err);
       } finally {
         setIsLoading(false);
       }
@@ -157,15 +154,72 @@ function PrayerSeriesPage() {
   return (
     <div className="bg-background min-h-screen flex flex-col">
       <SiteHeader />
+      
+      {/* Video Modal Overlay */}
+      {playingVideo && (
+        <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 backdrop-blur-md">
+          <div className="w-full max-w-6xl relative animate-in fade-in zoom-in-95 duration-300">
+            <button 
+              onClick={() => setPlayingVideo(null)}
+              className="absolute -top-12 right-0 text-white/70 hover:text-white uppercase tracking-widest text-xs font-bold transition-colors flex items-center gap-2"
+            >
+              Close Video
+            </button>
+            <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black">
+              <ReactPlayer 
+                url={playingVideo.videoUrl} 
+                width="100%" 
+                height="100%" 
+                playing 
+                controls 
+                style={{ objectFit: 'contain' }}
+              />
+            </div>
+            <div className="mt-6 text-left">
+              <span className="text-gold text-xs font-bold uppercase tracking-widest mb-2 block">
+                Session {playingVideo.day}
+              </span>
+              <h3 className="text-2xl sm:text-3xl font-display font-medium text-white mb-2">
+                {playingVideo.title}
+              </h3>
+              <p className="text-white/60 text-sm max-w-3xl leading-relaxed">
+                {playingVideo.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <main className="flex-grow">
         {/* Hero Banner */}
-        <div className="relative h-[55vh] min-h-[420px] overflow-hidden">
-          <img
-            src={series.bannerImage}
-            alt={series.title}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-forest-deep via-forest-deep/60 to-forest-deep/20" />
+        <div className="relative h-[55vh] min-h-[420px] overflow-hidden bg-black">
+          {isPreviewPlaying && series.samplePreviewVideo ? (
+            <div className="absolute inset-0 z-20">
+              <ReactPlayer 
+                url={series.samplePreviewVideo} 
+                width="100%" 
+                height="100%" 
+                playing 
+                controls 
+                style={{ objectFit: 'contain' }}
+              />
+              <button 
+                onClick={() => setIsPreviewPlaying(false)} 
+                className="absolute top-6 right-6 z-30 bg-black/60 text-white hover:bg-black/80 px-4 py-2 rounded-xl text-sm font-bold tracking-widest uppercase transition-all"
+              >
+                Close Video
+              </button>
+            </div>
+          ) : (
+            <>
+              <img
+                src={series.bannerImage || "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80"}
+                alt={series.title}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-forest-deep via-forest-deep/60 to-forest-deep/20" />
+            </>
+          )}
           <div className="relative h-full flex flex-col justify-end pb-12 px-6 max-w-7xl mx-auto w-full">
             <Link
               to="/prayer"
@@ -190,7 +244,18 @@ function PrayerSeriesPage() {
             <h1 className="font-display text-5xl sm:text-6xl font-medium text-cream leading-tight mb-3">
               {series.theme}
             </h1>
-            <p className="text-cream/75 text-lg max-w-2xl">{series.tagline}</p>
+            <p className="text-cream/75 text-lg max-w-2xl">{series.tagline || series.description}</p>
+            {series.samplePreviewVideo && !isPreviewPlaying && (
+              <div className="mt-6">
+                <button 
+                  onClick={() => setIsPreviewPlaying(true)}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 hover:bg-white/30 text-cream rounded-xl font-bold tracking-widest uppercase transition-all backdrop-blur-sm shadow-xl hover:scale-105 active:scale-95"
+                >
+                  <Play className="w-4 h-4 fill-current" />
+                  Watch Free Preview
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -209,7 +274,7 @@ function PrayerSeriesPage() {
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Play className="h-4 w-4 text-primary" />
-                    5 Sessions
+                    {series.videos?.length || 0} Sessions
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Clock className="h-4 w-4 text-primary" />
@@ -243,6 +308,11 @@ function PrayerSeriesPage() {
               {/* Videos Tab */}
               {activeTab === "videos" && (
                 <div className="space-y-4">
+                  {(!series.videos || series.videos.length === 0) && (
+                    <div className="text-center py-12 text-muted-foreground border border-dashed rounded-2xl">
+                      <p>No video sessions have been uploaded yet.</p>
+                    </div>
+                  )}
                   {series.videos?.map((video: any) => {
                     const isAccessible = !video.locked || hasAccess;
                     return (
@@ -254,7 +324,11 @@ function PrayerSeriesPage() {
                           }`}
                         onClick={() => {
                           if (isAccessible) {
-                            navigate({ to: "/prayer/video" } as any);
+                            if (video.videoUrl) {
+                              setPlayingVideo(video);
+                            } else {
+                              toast.error("Video not uploaded yet.");
+                            }
                           } else {
                             toast.error("Purchase access to unlock this session");
                           }
@@ -302,6 +376,11 @@ function PrayerSeriesPage() {
               {/* Resources Tab */}
               {activeTab === "resources" && (
                 <div className="space-y-4">
+                  {(!series.resources || series.resources.length === 0) && (
+                    <div className="text-center py-12 text-muted-foreground border border-dashed rounded-2xl">
+                      <p>No daily resources available yet.</p>
+                    </div>
+                  )}
                   {series.resources?.map((resource: any) => {
                     const isOpen = expandedDay === resource.day;
                     const isLocked = resource.day > 2 && !hasAccess;
@@ -368,6 +447,11 @@ function PrayerSeriesPage() {
               {/* Downloads Tab */}
               {activeTab === "downloads" && (
                 <div className="space-y-4">
+                  {(!series.downloads || series.downloads.length === 0) && (
+                    <div className="text-center py-12 text-muted-foreground border border-dashed rounded-2xl">
+                      <p>No downloadable materials available yet.</p>
+                    </div>
+                  )}
                   {series.downloads?.map((dl: any) => {
                     const isAccessible = !dl.locked || hasAccess;
                     const typeColors: Record<string, string> = {
@@ -444,7 +528,7 @@ function PrayerSeriesPage() {
 
                     <ul className="space-y-3 mb-8 text-sm text-cream/80">
                       {[
-                        "All 5 video sessions",
+                        `All ${series.videos?.length || 0} video sessions`,
                         "Daily devotionals & prayer guides",
                         "Full download package",
                         "Children's curriculum",
@@ -484,7 +568,7 @@ function PrayerSeriesPage() {
                 <h3 className="font-bold text-sm uppercase tracking-wider">Series Includes</h3>
                 <div className="space-y-3">
                   {[
-                    { icon: Play, label: "5 Video Sessions", sub: "HD quality, replay anytime" },
+                    { icon: Play, label: `${series.videos?.length || 0} Video Sessions`, sub: "HD quality, replay anytime" },
                     { icon: BookOpen, label: "Daily Devotionals", sub: "Scripture, reflection & prayer" },
                     { icon: Download, label: `${series.downloads?.length || 0} Downloads`, sub: "PDFs, slides & more" },
                     { icon: Users, label: "For Schools & Churches", sub: "Facilitator tools included" },
