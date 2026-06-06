@@ -135,7 +135,11 @@ function KidsManagement() {
 
   const fetchSeries = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/kids/series");
+      const res = await fetch("http://localhost:5000/api/kids/series", {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        }
+      });
       const data = await res.json();
       if (Array.isArray(data)) {
         setSeries(data);
@@ -858,7 +862,8 @@ function KidsManagement() {
       <Dialog open={isSettingsDialogOpen} onOpenChange={setIsSettingsDialogOpen}>
         <DialogContent className="sm:max-w-[500px] rounded-[2.5rem]">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-display font-bold">KidsBibleFlix Page Settings</DialogTitle>
+            <DialogTitle className="font-display font-bold text-2xl">Page Settings</DialogTitle>
+            <DialogDescription className="sr-only">Page Settings</DialogDescription>
           </DialogHeader>
           <div className="space-y-6 py-4">
             <div className="space-y-2">
@@ -894,7 +899,8 @@ function KidsManagement() {
       }}>
         <DialogContent className="sm:max-w-[600px] rounded-[2.5rem]">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-display font-bold">{editingSeriesId ? "Edit Series" : "Create New Series"}</DialogTitle>
+            <DialogTitle className="text-2xl font-display font-bold">{editingSeriesId ? 'Edit Series' : 'Add New Series'}</DialogTitle>
+            <DialogDescription className="sr-only">Series details</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleAddSeries} className="space-y-6 py-4">
             <div className="space-y-4">
@@ -1055,7 +1061,8 @@ function KidsManagement() {
       <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
         <DialogContent className="sm:max-w-[500px] rounded-[2.5rem]">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-display font-bold">Add Episode/Video</DialogTitle>
+            <DialogTitle className="text-2xl font-display font-bold">Upload Content</DialogTitle>
+            <DialogDescription className="sr-only">Upload episode content</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleUploadContent} className="space-y-6 py-4 text-left">
             <div className="space-y-4">
@@ -1127,7 +1134,8 @@ function KidsManagement() {
       <Dialog open={isPlanDialogOpen} onOpenChange={setIsPlanDialogOpen}>
         <DialogContent className="sm:max-w-[500px] rounded-[2.5rem]">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-display font-bold">Manage Subscription Plans</DialogTitle>
+            <DialogTitle className="font-display font-bold text-2xl">Manage Subscription Plans</DialogTitle>
+            <DialogDescription className="sr-only">Plan Settings</DialogDescription>
           </DialogHeader>
           <div className="space-y-6 py-4">
             <div className="grid grid-cols-2 gap-4 border border-border/50 p-4 rounded-2xl">
@@ -1169,7 +1177,8 @@ function KidsManagement() {
       <Dialog open={isGrantDialogOpen} onOpenChange={setIsGrantDialogOpen}>
         <DialogContent className="sm:max-w-[500px] rounded-[2.5rem]">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-display font-bold">Grant Free Access</DialogTitle>
+            <DialogTitle className="text-2xl font-display font-bold">Grant Access</DialogTitle>
+            <DialogDescription className="sr-only">Grant user access</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleGrantLifetime} className="space-y-6 py-4 text-left">
             <div className="space-y-4">

@@ -73,7 +73,11 @@ function PodcastManagement() {
   const fetchSeasons = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/podcast/seasons`);
+      const res = await fetch(`${API_URL}/api/podcast/seasons`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        }
+      });
       const data = await res.json();
       if (data.success) {
         setSeasons(data.data);

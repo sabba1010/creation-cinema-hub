@@ -4,7 +4,7 @@ import { ArrowLeft, Play, Settings, Plus, FileVideo, Trash2, Mic2 } from "lucide
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../../components/ui/dialog";
 import Swal from "sweetalert2";
 
 export const Route = createFileRoute("/admin/kids-series/$seriesId")({
@@ -24,7 +24,11 @@ function AdminSeriesPage() {
 
   const fetchSeriesData = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/kids/series/${seriesId}`);
+      const res = await fetch(`http://localhost:5000/api/kids/series/${seriesId}`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        }
+      });
       if (res.ok) {
         const data = await res.json();
         const seriesObj = {
@@ -44,7 +48,11 @@ function AdminSeriesPage() {
 
   const fetchEpisodes = async (seriesImg?: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/kids/series/${seriesId}/episodes`);
+      const res = await fetch(`http://localhost:5000/api/kids/series/${seriesId}/episodes`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        }
+      });
       if (res.ok) {
         const data = await res.json();
         const fallbackImg = seriesImg || "https://images.unsplash.com/photo-1502086223501-7ea2443054f1?w=800&h=400&fit=crop";
@@ -82,7 +90,10 @@ function AdminSeriesPage() {
 
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        },
         body: JSON.stringify({
           title: uploadForm.title,
           description: uploadForm.description,
@@ -123,7 +134,12 @@ function AdminSeriesPage() {
     });
     if (!result.isConfirmed) return;
     try {
-      await fetch(`http://localhost:5000/api/kids/episodes/${id}`, { method: "DELETE" });
+      await fetch(`http://localhost:5000/api/kids/episodes/${id}`, { 
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        }
+      });
       await fetchEpisodes(series?.img);
       if (activeEpisodeId === id) setActiveEpisodeId(null);
       Swal.fire({ title: "Removed!", text: "Episode has been deleted.", icon: "success", confirmButtonColor: "#2C4A3B" });
@@ -305,6 +321,9 @@ function AdminSeriesPage() {
             <DialogTitle className="text-2xl font-display font-bold">
               {editingEpId ? "Edit Episode" : `Add Episode to ${series.name}`}
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              Fill out episode details
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleUploadContent} className="space-y-6 py-4 text-left">
             <div className="space-y-4">
