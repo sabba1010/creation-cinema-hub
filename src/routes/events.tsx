@@ -19,10 +19,13 @@ import {
   CheckCircle,
   AlertCircle,
   XCircle,
+  X,
+  CreditCard,
   Navigation,
   Car,
   Accessibility,
   ExternalLink,
+  Star,
 } from "lucide-react";
 import { INITIAL_EVENTS, type CityScreening, type Showtime } from "../data/events-data";
 import { toast } from "sonner";
@@ -230,6 +233,9 @@ function EventsPage() {
   const [discountPercentage, setDiscountPercentage] = useState(0);
   const [isPromoValidating, setIsPromoValidating] = useState(false);
 
+  const [reviewForm, setReviewForm] = useState({ name: "", rating: 5, comment: "" });
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -251,6 +257,39 @@ function EventsPage() {
 
   const displayedEvents = events.filter(e => eventFilter === "active" ? e.status !== "Past" : e.status === "Past");
   const selectedEvent = displayedEvents.find((e) => e.id === selectedEventId) || displayedEvents[0];
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = localStorage.getItem("user_token");
+    if (!token) {
+      toast.error("Please login first to submit a review.");
+      window.location.href = "/login";
+      return;
+    }
+    setIsSubmittingReview(true);
+    try {
+      const res = await fetch(`http://localhost:5000/api/events/${selectedEvent?.id}/reviews`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(reviewForm)
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Review added successfully!");
+        setReviewForm({ name: "", rating: 5, comment: "" });
+        setEvents(events.map(ev => ev.id === selectedEvent?.id ? { ...data.data, id: data.data._id } : ev));
+      } else {
+        toast.error(data.message || "Failed to add review");
+      }
+    } catch (err) {
+      toast.error("Network error");
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
 
   const handleBookRequest = (city: string, showtimeId: string) => {
     const token = localStorage.getItem("user_token");
@@ -645,6 +684,84 @@ function EventsPage() {
                 </div>
               </div>
             )}
+            {/* Testimonials */}
+            <div>
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.4em] text-gold/70 mb-2">Testimonials</div>
+                  <h3 className="font-display text-3xl text-cream">Community Voices</h3>
+                </div>
+              </div>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-6">
+                  {selectedEvent.reviews && selectedEvent.reviews.length > 0 ? selectedEvent.reviews.map((r: any, i: number) => (
+                    <div key={i} className="p-6 rounded-[2rem] bg-white/5 border border-white/10 space-y-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="font-bold text-cream">{r.name}</div>
+                          <div className="text-[10px] text-cream/40 uppercase tracking-widest">{new Date(r.createdAt).toLocaleDateString()}</div>
+                        </div>
+                        <div className="flex items-center gap-1 text-gold">
+                          {[...Array(5)].map((_, j) => (
+                            <Star key={j} className={`w-3 h-3 ${j < r.rating ? "fill-gold" : "opacity-30"}`} />
+                          ))}
+                        </div>
+                      </div>
+                      <p className="text-sm text-cream/70 italic">"{r.comment}"</p>
+                    </div>
+                  )) : (
+                    <div className="text-sm text-cream/40 italic">No reviews yet. Be the first to share your experience!</div>
+                  )}
+                </div>
+
+                {/* Leave a Review Form */}
+                <div className="p-8 rounded-[2rem] bg-gradient-to-b from-forest-deep to-[#0a1a0a] border border-white/10 h-fit">
+                  <h4 className="font-bold text-lg text-cream mb-6">Leave a Review</h4>
+                  <form onSubmit={handleReviewSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-cream/50">Your Name</label>
+                      <input
+                        required
+                        type="text"
+                        value={reviewForm.name}
+                        onChange={e => setReviewForm({...reviewForm, name: e.target.value})}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50"
+                        placeholder="e.g. John Doe"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-cream/50">Rating (1-5)</label>
+                      <input
+                        required
+                        type="number"
+                        min="1"
+                        max="5"
+                        value={reviewForm.rating}
+                        onChange={e => setReviewForm({...reviewForm, rating: Number(e.target.value)})}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-cream/50">Your Experience</label>
+                      <textarea
+                        required
+                        value={reviewForm.comment}
+                        onChange={e => setReviewForm({...reviewForm, comment: e.target.value})}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm h-24 focus:outline-none focus:border-gold/50"
+                        placeholder="Share your thoughts about this event..."
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={isSubmittingReview}
+                      className="w-full py-3 rounded-xl bg-gold text-forest-deep font-bold text-sm tracking-widest uppercase hover:bg-gold/90 transition-all disabled:opacity-50"
+                    >
+                      {isSubmittingReview ? "Submitting..." : "Submit Review"}
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
 
             {/* FAQ */}
             {selectedEvent.faq && selectedEvent.faq.length > 0 && (
