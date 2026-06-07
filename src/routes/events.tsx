@@ -504,8 +504,24 @@ function EventsPage() {
             {/* Event Overview */}
             <div className="grid lg:grid-cols-3 gap-12">
               <div className="lg:col-span-2 space-y-6">
-                {/* Event Image */}
-                {selectedEvent.image && selectedEvent.image !== 'no-photo.jpg' && (
+                {/* Event Video / Image */}
+                {selectedEvent.recapVideoUrl ? (
+                  <div className="w-full aspect-video rounded-[2rem] overflow-hidden border border-white/10 mb-8 shadow-2xl relative bg-black">
+                    <iframe
+                      src={(() => {
+                        const url = selectedEvent.recapVideoUrl;
+                        const ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+                        if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
+                        const vimeoMatch = url.match(/(?:vimeo\.com\/)(\d+)/);
+                        if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+                        return url;
+                      })()}
+                      className="absolute inset-0 w-full h-full"
+                      allowFullScreen
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    />
+                  </div>
+                ) : selectedEvent.image && selectedEvent.image !== 'no-photo.jpg' && (
                   <div className="w-full h-[300px] sm:h-[400px] rounded-[2rem] overflow-hidden border border-white/10 mb-8 shadow-2xl">
                     <img
                       src={selectedEvent.image?.startsWith('http') || selectedEvent.image?.startsWith('data:') ? selectedEvent.image : `https://movie-backend-drab.vercel.app${selectedEvent.image.startsWith('/') ? '' : '/'}${selectedEvent.image}`}

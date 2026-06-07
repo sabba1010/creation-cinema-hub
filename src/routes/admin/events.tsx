@@ -87,6 +87,7 @@ function EventsManagement() {
     description: string;
     image: string;
     gallery: string[];
+    recapVideoUrl: string;
     categories: { name: string; price: number; available: number; facilities: string }[];
   }>({
     name: "",
@@ -99,6 +100,7 @@ function EventsManagement() {
     description: "",
     image: "",
     gallery: [],
+    recapVideoUrl: "",
     categories: [],
   });
 
@@ -286,6 +288,7 @@ function EventsManagement() {
       description: event.description || "",
       image: event.image || "",
       gallery: event.gallery || [],
+      recapVideoUrl: (event as any).recapVideoUrl || "",
       categories: extraCats.map(c => ({ ...c, facilities: c.facilities || "" })),
     });
     setIsEventDialogOpen(true);
@@ -754,6 +757,15 @@ function EventsManagement() {
                     </div>
                   )}
                 </div>
+              </div>
+              <div className="col-span-2 space-y-2">
+                <Label>Recap Video URL (Vimeo/YouTube)</Label>
+                <Input
+                  value={eventForm.recapVideoUrl}
+                  onChange={e => setEventForm({ ...eventForm, recapVideoUrl: e.target.value })}
+                  placeholder="https://vimeo.com/..."
+                  className="h-11 rounded-xl"
+                />
               </div>
               <div className="col-span-2 space-y-2">
                 <Label>Full Description</Label>
