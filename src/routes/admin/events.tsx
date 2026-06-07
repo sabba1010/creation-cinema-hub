@@ -502,32 +502,96 @@ function EventsManagement() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        variant={t.checkedIn ? "outline" : "default"}
-                        size="sm"
-                        className={t.checkedIn ? "opacity-50" : "bg-forest hover:bg-forest/90"}
-                        onClick={async () => {
-                          try {
-                            const token = localStorage.getItem("user_token");
-                            const res = await fetch(`https://movie-backend-drab.vercel.app/api/tickets/${t._id}/checkin`, {
-                              method: 'PUT',
-                              headers: { 'Authorization': `Bearer ${token}` }
-                            });
-                            const data = await res.json();
-                            if (data.success) {
-                              setTickets(tickets.map(tk => tk.id === t.id ? { ...tk, checkedIn: true } : tk));
-                              toast.success(`Attendee ${t.user} checked in!`);
-                            } else {
-                              toast.error(data.message || "Failed to check in");
-                            }
-                          } catch (err) {
-                            toast.error("Network error");
-                          }
-                        }}
-                        disabled={t.checkedIn}
-                      >
-                        {t.checkedIn ? "Checked In" : "Check In"}
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" size="sm" className="h-8">
+                            Manage <MoreVertical className="ml-2 w-3 h-3" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="rounded-xl w-48 border-border/50 shadow-elevated">
+                          <DropdownMenuItem
+                            className="gap-2 cursor-pointer"
+                            disabled={t.checkedIn || t.status !== "Paid"}
+                            onClick={async () => {
+                              try {
+                                const token = localStorage.getItem("user_token");
+                                const res = await fetch(`http://localhost:5000/api/tickets/${t._id}/checkin`, {
+                                  method: 'PUT',
+                                  headers: { 'Authorization': `Bearer ${token}` }
+                                });
+                                const data = await res.json();
+                                if (data.success) {
+                                  setTickets(tickets.map(tk => tk.id === t.id ? { ...tk, checkedIn: true } : tk));
+                                  toast.success(`Attendee ${t.user} checked in!`);
+                                } else {
+                                  toast.error(data.message || "Failed to check in");
+                                }
+                              } catch (err) {
+                                toast.error("Network error");
+                              }
+                            }}
+                          >
+                            <span className={t.checkedIn ? "opacity-50" : "text-emerald-500 font-medium"}>
+                              {t.checkedIn ? "Checked In" : "Mark as Checked In"}
+                            </span>
+                          </DropdownMenuItem>
+                          
+                          {t.status === "Paid" && (
+                            <>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="gap-2 cursor-pointer"
+                                onClick={async () => {
+                                  if(!confirm("Are you sure you want to cancel this ticket? This will restore capacity.")) return;
+                                  try {
+                                    const token = localStorage.getItem("user_token");
+                                    const res = await fetch(`http://localhost:5000/api/tickets/${t._id}/status`, {
+                                      method: 'PUT',
+                                      headers: { 
+                                        'Authorization': `Bearer ${token}`,
+                                        'Content-Type': 'application/json'
+                                      },
+                                      body: JSON.stringify({ status: 'Cancelled' })
+                                    });
+                                    const data = await res.json();
+                                    if (data.success) {
+                                      setTickets(tickets.map(tk => tk.id === t.id ? { ...tk, status: 'Cancelled' } : tk));
+                                      toast.success("Ticket Cancelled successfully");
+                                    } else toast.error(data.message);
+                                  } catch (err) { toast.error("Network error"); }
+                                }}
+                              >
+                                <span className="text-amber-500 font-medium">Cancel Ticket</span>
+                              </DropdownMenuItem>
+
+                              <DropdownMenuItem
+                                className="gap-2 cursor-pointer"
+                                onClick={async () => {
+                                  if(!confirm("Are you sure you want to mark this ticket as Refunded? This will restore capacity.")) return;
+                                  try {
+                                    const token = localStorage.getItem("user_token");
+                                    const res = await fetch(`http://localhost:5000/api/tickets/${t._id}/status`, {
+                                      method: 'PUT',
+                                      headers: { 
+                                        'Authorization': `Bearer ${token}`,
+                                        'Content-Type': 'application/json'
+                                      },
+                                      body: JSON.stringify({ status: 'Refunded' })
+                                    });
+                                    const data = await res.json();
+                                    if (data.success) {
+                                      setTickets(tickets.map(tk => tk.id === t.id ? { ...tk, status: 'Refunded' } : tk));
+                                      toast.success("Ticket Refunded successfully");
+                                    } else toast.error(data.message);
+                                  } catch (err) { toast.error("Network error"); }
+                                }}
+                              >
+                                <span className="text-destructive font-medium">Refund Ticket</span>
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}
