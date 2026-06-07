@@ -665,11 +665,11 @@ function EventsManagement() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Display Date Range</Label>
+                <Label>Event Date & Time (Calendar)</Label>
                 <Input
+                  type="datetime-local"
                   value={eventForm.date}
                   onChange={e => setEventForm({ ...eventForm, date: e.target.value })}
-                  placeholder="Aug 18 - 22"
                   className="h-11 rounded-xl" required
                 />
               </div>

@@ -472,7 +472,7 @@ function EventsPage() {
                 {/* Quick Info */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {[
-                    { icon: Calendar, label: "Date", value: selectedEvent.date },
+                    { icon: Calendar, label: "Date", value: !isNaN(new Date(selectedEvent.date).getTime()) ? new Date(selectedEvent.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : selectedEvent.date },
                     { icon: Clock, label: "Duration", value: selectedEvent.duration || "TBA" },
                     { icon: Users, label: "Age", value: selectedEvent.ageRating || "All Ages" },
                     { icon: Globe, label: "Language", value: selectedEvent.language || "English" },
@@ -852,11 +852,14 @@ function EventCountdown({ eventDate, showtimes }: { eventDate: string, showtimes
         targetTime = parsedDate.getTime();
       }
     } else if (eventDate) {
-      // Attempt to parse string directly, fallback to current year if missing
-      const parsedDate = new Date(`${eventDate} ${new Date().getFullYear()}`);
-      if (!isNaN(parsedDate.getTime()) && parsedDate.getTime() > new Date().getTime()) {
-        targetTime = parsedDate.getTime();
-      }
+       // Attempt to parse string directly, fallback to current year if missing
+       let parsedDate = new Date(eventDate);
+       if (isNaN(parsedDate.getTime())) {
+          parsedDate = new Date(`${eventDate} ${new Date().getFullYear()}`);
+       }
+       if (!isNaN(parsedDate.getTime()) && parsedDate.getTime() > new Date().getTime()) {
+          targetTime = parsedDate.getTime();
+       }
     }
 
     const interval = setInterval(() => {
