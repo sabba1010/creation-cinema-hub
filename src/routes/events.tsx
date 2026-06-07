@@ -467,6 +467,8 @@ function EventsPage() {
                   <p className="text-cream/60 mt-4 leading-relaxed">{selectedEvent.description}</p>
                 </div>
 
+                <EventCountdown eventDate={selectedEvent.date} showtimes={selectedEvent.cities?.[0]?.showtimes} />
+
                 {/* Quick Info */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {[
@@ -809,6 +811,88 @@ function EventsPage() {
 
       </main>
       <SiteFooter />
+    </div>
+  );
+}
+
+function EventCountdown({ eventDate, showtimes }: { eventDate: string, showtimes?: any[] }) {
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [isLive, setIsLive] = useState(false);
+
+  useEffect(() => {
+    // Default fallback to 14 days if date parsing fails
+    let targetTime = new Date().getTime() + 14 * 24 * 60 * 60 * 1000;
+    
+    // Attempt parsing from showtimes if available
+    if (showtimes && showtimes.length > 0) {
+       const firstShowtime = showtimes[0];
+       // e.g. "August 18, 2026 19:00:00"
+       const parsedDate = new Date(`${firstShowtime.date} ${firstShowtime.time}`);
+       if (!isNaN(parsedDate.getTime()) && parsedDate.getTime() > new Date().getTime()) {
+          targetTime = parsedDate.getTime();
+       }
+    } else if (eventDate) {
+       // Attempt to parse string directly, fallback to current year if missing
+       const parsedDate = new Date(`${eventDate} ${new Date().getFullYear()}`);
+       if (!isNaN(parsedDate.getTime()) && parsedDate.getTime() > new Date().getTime()) {
+          targetTime = parsedDate.getTime();
+       }
+    }
+
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetTime - now;
+
+      if (distance < 0) {
+        clearInterval(interval);
+        setIsLive(true);
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      } else {
+        setIsLive(false);
+        setTimeLeft({
+          days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((distance % (1000 * 60)) / 1000),
+        });
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [eventDate, showtimes]);
+
+  if (isLive) {
+    return (
+      <div className="flex items-center gap-3 p-4 rounded-2xl border border-gold/30 bg-gold/5 mb-8 shadow-inner shadow-gold/10">
+         <div className="h-3 w-3 rounded-full bg-gold animate-pulse shadow-[0_0_10px_var(--gold)]" />
+         <span className="font-display font-bold text-lg text-gold">Event is Live Now!</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-8">
+      <div className="text-[10px] font-black uppercase tracking-[0.4em] text-gold/70 mb-3 flex items-center gap-2">
+        <Clock className="w-3.5 h-3.5" /> Event Starts In
+      </div>
+      <div className="grid grid-cols-4 gap-3 sm:gap-4 p-6 sm:p-8 rounded-[2rem] border border-white/10 bg-white/5 shadow-2xl backdrop-blur-sm">
+        <div className="text-center">
+          <div className="text-3xl sm:text-5xl font-display font-bold text-gold tabular-nums tracking-tighter">{timeLeft.days}</div>
+          <div className="text-[9px] sm:text-[10px] uppercase font-bold text-cream/40 tracking-[0.2em] mt-2">Days</div>
+        </div>
+        <div className="text-center">
+          <div className="text-3xl sm:text-5xl font-display font-bold text-gold tabular-nums tracking-tighter">{timeLeft.hours.toString().padStart(2, '0')}</div>
+          <div className="text-[9px] sm:text-[10px] uppercase font-bold text-cream/40 tracking-[0.2em] mt-2">Hours</div>
+        </div>
+        <div className="text-center">
+          <div className="text-3xl sm:text-5xl font-display font-bold text-gold tabular-nums tracking-tighter">{timeLeft.minutes.toString().padStart(2, '0')}</div>
+          <div className="text-[9px] sm:text-[10px] uppercase font-bold text-cream/40 tracking-[0.2em] mt-2">Mins</div>
+        </div>
+        <div className="text-center">
+          <div className="text-3xl sm:text-5xl font-display font-bold text-gold tabular-nums tracking-tighter">{timeLeft.seconds.toString().padStart(2, '0')}</div>
+          <div className="text-[9px] sm:text-[10px] uppercase font-bold text-cream/40 tracking-[0.2em] mt-2">Secs</div>
+        </div>
+      </div>
     </div>
   );
 }
