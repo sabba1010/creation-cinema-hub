@@ -81,7 +81,8 @@ function DashboardOverview() {
 
       try {
         const headers = { "Authorization": `Bearer ${token}` };
-        const baseUrl = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app/api";
+        const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
+        const baseUrl = API_URL.endsWith('/api') ? API_URL : `${API_URL}/api`;
 
         const fetchEndpoint = async (endpoint: string, options = {}) => {
           try {
