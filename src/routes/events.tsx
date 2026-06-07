@@ -217,6 +217,7 @@ function EventsPage() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [eventFilter, setEventFilter] = useState<"active" | "past">("active");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -248,7 +249,8 @@ function EventsPage() {
     fetchEvents();
   }, []);
 
-  const selectedEvent = events.find((e) => e.id === selectedEventId) || events[0];
+  const displayedEvents = events.filter(e => eventFilter === "active" ? e.status !== "Past" : e.status === "Past");
+  const selectedEvent = displayedEvents.find((e) => e.id === selectedEventId) || displayedEvents[0];
 
   const handleBookRequest = (city: string, showtimeId: string) => {
     const token = localStorage.getItem("user_token");
@@ -390,21 +392,21 @@ function EventsPage() {
           </div>
 
           <div className="relative z-10 mx-auto max-w-5xl px-6 text-center space-y-6">
-            <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-gold/10 border border-gold/20 text-[10px] font-bold uppercase tracking-[0.4em] text-gold backdrop-blur-md">
-              <Sparkles className="w-3 h-3 animate-pulse" /> Live Events
+            <div className={`inline-flex items-center gap-3 px-4 py-1.5 rounded-full border text-[10px] font-bold uppercase tracking-[0.4em] backdrop-blur-md ${eventFilter === "active" ? "bg-gold/10 border-gold/20 text-gold" : "bg-white/5 border-white/10 text-cream/60"}`}>
+              <Sparkles className={`w-3 h-3 ${eventFilter === "active" ? "animate-pulse" : ""}`} /> {eventFilter === "active" ? "Live Events" : "Past Events"}
             </div>
             <h1 className="font-display text-6xl sm:text-8xl lg:text-9xl font-medium tracking-tighter leading-[0.9]">
-              Live <span className="italic text-gold block sm:inline">Events</span>
+              {eventFilter === "active" ? "Live" : "Past"} <span className="italic text-gold block sm:inline">Events</span>
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-cream/60 font-light leading-relaxed">
-              Immersive gatherings in cities around the world — and online for everyone.
+              {eventFilter === "active" ? "Immersive gatherings in cities around the world — and online for everyone." : "Explore our archive of past gatherings, screenings, and events."}
             </p>
             {/* Stats */}
             <div className="flex flex-wrap justify-center gap-8 pt-4 text-sm text-cream/50">
               {[
-                { icon: Globe, v: `${events.reduce((acc, e) => acc + (e.cities?.length ?? 0), 0)}`, l: "Locations" },
-                { icon: Calendar, v: `${events.length}`, l: "Events" },
-                { icon: Users, v: `${events.reduce((acc, e) => acc + (e.ticketsSold || 0), 0).toLocaleString()}+`, l: "Registered" },
+                { icon: Globe, v: `${displayedEvents.reduce((acc, e) => acc + (e.cities?.length ?? 0), 0)}`, l: "Locations" },
+                { icon: Calendar, v: `${displayedEvents.length}`, l: "Events" },
+                { icon: Users, v: `${displayedEvents.reduce((acc, e) => acc + (e.ticketsSold || 0), 0).toLocaleString()}+`, l: "Registered" },
                 { icon: Ticket, v: "Free – $45", l: "Ticket Range" },
               ].map(({ icon: Icon, v, l }) => (
                 <div key={l} className="flex items-center gap-2">
@@ -420,19 +422,38 @@ function EventsPage() {
         {/* Event Selector Tabs */}
         <section className="sticky top-16 z-20 border-b border-white/10 bg-[#050704]/95 backdrop-blur-xl">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="flex gap-0 overflow-x-auto scrollbar-hide">
-              {events.map((ev) => (
+            <div className="flex flex-col md:flex-row md:items-center gap-4 py-2 md:py-0">
+              {/* Filter Toggle */}
+              <div className="flex items-center gap-2 bg-white/5 rounded-lg p-1 w-fit md:mr-4">
                 <button
-                  key={ev.id}
-                  onClick={() => setSelectedEventId(ev.id)}
-                  className={`flex-shrink-0 px-5 py-4 text-xs font-bold uppercase tracking-widest border-b-2 transition-all whitespace-nowrap ${selectedEventId === ev.id
-                    ? "border-gold text-gold"
-                    : "border-transparent text-cream/40 hover:text-cream/70"
-                    }`}
+                  onClick={() => { setEventFilter("active"); setSelectedEventId(null); }}
+                  className={`px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-md transition-all ${eventFilter === "active" ? "bg-forest text-white shadow-md" : "text-cream/50 hover:text-cream/80"}`}
                 >
-                  {ev.name}
+                  Active
                 </button>
-              ))}
+                <button
+                  onClick={() => { setEventFilter("past"); setSelectedEventId(null); }}
+                  className={`px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-md transition-all ${eventFilter === "past" ? "bg-forest text-white shadow-md" : "text-cream/50 hover:text-cream/80"}`}
+                >
+                  Past
+                </button>
+              </div>
+
+              {/* Event Tabs */}
+              <div className="flex gap-0 overflow-x-auto scrollbar-hide flex-grow">
+                {displayedEvents.map((ev) => (
+                  <button
+                    key={ev.id}
+                    onClick={() => setSelectedEventId(ev.id)}
+                    className={`flex-shrink-0 px-5 py-4 text-xs font-bold uppercase tracking-widest border-b-2 transition-all whitespace-nowrap ${selectedEvent?.id === ev.id
+                      ? "border-gold text-gold"
+                      : "border-transparent text-cream/40 hover:text-cream/70"
+                      }`}
+                  >
+                    {ev.name}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -547,12 +568,21 @@ function EventsPage() {
                     ))}
                   </ul>
                 )}
-                <button
-                  onClick={handleGlobalBook}
-                  className="w-full py-4 rounded-xl text-sm font-black uppercase tracking-widest transition-all active:scale-95 bg-gold text-forest-deep hover:bg-gold/90 shadow-lg"
-                >
-                  Buy Ticket Now →
-                </button>
+                {selectedEvent.status !== "Past" ? (
+                  <button
+                    onClick={handleGlobalBook}
+                    className="w-full py-4 rounded-xl text-sm font-black uppercase tracking-widest transition-all active:scale-95 bg-gold text-forest-deep hover:bg-gold/90 shadow-lg"
+                  >
+                    Buy Ticket Now →
+                  </button>
+                ) : (
+                  <button
+                    disabled
+                    className="w-full py-4 rounded-xl text-sm font-black uppercase tracking-widest bg-white/5 text-cream/30 cursor-not-allowed shadow-lg"
+                  >
+                    Event Ended
+                  </button>
+                )}
                 {selectedEvent.cities && selectedEvent.cities.length > 0 && (
                   <div className="text-xs text-cream/40 text-center">Or select a specific city & showtime below</div>
                 )}
@@ -664,7 +694,7 @@ function EventsPage() {
         ) : (
           <div className="py-32 text-center text-cream/50 flex flex-col items-center justify-center space-y-4">
             <Calendar className="w-12 h-12 text-cream/20" />
-            <p>No upcoming events at this moment. Please check back later!</p>
+            <p>{eventFilter === "active" ? "No upcoming events at this moment. Please check back later!" : "No past events found."}</p>
           </div>
         )}
 
