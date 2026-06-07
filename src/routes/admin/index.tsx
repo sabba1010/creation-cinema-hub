@@ -7,9 +7,18 @@ import {
   Calendar,
   CreditCard,
   TrendingUp,
-  ArrowUpRight,
-  ArrowDownRight,
-  Activity
+  Activity,
+  Heart,
+  Box,
+  Flag,
+  BookOpen,
+  Mail,
+  MessageSquare,
+  PlayCircle,
+  Mic,
+  Sun,
+  Banknote,
+  Tv
 } from "lucide-react";
 import {
   BarChart,
@@ -49,9 +58,20 @@ const revenueData = [
 function DashboardOverview() {
   const [stats, setStats] = useState({
     users: 0,
-    films: 24, // Assuming we don't have film data yet
+    films: 0,
     events: 0,
-    revenue: 0
+    revenue: 0,
+    donations: 0,
+    donationAmount: 0,
+    products: 0,
+    campaigns: 0,
+    resources: 0,
+    subscribers: 0,
+    messages: 0,
+    kidsSeries: 0,
+    podcasts: 0,
+    prayers: 0,
+    series: 0,
   });
 
   useEffect(() => {
@@ -61,23 +81,44 @@ function DashboardOverview() {
 
       try {
         const headers = { "Authorization": `Bearer ${token}` };
+        const baseUrl = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app/api";
 
-        // Fetch users
-        const usersRes = await fetch("https://movie-backend-drab.vercel.app/api/users", { headers });
-        const usersData = await usersRes.json();
-        const usersCount = usersData.success ? usersData.data.length : 0;
+        const fetchEndpoint = async (endpoint: string, options = {}) => {
+          try {
+            const res = await fetch(`${baseUrl}${endpoint}`, options);
+            if (!res.ok) return [];
+            const data = await res.json();
+            return data.success ? data.data || [] : [];
+          } catch (e) {
+            console.error(`Error fetching ${endpoint}:`, e);
+            return [];
+          }
+        };
 
-        // Fetch events
-        const eventsRes = await fetch("https://movie-backend-drab.vercel.app/api/events");
-        const eventsData = await eventsRes.json();
-        const eventsCount = eventsData.success ? eventsData.data.length : 0;
+        const [
+          usersData, eventsData, ticketsData, filmsData,
+          donationsData, productsData, campaignsData, resourcesData,
+          newsletterData, contactData, kidsData, podcastData, prayerData, seriesData
+        ] = await Promise.all([
+          fetchEndpoint("/users", { headers }),
+          fetchEndpoint("/events"),
+          fetchEndpoint("/tickets", { headers }),
+          fetchEndpoint("/films"),
+          fetchEndpoint("/donations", { headers }),
+          fetchEndpoint("/products"),
+          fetchEndpoint("/campaigns"),
+          fetchEndpoint("/resources"),
+          fetchEndpoint("/newsletter", { headers }),
+          fetchEndpoint("/contact", { headers }),
+          fetchEndpoint("/kids/series"),
+          fetchEndpoint("/podcast/seasons"),
+          fetchEndpoint("/prayer/seasons"),
+          fetchEndpoint("/series")
+        ]);
 
-        // Fetch tickets for revenue
-        const ticketsRes = await fetch("https://movie-backend-drab.vercel.app/api/tickets", { headers });
-        const ticketsData = await ticketsRes.json();
         let totalRevenue = 0;
-        if (ticketsData.success) {
-          ticketsData.data.forEach((t: any) => {
+        if (Array.isArray(ticketsData)) {
+          ticketsData.forEach((t: any) => {
             if (t.status === 'Paid') {
               const priceStr = String(t.pricePaid || 0).replace(/[^0-9.]/g, '');
               totalRevenue += parseFloat(priceStr) || 0;
@@ -85,16 +126,33 @@ function DashboardOverview() {
           });
         }
 
-        // Fetch films
-        const filmsRes = await fetch("https://movie-backend-drab.vercel.app/api/films");
-        const filmsData = await filmsRes.json();
-        const filmsCount = filmsData.success ? filmsData.data.length : 0;
+        let totalDonationAmount = 0;
+        if (Array.isArray(donationsData)) {
+          donationsData.forEach((d: any) => {
+            const amountStr = String(d.amount || d.totalAmount || 0).replace(/[^0-9.]/g, '');
+            totalDonationAmount += parseFloat(amountStr) || 0;
+          });
+        }
+
+        // Fallback checks for nested data if the endpoint structure differs
+        const countData = (data: any) => Array.isArray(data) ? data.length : (data ? 1 : 0);
 
         setStats({
-          users: usersCount,
-          films: filmsCount,
-          events: eventsCount,
-          revenue: totalRevenue
+          users: countData(usersData),
+          events: countData(eventsData),
+          films: countData(filmsData),
+          revenue: totalRevenue,
+          donations: countData(donationsData),
+          donationAmount: totalDonationAmount,
+          products: countData(productsData),
+          campaigns: countData(campaignsData),
+          resources: countData(resourcesData),
+          subscribers: countData(newsletterData),
+          messages: countData(contactData),
+          kidsSeries: countData(kidsData),
+          podcasts: countData(podcastData),
+          prayers: countData(prayerData),
+          series: countData(seriesData),
         });
 
       } catch (err) {
@@ -109,38 +167,52 @@ function DashboardOverview() {
     <div className="space-y-8 animate-fade-up">
       <div>
         <h1 className="text-3xl font-display font-bold text-foreground">Dashboard Overview</h1>
-        <p className="text-muted-foreground">Welcome back, Admin. Here's what's happening today.</p>
+        <p className="text-muted-foreground">Welcome back, Admin. Here's your complete real-time data overview.</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatsCard
-          title="Total Users"
-          value={stats.users.toString()}
-          change="Real-time"
-          trend="up"
-          icon={Users}
-        />
-        <StatsCard
-          title="Total Films"
-          value={stats.films.toString()}
-          change="Real-time"
-          trend="up"
-          icon={Film}
-        />
-        <StatsCard
-          title="Active Events"
-          value={stats.events.toString()}
-          change="Real-time"
-          trend="up"
-          icon={Calendar}
-        />
-        <StatsCard
-          title="Revenue (Tickets)"
-          value={`$${stats.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-          change="Real-time"
-          trend="up"
-          icon={CreditCard}
-        />
+      <div className="space-y-12">
+        
+        {/* Core Financials & Overview */}
+        <div className="space-y-4">
+          <h2 className="text-xl font-display font-semibold text-foreground flex items-center gap-2 border-b border-border/50 pb-2">
+            <Activity className="w-5 h-5 text-gold" /> Core Financials & Overview
+          </h2>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <StatsCard title="Total Users" value={stats.users.toString()} change="Real-time" icon={Users} color="sky" />
+            <StatsCard title="Ticket Revenue" value={`$${stats.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} change="Real-time" icon={CreditCard} color="gold" className="border-gold/30 bg-gold/5" />
+            <StatsCard title="Donation Vol." value={`$${stats.donationAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} change="Real-time" icon={Banknote} color="gold" className="border-gold/30 bg-gold/5" />
+            <StatsCard title="Total Donations" value={stats.donations.toString()} change="Real-time" icon={Heart} color="earth" />
+          </div>
+        </div>
+
+        {/* Content Library */}
+        <div className="space-y-4">
+          <h2 className="text-xl font-display font-semibold text-foreground flex items-center gap-2 border-b border-border/50 pb-2">
+            <PlayCircle className="w-5 h-5 text-forest" /> Content Library
+          </h2>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+            <StatsCard title="Films" value={stats.films.toString()} change="Real-time" icon={Film} color="forest" />
+            <StatsCard title="TV Series" value={stats.series.toString()} change="Real-time" icon={Tv} color="forest" />
+            <StatsCard title="Kids Series" value={stats.kidsSeries.toString()} change="Real-time" icon={PlayCircle} color="forest" />
+            <StatsCard title="Podcast Seasons" value={stats.podcasts.toString()} change="Real-time" icon={Mic} color="forest" />
+            <StatsCard title="Prayer Seasons" value={stats.prayers.toString()} change="Real-time" icon={Sun} color="forest" />
+          </div>
+        </div>
+
+        {/* Engagement & Store */}
+        <div className="space-y-4">
+          <h2 className="text-xl font-display font-semibold text-foreground flex items-center gap-2 border-b border-border/50 pb-2">
+            <Users className="w-5 h-5 text-sky" /> Engagement & Store
+          </h2>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+            <StatsCard title="Active Events" value={stats.events.toString()} change="Real-time" icon={Calendar} color="sky" />
+            <StatsCard title="Shop Products" value={stats.products.toString()} change="Real-time" icon={Box} color="earth" />
+            <StatsCard title="Campaigns" value={stats.campaigns.toString()} change="Real-time" icon={Flag} color="earth" />
+            <StatsCard title="Resources" value={stats.resources.toString()} change="Real-time" icon={BookOpen} color="forest" />
+            <StatsCard title="Subscribers" value={stats.subscribers.toString()} change="Real-time" icon={Mail} color="sky" />
+            <StatsCard title="Messages" value={stats.messages.toString()} change="Real-time" icon={MessageSquare} color="sky" />
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -238,13 +310,25 @@ function DashboardOverview() {
   );
 }
 
-function StatsCard({ title, value, change, trend, icon: Icon }: any) {
+function StatsCard({ title, value, change, icon: Icon, color = "forest", className = "" }: any) {
+  
+  const getColorClasses = (c: string) => {
+    switch(c) {
+      case 'gold': return 'bg-gold/10 text-gold';
+      case 'sky': return 'bg-sky/10 text-sky';
+      case 'earth': return 'bg-earth/10 text-earth';
+      case 'forest':
+      default:
+        return 'bg-forest/10 text-forest';
+    }
+  };
+
   return (
-    <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card transition-all hover:shadow-elevated hover:scale-[1.02]">
+    <Card className={`border-border/50 bg-card/50 backdrop-blur-sm shadow-card transition-all hover:shadow-elevated hover:scale-[1.02] ${className}`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        <div className="p-2 bg-forest/10 rounded-lg">
-          <Icon className="h-4 w-4 text-forest" />
+        <div className={`p-2 rounded-lg ${getColorClasses(color)}`}>
+          <Icon className="h-4 w-4" />
         </div>
       </CardHeader>
       <CardContent>
@@ -256,3 +340,4 @@ function StatsCard({ title, value, change, trend, icon: Icon }: any) {
     </Card>
   );
 }
+
