@@ -239,7 +239,7 @@ function EventsPage() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/events");
+        const res = await fetch("https://movie-backend-drab.vercel.app/api/events");
         const data = await res.json();
         if (data.success && data.data.length > 0) {
           const mapped = data.data.map((e: any) => ({ ...e, id: e._id }));
@@ -268,7 +268,7 @@ function EventsPage() {
     }
     setIsSubmittingReview(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/events/${selectedEvent?.id}/reviews`, {
+      const res = await fetch(`https://movie-backend-drab.vercel.app/api/events/${selectedEvent?.id}/reviews`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -332,7 +332,7 @@ function EventsPage() {
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     try {
-      const res = await fetch("http://localhost:5000/api/tickets", {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/tickets", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -385,7 +385,7 @@ function EventsPage() {
     if (!promoCode) return;
     setIsPromoValidating(true);
     try {
-      const res = await fetch("http://localhost:5000/api/promocodes/validate", {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/promocodes/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: promoCode })
@@ -508,7 +508,7 @@ function EventsPage() {
                 {selectedEvent.image && selectedEvent.image !== 'no-photo.jpg' && (
                   <div className="w-full h-[300px] sm:h-[400px] rounded-[2rem] overflow-hidden border border-white/10 mb-8 shadow-2xl">
                     <img
-                      src={selectedEvent.image?.startsWith('http') || selectedEvent.image?.startsWith('data:') ? selectedEvent.image : `http://localhost:5000${selectedEvent.image.startsWith('/') ? '' : '/'}${selectedEvent.image}`}
+                      src={selectedEvent.image?.startsWith('http') || selectedEvent.image?.startsWith('data:') ? selectedEvent.image : `https://movie-backend-drab.vercel.app${selectedEvent.image.startsWith('/') ? '' : '/'}${selectedEvent.image}`}
                       alt={selectedEvent.name}
                       className="w-full h-full object-cover"
                     />
@@ -555,10 +555,10 @@ function EventsPage() {
                       {selectedEvent.gallery.map((img: string, idx: number) => (
                         <div key={idx} className="aspect-square rounded-2xl overflow-hidden border border-white/10 hover:border-gold/50 transition-colors shadow-lg">
                           <img
-                            src={img.startsWith('http') || img.startsWith('/') || img.startsWith('data:') ? img : `http://localhost:5000${img}`}
+                            src={img.startsWith('http') || img.startsWith('/') || img.startsWith('data:') ? img : `https://movie-backend-drab.vercel.app${img}`}
                             alt={`${selectedEvent.name} Gallery ${idx}`}
                             className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 cursor-pointer"
-                            onClick={() => window.open(img.startsWith('http') || img.startsWith('/') || img.startsWith('data:') ? img : `http://localhost:5000${img}`, '_blank')}
+                            onClick={() => window.open(img.startsWith('http') || img.startsWith('/') || img.startsWith('data:') ? img : `https://movie-backend-drab.vercel.app${img}`, '_blank')}
                           />
                         </div>
                       ))}
@@ -724,7 +724,7 @@ function EventsPage() {
                         required
                         type="text"
                         value={reviewForm.name}
-                        onChange={e => setReviewForm({...reviewForm, name: e.target.value})}
+                        onChange={e => setReviewForm({ ...reviewForm, name: e.target.value })}
                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50"
                         placeholder="e.g. John Doe"
                       />
@@ -737,7 +737,7 @@ function EventsPage() {
                         min="1"
                         max="5"
                         value={reviewForm.rating}
-                        onChange={e => setReviewForm({...reviewForm, rating: Number(e.target.value)})}
+                        onChange={e => setReviewForm({ ...reviewForm, rating: Number(e.target.value) })}
                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50"
                       />
                     </div>
@@ -746,7 +746,7 @@ function EventsPage() {
                       <textarea
                         required
                         value={reviewForm.comment}
-                        onChange={e => setReviewForm({...reviewForm, comment: e.target.value})}
+                        onChange={e => setReviewForm({ ...reviewForm, comment: e.target.value })}
                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm h-24 focus:outline-none focus:border-gold/50"
                         placeholder="Share your thoughts about this event..."
                       />
@@ -999,14 +999,14 @@ function EventCountdown({ eventDate, showtimes }: { eventDate: string, showtimes
         targetTime = parsedDate.getTime();
       }
     } else if (eventDate) {
-       // Attempt to parse string directly, fallback to current year if missing
-       let parsedDate = new Date(eventDate);
-       if (isNaN(parsedDate.getTime())) {
-          parsedDate = new Date(`${eventDate} ${new Date().getFullYear()}`);
-       }
-       if (!isNaN(parsedDate.getTime()) && parsedDate.getTime() > new Date().getTime()) {
-          targetTime = parsedDate.getTime();
-       }
+      // Attempt to parse string directly, fallback to current year if missing
+      let parsedDate = new Date(eventDate);
+      if (isNaN(parsedDate.getTime())) {
+        parsedDate = new Date(`${eventDate} ${new Date().getFullYear()}`);
+      }
+      if (!isNaN(parsedDate.getTime()) && parsedDate.getTime() > new Date().getTime()) {
+        targetTime = parsedDate.getTime();
+      }
     }
 
     const interval = setInterval(() => {

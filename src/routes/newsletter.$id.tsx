@@ -13,7 +13,7 @@ export const Route = createFileRoute("/newsletter/$id")({
   component: NewsletterDetailPage,
 });
 
-const API = "http://localhost:5000";
+const API = "https://movie-backend-drab.vercel.app";
 
 function getVimeoEmbedUrl(url: string) {
   const match = url.match(/vimeo\.com\/(\d+)/);

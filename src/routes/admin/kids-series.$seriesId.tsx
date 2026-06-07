@@ -24,7 +24,7 @@ function AdminSeriesPage() {
 
   const fetchSeriesData = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/kids/series/${seriesId}`, {
+      const res = await fetch(`https://movie-backend-drab.vercel.app/api/kids/series/${seriesId}`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("user_token")}`
         }
@@ -48,7 +48,7 @@ function AdminSeriesPage() {
 
   const fetchEpisodes = async (seriesImg?: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/kids/series/${seriesId}/episodes`, {
+      const res = await fetch(`https://movie-backend-drab.vercel.app/api/kids/series/${seriesId}/episodes`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("user_token")}`
         }
@@ -85,8 +85,8 @@ function AdminSeriesPage() {
     try {
       const method = editingEpId ? "PUT" : "POST";
       const url = editingEpId
-        ? `http://localhost:5000/api/kids/episodes/${editingEpId}`
-        : `http://localhost:5000/api/kids/series/${seriesId}/episodes`;
+        ? `https://movie-backend-drab.vercel.app/api/kids/episodes/${editingEpId}`
+        : `https://movie-backend-drab.vercel.app/api/kids/series/${seriesId}/episodes`;
 
       const res = await fetch(url, {
         method,
@@ -134,7 +134,7 @@ function AdminSeriesPage() {
     });
     if (!result.isConfirmed) return;
     try {
-      await fetch(`http://localhost:5000/api/kids/episodes/${id}`, {
+      await fetch(`https://movie-backend-drab.vercel.app/api/kids/episodes/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("user_token")}`

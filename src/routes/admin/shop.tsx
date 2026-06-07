@@ -60,7 +60,7 @@ function ShopManagement() {
 
    const fetchProducts = async () => {
       try {
-         const res = await fetch("http://localhost:5000/api/products");
+         const res = await fetch("https://movie-backend-drab.vercel.app/api/products");
          const data = await res.json();
          if (data.success) {
             setProducts(data.data);
@@ -76,7 +76,7 @@ function ShopManagement() {
 
    const handleDelete = async (id: string, title: string) => {
       try {
-         await fetch(`http://localhost:5000/api/products/${id}`, { method: 'DELETE' });
+         await fetch(`https://movie-backend-drab.vercel.app/api/products/${id}`, { method: 'DELETE' });
          setProducts(products.filter(p => p._id !== id));
          toast.error(`${title} removed from inventory`);
       } catch (error) {
@@ -99,7 +99,7 @@ function ShopManagement() {
 
    const handleAddSubmit = async () => {
       try {
-         const res = await fetch("http://localhost:5000/api/products", {
+         const res = await fetch("https://movie-backend-drab.vercel.app/api/products", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title, category, price, stock, desc, externalLink, image, storeName })
@@ -116,7 +116,7 @@ function ShopManagement() {
 
    const handleEditSubmit = async () => {
       try {
-         const res = await fetch(`http://localhost:5000/api/products/${selectedProduct._id}`, {
+         const res = await fetch(`https://movie-backend-drab.vercel.app/api/products/${selectedProduct._id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title, category, price, stock, desc, externalLink, image, storeName })

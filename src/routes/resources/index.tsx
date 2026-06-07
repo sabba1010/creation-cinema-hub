@@ -16,7 +16,7 @@ export const Route = createFileRoute("/resources/")({
 });
 
 const RESOURCE_TYPES = ["All", "Parents", "Teachers", "Pastors", "Youth Leaders", "General"];
-const API = "http://localhost:5000";
+const API = "https://movie-backend-drab.vercel.app";
 
 function ResourcesLandingPage() {
   const [resources, setResources] = useState<any[]>([]);
