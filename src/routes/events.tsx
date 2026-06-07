@@ -225,6 +225,9 @@ function EventsPage() {
   const [paymentForm, setPaymentForm] = useState({ name: "", cardNumber: "", expiry: "", cvc: "" });
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
   const [ticketQuantity, setTicketQuantity] = useState<number>(1);
+  const [promoCode, setPromoCode] = useState("");
+  const [discountPercentage, setDiscountPercentage] = useState(0);
+  const [isPromoValidating, setIsPromoValidating] = useState(false);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -257,6 +260,8 @@ function EventsPage() {
     setPendingBookingDetails({ city, showtimeId });
     setTicketQuantity(1);
     setSelectedCategoryName(selectedEvent?.categories?.[0]?.name || "");
+    setPromoCode("");
+    setDiscountPercentage(0);
     setIsPaymentModalOpen(true);
   };
 
@@ -270,6 +275,8 @@ function EventsPage() {
     setPendingBookingDetails({ city: "Global", showtimeId: "General" });
     setTicketQuantity(1);
     setSelectedCategoryName(selectedEvent?.categories?.[0]?.name || "");
+    setPromoCode("");
+    setDiscountPercentage(0);
     setIsPaymentModalOpen(true);
   };
 
@@ -295,7 +302,8 @@ function EventsPage() {
           city: pendingBookingDetails.city,
           showtimeId: pendingBookingDetails.showtimeId,
           categoryName: selectedCategoryName,
-          quantity: ticketQuantity
+          quantity: ticketQuantity,
+          promoCode: discountPercentage > 0 ? promoCode : undefined
         })
       });
       const data = await res.json();
@@ -326,8 +334,36 @@ function EventsPage() {
   } else {
     ticketPriceValue = parseFloat((selectedEvent?.price || "0").replace(/[^0-9.]/g, ''));
   }
-  const totalDue = ticketPriceValue * ticketQuantity;
+
+  const baseTotal = ticketPriceValue * ticketQuantity;
+  const discountAmount = (baseTotal * discountPercentage) / 100;
+  const totalDue = baseTotal - discountAmount;
   const formattedTotal = totalDue > 0 ? `$${totalDue.toFixed(2)}` : "Free";
+
+  const handleApplyPromo = async () => {
+    if (!promoCode) return;
+    setIsPromoValidating(true);
+    try {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/promocodes/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: promoCode })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setDiscountPercentage(data.data.discountPercentage);
+        toast.success(`Promo code applied! ${data.data.discountPercentage}% off.`);
+      } else {
+        setDiscountPercentage(0);
+        toast.error(data.message || "Invalid promo code");
+      }
+    } catch (err) {
+      setDiscountPercentage(0);
+      toast.error("Error validating promo code");
+    } finally {
+      setIsPromoValidating(false);
+    }
+  };
 
   return (
     <div className="bg-[#050704] min-h-screen flex flex-col text-cream selection:bg-gold/30">
@@ -670,9 +706,40 @@ function EventsPage() {
                     />
                   </div>
 
+                  <div className="mt-6 pt-4 border-t border-white/10">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50 mb-1 block">Promo Code</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                        placeholder="ENTER CODE"
+                        className="flex-grow h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream font-mono uppercase focus:outline-none focus:border-gold/50 transition-colors placeholder:text-cream/30"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleApplyPromo}
+                        disabled={!promoCode || isPromoValidating}
+                        className="h-11 px-6 rounded-xl bg-white/10 hover:bg-white/20 text-cream text-xs font-bold uppercase tracking-widest transition-all disabled:opacity-50"
+                      >
+                        {isPromoValidating ? "..." : "Apply"}
+                      </button>
+                    </div>
+                    {discountPercentage > 0 && (
+                      <div className="text-emerald-500 text-xs mt-2 font-bold tracking-wide">
+                        <CheckCircle className="inline-block w-3 h-3 mr-1 mb-0.5" /> Promo applied: {discountPercentage}% off!
+                      </div>
+                    )}
+                  </div>
+
                   <div className="mt-4 pt-4 border-t border-white/10 flex justify-between items-center text-cream">
                     <span>Total due</span>
-                    <span className="font-bold text-xl text-gold">{formattedTotal}</span>
+                    <div className="text-right">
+                      {discountPercentage > 0 && (
+                        <div className="text-xs text-cream/40 line-through mb-0.5">${baseTotal.toFixed(2)}</div>
+                      )}
+                      <span className="font-bold text-xl text-gold">{formattedTotal}</span>
+                    </div>
                   </div>
                 </div>
 

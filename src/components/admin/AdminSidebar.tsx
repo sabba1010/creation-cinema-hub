@@ -40,6 +40,7 @@ const menuItems = [
   { title: "Resources", icon: FileText, path: "/admin/resources" },
   { title: "Podcast", icon: Mic, path: "/admin/podcast" },
   { title: "Shop", icon: ShoppingBag, path: "/admin/shop" },
+  { title: "Promo Codes", icon: CreditCard, path: "/admin/promo-codes" },
   { title: "Newsletter", icon: Mail, path: "/admin/newsletter" },
   { title: "Settings", icon: Settings, path: "/admin/settings" },
 ];

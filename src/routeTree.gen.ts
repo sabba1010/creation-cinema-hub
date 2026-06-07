@@ -54,6 +54,7 @@ import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminShopRouteImport } from './routes/admin/shop'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminResourcesRouteImport } from './routes/admin/resources'
+import { Route as AdminPromoCodesRouteImport } from './routes/admin/promo-codes'
 import { Route as AdminPrayerRouteImport } from './routes/admin/prayer'
 import { Route as AdminPodcastRouteImport } from './routes/admin/podcast'
 import { Route as AdminPaymentsRouteImport } from './routes/admin/payments'
@@ -295,6 +296,11 @@ const AdminResourcesRoute = AdminResourcesRouteImport.update({
   path: '/resources',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPromoCodesRoute = AdminPromoCodesRouteImport.update({
+  id: '/promo-codes',
+  path: '/promo-codes',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPrayerRoute = AdminPrayerRouteImport.update({
   id: '/prayer',
   path: '/prayer',
@@ -399,6 +405,7 @@ export interface FileRoutesByFullPath {
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/podcast': typeof AdminPodcastRoute
   '/admin/prayer': typeof AdminPrayerRoute
+  '/admin/promo-codes': typeof AdminPromoCodesRoute
   '/admin/resources': typeof AdminResourcesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/shop': typeof AdminShopRoute
@@ -453,6 +460,7 @@ export interface FileRoutesByTo {
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/podcast': typeof AdminPodcastRoute
   '/admin/prayer': typeof AdminPrayerRoute
+  '/admin/promo-codes': typeof AdminPromoCodesRoute
   '/admin/resources': typeof AdminResourcesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/shop': typeof AdminShopRoute
@@ -516,6 +524,7 @@ export interface FileRoutesById {
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/podcast': typeof AdminPodcastRoute
   '/admin/prayer': typeof AdminPrayerRoute
+  '/admin/promo-codes': typeof AdminPromoCodesRoute
   '/admin/resources': typeof AdminResourcesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/shop': typeof AdminShopRoute
@@ -580,6 +589,7 @@ export interface FileRouteTypes {
     | '/admin/payments'
     | '/admin/podcast'
     | '/admin/prayer'
+    | '/admin/promo-codes'
     | '/admin/resources'
     | '/admin/settings'
     | '/admin/shop'
@@ -634,6 +644,7 @@ export interface FileRouteTypes {
     | '/admin/payments'
     | '/admin/podcast'
     | '/admin/prayer'
+    | '/admin/promo-codes'
     | '/admin/resources'
     | '/admin/settings'
     | '/admin/shop'
@@ -696,6 +707,7 @@ export interface FileRouteTypes {
     | '/admin/payments'
     | '/admin/podcast'
     | '/admin/prayer'
+    | '/admin/promo-codes'
     | '/admin/resources'
     | '/admin/settings'
     | '/admin/shop'
@@ -1079,6 +1091,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminResourcesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/promo-codes': {
+      id: '/admin/promo-codes'
+      path: '/promo-codes'
+      fullPath: '/admin/promo-codes'
+      preLoaderRoute: typeof AdminPromoCodesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/prayer': {
       id: '/admin/prayer'
       path: '/prayer'
@@ -1207,6 +1226,7 @@ interface AdminRouteChildren {
   AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminPodcastRoute: typeof AdminPodcastRoute
   AdminPrayerRoute: typeof AdminPrayerRoute
+  AdminPromoCodesRoute: typeof AdminPromoCodesRoute
   AdminResourcesRoute: typeof AdminResourcesRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminShopRoute: typeof AdminShopRoute
@@ -1227,6 +1247,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPaymentsRoute: AdminPaymentsRoute,
   AdminPodcastRoute: AdminPodcastRoute,
   AdminPrayerRoute: AdminPrayerRoute,
+  AdminPromoCodesRoute: AdminPromoCodesRoute,
   AdminResourcesRoute: AdminResourcesRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminShopRoute: AdminShopRoute,

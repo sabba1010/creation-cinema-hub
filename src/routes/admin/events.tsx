@@ -60,15 +60,10 @@ export const Route = createFileRoute("/admin/events")({
 
 const INITIAL_TICKETS: any[] = [];
 
-const INITIAL_PROMOS = [
-  { id: 1, code: "EARLYBIRD", discount: "25%", expiry: "2026-05-20", status: "Active" },
-  { id: 2, code: "SUMMER25", discount: "15%", expiry: "2026-06-15", status: "Active" },
-];
-
 function EventsManagement() {
   const [events, setEvents] = useState<any[]>([]);
   const [tickets, setTickets] = useState(INITIAL_TICKETS);
-  const [promos, setPromos] = useState(INITIAL_PROMOS);
+  const [promos, setPromos] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState("all-events");
 
   // Dialog States
@@ -165,8 +160,30 @@ function EventsManagement() {
         console.error("Error fetching tickets:", err);
       }
     };
+    const fetchPromos = async () => {
+      const token = localStorage.getItem("user_token");
+      if (!token) return;
+      try {
+        const res = await fetch("https://movie-backend-drab.vercel.app/api/promocodes", {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          setPromos(data.data.map((p: any) => ({
+            id: p._id,
+            code: p.code,
+            discount: `${p.discountPercentage}%`,
+            expiry: "N/A", // or format p.createdAt
+            status: p.isActive ? "Active" : "Inactive"
+          })));
+        }
+      } catch (err) {
+        console.error("Error fetching promos:", err);
+      }
+    };
     fetchEvents();
     fetchTickets();
+    fetchPromos();
   }, []);
 
   const handleSaveEvent = async (e: React.FormEvent) => {
@@ -241,19 +258,64 @@ function EventsManagement() {
     setIsEventDialogOpen(true);
   };
 
-  const handleAddPromo = (e: React.FormEvent) => {
+  const handleAddPromo = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newPromo = {
-      id: Date.now(),
-      code: promoForm.code.toUpperCase(),
-      discount: promoForm.discount.includes("%") ? promoForm.discount : `${promoForm.discount}%`,
-      expiry: promoForm.expiry,
-      status: "Active" as const
-    };
-    setPromos([newPromo, ...promos]);
-    setIsPromoDialogOpen(false);
-    setPromoForm({ code: "", discount: "", expiry: "2026-12-31" });
-    toast.success("Promo code created!");
+    if (!promoForm.code || !promoForm.discount) {
+      toast.error("Code and discount are required");
+      return;
+    }
+    try {
+      const token = localStorage.getItem("user_token");
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/promocodes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          code: promoForm.code,
+          discountPercentage: Number(promoForm.discount.replace('%', ''))
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        const p = data.data;
+        setPromos([{
+          id: p._id,
+          code: p.code,
+          discount: `${p.discountPercentage}%`,
+          expiry: "N/A",
+          status: p.isActive ? "Active" : "Inactive"
+        }, ...promos]);
+        setIsPromoDialogOpen(false);
+        setPromoForm({ code: "", discount: "", expiry: "2026-12-31" });
+        toast.success("Promo code created!");
+      } else {
+        toast.error(data.message || "Failed to create promo code");
+      }
+    } catch (err) {
+      toast.error("Network error");
+    }
+  };
+
+  const handleDeletePromo = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this promo code?")) return;
+    try {
+      const token = localStorage.getItem("user_token");
+      const res = await fetch(`https://movie-backend-drab.vercel.app/api/promocodes/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPromos(promos.filter(p => p.id !== id));
+        toast.success("Promo code deleted");
+      } else {
+        toast.error(data.message || "Failed to delete");
+      }
+    } catch (err) {
+      toast.error("Network error");
+    }
   };
 
   return (
@@ -666,7 +728,7 @@ function EventsManagement() {
                     <div className="font-black text-forest tracking-wider">{p.code}</div>
                     <div className="text-[10px] text-muted-foreground uppercase font-bold">{p.discount} OFF • EXP: {p.expiry}</div>
                   </div>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive" onClick={() => setPromos(promos.filter(x => x.id !== p.id))}>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive" onClick={() => handleDeletePromo(p.id)}>
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>

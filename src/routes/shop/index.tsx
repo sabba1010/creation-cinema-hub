@@ -180,23 +180,23 @@ function ShopLandingPage() {
                           </div>
                         </div>
                         <div className="flex gap-2 w-full">
-                           <button 
-                             onClick={(e) => handleAddToCart(e, product)}
-                             className="flex-1 py-4 rounded-2xl bg-gold text-forest-deep text-[10px] font-bold uppercase tracking-[0.2em] text-center shadow-lg transition-transform active:scale-95"
-                           >
-                             Add to Cart
-                           </button>
-                           {product.externalLink && product.externalLink !== "#" && (
-                             <a 
-                               href={product.externalLink}
-                               target="_blank"
-                               rel="noopener noreferrer"
-                               onClick={(e) => e.stopPropagation()}
-                               className="flex-1 py-4 rounded-2xl bg-white/10 backdrop-blur-sm text-white border border-white/20 text-[10px] font-bold uppercase tracking-[0.2em] text-center shadow-lg transition-transform hover:bg-white/20 flex items-center justify-center active:scale-95"
-                             >
-                               {product.storeName || "Buy"}
-                             </a>
-                           )}
+                          <button
+                            onClick={(e) => handleAddToCart(e, product)}
+                            className="flex-1 py-4 rounded-2xl bg-gold text-forest-deep text-[10px] font-bold uppercase tracking-[0.2em] text-center shadow-lg transition-transform active:scale-95"
+                          >
+                            Add to Cart
+                          </button>
+                          {product.externalLink && product.externalLink !== "#" && (
+                            <a
+                              href={product.externalLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="flex-1 py-4 rounded-2xl bg-white/10 backdrop-blur-sm text-white border border-white/20 text-[10px] font-bold uppercase tracking-[0.2em] text-center shadow-lg transition-transform hover:bg-white/20 flex items-center justify-center active:scale-95"
+                            >
+                              {product.storeName || "Buy"}
+                            </a>
+                          )}
                         </div>
                       </div>
                     </div>

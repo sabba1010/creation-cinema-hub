@@ -172,7 +172,7 @@ function DashboardOverview() {
       </div>
 
       <div className="space-y-12">
-        
+
         {/* Core Financials & Overview */}
         <div className="space-y-4">
           <h2 className="text-xl font-display font-semibold text-foreground flex items-center gap-2 border-b border-border/50 pb-2">
@@ -312,9 +312,9 @@ function DashboardOverview() {
 }
 
 function StatsCard({ title, value, change, icon: Icon, color = "forest", className = "" }: any) {
-  
+
   const getColorClasses = (c: string) => {
-    switch(c) {
+    switch (c) {
       case 'gold': return 'bg-gold/10 text-gold';
       case 'sky': return 'bg-sky/10 text-sky';
       case 'earth': return 'bg-earth/10 text-earth';
