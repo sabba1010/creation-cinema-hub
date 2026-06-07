@@ -508,7 +508,7 @@ function EventsPage() {
               </div>
 
               {/* Ticket Card */}
-              <div className="p-8 rounded-[2rem] bg-gradient-to-b from-forest-deep to-[#0a1a0a] border border-white/10 space-y-6 shadow-2xl">
+              <div className="h-fit lg:sticky lg:top-32 p-8 rounded-[2rem] bg-gradient-to-b from-forest-deep to-[#0a1a0a] border border-white/10 space-y-6 shadow-2xl">
                 <div>
                   <div className="text-[10px] font-black uppercase tracking-[0.35em] text-gold/70 mb-1">From</div>
                   <div className="font-display text-5xl font-medium text-gold">{selectedEvent.price}</div>
