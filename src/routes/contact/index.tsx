@@ -14,7 +14,7 @@ export const Route = createFileRoute("/contact/")({
   component: ContactPage,
 });
 
-const API = "https://movie-backend-drab.vercel.app";
+const API = "http://localhost:5000";
 
 const CATEGORIES = [
   "General questions",

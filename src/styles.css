@@ -183,6 +183,14 @@
     mix-blend-mode: multiply;
     opacity: 0.4;
   }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 @keyframes float-slow {

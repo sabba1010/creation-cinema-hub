@@ -232,7 +232,7 @@ function EventsPage() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await fetch("https://movie-backend-drab.vercel.app/api/events");
+        const res = await fetch("http://localhost:5000/api/events");
         const data = await res.json();
         if (data.success && data.data.length > 0) {
           const mapped = data.data.map((e: any) => ({ ...e, id: e._id }));
@@ -291,7 +291,7 @@ function EventsPage() {
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     try {
-      const res = await fetch("https://movie-backend-drab.vercel.app/api/tickets", {
+      const res = await fetch("http://localhost:5000/api/tickets", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -344,7 +344,7 @@ function EventsPage() {
     if (!promoCode) return;
     setIsPromoValidating(true);
     try {
-      const res = await fetch("https://movie-backend-drab.vercel.app/api/promocodes/validate", {
+      const res = await fetch("http://localhost:5000/api/promocodes/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: promoCode })
@@ -448,7 +448,7 @@ function EventsPage() {
                 {selectedEvent.image && selectedEvent.image !== 'no-photo.jpg' && (
                   <div className="w-full h-[300px] sm:h-[400px] rounded-[2rem] overflow-hidden border border-white/10 mb-8 shadow-2xl">
                     <img
-                      src={selectedEvent.image?.startsWith('http') ? selectedEvent.image : `https://movie-backend-drab.vercel.app${selectedEvent.image}`}
+                      src={selectedEvent.image?.startsWith('http') || selectedEvent.image?.startsWith('data:') ? selectedEvent.image : `http://localhost:5000${selectedEvent.image.startsWith('/') ? '' : '/'}${selectedEvent.image}`}
                       alt={selectedEvent.name}
                       className="w-full h-full object-cover"
                     />
@@ -485,6 +485,26 @@ function EventsPage() {
                     </div>
                   ))}
                 </div>
+
+
+                {/* Event Photo Gallery */}
+                {selectedEvent.gallery && selectedEvent.gallery.length > 0 && (
+                  <div className="pt-8">
+                    <h3 className="text-xl font-display font-bold text-cream mb-4">Event Gallery</h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                      {selectedEvent.gallery.map((img: string, idx: number) => (
+                        <div key={idx} className="aspect-square rounded-2xl overflow-hidden border border-white/10 hover:border-gold/50 transition-colors shadow-lg">
+                          <img
+                            src={img.startsWith('http') || img.startsWith('/') || img.startsWith('data:') ? img : `http://localhost:5000${img}`}
+                            alt={`${selectedEvent.name} Gallery ${idx}`}
+                            className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 cursor-pointer"
+                            onClick={() => window.open(img.startsWith('http') || img.startsWith('/') || img.startsWith('data:') ? img : `http://localhost:5000${img}`, '_blank')}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Ticket Card */}
@@ -822,21 +842,21 @@ function EventCountdown({ eventDate, showtimes }: { eventDate: string, showtimes
   useEffect(() => {
     // Default fallback to 14 days if date parsing fails
     let targetTime = new Date().getTime() + 14 * 24 * 60 * 60 * 1000;
-    
+
     // Attempt parsing from showtimes if available
     if (showtimes && showtimes.length > 0) {
-       const firstShowtime = showtimes[0];
-       // e.g. "August 18, 2026 19:00:00"
-       const parsedDate = new Date(`${firstShowtime.date} ${firstShowtime.time}`);
-       if (!isNaN(parsedDate.getTime()) && parsedDate.getTime() > new Date().getTime()) {
-          targetTime = parsedDate.getTime();
-       }
+      const firstShowtime = showtimes[0];
+      // e.g. "August 18, 2026 19:00:00"
+      const parsedDate = new Date(`${firstShowtime.date} ${firstShowtime.time}`);
+      if (!isNaN(parsedDate.getTime()) && parsedDate.getTime() > new Date().getTime()) {
+        targetTime = parsedDate.getTime();
+      }
     } else if (eventDate) {
-       // Attempt to parse string directly, fallback to current year if missing
-       const parsedDate = new Date(`${eventDate} ${new Date().getFullYear()}`);
-       if (!isNaN(parsedDate.getTime()) && parsedDate.getTime() > new Date().getTime()) {
-          targetTime = parsedDate.getTime();
-       }
+      // Attempt to parse string directly, fallback to current year if missing
+      const parsedDate = new Date(`${eventDate} ${new Date().getFullYear()}`);
+      if (!isNaN(parsedDate.getTime()) && parsedDate.getTime() > new Date().getTime()) {
+        targetTime = parsedDate.getTime();
+      }
     }
 
     const interval = setInterval(() => {
@@ -864,8 +884,8 @@ function EventCountdown({ eventDate, showtimes }: { eventDate: string, showtimes
   if (isLive) {
     return (
       <div className="flex items-center gap-3 p-4 rounded-2xl border border-gold/30 bg-gold/5 mb-8 shadow-inner shadow-gold/10">
-         <div className="h-3 w-3 rounded-full bg-gold animate-pulse shadow-[0_0_10px_var(--gold)]" />
-         <span className="font-display font-bold text-lg text-gold">Event is Live Now!</span>
+        <div className="h-3 w-3 rounded-full bg-gold animate-pulse shadow-[0_0_10px_var(--gold)]" />
+        <span className="font-display font-bold text-lg text-gold">Event is Live Now!</span>
       </div>
     );
   }

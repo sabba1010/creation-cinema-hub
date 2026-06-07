@@ -57,9 +57,9 @@ function DonationManagement() {
     const fetchData = async () => {
       try {
         const [donationsRes, campaignsRes, kidsRes] = await Promise.all([
-          fetch("https://movie-backend-drab.vercel.app/api/donations"),
-          fetch("https://movie-backend-drab.vercel.app/api/campaigns"),
-          fetch("https://movie-backend-drab.vercel.app/api/kids/analytics", {
+          fetch("http://localhost:5000/api/donations"),
+          fetch("http://localhost:5000/api/campaigns"),
+          fetch("http://localhost:5000/api/kids/analytics", {
             headers: { Authorization: `Bearer ${localStorage.getItem("user_token")}` }
           })
         ]);
@@ -82,7 +82,7 @@ function DonationManagement() {
   const handleCreateCampaign = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("https://movie-backend-drab.vercel.app/api/campaigns", {
+      const res = await fetch("http://localhost:5000/api/campaigns", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...newCampaign, goalAmount: Number(newCampaign.goalAmount) })
@@ -111,7 +111,7 @@ function DonationManagement() {
 
   const handleDeleteCampaign = async (id: string) => {
     try {
-      const res = await fetch(`https://movie-backend-drab.vercel.app/api/campaigns/${id}`, { method: "DELETE" });
+      const res = await fetch(`http://localhost:5000/api/campaigns/${id}`, { method: "DELETE" });
       if (res.ok) {
         setCampaigns(campaigns.filter(c => c._id !== id));
         toast.success("Campaign deleted");
@@ -141,7 +141,7 @@ function DonationManagement() {
   const handleBulkReceipt = async () => {
     try {
       toast.loading("Sending bulk receipts...", { id: "bulkReceipt" });
-      const res = await fetch("https://movie-backend-drab.vercel.app/api/admin-mail/bulk-receipt", {
+      const res = await fetch("http://localhost:5000/api/admin-mail/bulk-receipt", {
         method: "POST"
       });
       if (res.ok) {
@@ -161,7 +161,7 @@ function DonationManagement() {
     }
     try {
       setIsSendingEmail(true);
-      const res = await fetch("https://movie-backend-drab.vercel.app/api/admin-mail/send-update", {
+      const res = await fetch("http://localhost:5000/api/admin-mail/send-update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ segment: emailSegment, subject: emailSubject, content: emailContent })
