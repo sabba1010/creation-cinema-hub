@@ -298,7 +298,7 @@ function EventsManagement() {
       generalFacilities: generalCat ? (generalCat.facilities || "") : "",
       description: event.description || "",
       image: event.image || "",
-      gallery: event.gallery || [],
+      gallery: (event as any).gallery || [],
       recapVideoUrl: (event as any).recapVideoUrl || "",
       categories: extraCats.map(c => ({ ...c, facilities: c.facilities || "" })),
     });
@@ -396,6 +396,7 @@ function EventsManagement() {
                 description: "",
                 image: "",
                 gallery: [],
+                recapVideoUrl: "",
                 categories: [],
               });
               setIsEventDialogOpen(true);
