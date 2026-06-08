@@ -97,7 +97,7 @@ const INITIAL_LIFETIME = [
   { id: 2, name: "Emma Thompson", email: "emma.t@example.com", joined: "Feb 05, 2026", source: "Promo Code" },
 ];
 
-const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function KidsManagement() {
   const [series, setSeries] = useState<any[]>([]);
@@ -265,8 +265,7 @@ function KidsManagement() {
         });
         const data = await res.json();
         if (data.success) {
-          const fullUrl = `${API_URL}${data.url}`;
-          setForm((prev: any) => ({ ...prev, [formField]: fullUrl }));
+          setForm((prev: any) => ({ ...prev, [formField]: data.url }));
           toast.success("Upload complete!", { id: toastId });
         } else {
           toast.error(data.message || "Upload failed", { id: toastId });
@@ -571,11 +570,14 @@ function KidsManagement() {
                 <Card key={item._id || item.id || Math.random()} className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card hover:shadow-elevated transition-all group overflow-hidden flex flex-col">
                   <div className="h-32 bg-muted relative overflow-hidden">
                     <img
-                      src={item.image || item.img}
+                      src={item.image ? (item.image.startsWith('http') || item.image.startsWith('data:') ? item.image : `${API_URL}${item.image.startsWith('/') ? '' : '/'}${item.image}`) : item.img}
                       alt={item.name}
                       className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-700"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1502086223501-7ea2443054f1?w=400&h=200&fit=crop";
+                        const target = e.target as HTMLImageElement;
+                        if (!target.src.includes('unsplash.com')) {
+                          target.src = "https://images.unsplash.com/photo-1502086223501-7ea2443054f1?w=400&h=200&fit=crop";
+                        }
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />

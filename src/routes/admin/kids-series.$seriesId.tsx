@@ -6,10 +6,13 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../../components/ui/dialog";
 import Swal from "sweetalert2";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/kids-series/$seriesId")({
   component: AdminSeriesPage,
 });
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function AdminSeriesPage() {
   const { seriesId } = Route.useParams();
@@ -24,7 +27,7 @@ function AdminSeriesPage() {
 
   const fetchSeriesData = async () => {
     try {
-      const res = await fetch(`https://movie-backend-drab.vercel.app/api/kids/series/${seriesId}`, {
+      const res = await fetch(`${API_URL}/api/kids/series/${seriesId}`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("user_token")}`
         }
@@ -48,7 +51,7 @@ function AdminSeriesPage() {
 
   const fetchEpisodes = async (seriesImg?: string) => {
     try {
-      const res = await fetch(`https://movie-backend-drab.vercel.app/api/kids/series/${seriesId}/episodes`, {
+      const res = await fetch(`${API_URL}/api/kids/series/${seriesId}/episodes`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("user_token")}`
         }
@@ -85,8 +88,8 @@ function AdminSeriesPage() {
     try {
       const method = editingEpId ? "PUT" : "POST";
       const url = editingEpId
-        ? `https://movie-backend-drab.vercel.app/api/kids/episodes/${editingEpId}`
-        : `https://movie-backend-drab.vercel.app/api/kids/series/${seriesId}/episodes`;
+        ? `${API_URL}/api/kids/episodes/${editingEpId}`
+        : `${API_URL}/api/kids/series/${seriesId}/episodes`;
 
       const res = await fetch(url, {
         method,
@@ -134,7 +137,7 @@ function AdminSeriesPage() {
     });
     if (!result.isConfirmed) return;
     try {
-      await fetch(`https://movie-backend-drab.vercel.app/api/kids/episodes/${id}`, {
+      await fetch(`${API_URL}/api/kids/episodes/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("user_token")}`
@@ -214,7 +217,10 @@ function AdminSeriesPage() {
                   alt={series.name}
                   className="w-full h-full object-cover opacity-60"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1502086223501-7ea2443054f1?w=800&h=400&fit=crop";
+                    const target = e.target as HTMLImageElement;
+                    if (!target.src.includes('unsplash.com')) {
+                      target.src = "https://images.unsplash.com/photo-1502086223501-7ea2443054f1?w=800&h=400&fit=crop";
+                    }
                   }}
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40">
@@ -273,7 +279,10 @@ function AdminSeriesPage() {
                       alt={ep.title}
                       className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = series?.img || "https://images.unsplash.com/photo-1502086223501-7ea2443054f1?w=400&h=200&fit=crop";
+                        const target = e.target as HTMLImageElement;
+                        if (!target.src.includes('unsplash.com')) {
+                          target.src = series?.img || "https://images.unsplash.com/photo-1502086223501-7ea2443054f1?w=400&h=200&fit=crop";
+                        }
                       }}
                     />
                     {activeEpisodeId === ep.id && (
@@ -363,14 +372,27 @@ function AdminSeriesPage() {
                   type="file"
                   accept="audio/*"
                   className="h-11 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-forest/10 file:text-forest hover:file:bg-forest/20 transition-all cursor-pointer disabled:opacity-50"
-                  onChange={e => {
+                  onChange={async e => {
                     const file = e.target.files?.[0];
                     if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        setUploadForm({ ...uploadForm, audioLink: reader.result as string });
-                      };
-                      reader.readAsDataURL(file);
+                      const formData = new FormData();
+                      formData.append('file', file);
+                      const toastId = toast.loading('Uploading audio...');
+                      try {
+                        const res = await fetch(`${API_URL}/api/upload`, {
+                          method: 'POST',
+                          body: formData,
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                          setUploadForm({ ...uploadForm, audioLink: `${API_URL}${data.url}` });
+                          toast.success('Audio uploaded!', { id: toastId });
+                        } else {
+                          toast.error('Upload failed', { id: toastId });
+                        }
+                      } catch (err) {
+                        toast.error('Upload error', { id: toastId });
+                      }
                     }
                   }}
                   disabled={!!uploadForm.vimeoLink}

@@ -396,7 +396,7 @@ function PodcastManagement() {
             {seasons.map((season) => (
               <Card key={season._id} className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card group hover:shadow-2xl transition-all duration-500 overflow-hidden flex flex-col">
                 <div className="h-40 bg-muted relative">
-                  <img src={season.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"} alt={season.title} className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-700" onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"; }} />
+                  <img src={season.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"} alt={season.title} className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-700" onError={(e) => { const target = e.target as HTMLImageElement; if (!target.src.includes('unsplash.com')) { target.src = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"; } }} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <Badge className={`absolute top-4 right-4 border-none ${season.status === 'Active' ? 'bg-forest text-white' : 'bg-white/20 backdrop-blur-md text-white'}`}>
                     {season.status}

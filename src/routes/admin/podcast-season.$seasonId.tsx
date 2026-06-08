@@ -246,7 +246,10 @@ function AdminPodcastSeasonPage() {
                 alt={season.title}
                 className="absolute inset-0 w-full h-full object-cover opacity-20"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800";
+                  const target = e.target as HTMLImageElement;
+                  if (!target.src.includes('unsplash.com')) {
+                    target.src = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800";
+                  }
                 }}
               />
               <div className="relative z-10 flex flex-col items-center w-full max-w-md text-center">

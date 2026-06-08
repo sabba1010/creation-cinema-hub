@@ -30,6 +30,9 @@ import {
 import { INITIAL_EVENTS, type CityScreening, type Showtime } from "../data/events-data";
 import { toast } from "sonner";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+
 export const Route = createFileRoute("/events")({
   head: () => ({
     meta: [
@@ -239,7 +242,7 @@ function EventsPage() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await fetch("https://movie-backend-drab.vercel.app/api/events");
+        const res = await fetch("${API_URL}/api/events");
         const data = await res.json();
         if (data.success && data.data.length > 0) {
           const mapped = data.data.map((e: any) => ({ ...e, id: e._id }));
@@ -268,7 +271,7 @@ function EventsPage() {
     }
     setIsSubmittingReview(true);
     try {
-      const res = await fetch(`https://movie-backend-drab.vercel.app/api/events/${selectedEvent?.id}/reviews`, {
+      const res = await fetch(`${API_URL}/api/events/${selectedEvent?.id}/reviews`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -332,7 +335,7 @@ function EventsPage() {
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     try {
-      const res = await fetch("https://movie-backend-drab.vercel.app/api/tickets", {
+      const res = await fetch("${API_URL}/api/tickets", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -385,7 +388,7 @@ function EventsPage() {
     if (!promoCode) return;
     setIsPromoValidating(true);
     try {
-      const res = await fetch("https://movie-backend-drab.vercel.app/api/promocodes/validate", {
+      const res = await fetch("${API_URL}/api/promocodes/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: promoCode })
@@ -532,7 +535,7 @@ function EventsPage() {
                     ) : selectedEvent.image && selectedEvent.image !== 'no-photo.jpg' && (
                       <div className="w-full h-[300px] sm:h-[400px] rounded-[2rem] overflow-hidden border border-white/10 mb-8 shadow-2xl">
                         <img
-                          src={selectedEvent.image?.startsWith('http') || selectedEvent.image?.startsWith('data:') ? selectedEvent.image : `https://movie-backend-drab.vercel.app${selectedEvent.image.startsWith('/') ? '' : '/'}${selectedEvent.image}`}
+                          src={selectedEvent.image?.startsWith('http') || selectedEvent.image?.startsWith('data:') ? selectedEvent.image : `${API_URL}${selectedEvent.image.startsWith('/') ? '' : '/'}${selectedEvent.image}`}
                           alt={selectedEvent.name}
                           className="w-full h-full object-cover"
                         />
@@ -579,10 +582,10 @@ function EventsPage() {
                           {selectedEvent.gallery.map((img: string, idx: number) => (
                             <div key={idx} className="aspect-square rounded-2xl overflow-hidden border border-white/10 hover:border-gold/50 transition-colors shadow-lg">
                               <img
-                                src={img.startsWith('http') || img.startsWith('data:') ? img : `https://movie-backend-drab.vercel.app${img.startsWith('/') ? '' : '/'}${img}`}
+                                src={img.startsWith('http') || img.startsWith('data:') ? img : `${API_URL}${img.startsWith('/') ? '' : '/'}${img}`}
                                 alt={`${selectedEvent.name} Gallery ${idx}`}
                                 className="w-full h-full object-cover hover:scale-110 transition-transform duration-500 cursor-pointer"
-                                onClick={() => window.open(img.startsWith('http') || img.startsWith('data:') ? img : `https://movie-backend-drab.vercel.app${img.startsWith('/') ? '' : '/'}${img}`, '_blank')}
+                                onClick={() => window.open(img.startsWith('http') || img.startsWith('data:') ? img : `${API_URL}${img.startsWith('/') ? '' : '/'}${img}`, '_blank')}
                               />
                             </div>
                           ))}
