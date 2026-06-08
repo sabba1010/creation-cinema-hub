@@ -1,5 +1,6 @@
 import { Facebook, Instagram, Youtube, Mail } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 const COLS = [
   { title: "Watch", items: [{label: "Films", to: "/films"}, {label: "KidsBibleFlix", to: "/kids"}, {label: "Trailers", to: "#"}] },
@@ -9,6 +10,16 @@ const COLS = [
 ];
 
 export function SiteFooter() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userAuth = localStorage.getItem("user_auth") === "true";
+      const adminAuth = localStorage.getItem("admin_auth") === "true";
+      setIsLoggedIn(userAuth || adminAuth);
+    }
+  }, []);
+
   return (
     <footer className="relative overflow-hidden bg-forest-deep text-cream">
       <div className="absolute inset-0 opacity-[0.07] [background-image:radial-gradient(circle_at_20%_20%,var(--gold),transparent_55%),radial-gradient(circle_at_80%_60%,var(--sky),transparent_50%)]" />
@@ -55,10 +66,13 @@ export function SiteFooter() {
           <div>
             <h4 className="font-display text-sm uppercase tracking-[0.2em] text-gold/90">Stay in the story</h4>
             <p className="mt-3 text-sm text-cream/70">Monthly stories, new releases, and free resources delivered with care.</p>
-            <form className="mt-5 flex overflow-hidden rounded-full border border-cream/20 bg-cream/5">
-              <input type="email" placeholder="your@email.com" className="flex-1 bg-transparent px-4 py-3 text-sm placeholder:text-cream/40 focus:outline-none" />
-              <button className="bg-gradient-gold px-5 text-sm font-semibold text-gold-foreground">Join</button>
-            </form>
+            {!isLoggedIn && (
+              <div className="mt-5">
+                <Link to="/login" className="inline-flex items-center justify-center bg-gradient-gold px-8 py-3 rounded-full text-sm font-semibold text-gold-foreground transition-transform hover:scale-105 active:scale-95">
+                  Login / Register
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 

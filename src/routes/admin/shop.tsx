@@ -17,8 +17,10 @@ import {
    Shirt,
    Book,
    Image as ImageIcon,
-   ExternalLink
+   ExternalLink,
+   TrendingUp
 } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from "recharts";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
@@ -151,6 +153,36 @@ function ShopManagement() {
             <StatsCard title="Average Rating" value={products.length > 0 ? (products.reduce((acc, p) => acc + (Number(p.rating) || 5), 0) / products.length).toFixed(1) : "0.0"} icon={Star} color="forest" />
          </div>
 
+         {/* Analytics Section */}
+         <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
+            <div className="p-6 border-b border-border/50 flex items-center gap-3 bg-muted/20">
+               <TrendingUp className="w-5 h-5 text-forest" />
+               <h2 className="text-xl font-display font-bold text-foreground">Sales & Revenue Analysis</h2>
+            </div>
+            <div className="p-6">
+               <div className="h-[300px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                     <LineChart data={[
+                        { name: 'Jan', sales: 4000, revenue: 2400 },
+                        { name: 'Feb', sales: 3000, revenue: 1398 },
+                        { name: 'Mar', sales: 2000, revenue: 9800 },
+                        { name: 'Apr', sales: 2780, revenue: 3908 },
+                        { name: 'May', sales: 1890, revenue: 4800 },
+                        { name: 'Jun', sales: 2390, revenue: 3800 },
+                     ]}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} dy={10} />
+                        <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} dx={-10} />
+                        <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} dx={10} />
+                        <RechartsTooltip contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
+                        <Line yAxisId="left" type="monotone" dataKey="sales" stroke="#1a2f24" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                        <Line yAxisId="right" type="monotone" dataKey="revenue" stroke="#D4AF37" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                     </LineChart>
+                  </ResponsiveContainer>
+               </div>
+            </div>
+         </Card>
+
          <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
             <div className="p-6 border-b border-border/50 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-muted/20">
                <div className="relative flex-1 max-w-md">
@@ -168,7 +200,7 @@ function ShopManagement() {
             <div className="p-6">
                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {products.map((p) => (
-                     <div key={p._id} className="group relative bg-background border border-border/50 rounded-[2rem] overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 flex flex-col">
+                     <div key={p._id} className="group relative bg-background border border-border/50 rounded-[2rem] overflow-hidden hover:shadow-2xl transition-all duration-500 flex flex-col">
                         <div className="aspect-square relative overflow-hidden bg-muted">
                            <img src={p.image} alt={p.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                            <div className="absolute top-4 left-4">
@@ -373,7 +405,7 @@ function StatsCard({ title, value, icon: Icon, color }: any) {
    };
 
    return (
-      <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card p-6 flex flex-col gap-2 transition-all hover:-translate-y-1">
+      <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card p-6 flex flex-col gap-2 transition-all">
          <div className={`p-3 rounded-2xl w-fit ${colorMap[color]}`}>
             <Icon className="w-6 h-6" />
          </div>

@@ -73,20 +73,25 @@ const PLATFORMS = [
   }
 ];
 
-const LATEST_EPISODE = {
-  id: "1",
-  title: "The Architecture of Light",
-  duration: "42:15",
-  date: "May 12, 2026",
+const DEFAULT_BANNER = {
+  tag: "OMS Podcast Network",
+  title: "God's Great Earth Podcast",
+  description: "Join us every Tuesday for deep conversations, biblical insights, and stories that celebrate the wonder of our Creator. Available on all major platforms.",
+  buttonText: "Latest Episode",
+  image: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&q=80&w=800",
+  videoTitle: "The Majesty of the Mountains",
+  videoSubtitle: "Watch Episode",
   audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-  coverImage: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&q=80&w=800",
-  seasonTitle: "Season 1, Episode 1",
+  audioTitle: "The Architecture of Light",
+  audioSeasonTitle: "Season 1, Episode 1"
 };
 
 function PodcastLandingPage() {
   const { playEpisode } = usePodcast();
   const [activeForm, setActiveForm] = useState<"welcome" | "shoutout" | "brainTeaser" | "joke">("welcome");
   const [seasons, setSeasons] = useState<any[]>([]);
+
+  const [bannerData, setBannerData] = useState(DEFAULT_BANNER);
 
   useEffect(() => {
     fetch(`${API_URL}/api/podcast/seasons`)
@@ -97,7 +102,26 @@ function PodcastLandingPage() {
         }
       })
       .catch(console.error);
+
+    fetch(`${API_URL}/api/settings`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data.podcast_banner) {
+          setBannerData({ ...DEFAULT_BANNER, ...data.data.podcast_banner });
+        }
+      })
+      .catch(console.error);
   }, []);
+
+  const featuredEpisode = {
+    id: "featured",
+    title: bannerData.audioTitle,
+    duration: "00:00",
+    date: new Date().toLocaleDateString(),
+    audioUrl: bannerData.audioUrl,
+    coverImage: bannerData.image,
+    seasonTitle: bannerData.audioSeasonTitle,
+  };
 
   return (
     <div className="bg-background min-h-screen flex flex-col">
@@ -109,21 +133,21 @@ function PodcastLandingPage() {
           <div className="relative mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-16 items-center">
             <div className="animate-fade-up">
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/20 text-gold text-[10px] font-bold uppercase tracking-widest mb-6">
-                <Mic2 className="h-3 w-3" /> OMS Podcast Network
+                <Mic2 className="h-3 w-3" /> {bannerData.tag}
               </span>
               <h1 className="text-5xl sm:text-7xl font-bold tracking-tight leading-none" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
-                God's Great <span className="italic text-gold">Earth</span> Podcast
+                {bannerData.title}
               </h1>
               <p className="mt-8 text-lg text-cream/75 leading-relaxed max-w-xl" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
-                Join us every Tuesday for deep conversations, biblical insights, and stories that celebrate the wonder of our Creator. Available on all major platforms.
+                {bannerData.description}
               </p>
 
               <div className="mt-10 flex flex-wrap items-center gap-6">
                 <button
-                  onClick={() => playEpisode(LATEST_EPISODE)}
+                  onClick={() => playEpisode(featuredEpisode)}
                   className="rounded-full bg-gold px-8 py-4 text-sm font-bold uppercase tracking-widest text-gold-foreground shadow-lg hover:scale-105 transition cursor-pointer inline-block"
                 >
-                  Latest Episode
+                  {bannerData.buttonText}
                 </button>
                 <div className="flex items-center gap-3">
                   {PLATFORMS.slice(0, 4).map((p) => (
@@ -146,15 +170,15 @@ function PodcastLandingPage() {
 
             <div className="relative hidden lg:block animate-fade-up [animation-delay:200ms]">
               <div className="relative z-10 overflow-hidden rounded-[2.5rem] shadow-2xl border border-cream/10">
-                <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&q=80&w=800" alt="Podcast Studio" className="w-full aspect-square object-cover" />
+                <img src={bannerData.image} alt="Podcast Studio" className="w-full aspect-square object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 <div className="absolute bottom-10 left-10 right-10 flex items-center justify-between">
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gold">Watch Episode</p>
-                    <p className="text-xl font-medium" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>The Majesty of the Mountains</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-gold">{bannerData.videoSubtitle}</p>
+                    <p className="text-xl font-medium" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>{bannerData.videoTitle}</p>
                   </div>
                   <button
-                    onClick={() => playEpisode(LATEST_EPISODE)}
+                    onClick={() => playEpisode(featuredEpisode)}
                     className="h-14 w-14 rounded-full bg-cream text-forest-deep grid place-items-center shadow-glow hover:scale-105 hover:bg-gold hover:text-gold-foreground transition cursor-pointer"
                   >
                     <Play className="h-6 w-6 fill-current" />

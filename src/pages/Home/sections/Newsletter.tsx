@@ -1,4 +1,14 @@
-﻿export function Newsletter() {
+import { useState, useEffect } from "react";
+import { Link } from "@tanstack/react-router";
+
+export function Newsletter() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("user_token");
+    setIsLoggedIn(!!token);
+  }, []);
+
   return (
     <section id="resources" className="relative bg-gradient-warm py-24 sm:py-32">
       <div className="mx-auto max-w-5xl px-6">
@@ -24,15 +34,18 @@
               </ul>
             </div>
 
-            <form className="space-y-3">
-              <Field label="Full name" type="text" placeholder="Jane Doe" />
-              <Field label="Email" type="email" placeholder="jane@family.com" />
-              <Field label="Phone (optional)" type="tel" placeholder="+1 555 000 0000" />
-              <button type="submit" className="mt-2 w-full rounded-full bg-gradient-forest px-6 py-4 text-sm font-semibold text-cream shadow-card transition hover:shadow-elevated">
-                Send me free resources
-              </button>
-              <p className="text-center text-[11px] text-muted-foreground">We respect your inbox. Unsubscribe any time.</p>
-            </form>
+            <div className="flex flex-col justify-center items-center h-full">
+              {!isLoggedIn && (
+                <div className="space-y-4 w-full">
+                  <Link to="/register" className="flex w-full justify-center rounded-full bg-gradient-forest px-6 py-4 text-sm font-semibold text-cream shadow-card transition hover:shadow-elevated">
+                    Join / Register
+                  </Link>
+                  <p className="text-center text-[11px] text-muted-foreground">
+                    Already have an account? <Link to="/login" className="text-forest underline">Log in here</Link>
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

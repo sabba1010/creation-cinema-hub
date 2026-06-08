@@ -10,10 +10,20 @@ import {
   CloudUpload,
   ArrowUpRight,
   Settings,
-  Edit3
+  Edit3,
+  TrendingUp
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
-import { Card, CardContent } from "../../components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
+} from "recharts";
 import { Badge } from "../../components/ui/badge";
 import { Input } from "../../components/ui/input";
 import { Textarea } from "../../components/ui/textarea";
@@ -37,7 +47,7 @@ function StatsCard({ title, value, icon: Icon, color }: any) {
   };
 
   return (
-    <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card p-6 flex flex-col gap-2 transition-all hover:-translate-y-1">
+    <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card p-6 flex flex-col gap-2 transition-all">
       <div className={`p-3 rounded-2xl w-fit ${colorMap[color]}`}>
         <Icon className="w-6 h-6" />
       </div>
@@ -63,6 +73,20 @@ const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.verc
 function PodcastManagement() {
   const [seasons, setSeasons] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [bannerSettings, setBannerSettings] = useState({
+    tag: "OMS Podcast Network",
+    title: "God's Great Earth Podcast",
+    description: "Join us every Tuesday for deep conversations, biblical insights, and stories that celebrate the wonder of our Creator. Available on all major platforms.",
+    buttonText: "Latest Episode",
+    image: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&q=80&w=800",
+    videoTitle: "The Majesty of the Mountains",
+    videoSubtitle: "Watch Episode",
+    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    audioTitle: "The Architecture of Light",
+    audioSeasonTitle: "Season 1, Episode 1"
+  });
+  const [isBannerSettingsOpen, setIsBannerSettingsOpen] = useState(false);
 
   const [isNewSeasonOpen, setIsNewSeasonOpen] = useState(false);
   const [isEditSeasonOpen, setIsEditSeasonOpen] = useState(false);
@@ -91,7 +115,43 @@ function PodcastManagement() {
 
   useEffect(() => {
     fetchSeasons();
+    fetchBannerSettings();
   }, []);
+
+  const fetchBannerSettings = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/settings`, {
+        headers: { "Authorization": `Bearer ${localStorage.getItem("user_token")}` }
+      });
+      const data = await res.json();
+      if (data.success && data.data.podcast_banner) {
+        setBannerSettings(data.data.podcast_banner);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUpdateBannerSettings = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/settings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        },
+        body: JSON.stringify({ key: "podcast_banner", value: bannerSettings })
+      });
+      if (res.ok) {
+        toast.success("Banner settings updated!");
+        setIsBannerSettingsOpen(false);
+      } else {
+        toast.error("Failed to update banner settings");
+      }
+    } catch (err) {
+      toast.error("Failed to update banner settings");
+    }
+  };
 
   const handleCreateSeason = async () => {
     try {
@@ -210,6 +270,10 @@ function PodcastManagement() {
           <p className="text-muted-foreground">Control your seasons and publish new episodes.</p>
         </div>
         <div className="flex gap-2">
+          <Button variant="outline" className="h-11 rounded-xl border-border/50 gap-2" onClick={() => setIsBannerSettingsOpen(true)}>
+            <Settings className="w-4 h-4" />
+            Banner Settings
+          </Button>
           <Button variant="outline" className="h-11 rounded-xl border-border/50 gap-2" onClick={() => { setSeasonForm({ title: "", description: "", status: "Active", image: "", spotifyUrl: "", applePodcastsUrl: "" }); setIsNewSeasonOpen(true); }}>
             <Plus className="w-4 h-4" />
             New Season
@@ -218,10 +282,103 @@ function PodcastManagement() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-4">
-        <StatsCard title="Total Listens" value={seasons.reduce((acc, s) => acc + (s.listensCount || 0), 0)} icon={Headphones} color="forest" />
-        <StatsCard title="Total Episodes" value={seasons.reduce((acc, s) => acc + (s.episodesCount || 0), 0)} icon={Mic} color="gold" />
-        <StatsCard title="Active Seasons" value={seasons.filter(s => s.status === "Active").length} icon={ListMusic} color="sky" />
-        <StatsCard title="Avg. Listen Time" value="--" icon={Settings} color="forest" />
+        {(() => {
+          const totalListens = seasons.reduce((acc, s) => acc + (s.listensCount || 0), 0);
+          const totalEps = seasons.reduce((acc, s) => acc + (s.episodesCount || 0), 0);
+          const avgListens = totalEps > 0 ? Math.round(totalListens / totalEps) : 0;
+          return (
+            <>
+              <StatsCard title="Total Listens" value={totalListens} icon={Headphones} color="forest" />
+              <StatsCard title="Total Episodes" value={totalEps} icon={Mic} color="gold" />
+              <StatsCard title="Active Seasons" value={seasons.filter(s => s.status === "Active").length} icon={ListMusic} color="sky" />
+              <StatsCard title="Avg Listens/Ep" value={avgListens} icon={TrendingUp} color="forest" />
+            </>
+          );
+        })()}
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden transition-all hover:shadow-elevated">
+          <CardHeader>
+            <CardTitle className="text-xl font-display flex items-center gap-2">
+              <Headphones className="w-5 h-5 text-forest" />
+              Listens per Season
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={seasons.map(s => ({ name: s.title, listens: s.listensCount || 0 }))}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="color-mix(in srgb, var(--border) 50%, transparent)" />
+                <XAxis
+                  dataKey="name"
+                  stroke="var(--muted-foreground)"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  stroke="var(--muted-foreground)"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip
+                  cursor={{ fill: "color-mix(in srgb, var(--forest) 10%, transparent)" }}
+                  contentStyle={{
+                    backgroundColor: "var(--card)",
+                    borderColor: "var(--border)",
+                    color: "var(--foreground)",
+                    borderRadius: "12px",
+                    boxShadow: "var(--shadow-card)"
+                  }}
+                  itemStyle={{ color: "var(--forest)" }}
+                />
+                <Bar dataKey="listens" fill="var(--forest)" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden transition-all hover:shadow-elevated">
+          <CardHeader>
+            <CardTitle className="text-xl font-display flex items-center gap-2">
+              <Mic className="w-5 h-5 text-gold" />
+              Episodes per Season
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={seasons.map(s => ({ name: s.title, episodes: s.episodesCount || 0 }))}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="color-mix(in srgb, var(--border) 50%, transparent)" />
+                <XAxis
+                  dataKey="name"
+                  stroke="var(--muted-foreground)"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  stroke="var(--muted-foreground)"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip
+                  cursor={{ fill: "color-mix(in srgb, var(--gold) 10%, transparent)" }}
+                  contentStyle={{
+                    backgroundColor: "var(--card)",
+                    borderColor: "var(--border)",
+                    color: "var(--foreground)",
+                    borderRadius: "12px",
+                    boxShadow: "var(--shadow-card)"
+                  }}
+                  itemStyle={{ color: "var(--gold)" }}
+                />
+                <Bar dataKey="episodes" fill="var(--gold)" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="space-y-6">
@@ -398,6 +555,74 @@ function PodcastManagement() {
             </div>
             <Button className="w-full bg-forest h-12 rounded-xl shadow-lg font-bold uppercase tracking-widest text-[11px]" onClick={handleUpdateSeason}>
               Save Changes
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Banner Settings Dialog */}
+      <Dialog open={isBannerSettingsOpen} onOpenChange={setIsBannerSettingsOpen}>
+        <DialogContent className="sm:max-w-[700px] rounded-[2.5rem] border-border/50 bg-card/95 backdrop-blur-xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-display font-bold">Podcast Banner Settings</DialogTitle>
+            <DialogDescription>Customize the header on the Podcast page.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Tag (e.g. OMS Podcast Network)</Label>
+                <Input className="h-11 rounded-xl" value={bannerSettings.tag} onChange={e => setBannerSettings({ ...bannerSettings, tag: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Button Text</Label>
+                <Input className="h-11 rounded-xl" value={bannerSettings.buttonText} onChange={e => setBannerSettings({ ...bannerSettings, buttonText: e.target.value })} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Main Title</Label>
+              <Input className="h-11 rounded-xl" value={bannerSettings.title} onChange={e => setBannerSettings({ ...bannerSettings, title: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label>Description</Label>
+              <Textarea className="rounded-xl min-h-[80px]" value={bannerSettings.description} onChange={e => setBannerSettings({ ...bannerSettings, description: e.target.value })} />
+            </div>
+
+            <div className="pt-4 border-t border-border">
+              <h4 className="font-bold mb-4">Featured Episode Content</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Video Title (on Image)</Label>
+                  <Input className="h-11 rounded-xl" value={bannerSettings.videoTitle} onChange={e => setBannerSettings({ ...bannerSettings, videoTitle: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Video Subtitle</Label>
+                  <Input className="h-11 rounded-xl" value={bannerSettings.videoSubtitle} onChange={e => setBannerSettings({ ...bannerSettings, videoSubtitle: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Audio Title (in Player)</Label>
+                  <Input className="h-11 rounded-xl" value={bannerSettings.audioTitle} onChange={e => setBannerSettings({ ...bannerSettings, audioTitle: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Audio Season Info</Label>
+                  <Input className="h-11 rounded-xl" value={bannerSettings.audioSeasonTitle} onChange={e => setBannerSettings({ ...bannerSettings, audioSeasonTitle: e.target.value })} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <div className="space-y-2">
+                  <Label>Cover Image</Label>
+                  <Input type="file" accept="image/*" className="h-11 rounded-xl file:text-xs" onChange={e => handleImageUpload(e, setBannerSettings, 'image')} />
+                  {bannerSettings.image && <p className="text-[10px] text-muted-foreground truncate">Current: {bannerSettings.image}</p>}
+                </div>
+                <div className="space-y-2">
+                  <Label>Audio File</Label>
+                  <Input type="file" accept="audio/*" className="h-11 rounded-xl file:text-xs" onChange={e => handleImageUpload(e, setBannerSettings, 'audioUrl')} />
+                  {bannerSettings.audioUrl && <p className="text-[10px] text-muted-foreground truncate">Current: {bannerSettings.audioUrl}</p>}
+                </div>
+              </div>
+            </div>
+
+            <Button className="w-full bg-forest h-12 rounded-xl shadow-lg font-bold uppercase tracking-widest text-[11px] mt-4" onClick={handleUpdateBannerSettings}>
+              Save Banner Settings
             </Button>
           </div>
         </DialogContent>

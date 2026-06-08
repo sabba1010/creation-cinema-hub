@@ -236,10 +236,10 @@ function SeasonDetailsPage() {
             <div className="p-8 rounded-[2rem] bg-forest-deep text-cream">
               <h4 className="font-display text-xl mb-4">Never miss an episode</h4>
               <p className="text-sm text-cream/70 leading-relaxed mb-6">Get the latest stories and study materials delivered directly to your inbox.</p>
-              <form className="space-y-3">
+              {/* <form className="space-y-3">
                 <input type="email" placeholder="Your email" className="w-full px-5 py-3 rounded-xl bg-cream/10 border border-cream/10 text-sm focus:outline-none focus:border-gold/50" />
                 <button className="w-full py-3 rounded-xl bg-gold text-gold-foreground font-bold text-sm uppercase tracking-widest hover:scale-105 transition">Subscribe</button>
-              </form>
+              </form> */}
             </div>
           </div>
         </div>

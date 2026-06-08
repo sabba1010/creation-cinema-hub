@@ -217,59 +217,72 @@ function KidsLibraryPage() {
         </section>
 
         {/* Search + Filters */}
-        <section className="py-8 border-b border-[#EFECE3] bg-[#FAF7EE]/80 backdrop-blur-md sticky top-20 z-30">
-          <div className="mx-auto max-w-7xl px-6 space-y-4">
-            {/* Search bar */}
-            <div className="relative max-w-xl mx-auto">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search series, topics..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-14 pr-12 py-4 rounded-3xl border border-[#EFECE3] bg-white shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-forest-deep/20"
-              />
-              {searchQuery && (
-                <button onClick={() => setSearchQuery("")} className="absolute right-5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-forest-deep">
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
+        <section className="py-6 border-b border-cream/20 bg-[#FAF7EE]/90 backdrop-blur-xl sticky top-20 z-30 shadow-sm transition-all">
+          <div className="mx-auto max-w-7xl px-6 space-y-5">
+            
+            {/* Top Row: Search & Type */}
+            <div className="flex flex-col md:flex-row gap-2 md:gap-4 bg-white p-2 rounded-[2rem] shadow-sm border border-[#EFECE3] transition-all focus-within:ring-4 focus-within:ring-forest/5 focus-within:border-forest/20">
+              {/* Search */}
+              <div className="relative flex-1 min-w-[250px]">
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-forest-deep/40" />
+                <input
+                  type="text"
+                  placeholder="Find a story, series, or topic..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="w-full pl-12 pr-12 py-3.5 bg-transparent text-sm font-medium text-forest-deep placeholder:text-forest-deep/40 focus:outline-none"
+                />
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-forest-deep/40 hover:text-forest-deep transition-colors bg-[#FAF7EE] p-1.5 rounded-full">
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+              </div>
 
-            {/* Tab + Topic filters */}
-            <div className="flex flex-wrap justify-center gap-3">
-              {/* Content type tabs */}
-              <div className="bg-white p-1.5 rounded-2xl border border-[#EFECE3] flex flex-wrap gap-1 shadow-sm justify-center">
+              {/* Separator on desktop */}
+              <div className="hidden md:block w-px h-8 bg-[#EFECE3] self-center" />
+
+              {/* Content Type Tabs */}
+              <div className="flex items-center gap-1 overflow-x-auto hide-scrollbar px-2 pb-2 md:pb-0 md:px-0">
                 {["All", "Live-action", "Audio Story", "Creation Case", "OMS Resource"].map((tab) => {
-                  // Map the display tab to the backend contentType
                   const valMap: any = { "Audio Story": "Audio", "OMS Resource": "OMS" };
                   const val = valMap[tab] || tab;
+                  const isActive = activeTab === val;
 
                   return (
                     <button
                       key={tab}
                       onClick={() => setActiveTab(val)}
-                      className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${activeTab === val ? "bg-forest-deep text-white shadow" : "text-forest-deep/40 hover:bg-cream/50"}`}
+                      className={`whitespace-nowrap flex items-center justify-center gap-2 px-5 py-3 rounded-2xl font-bold text-[10px] sm:text-[11px] uppercase tracking-widest transition-all duration-300 ${isActive ? "bg-forest-deep text-gold shadow-md scale-100" : "bg-transparent text-forest-deep/50 hover:bg-[#FAF7EE] hover:text-forest-deep active:scale-95"}`}
                     >
                       {tab}
                     </button>
                   )
                 })}
               </div>
+            </div>
 
-              {/* Topic pills */}
-              <div className="flex flex-wrap gap-2">
-                {TOPICS.map(topic => (
-                  <button
-                    key={topic}
-                    onClick={() => setActiveTopic(topic)}
-                    className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest border transition-all ${activeTopic === topic ? "bg-forest-deep text-white border-forest-deep shadow" : "bg-white text-forest-deep/60 border-[#EFECE3] hover:border-forest-deep/30"}`}
-                  >
-                    {topic}
-                  </button>
-                ))}
+            {/* Bottom Row: Topics Scroll */}
+            <div className="flex items-center overflow-x-auto hide-scrollbar pb-2 pt-1 px-1 -mx-2 sm:mx-0 sm:px-0">
+              <div className="flex items-center gap-2 px-2 shrink-0">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-forest-deep/40 mr-2 flex items-center gap-1.5 shrink-0 hidden sm:flex">
+                  <LayoutGrid className="w-3.5 h-3.5" /> Topics
+                </span>
+                {TOPICS.map(topic => {
+                  const isActive = activeTopic === topic;
+                  return (
+                    <button
+                      key={topic}
+                      onClick={() => setActiveTopic(topic)}
+                      className={`shrink-0 px-5 py-2.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-widest transition-all duration-300 border ${isActive ? "bg-gold text-forest-deep border-gold shadow-sm scale-105" : "bg-white text-forest-deep/60 border-[#EFECE3] hover:border-gold/50 hover:bg-gold/10 hover:text-forest-deep active:scale-95"}`}
+                    >
+                      {topic}
+                    </button>
+                  );
+                })}
               </div>
             </div>
+
           </div>
         </section>
 
