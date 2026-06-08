@@ -191,9 +191,8 @@ function DashboardOverview() {
           <h2 className="text-xl font-display font-semibold text-foreground flex items-center gap-2 border-b border-border/50 pb-2">
             <PlayCircle className="w-5 h-5 text-forest" /> Content Library
           </h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <StatsCard title="Films" value={stats.films.toString()} change="Real-time" icon={Film} color="forest" />
-            <StatsCard title="TV Series" value={stats.series.toString()} change="Real-time" icon={Tv} color="forest" />
             <StatsCard title="Kids Series" value={stats.kidsSeries.toString()} change="Real-time" icon={PlayCircle} color="forest" />
             <StatsCard title="Podcast Seasons" value={stats.podcasts.toString()} change="Real-time" icon={Mic} color="forest" />
             <StatsCard title="Prayer Seasons" value={stats.prayers.toString()} change="Real-time" icon={Sun} color="forest" />

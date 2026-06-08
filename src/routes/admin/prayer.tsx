@@ -12,8 +12,18 @@ import {
   Mail,
   User,
   Trash2,
-  Settings
+  Settings,
+  TrendingUp
 } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer
+} from "recharts";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
@@ -407,6 +417,36 @@ function PrayerManagement() {
         </div>
       </div>
 
+      {/* Analytics Section */}
+      <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
+        <div className="p-6 border-b border-border/50 flex items-center gap-3 bg-muted/20">
+          <TrendingUp className="w-5 h-5 text-forest" />
+          <h2 className="text-xl font-display font-bold text-foreground">Engagement & Purchases Analysis</h2>
+        </div>
+        <div className="p-6">
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={[
+                { name: 'Week 1', engagement: 400, purchases: 240 },
+                { name: 'Week 2', engagement: 300, purchases: 139 },
+                { name: 'Week 3', engagement: 200, purchases: 980 },
+                { name: 'Week 4', engagement: 278, purchases: 390 },
+                { name: 'Week 5', engagement: 189, purchases: 480 },
+                { name: 'Week 6', engagement: 239, purchases: 380 },
+              ]}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} dy={10} />
+                <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} dx={-10} />
+                <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} dx={10} />
+                <RechartsTooltip contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
+                <Line yAxisId="left" type="monotone" dataKey="engagement" stroke="#1a2f24" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} name="Engagement" />
+                <Line yAxisId="right" type="monotone" dataKey="purchases" stroke="#D4AF37" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} name="Purchases" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </Card>
+
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="md:col-span-2 border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between">
@@ -449,7 +489,7 @@ function PrayerManagement() {
                     <Badge variant="outline">{season.status}</Badge>
                   </TableCell>
                   <TableCell className="text-right flex justify-end gap-2">
-                    <Link to={`/admin/prayer-season/${season._id}`}>
+                    <Link to="/admin/prayer-season/$seasonId" params={{ seasonId: season._id.toString() }}>
                       <Button variant="outline" size="sm" className="h-8 rounded-lg gap-2">
                         <Settings className="w-4 h-4" /> Manage Episodes
                       </Button>
