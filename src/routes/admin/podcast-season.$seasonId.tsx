@@ -65,7 +65,7 @@ function AdminPodcastSeasonPage() {
         const data = await res.json();
         if (data.success) {
           const fullUrl = `${API_URL}${data.url}`;
-          setUploadForm({ ...uploadForm, audioUrl: fullUrl });
+          setUploadForm(prev => ({ ...prev, audioUrl: fullUrl }));
           toast.success("Upload complete!", { id: toastId });
         } else {
           toast.error(data.message || "Upload failed", { id: toastId });
@@ -333,7 +333,10 @@ function AdminPodcastSeasonPage() {
                       <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{ep.description}</p>
                     )}
                     <p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-2">{ep.duration || "00:00"}</p>
-                    <div className="mt-2 flex gap-3">
+                    {ep.audioUrl && (
+                      <audio controls src={ep.audioUrl} className="h-8 mt-3 w-full max-w-[220px] rounded-lg" />
+                    )}
+                    <div className="mt-3 flex gap-3">
                       <button onClick={(e) => {
                         e.stopPropagation();
                         setEditingEpId(ep._id);

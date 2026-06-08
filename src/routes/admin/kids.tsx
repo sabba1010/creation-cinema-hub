@@ -252,6 +252,31 @@ function KidsManagement() {
     fetchPurchases();
   }, []);
 
+  const handleFileUpload = async (e: any, setForm: any, formField: string, type: string) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      const toastId = toast.loading(`Uploading ${type}...`);
+      try {
+        const res = await fetch(`${API_URL}/api/upload`, {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await res.json();
+        if (data.success) {
+          const fullUrl = `${API_URL}${data.url}`;
+          setForm((prev: any) => ({ ...prev, [formField]: fullUrl }));
+          toast.success("Upload complete!", { id: toastId });
+        } else {
+          toast.error(data.message || "Upload failed", { id: toastId });
+        }
+      } catch (err) {
+        toast.error("Upload error", { id: toastId });
+      }
+    }
+  };
+
   const handleAddSeries = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -932,17 +957,9 @@ function KidsManagement() {
                   type="file"
                   accept="image/*"
                   className="h-11 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-forest/10 file:text-forest hover:file:bg-forest/20 transition-all cursor-pointer"
-                  onChange={e => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        setSeriesForm({ ...seriesForm, image: reader.result as string });
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  }}
+                  onChange={e => handleFileUpload(e, setSeriesForm, 'image', 'image')}
                 />
+                {seriesForm.image && <p className="text-[10px] text-forest font-bold mt-2">✓ Image uploaded</p>}
               </div>
               <div className="space-y-2">
                 <Label>Audio Content (Optional)</Label>
@@ -950,17 +967,9 @@ function KidsManagement() {
                   type="file"
                   accept="audio/*"
                   className="h-11 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-forest/10 file:text-forest hover:file:bg-forest/20 transition-all cursor-pointer"
-                  onChange={e => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        setSeriesForm({ ...seriesForm, audioLink: reader.result as string });
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  }}
+                  onChange={e => handleFileUpload(e, setSeriesForm, 'audioLink', 'audio')}
                 />
+                {seriesForm.audioLink && <p className="text-[10px] text-forest font-bold mt-2">✓ Audio uploaded</p>}
               </div>
 
               {seriesForm.audioLink && (
