@@ -89,7 +89,8 @@ function DashboardOverview() {
             const res = await fetch(`${baseUrl}${endpoint}`, options);
             if (!res.ok) return [];
             const data = await res.json();
-            return data.success ? data.data || [] : [];
+            if (Array.isArray(data)) return data;
+            return data.success ? data.data || [] : data;
           } catch (e) {
             console.error(`Error fetching ${endpoint}:`, e);
             return [];
@@ -193,7 +194,7 @@ function DashboardOverview() {
           </h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <StatsCard title="Films" value={stats.films.toString()} change="Real-time" icon={Film} color="forest" />
-            <StatsCard title="Kids Series" value={stats.kidsSeries.toString()} change="Real-time" icon={PlayCircle} color="forest" />
+            <StatsCard title="KidsBible" value={stats.kidsSeries.toString()} change="Real-time" icon={PlayCircle} color="forest" />
             <StatsCard title="Podcast Seasons" value={stats.podcasts.toString()} change="Real-time" icon={Mic} color="forest" />
             <StatsCard title="Prayer Seasons" value={stats.prayers.toString()} change="Real-time" icon={Sun} color="forest" />
           </div>
@@ -212,6 +213,37 @@ function DashboardOverview() {
             <StatsCard title="Subscribers" value={stats.subscribers.toString()} change="Real-time" icon={Mail} color="sky" />
             <StatsCard title="Messages" value={stats.messages.toString()} change="Real-time" icon={MessageSquare} color="sky" />
           </div>
+        </div>
+
+        {/* Content Analysis */}
+        <div className="space-y-4 pt-4">
+          <h2 className="text-xl font-display font-semibold text-foreground flex items-center gap-2 border-b border-border/50 pb-2">
+            <PlayCircle className="w-5 h-5 text-gold" /> Content Distribution Analysis
+          </h2>
+          <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden">
+            <CardContent className="h-[350px] p-6">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={[
+                  { name: 'KidsBible', count: stats.kidsSeries },
+                  { name: 'Podcast', count: stats.podcasts },
+                  { name: 'Film', count: stats.films },
+                  { name: 'Event', count: stats.events },
+                  { name: 'Week of Prayer', count: stats.prayers },
+                ]} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(var(--border) / 0.5)" />
+                  <XAxis dataKey="name" stroke="oklch(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis stroke="oklch(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                  <Tooltip
+                    cursor={{ fill: "rgba(26, 47, 36, 0.05)" }}
+                    contentStyle={{ backgroundColor: "#ffffff", borderColor: "#e5e7eb", borderRadius: "12px", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)", padding: "12px" }}
+                    labelStyle={{ color: "#111827", fontWeight: "bold", marginBottom: "4px" }}
+                    itemStyle={{ color: "#1a2f24", fontWeight: "500" }}
+                  />
+                  <Bar dataKey="count" fill="#1a2f24" radius={[6, 6, 0, 0]} name="Total Series/Items Showing" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
         </div>
       </div>
 

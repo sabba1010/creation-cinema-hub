@@ -62,6 +62,7 @@ const INITIAL_TICKETS: any[] = [];
 
 function EventsManagement() {
   const [events, setEvents] = useState<any[]>([]);
+  const [isLoadingEvents, setIsLoadingEvents] = useState(true);
   const [tickets, setTickets] = useState(INITIAL_TICKETS);
   const [promos, setPromos] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState("all-events");
@@ -112,17 +113,25 @@ function EventsManagement() {
     if (!file) return;
 
     setIsUploading(true);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setEventForm({ ...eventForm, image: reader.result as string });
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('https://movie-backend-drab.vercel.app/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEventForm({ ...eventForm, image: data.url });
+        toast.success("Image uploaded successfully!");
+      } else {
+        toast.error("Failed to upload image");
+      }
+    } catch (err) {
+      toast.error("Network error during upload");
+    } finally {
       setIsUploading(false);
-      toast.success("Image attached successfully!");
-    };
-    reader.onerror = () => {
-      toast.error("Failed to process image");
-      setIsUploading(false);
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
   const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,19 +141,18 @@ function EventsManagement() {
     setIsUploading(true);
     const newImages: string[] = [];
 
-    const readAsDataURL = (file: File): Promise<string> => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    };
-
     try {
       for (let i = 0; i < files.length; i++) {
-        const result = await readAsDataURL(files[i]);
-        newImages.push(result);
+        const formData = new FormData();
+        formData.append('file', files[i]);
+        const res = await fetch('https://movie-backend-drab.vercel.app/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          newImages.push(data.url);
+        }
       }
       setEventForm(prev => ({ ...prev, gallery: [...prev.gallery, ...newImages] }));
       toast.success(`${newImages.length} images added to gallery!`);
@@ -158,6 +166,7 @@ function EventsManagement() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
+        setIsLoadingEvents(true);
         const res = await fetch("https://movie-backend-drab.vercel.app/api/events");
         const data = await res.json();
         if (data.success) {
@@ -165,6 +174,8 @@ function EventsManagement() {
         }
       } catch (err) {
         console.error("Error fetching events:", err);
+      } finally {
+        setIsLoadingEvents(false);
       }
     };
     const fetchTickets = async () => {
@@ -404,94 +415,101 @@ function EventsManagement() {
         </TabsList>
 
         <TabsContent value="all-events" className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {events.map((event) => (
-              <Card key={event.id} className="group border-border/50 bg-card/50 backdrop-blur-sm shadow-card hover:shadow-elevated transition-all overflow-hidden">
-                <div className="aspect-video relative overflow-hidden">
-                  <img
-                    src={event.image?.startsWith('http') || event.image?.startsWith('data:') ? event.image : `https://movie-backend-drab.vercel.app${event.image?.startsWith('/') ? '' : '/'}${event.image}`}
-                    alt={event.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <Badge className="bg-forest/90 backdrop-blur text-white border-none">{event.status}</Badge>
-                  </div>
-                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="secondary" size="sm" className="h-8 w-8 p-0 rounded-full bg-white/90 shadow-lg">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="rounded-xl border-border/50 p-1 shadow-elevated">
-                        <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => handleEditEvent(event)}>
-                          <Edit className="w-4 h-4" /> Edit Branding
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => setSelectedEvent(event)}>
-                          <Settings className="w-4 h-4" /> Manage Showtimes
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="gap-2 text-destructive cursor-pointer" onClick={async () => {
-                          if (confirm("Are you sure you want to delete this event?")) {
-                            try {
-                              const token = localStorage.getItem("user_token");
-                              const res = await fetch(`https://movie-backend-drab.vercel.app/api/events/${event.id}`, {
-                                method: "DELETE",
-                                headers: { "Authorization": `Bearer ${token}` }
-                              });
-                              const data = await res.json();
-                              if (data.success) {
-                                setEvents(events.filter(e => e.id !== event.id));
-                                toast.success("Event deleted");
-                              } else {
-                                toast.error(data.message || "Failed to delete");
+          {isLoadingEvents ? (
+            <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+              <div className="w-12 h-12 border-4 border-forest border-t-transparent rounded-full animate-spin mb-4"></div>
+              <p>Loading events...</p>
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {events.map((event) => (
+                <Card key={event.id} className="group border-border/50 bg-card/50 backdrop-blur-sm shadow-card hover:shadow-elevated transition-all overflow-hidden">
+                  <div className="aspect-video relative overflow-hidden">
+                    <img
+                      src={event.image?.startsWith('http') || event.image?.startsWith('data:') ? event.image : `https://movie-backend-drab.vercel.app${event.image?.startsWith('/') ? '' : '/'}${event.image}`}
+                      alt={event.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute top-4 left-4">
+                      <Badge className="bg-forest/90 backdrop-blur text-white border-none">{event.status}</Badge>
+                    </div>
+                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="secondary" size="sm" className="h-8 w-8 p-0 rounded-full bg-white/90 shadow-lg">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="rounded-xl border-border/50 p-1 shadow-elevated">
+                          <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => handleEditEvent(event)}>
+                            <Edit className="w-4 h-4" /> Edit Branding
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => setSelectedEvent(event)}>
+                            <Settings className="w-4 h-4" /> Manage Showtimes
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="gap-2 text-destructive cursor-pointer" onClick={async () => {
+                            if (confirm("Are you sure you want to delete this event?")) {
+                              try {
+                                const token = localStorage.getItem("user_token");
+                                const res = await fetch(`https://movie-backend-drab.vercel.app/api/events/${event.id}`, {
+                                  method: "DELETE",
+                                  headers: { "Authorization": `Bearer ${token}` }
+                                });
+                                const data = await res.json();
+                                if (data.success) {
+                                  setEvents(events.filter(e => e.id !== event.id));
+                                  toast.success("Event deleted");
+                                } else {
+                                  toast.error(data.message || "Failed to delete");
+                                }
+                              } catch (err) {
+                                toast.error("Network error");
                               }
-                            } catch (err) {
-                              toast.error("Network error");
                             }
-                          }
-                        }}>
-                          <Trash2 className="w-4 h-4" /> Delete Event
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </div>
-                <CardContent className="p-6 space-y-4">
-                  <div>
-                    <h3 className="font-display font-bold text-xl leading-tight">{event.name}</h3>
-                    <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{event.subtitle}</p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <CalendarIcon className="h-3.5 w-3.5 text-gold" />
-                      {event.date}
-                    </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <MapPin className="h-3.5 w-3.5 text-gold" />
-                      {event.cities?.length || 0} Cities
+                          }}>
+                            <Trash2 className="w-4 h-4" /> Delete Event
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
-
-                  <div className="pt-4 border-t border-border/30 grid grid-cols-3 gap-2">
+                  <CardContent className="p-6 space-y-4">
                     <div>
-                      <div className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-0.5">Price</div>
-                      <div className="font-display font-bold text-lg text-forest">{event.price}</div>
+                      <h3 className="font-display font-bold text-xl leading-tight">{event.name}</h3>
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{event.subtitle}</p>
                     </div>
-                    <div className="text-center">
-                      <div className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-0.5">Sold</div>
-                      <div className="font-bold text-lg text-forest">{event.ticketsSold || 0}</div>
+
+                    <div className="grid grid-cols-2 gap-4 text-xs">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <CalendarIcon className="h-3.5 w-3.5 text-gold" />
+                        {event.date}
+                      </div>
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <MapPin className="h-3.5 w-3.5 text-gold" />
+                        {event.cities?.length || 0} Cities
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-0.5">Available</div>
-                      <div className="font-bold text-forest text-lg">{Math.max(0, event.capacity - (event.ticketsSold || 0))}</div>
+
+                    <div className="pt-4 border-t border-border/30 grid grid-cols-3 gap-2">
+                      <div>
+                        <div className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-0.5">Price</div>
+                        <div className="font-display font-bold text-lg text-forest">{event.price}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-0.5">Sold</div>
+                        <div className="font-bold text-lg text-forest">{event.ticketsSold || 0}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mb-0.5">Available</div>
+                        <div className="font-bold text-forest text-lg">{Math.max(0, event.capacity - (event.ticketsSold || 0))}</div>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="registrations">
@@ -715,7 +733,7 @@ function EventsManagement() {
                     disabled={isUploading}
                   />
                   {eventForm.image && (
-                    <img src={eventForm.image.startsWith('http') || eventForm.image.startsWith('/') ? eventForm.image : `https://movie-backend-drab.vercel.app${eventForm.image}`} alt="Preview" className="h-11 w-11 object-cover rounded-md border border-border" />
+                    <img src={eventForm.image.startsWith('http') || eventForm.image.startsWith('data:') ? eventForm.image : `https://movie-backend-drab.vercel.app${eventForm.image.startsWith('/') ? '' : '/'}${eventForm.image}`} alt="Preview" className="h-11 w-11 object-cover rounded-md border border-border" />
                   )}
                 </div>
                 {isUploading && <p className="text-xs text-muted-foreground">Uploading image...</p>}
@@ -737,7 +755,7 @@ function EventsManagement() {
                       {eventForm.gallery.map((img, idx) => (
                         <div key={idx} className="relative group w-16 h-16 rounded-lg border border-border overflow-hidden">
                           <img
-                            src={img.startsWith('http') || img.startsWith('/') || img.startsWith('data:') ? img : `https://movie-backend-drab.vercel.app${img}`}
+                            src={img.startsWith('http') || img.startsWith('data:') ? img : `https://movie-backend-drab.vercel.app${img.startsWith('/') ? '' : '/'}${img}`}
                             alt={`Gallery ${idx}`}
                             className="w-full h-full object-cover"
                           />

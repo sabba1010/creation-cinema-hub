@@ -219,7 +219,7 @@ function KidsLibraryPage() {
         {/* Search + Filters */}
         <section className="py-6 border-b border-cream/20 bg-[#FAF7EE]/90 backdrop-blur-xl sticky top-20 z-30 shadow-sm transition-all">
           <div className="mx-auto max-w-7xl px-6 space-y-5">
-            
+
             {/* Top Row: Search & Type */}
             <div className="flex flex-col md:flex-row gap-2 md:gap-4 bg-white p-2 rounded-[2rem] shadow-sm border border-[#EFECE3] transition-all focus-within:ring-4 focus-within:ring-forest/5 focus-within:border-forest/20">
               {/* Search */}
