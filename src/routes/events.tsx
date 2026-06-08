@@ -242,7 +242,7 @@ function EventsPage() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await fetch("${API_URL}/api/events");
+        const res = await fetch(`${API_URL}/api/events`);
         const data = await res.json();
         if (data.success && data.data.length > 0) {
           const mapped = data.data.map((e: any) => ({ ...e, id: e._id }));
@@ -335,7 +335,7 @@ function EventsPage() {
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     try {
-      const res = await fetch("${API_URL}/api/tickets", {
+      const res = await fetch(`${API_URL}/api/tickets`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -388,7 +388,7 @@ function EventsPage() {
     if (!promoCode) return;
     setIsPromoValidating(true);
     try {
-      const res = await fetch("${API_URL}/api/promocodes/validate", {
+      const res = await fetch(`${API_URL}/api/promocodes/validate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: promoCode })
