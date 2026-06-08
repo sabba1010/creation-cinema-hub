@@ -27,6 +27,8 @@ function SeasonDetailsPage() {
   const [season, setSeason] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const resolveUrl = (url: string) => !url ? '' : url.startsWith('http') || url.startsWith('data:') ? url : `${API_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+
   // Email capture state
   const [isDownloadOpen, setIsDownloadOpen] = useState(false);
   const [downloadEmail, setDownloadEmail] = useState("");
@@ -127,7 +129,7 @@ function SeasonDetailsPage() {
 
             <div className="grid lg:grid-cols-[1.2fr_2fr] gap-12 items-end">
               <div className="relative aspect-square rounded-[2rem] overflow-hidden shadow-2xl">
-                <img src={season.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"} alt="Season Cover" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"; }} />
+                <img src={season.image ? resolveUrl(season.image) : "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"} alt="Season Cover" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"; }} />
               </div>
               <div className="pb-4">
                 <span className="text-xs font-bold uppercase tracking-[0.3em] text-primary/70">Podcast Season</span>
@@ -161,9 +163,9 @@ function SeasonDetailsPage() {
                             title: ep.title,
                             duration: ep.duration,
                             date: new Date(ep.createdAt).toLocaleDateString(),
-                            audioUrl: ep.audioUrl,
+                            audioUrl: resolveUrl(ep.audioUrl),
                             seasonTitle: season.title,
-                            coverImage: season.image
+                            coverImage: resolveUrl(season.image)
                           });
                           // Record the listen
                           fetch(`${API_URL}/api/podcast/episodes/${ep._id}/listen`, { method: 'POST' }).catch(console.error);
@@ -181,7 +183,7 @@ function SeasonDetailsPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <a href={ep.audioUrl} download target="_blank" rel="noreferrer" className="h-10 w-10 grid place-items-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">
+                      <a href={resolveUrl(ep.audioUrl)} download target="_blank" rel="noreferrer" className="h-10 w-10 grid place-items-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition cursor-pointer">
                         <Download className="h-5 w-5" />
                       </a>
                       <button

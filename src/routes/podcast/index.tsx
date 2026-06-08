@@ -113,13 +113,15 @@ function PodcastLandingPage() {
       .catch(console.error);
   }, []);
 
+  const resolveUrl = (url: string) => !url ? '' : url.startsWith('http') || url.startsWith('data:') ? url : `${API_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+
   const featuredEpisode = {
     id: "featured",
     title: bannerData.audioTitle,
     duration: "00:00",
     date: new Date().toLocaleDateString(),
-    audioUrl: bannerData.audioUrl,
-    coverImage: bannerData.image,
+    audioUrl: resolveUrl(bannerData.audioUrl),
+    coverImage: resolveUrl(bannerData.image),
     seasonTitle: bannerData.audioSeasonTitle,
   };
 
@@ -170,7 +172,7 @@ function PodcastLandingPage() {
 
             <div className="relative hidden lg:block animate-fade-up [animation-delay:200ms]">
               <div className="relative z-10 overflow-hidden rounded-[2.5rem] shadow-2xl border border-cream/10">
-                <img src={bannerData.image} alt="Podcast Studio" className="w-full aspect-square object-cover" />
+                <img src={resolveUrl(bannerData.image)} alt="Podcast Studio" className="w-full aspect-square object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 <div className="absolute bottom-10 left-10 right-10 flex items-center justify-between">
                   <div>
@@ -245,7 +247,7 @@ function PodcastLandingPage() {
                   className="group cursor-pointer"
                 >
                   <div className="relative overflow-hidden rounded-3xl aspect-[4/5] bg-muted">
-                    <img src={s.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"} alt={s.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"; }} />
+                    <img src={s.image ? resolveUrl(s.image) : "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"} alt={s.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800"; }} />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                     <div className="absolute bottom-8 left-8 right-8">
                       <p className="text-[10px] font-bold uppercase tracking-widest text-gold/90 mb-2">Season {index + 1} • {s.episodesCount || 0} Episodes</p>
