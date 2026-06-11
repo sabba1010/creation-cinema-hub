@@ -414,7 +414,7 @@ function EventsManagement() {
         <TabsList className="bg-card/50 backdrop-blur-md border border-border/50 p-1 rounded-xl">
           <TabsTrigger value="all-events" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white transition-all">All Events</TabsTrigger>
           <TabsTrigger value="registrations" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white transition-all">Registrations</TabsTrigger>
-          <TabsTrigger value="settings" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white transition-all">Global Settings</TabsTrigger>
+          {/* <TabsTrigger value="settings" className="rounded-lg px-6 data-[state=active]:bg-forest data-[state=active]:text-white transition-all">Global Settings</TabsTrigger> */}
         </TabsList>
 
         <TabsContent value="all-events" className="space-y-6">
