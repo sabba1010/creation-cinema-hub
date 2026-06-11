@@ -130,7 +130,7 @@ function KidsManagement() {
     yearlyEnabled: true, yearlyPrice: 49.99,
     trialDays: 7,
   });
-  const [seriesForm, setSeriesForm] = useState({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness", contentType: "Live-action" });
+  const [seriesForm, setSeriesForm] = useState({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness", contentType: "Creation Case" });
   const [grantForm, setGrantForm] = useState({ name: "", email: "", source: "Manual Grant", plan: "lifetime" });
   const [uploadForm, setUploadForm] = useState({ title: "", description: "", vimeoLink: "", audioLink: "", seriesId: "" });
   const [editingSeriesId, setEditingSeriesId] = useState<string | null>(null);
@@ -307,7 +307,7 @@ function KidsManagement() {
       });
       if (res.ok) {
         setIsSeriesDialogOpen(false);
-        setSeriesForm({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness", contentType: "Live-action" });
+        setSeriesForm({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness", contentType: "Creation Case" });
         setEditingSeriesId(null);
         Swal.fire({
           title: 'Success!',
@@ -334,7 +334,7 @@ function KidsManagement() {
       name: item.name || "",
       description: item.description || item.desc || "",
       topic: item.topic || "Kindness",
-      contentType: item.contentType || "Live-action",
+      contentType: item.contentType || "Creation Case",
       image: item.image || item.img || "",
       trailer: item.trailer || "",
       audioLink: item.audioLink || "",
@@ -560,7 +560,7 @@ function KidsManagement() {
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               <button
-                onClick={() => { setEditingSeriesId(null); setSeriesForm({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness", contentType: "Live-action" }); setIsSeriesDialogOpen(true); }}
+                onClick={() => { setEditingSeriesId(null); setSeriesForm({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness", contentType: "Creation Case" }); setIsSeriesDialogOpen(true); }}
                 className="h-full min-h-[280px] rounded-[2rem] border-2 border-dashed border-[#EFECE3] flex flex-col items-center justify-center text-muted-foreground hover:bg-white/50 hover:border-forest hover:text-forest transition-all group"
               >
                 <Plus className="w-8 h-8 mb-4 transition-transform group-hover:scale-110" />
@@ -604,7 +604,7 @@ function KidsManagement() {
                     <div className="flex items-center justify-between">
                       <div className="text-xs text-muted-foreground uppercase tracking-wider font-bold">{item.episodeCount ?? item.episodes ?? 0} Episodes</div>
                       <div className="flex gap-1">
-                        <Badge variant="outline" className="text-[9px] uppercase">{item.contentType || 'Live-action'}</Badge>
+                        <Badge variant="outline" className="text-[9px] uppercase">{item.contentType || 'Creation Case'}</Badge>
                         <Badge className="bg-forest/10 text-forest border-forest/20 text-[10px]">{item.topic}</Badge>
                       </div>
                     </div>
@@ -923,7 +923,7 @@ function KidsManagement() {
         setIsSeriesDialogOpen(open);
         if (!open) {
           setEditingSeriesId(null);
-          setSeriesForm({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness", contentType: "Live-action" });
+          setSeriesForm({ name: "", description: "", image: "", trailer: "", audioLink: "", trailerTitle: "", trailerDescription: "", audioTitle: "", audioDescription: "", topic: "Kindness", contentType: "Creation Case" });
         }
       }}>
         <DialogContent className="sm:max-w-[600px] rounded-[2.5rem]">
@@ -1055,7 +1055,6 @@ function KidsManagement() {
                       <SelectValue placeholder="Select format" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
-                      <SelectItem value="Live-action">Live-action</SelectItem>
                       <SelectItem value="Audio">Audio Story</SelectItem>
                       <SelectItem value="Creation Case">Creation Case</SelectItem>
                       <SelectItem value="OMS">OMS Resource</SelectItem>

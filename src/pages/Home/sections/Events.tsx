@@ -140,7 +140,7 @@ export function Events() {
                 
                 <h2 className="font-display text-5xl sm:text-6xl lg:text-7xl font-medium leading-[0.95] tracking-tighter">
                   {featuredEvent.name.includes(':') ? (
-                    featuredEvent.name.split(':').map((part, i) => (
+                    featuredEvent.name.split(':').map((part: string, i: number) => (
                       <span key={i} className={i === 1 ? "italic text-gold block mt-2" : "block"}>
                         {part}{i === 0 ? ':' : ''}
                       </span>

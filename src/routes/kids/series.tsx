@@ -12,12 +12,12 @@ export const Route = createFileRoute("/kids/series")({
 function KidsSeriesPage() {
   const [filter, setFilter] = useState("All");
 
-  const CATEGORIES = ["All", "Animated", "Live Action", "Bible Stories", "Adventure"];
+  const CATEGORIES = ["All", "Animated", "Bible Stories", "Adventure"];
 
   const SERIES = [
     { id: 1, title: "Friendly Forest", type: "Animated", eps: 12, img: "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&q=80&w=600", desc: "Teaching kindness through forest adventures.", color: "forest" },
     { id: 2, title: "Star Sailors", type: "Animated", eps: 8, img: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&q=80&w=600", desc: "Exploring the wonders of God's universe.", color: "gold" },
-    { id: 3, title: "Miracle Makers", type: "Live Action", eps: 15, img: "https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&q=80&w=600", desc: "Re-living the incredible miracles of Jesus.", color: "earth" },
+    { id: 3, title: "Miracle Makers", type: "Bible Stories", eps: 15, img: "https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&q=80&w=600", desc: "Re-living the incredible miracles of Jesus.", color: "earth" },
     { id: 4, title: "Bible Buddies", type: "Animated", eps: 24, img: "https://images.unsplash.com/photo-1519340241574-211915c54970?auto=format&fit=crop&q=80&w=600", desc: "Classic Bible stories for the little ones.", color: "sage" },
     { id: 5, title: "Wonder Quest", type: "Adventure", eps: 10, img: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&q=80&w=600", desc: "Nature walks and faith-building discoveries.", color: "forest" },
     { id: 6, title: "Parable Party", type: "Animated", eps: 18, img: "https://images.unsplash.com/photo-1550133730-69513a51d71f?auto=format&fit=crop&q=80&w=600", desc: "Understanding the stories Jesus told.", color: "gold" },

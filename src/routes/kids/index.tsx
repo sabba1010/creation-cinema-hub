@@ -345,12 +345,11 @@ function KidsLandingPage() {
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4 lg:gap-6">
                   {[
-                    { icon: Tv, title: "Live-Action Shows", desc: "Engaging, real-life character-building series." },
-                    { icon: Headphones, title: "Audio Stories", desc: "Screen-free adventures perfect for bedtime or travel." },
-                    { icon: Video, title: "Creation Case Episodes", desc: "Our flagship series exploring the wonders of God's world." },
-                    { icon: Film, title: "Other OMS Resources", desc: "A curated collection of exclusive video and audio content." }
+                    { icon: Headphones, title: "Audio Stories", desc: "Screen-free adventures perfect for bedtime or travel.", className: "" },
+                    { icon: Video, title: "Creation Case Episodes", desc: "Our flagship series exploring the wonders of God's world.", className: "" },
+                    { icon: Film, title: "Other OMS Resources", desc: "A curated collection of exclusive video and audio content.", className: "sm:col-span-2" }
                   ].map((item, idx) => (
-                    <div key={idx} className="group relative bg-white/5 border border-white/10 rounded-[2rem] p-5 sm:p-6 hover:bg-white/10 hover:border-gold/30 transition-all duration-500 overflow-hidden cursor-default">
+                    <div key={idx} className={`group relative bg-white/5 border border-white/10 rounded-[2rem] p-5 sm:p-6 hover:bg-white/10 hover:border-gold/30 transition-all duration-500 overflow-hidden cursor-default ${item.className}`}>
                       <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-10 transform translate-x-4 -translate-y-4 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-700">
                         <item.icon className="w-32 h-32 text-gold" />
                       </div>

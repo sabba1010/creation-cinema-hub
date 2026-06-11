@@ -86,7 +86,7 @@ function KidsLibraryPage() {
 
   const filteredContent = seriesList.filter((s) => {
     // Tab filter
-    const type = s.contentType || "Live-action";
+    const type = s.contentType || "Creation Case";
     if (activeTab !== "All" && type !== activeTab) return false;
 
     // Topic filter
@@ -244,7 +244,7 @@ function KidsLibraryPage() {
 
               {/* Content Type Tabs */}
               <div className="flex items-center gap-1 overflow-x-auto hide-scrollbar px-2 pb-2 md:pb-0 md:px-0">
-                {["All", "Live-action", "Audio Story", "Creation Case", "OMS Resource"].map((tab) => {
+                {["All", "Audio Story", "Creation Case", "OMS Resource"].map((tab) => {
                   const valMap: any = { "Audio Story": "Audio", "OMS Resource": "OMS" };
                   const val = valMap[tab] || tab;
                   const isActive = activeTab === val;
