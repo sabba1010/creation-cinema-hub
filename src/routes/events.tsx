@@ -30,7 +30,7 @@ import {
 import { INITIAL_EVENTS, type CityScreening, type Showtime } from "../data/events-data";
 import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 
 export const Route = createFileRoute("/events")({
@@ -551,6 +551,10 @@ function EventsPage() {
                       </div>
                       <h2 className="font-display text-4xl sm:text-5xl font-medium text-cream">{selectedEvent.name}</h2>
                       <p className="text-gold/80 text-lg mt-2">{selectedEvent.subtitle}</p>
+                      <div className="flex items-center gap-2 text-cream mt-4 font-medium text-sm tracking-wide">
+                        <MapPin className="h-5 w-5 text-gold" />
+                        <span>{selectedEvent.location || "Global"}</span>
+                      </div>
                       <p className="text-cream/60 mt-4 leading-relaxed">{selectedEvent.description}</p>
                     </div>
 

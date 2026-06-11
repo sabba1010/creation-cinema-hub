@@ -60,7 +60,7 @@ export const Route = createFileRoute("/admin/events")({
 
 const INITIAL_TICKETS: any[] = [];
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 function EventsManagement() {
   const [events, setEvents] = useState<any[]>([]);
@@ -447,9 +447,9 @@ function EventsManagement() {
                           <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => handleEditEvent(event)}>
                             <Edit className="w-4 h-4" /> Edit Branding
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => setSelectedEvent(event)}>
+                          {/* <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => setSelectedEvent(event)}>
                             <Settings className="w-4 h-4" /> Manage Showtimes
-                          </DropdownMenuItem>
+                          </DropdownMenuItem> */}
                           <DropdownMenuSeparator />
                           <DropdownMenuItem className="gap-2 text-destructive cursor-pointer" onClick={async () => {
                             if (confirm("Are you sure you want to delete this event?")) {
@@ -490,7 +490,7 @@ function EventsManagement() {
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <MapPin className="h-3.5 w-3.5 text-gold" />
-                        {event.cities?.length || 0} Cities
+                        {event.location || "Global"}
                       </div>
                     </div>
 
@@ -686,6 +686,15 @@ function EventsManagement() {
                   onChange={e => setEventForm({ ...eventForm, subtitle: e.target.value })}
                   placeholder="e.g. A global experience of faith"
                   className="h-11 rounded-xl"
+                />
+              </div>
+              <div className="col-span-2 space-y-2">
+                <Label>Event Location</Label>
+                <Input
+                  value={eventForm.location}
+                  onChange={e => setEventForm({ ...eventForm, location: e.target.value })}
+                  placeholder="e.g. New York, NY"
+                  className="h-11 rounded-xl" required
                 />
               </div>
               <div className="space-y-2">
