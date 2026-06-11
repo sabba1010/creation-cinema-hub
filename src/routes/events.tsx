@@ -30,7 +30,7 @@ import {
 import { INITIAL_EVENTS, type CityScreening, type Showtime } from "../data/events-data";
 import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 
 export const Route = createFileRoute("/events")({
@@ -247,7 +247,20 @@ function EventsPage() {
         if (data.success && data.data.length > 0) {
           const mapped = data.data.map((e: any) => ({ ...e, id: e._id }));
           setEvents(mapped);
-          setSelectedEventId(mapped[0].id);
+          
+          const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+          const paramId = searchParams ? searchParams.get('id') : null;
+          const matchedEvent = mapped.find((e: any) => e.id === paramId);
+          if (matchedEvent) {
+            setSelectedEventId(matchedEvent.id);
+            if (matchedEvent.status === "Past") {
+              setEventFilter("past");
+            } else {
+              setEventFilter("active");
+            }
+          } else {
+            setSelectedEventId(mapped[0].id);
+          }
         }
       } catch (err) {
         console.error("Error fetching events:", err);
