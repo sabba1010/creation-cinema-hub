@@ -30,7 +30,7 @@ import {
 import { INITIAL_EVENTS, type CityScreening, type Showtime } from "../data/events-data";
 import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 
 export const Route = createFileRoute("/events")({
@@ -247,7 +247,7 @@ function EventsPage() {
         if (data.success && data.data.length > 0) {
           const mapped = data.data.map((e: any) => ({ ...e, id: e._id }));
           setEvents(mapped);
-          
+
           const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
           const paramId = searchParams ? searchParams.get('id') : null;
           const matchedEvent = mapped.find((e: any) => e.id === paramId);
@@ -960,7 +960,7 @@ function EventsPage() {
                         <CreditCard className="h-5 w-5" />
                       </div>
                       <div className="text-[10px] font-bold uppercase tracking-widest leading-relaxed text-cream/70">
-                        Secure checkout via Stripe <br/>
+                        Secure checkout via Stripe <br />
                         <span className="text-white/40 font-medium">You will be redirected to Stripe to pay securely.</span>
                       </div>
                     </div>

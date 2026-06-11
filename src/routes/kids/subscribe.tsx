@@ -5,7 +5,7 @@ import { CheckCircle2, ShieldCheck, Heart, Users, CreditCard, Sparkles, Star, Cr
 import { useState, useEffect, useRef } from "react";
 import Swal from "sweetalert2";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 export const Route = createFileRoute("/kids/subscribe")({
    component: KidsSubscribePage,

@@ -14,7 +14,7 @@ import Swal from "sweetalert2";
 
 export const Route = createFileRoute("/admin/newsletter")({ component: NewsletterManagement });
 
-const API = "http://localhost:5000";
+const API = "https://movie-backend-drab.vercel.app";
 const CATEGORIES = ["Ministry Update", "Community", "Events", "Kids", "Podcast", "Announcement"];
 
 function getVimeoEmbed(url: string) {

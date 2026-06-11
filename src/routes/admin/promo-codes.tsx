@@ -22,7 +22,7 @@ function PromoCodesManagement() {
   const fetchPromoCodes = async () => {
     try {
       const token = localStorage.getItem("user_token");
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
       const baseUrl = API_URL.endsWith('/api') ? API_URL : `${API_URL}/api`;
 
       const res = await fetch(`${baseUrl}/promocodes`, {
@@ -52,7 +52,7 @@ function PromoCodesManagement() {
     }
     try {
       const token = localStorage.getItem("user_token");
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
       const baseUrl = API_URL.endsWith('/api') ? API_URL : `${API_URL}/api`;
 
       const res = await fetch(`${baseUrl}/promocodes`, {
@@ -85,7 +85,7 @@ function PromoCodesManagement() {
     if (!confirm("Are you sure you want to delete this promo code?")) return;
     try {
       const token = localStorage.getItem("user_token");
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
       const baseUrl = API_URL.endsWith('/api') ? API_URL : `${API_URL}/api`;
 
       const res = await fetch(`${baseUrl}/promocodes/${id}`, {

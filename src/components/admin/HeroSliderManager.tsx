@@ -32,7 +32,7 @@ export function HeroSliderManager() {
 
   const fetchSliders = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/hero-sliders/admin");
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/hero-sliders/admin");
       const data = await res.json();
       if (data.success) {
         setSliders(data.data);
@@ -68,8 +68,8 @@ export function HeroSliderManager() {
     e.preventDefault();
     try {
       const url = editingSlider
-        ? `http://localhost:5000/api/hero-sliders/${editingSlider._id}`
-        : "http://localhost:5000/api/hero-sliders";
+        ? `https://movie-backend-drab.vercel.app/api/hero-sliders/${editingSlider._id}`
+        : "https://movie-backend-drab.vercel.app/api/hero-sliders";
       const method = editingSlider ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -94,7 +94,7 @@ export function HeroSliderManager() {
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this slider?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/hero-sliders/${id}`, {
+      const res = await fetch(`https://movie-backend-drab.vercel.app/api/hero-sliders/${id}`, {
         method: "DELETE"
       });
       if (res.ok) {
@@ -108,7 +108,7 @@ export function HeroSliderManager() {
 
   const toggleActive = async (id: string, currentStatus: boolean) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/hero-sliders/${id}`, {
+      const res = await fetch(`https://movie-backend-drab.vercel.app/api/hero-sliders/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isActive: !currentStatus })

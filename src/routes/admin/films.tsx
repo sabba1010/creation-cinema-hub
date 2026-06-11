@@ -147,7 +147,7 @@ function FilmsManagement() {
   useEffect(() => {
     fetchFilms();
     fetchPurchases();
-    fetch("http://localhost:5000/api/settings")
+    fetch("https://movie-backend-drab.vercel.app/api/settings")
       .then(res => res.json())
       .then(data => {
         if (data.success && data.data.global_rent_duration) {
@@ -160,7 +160,7 @@ function FilmsManagement() {
 
   const fetchFilms = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/films");
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/films");
       const data = await res.json();
       if (data.success) {
         setFilms(data.data.map((f: any) => ({ ...f, id: f._id })));
@@ -172,7 +172,7 @@ function FilmsManagement() {
 
   const fetchPurchases = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/purchases");
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/purchases");
       const data = await res.json();
       if (data.success) {
         setPurchases(data.data.map((p: any) => ({
@@ -199,7 +199,7 @@ function FilmsManagement() {
     formDataObj.append("image", file);
 
     try {
-      const res = await fetch("http://localhost:5000/api/upload", {
+      const res = await fetch("https://movie-backend-drab.vercel.app/api/upload", {
         method: "POST",
         body: formDataObj,
       });
@@ -207,7 +207,7 @@ function FilmsManagement() {
       if (data.success) {
         // Use full URL or relative depending on how the frontend displays it. 
         // We will store the absolute URL so it works everywhere.
-        const fullUrl = `http://localhost:5000${data.url}`;
+        const fullUrl = `https://movie-backend-drab.vercel.app${data.url}`;
         setFormData({ ...formData, thumbnail: fullUrl });
         toast.success("Image uploaded to server!");
       } else {
@@ -231,7 +231,7 @@ function FilmsManagement() {
       };
 
       if (editingFilm) {
-        const res = await fetch(`http://localhost:5000/api/films/${editingFilm.id}`, {
+        const res = await fetch(`https://movie-backend-drab.vercel.app/api/films/${editingFilm.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
           body: JSON.stringify(payload)
@@ -242,7 +242,7 @@ function FilmsManagement() {
           toast.success("Film updated successfully!");
         } else toast.error(data.message);
       } else {
-        const res = await fetch("http://localhost:5000/api/films", {
+        const res = await fetch("https://movie-backend-drab.vercel.app/api/films", {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
           body: JSON.stringify(payload)
@@ -285,7 +285,7 @@ function FilmsManagement() {
     if (!confirm("Delete this film?")) return;
     const token = localStorage.getItem("user_token");
     try {
-      const res = await fetch(`http://localhost:5000/api/films/${id}`, {
+      const res = await fetch(`https://movie-backend-drab.vercel.app/api/films/${id}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -651,7 +651,7 @@ function FilmsManagement() {
                   className="w-full bg-forest shadow-md"
                   onClick={async () => {
                     try {
-                      const res = await fetch("http://localhost:5000/api/settings", {
+                      const res = await fetch("https://movie-backend-drab.vercel.app/api/settings", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ key: "global_rent_duration", value: rentDuration })

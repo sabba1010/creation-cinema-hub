@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Calendar, Play, BookOpen, Download, Globe, ArrowRight, Users, CheckCircle } from "lucide-react";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 export const Route = createFileRoute("/prayer/")({
   component: PrayerLandingPage,

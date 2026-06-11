@@ -4,7 +4,7 @@ import { CheckCircle2, Crown, Ticket, ShoppingBag, ArrowRight } from "lucide-rea
 import { SiteHeader } from "../../components/layout/SiteHeader";
 import { SiteFooter } from "../../components/layout/SiteFooter";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 export const Route = createFileRoute("/payment/success")({
   validateSearch: (search: Record<string, unknown>): { session_id?: string } => {

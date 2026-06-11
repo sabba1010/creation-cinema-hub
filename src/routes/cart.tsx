@@ -38,7 +38,7 @@ function CartPage() {
   }, []);
 
   const updateQuantity = (id: string, delta: number) => {
-    const newItems = items.map(item => 
+    const newItems = items.map(item =>
       item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
     );
     setItems(newItems);
@@ -69,7 +69,7 @@ function CartPage() {
 
     setIsCheckingOut(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/payment/create-checkout-session`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app"}/api/payment/create-checkout-session`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -111,8 +111,8 @@ function CartPage() {
               <ShoppingBag className="h-6 w-6" />
             </div>
             <div>
-               <h1 className="font-display text-4xl font-medium italic">Your Collection</h1>
-               <p className="text-muted-foreground text-sm uppercase tracking-widest font-bold mt-1">{items.length} Items in cart</p>
+              <h1 className="font-display text-4xl font-medium italic">Your Collection</h1>
+              <p className="text-muted-foreground text-sm uppercase tracking-widest font-bold mt-1">{items.length} Items in cart</p>
             </div>
           </div>
 
@@ -172,7 +172,7 @@ function CartPage() {
                       <span>${total.toFixed(2)}</span>
                     </div>
                   </div>
-                  <button 
+                  <button
                     onClick={handleCheckout}
                     disabled={isCheckingOut}
                     className="w-full mt-10 py-5 rounded-2xl bg-gold text-forest-deep font-bold text-sm uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:scale-100 disabled:active:scale-100"
@@ -184,22 +184,22 @@ function CartPage() {
                 </div>
 
                 <div className="space-y-4">
-                   <div className="flex items-center gap-4 p-5 rounded-2xl border border-border bg-card/50">
-                      <div className="h-10 w-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                         <ShieldCheck className="h-5 w-5" />
-                      </div>
-                      <div className="text-[10px] font-bold uppercase tracking-widest leading-relaxed">
-                         Secure Checkout with <br/><span className="text-foreground">SSL Encryption</span>
-                      </div>
-                   </div>
-                   <div className="flex items-center gap-4 p-5 rounded-2xl border border-border bg-card/50">
-                      <div className="h-10 w-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
-                         <Truck className="h-5 w-5" />
-                      </div>
-                      <div className="text-[10px] font-bold uppercase tracking-widest leading-relaxed">
-                         Free Shipping on <br/><span className="text-foreground">Orders Over $100</span>
-                      </div>
-                   </div>
+                  <div className="flex items-center gap-4 p-5 rounded-2xl border border-border bg-card/50">
+                    <div className="h-10 w-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                      <ShieldCheck className="h-5 w-5" />
+                    </div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest leading-relaxed">
+                      Secure Checkout with <br /><span className="text-foreground">SSL Encryption</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 p-5 rounded-2xl border border-border bg-card/50">
+                    <div className="h-10 w-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                      <Truck className="h-5 w-5" />
+                    </div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest leading-relaxed">
+                      Free Shipping on <br /><span className="text-foreground">Orders Over $100</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Calendar, MapPin, Ticket, ArrowRight, Sparkles, Clock, Users } from "lucide-react";
 import { INITIAL_EVENTS } from "../../../data/events-data";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 export function Events() {
   const [events, setEvents] = useState<any[]>([]);
@@ -33,10 +33,10 @@ export function Events() {
 
   useEffect(() => {
     if (!featuredEvent) return;
-    
+
     let targetTime = 0;
     const eventDate = featuredEvent.date;
-    
+
     if (featuredEvent.cities && featuredEvent.cities[0]?.showtimes && featuredEvent.cities[0].showtimes.length > 0) {
       const firstShowtime = featuredEvent.cities[0].showtimes[0];
       const parsedDate = new Date(`${firstShowtime.date} ${firstShowtime.time}`);
@@ -44,7 +44,7 @@ export function Events() {
         targetTime = parsedDate.getTime();
       }
     }
-    
+
     if (!targetTime && eventDate) {
       let parseableDateStr = eventDate;
       if (eventDate.includes('–')) {
@@ -52,21 +52,21 @@ export function Events() {
       } else if (eventDate.includes('-')) {
         parseableDateStr = eventDate.split('-')[0].trim();
       }
-      
+
       let parsedDate = new Date(parseableDateStr);
       if (isNaN(parsedDate.getTime())) {
         parsedDate = new Date(`${parseableDateStr} ${new Date().getFullYear()}`);
       }
-      
+
       if (!isNaN(parsedDate.getTime())) {
         targetTime = parsedDate.getTime();
       }
     }
-    
+
     if (!targetTime) {
       targetTime = new Date().getTime() + 14 * 24 * 60 * 60 * 1000;
     }
-    
+
     const updateCountdown = () => {
       const now = new Date().getTime();
       const distance = targetTime - now;
@@ -78,7 +78,7 @@ export function Events() {
         setTimeLeft({ days, hours });
       }
     };
-    
+
     updateCountdown();
     const interval = setInterval(updateCountdown, 60000);
     return () => clearInterval(interval);
@@ -115,17 +115,17 @@ export function Events() {
           </div>
 
           <div className="relative grid items-stretch gap-0 lg:grid-cols-2 min-h-[400px]">
-            
+
             {/* Visual Side */}
             <div className="relative h-full overflow-hidden">
-              <img 
-                src={getImageUrl(featuredEvent.image)} 
-                alt={featuredEvent.name} 
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-[3000ms] group-hover:scale-105" 
+              <img
+                src={getImageUrl(featuredEvent.image)}
+                alt={featuredEvent.name}
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-[3000ms] group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-[#050704] via-transparent to-transparent hidden lg:block" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#050704] via-transparent to-transparent lg:hidden" />
-              
+
               <div className="absolute left-8 top-8 inline-flex items-center gap-2 rounded-full bg-black/40 border border-white/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.4em] text-gold backdrop-blur-md">
                 <span className="h-2 w-2 rounded-full bg-gold animate-pulse shadow-[0_0_10px_var(--gold)]" /> Live Event
               </div>
@@ -135,9 +135,9 @@ export function Events() {
             <div className="flex flex-col justify-center p-8 sm:p-12 lg:p-14 text-cream">
               <div className="space-y-6">
                 <div className="inline-block px-4 py-1 rounded-lg bg-gold/10 border border-gold/20 text-[10px] font-bold uppercase tracking-[0.4em] text-gold">
-                   Upcoming Experience
+                  Upcoming Experience
                 </div>
-                
+
                 <h2 className="font-display text-5xl sm:text-6xl lg:text-7xl font-medium leading-[0.95] tracking-tighter">
                   {featuredEvent.name.includes(':') ? (
                     featuredEvent.name.split(':').map((part: string, i: number) => (
@@ -149,7 +149,7 @@ export function Events() {
                     <span className="block">{featuredEvent.name}</span>
                   )}
                 </h2>
-                
+
                 <p className="max-w-md text-lg text-cream/50 font-light leading-relaxed">
                   {featuredEvent.description || "Step into a space where faith meets wonder. Join our global community for an immersive gathering."}
                 </p>
@@ -175,22 +175,22 @@ export function Events() {
 
               {/* Countdown & CTA */}
               <div className="mt-8 flex flex-col sm:flex-row items-center gap-8">
-                 <a 
-                   href={`/events?id=${featuredEvent.id}`} 
-                   className="group text-center block relative w-full sm:w-auto px-10 py-5 bg-gold text-[#050704] rounded-full font-bold text-sm uppercase tracking-widest shadow-glow transition-all hover:scale-105 active:scale-95"
-                 >
-                    Reserve Spot <ArrowRight className="inline-block ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
-                 </a>
-                 <div className="flex gap-6">
-                    <div className="text-center">
-                       <div className="text-xl font-display font-bold text-gold">{timeLeft.days}</div>
-                       <div className="text-[8px] uppercase font-bold text-white/30 tracking-widest">Days</div>
-                    </div>
-                    <div className="text-center">
-                       <div className="text-xl font-display font-bold text-gold">{timeLeft.hours}</div>
-                       <div className="text-[8px] uppercase font-bold text-white/30 tracking-widest">Hrs</div>
-                    </div>
-                 </div>
+                <a
+                  href={`/events?id=${featuredEvent.id}`}
+                  className="group text-center block relative w-full sm:w-auto px-10 py-5 bg-gold text-[#050704] rounded-full font-bold text-sm uppercase tracking-widest shadow-glow transition-all hover:scale-105 active:scale-95"
+                >
+                  Reserve Spot <ArrowRight className="inline-block ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </a>
+                <div className="flex gap-6">
+                  <div className="text-center">
+                    <div className="text-xl font-display font-bold text-gold">{timeLeft.days}</div>
+                    <div className="text-[8px] uppercase font-bold text-white/30 tracking-widest">Days</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl font-display font-bold text-gold">{timeLeft.hours}</div>
+                    <div className="text-[8px] uppercase font-bold text-white/30 tracking-widest">Hrs</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -212,7 +212,7 @@ export function Events() {
 function MiniCard({ date, title, id }: { date: string, title: string, id: string }) {
   let month = "JUN";
   let day = "12";
-  
+
   const d = new Date(date);
   if (!isNaN(d.getTime())) {
     month = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
