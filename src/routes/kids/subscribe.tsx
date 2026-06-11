@@ -113,20 +113,17 @@ function KidsSubscribePage() {
             yearly: `$${planSettings.yearlyPrice}`,
          };
 
-         // Record the purchase in the backend
-         const res = await fetch(`${API_URL}/api/kids/purchase`, {
+         const res = await fetch(`${API_URL}/api/payment/create-checkout-session`, {
             method: "POST",
             headers: {
                "Content-Type": "application/json",
                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-               userId: user.id,
-               name: user.name,
-               email: user.email,
+               type: "kids_subscription",
                plan,
-               amount: priceMap[plan],
-               source: "stripe",
+               successUrl: `${window.location.origin}/payment/success`,
+               cancelUrl: window.location.href,
             }),
          });
 
@@ -136,30 +133,9 @@ function KidsSubscribePage() {
             throw new Error(data.message || "Failed to process subscription");
          }
 
-         // Update local user data
-         const updatedUser = {
-            ...user,
-            kidsAccess: true,
-            kidsAccessType: plan,
-            kidsAccessExpiry: plan === "monthly"
-               ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-               : plan === "yearly"
-                  ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
-                  : null,
-         };
-         localStorage.setItem("user_data", JSON.stringify(updatedUser));
-
-         await Swal.fire({
-            icon: "success",
-            title: plan === "lifetime" ? "🎉 Lifetime Access Unlocked!" : "🎉 Subscription Active!",
-            html: plan === "lifetime"
-               ? `<p>You now have <strong>forever access</strong> to all KidsBibleFlix content for a one-time payment of <strong>${priceMap[plan]}</strong>. Welcome to the family!</p>`
-               : `<p>Your <strong>${plan} subscription</strong> of <strong>${priceMap[plan]}</strong> is now active. Enjoy unlimited wonder!</p>`,
-            confirmButtonColor: "#D4AF37",
-            confirmButtonText: "Start Watching →",
-         });
-
-         navigate({ to: "/kids/library" });
+         // Redirect to Stripe checkout
+         window.location.href = data.url;
+         return;
       } catch (err: any) {
          Swal.fire({
             icon: "error",

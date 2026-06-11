@@ -344,31 +344,30 @@ function EventsPage() {
 
     setIsProcessingPayment(true);
 
-    // Simulate payment processing delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
     try {
-      const res = await fetch(`${API_URL}/api/tickets`, {
+      const res = await fetch(`${API_URL}/api/payment/create-checkout-session`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
+          type: "event_ticket",
           eventId: selectedEventId,
           city: pendingBookingDetails.city,
           showtimeId: pendingBookingDetails.showtimeId,
           categoryName: selectedCategoryName,
           quantity: ticketQuantity,
-          promoCode: discountPercentage > 0 ? promoCode : undefined
+          promoCode: discountPercentage > 0 ? promoCode : undefined,
+          successUrl: `${window.location.origin}/payment/success`,
+          cancelUrl: window.location.href
         })
       });
       const data = await res.json();
       if (data.success) {
-        toast.success(`Payment successful! Ticket booked! Ticket ID: ${data.data.ticketId}`);
-        window.location.href = "/profile";
+        window.location.href = data.url;
       } else {
-        toast.error(data.message || "Failed to book ticket");
+        toast.error(data.message || "Failed to create checkout session");
         setIsProcessingPayment(false);
       }
     } catch (err) {
@@ -956,52 +955,13 @@ function EventsPage() {
                       </div>
                     </div>
 
-                    <div className="space-y-3">
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50">Name on Card</label>
-                        <input
-                          required
-                          type="text"
-                          value={paymentForm.name}
-                          onChange={e => setPaymentForm({ ...paymentForm, name: e.target.value })}
-                          className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream placeholder:text-cream/30 focus:outline-none focus:border-gold/50 transition-colors"
-                          placeholder="John Doe"
-                        />
+                    <div className="space-y-4 p-5 rounded-2xl border border-white/10 bg-white/5 text-center">
+                      <div className="h-10 w-10 rounded-xl bg-gold/10 text-gold flex items-center justify-center mx-auto">
+                        <CreditCard className="h-5 w-5" />
                       </div>
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50">Card Number</label>
-                        <input
-                          required
-                          type="text"
-                          value={paymentForm.cardNumber}
-                          onChange={e => setPaymentForm({ ...paymentForm, cardNumber: e.target.value })}
-                          className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream font-mono tracking-widest placeholder:text-cream/30 focus:outline-none focus:border-gold/50 transition-colors"
-                          placeholder="0000 0000 0000 0000"
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                          <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50">Expiry</label>
-                          <input
-                            required
-                            type="text"
-                            value={paymentForm.expiry}
-                            onChange={e => setPaymentForm({ ...paymentForm, expiry: e.target.value })}
-                            className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream font-mono placeholder:text-cream/30 focus:outline-none focus:border-gold/50 transition-colors"
-                            placeholder="MM/YY"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <label className="text-[10px] font-bold uppercase tracking-[0.25em] text-cream/50">CVC</label>
-                          <input
-                            required
-                            type="text"
-                            value={paymentForm.cvc}
-                            onChange={e => setPaymentForm({ ...paymentForm, cvc: e.target.value })}
-                            className="w-full h-11 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-cream font-mono placeholder:text-cream/30 focus:outline-none focus:border-gold/50 transition-colors"
-                            placeholder="123"
-                          />
-                        </div>
+                      <div className="text-[10px] font-bold uppercase tracking-widest leading-relaxed text-cream/70">
+                        Secure checkout via Stripe <br/>
+                        <span className="text-white/40 font-medium">You will be redirected to Stripe to pay securely.</span>
                       </div>
                     </div>
                     <button

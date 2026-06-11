@@ -59,18 +59,46 @@ function CartPage() {
 
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
+    const token = localStorage.getItem("user_token");
+    if (!token) {
+      toast.error("Please login first to complete checkout.");
+      window.location.href = "/login?redirect=/cart";
+      return;
+    }
+
     setIsCheckingOut(true);
-    // Simulate API call
-    setTimeout(() => {
-      setItems([]);
-      localStorage.removeItem('oms_cart');
-      window.dispatchEvent(new Event('cart_updated'));
-      setIsCheckingOut(false);
-      toast.success("Order placed successfully!", {
-        description: "You will receive an email confirmation shortly."
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/payment/create-checkout-session`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          type: "cart_checkout",
+          items: items.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            image: item.image
+          })),
+          successUrl: `${window.location.origin}/payment/success`,
+          cancelUrl: window.location.href
+        })
       });
-    }, 1500);
+      const data = await res.json();
+      if (data.success) {
+        window.location.href = data.url;
+      } else {
+        toast.error(data.message || "Failed to create checkout session");
+        setIsCheckingOut(false);
+      }
+    } catch (err) {
+      toast.error("Network error. Please try again.");
+      setIsCheckingOut(false);
+    }
   };
 
   return (

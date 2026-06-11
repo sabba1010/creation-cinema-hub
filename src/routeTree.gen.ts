@@ -41,6 +41,7 @@ import { Route as ShopProductIdRouteImport } from './routes/shop/$productId'
 import { Route as ResourcesResourceIdRouteImport } from './routes/resources/$resourceId'
 import { Route as PrayerVideoRouteImport } from './routes/prayer/video'
 import { Route as PrayerDashboardRouteImport } from './routes/prayer/dashboard'
+import { Route as PaymentSuccessRouteImport } from './routes/payment/success'
 import { Route as NewsletterIdRouteImport } from './routes/newsletter.$id'
 import { Route as KidsTopicsRouteImport } from './routes/kids/topics'
 import { Route as KidsSubscribeRouteImport } from './routes/kids/subscribe'
@@ -231,6 +232,11 @@ const PrayerDashboardRoute = PrayerDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => PrayerRoute,
 } as any)
+const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
+  id: '/payment/success',
+  path: '/payment/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NewsletterIdRoute = NewsletterIdRouteImport.update({
   id: '/newsletter/$id',
   path: '/newsletter/$id',
@@ -419,6 +425,7 @@ export interface FileRoutesByFullPath {
   '/kids/subscribe': typeof KidsSubscribeRoute
   '/kids/topics': typeof KidsTopicsRoute
   '/newsletter/$id': typeof NewsletterIdRoute
+  '/payment/success': typeof PaymentSuccessRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
@@ -474,6 +481,7 @@ export interface FileRoutesByTo {
   '/kids/subscribe': typeof KidsSubscribeRoute
   '/kids/topics': typeof KidsTopicsRoute
   '/newsletter/$id': typeof NewsletterIdRoute
+  '/payment/success': typeof PaymentSuccessRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
@@ -538,6 +546,7 @@ export interface FileRoutesById {
   '/kids/subscribe': typeof KidsSubscribeRoute
   '/kids/topics': typeof KidsTopicsRoute
   '/newsletter/$id': typeof NewsletterIdRoute
+  '/payment/success': typeof PaymentSuccessRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
@@ -603,6 +612,7 @@ export interface FileRouteTypes {
     | '/kids/subscribe'
     | '/kids/topics'
     | '/newsletter/$id'
+    | '/payment/success'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
@@ -658,6 +668,7 @@ export interface FileRouteTypes {
     | '/kids/subscribe'
     | '/kids/topics'
     | '/newsletter/$id'
+    | '/payment/success'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
@@ -721,6 +732,7 @@ export interface FileRouteTypes {
     | '/kids/subscribe'
     | '/kids/topics'
     | '/newsletter/$id'
+    | '/payment/success'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
@@ -767,6 +779,7 @@ export interface RootRouteChildren {
   KidsSubscribeRoute: typeof KidsSubscribeRoute
   KidsTopicsRoute: typeof KidsTopicsRoute
   NewsletterIdRoute: typeof NewsletterIdRoute
+  PaymentSuccessRoute: typeof PaymentSuccessRoute
   ContactIndexRoute: typeof ContactIndexRoute
   KidsIndexRoute: typeof KidsIndexRoute
   NewsletterIndexRoute: typeof NewsletterIndexRoute
@@ -999,6 +1012,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/prayer/dashboard'
       preLoaderRoute: typeof PrayerDashboardRouteImport
       parentRoute: typeof PrayerRoute
+    }
+    '/payment/success': {
+      id: '/payment/success'
+      path: '/payment/success'
+      fullPath: '/payment/success'
+      preLoaderRoute: typeof PaymentSuccessRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/newsletter/$id': {
       id: '/newsletter/$id'
@@ -1366,6 +1386,7 @@ const rootRouteChildren: RootRouteChildren = {
   KidsSubscribeRoute: KidsSubscribeRoute,
   KidsTopicsRoute: KidsTopicsRoute,
   NewsletterIdRoute: NewsletterIdRoute,
+  PaymentSuccessRoute: PaymentSuccessRoute,
   ContactIndexRoute: ContactIndexRoute,
   KidsIndexRoute: KidsIndexRoute,
   NewsletterIndexRoute: NewsletterIndexRoute,
