@@ -4,6 +4,9 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Play, FileText, Download, Share2, Info, Star, Clock, Calendar, ChevronRight, User, MessageCircle, Film, X, CreditCard, CheckCircle2, Lock } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { toast } from "sonner";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export const Route = createFileRoute("/films/$filmId")({
   component: IndividualFilmPage,
@@ -37,65 +40,43 @@ function IndividualFilmPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
 
-  const handlePurchase = (type: "buy" | "rent") => {
-    setPaymentType(type);
-    setPaymentStatus("idle");
-    setShowPaymentModal(true);
-  };
+  const handlePurchase = async (type: "buy" | "rent") => {
+    const token = localStorage.getItem("user_token");
+    if (!token) {
+      toast.error("Please login to buy or rent films.");
+      return;
+    }
 
-  const processPayment = (e: React.FormEvent) => {
-    e.preventDefault();
-    setPaymentStatus("processing");
-    // Simulate API call to payment gateway
-    setTimeout(async () => {
-      const globalRentHours = parseInt(localStorage.getItem("global_rent_duration") || "48", 10) || 48;
+    try {
+      const res = await fetch(`${API_URL}/api/payment/create-checkout-session`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          type: "film_purchase",
+          filmId: film._id,
+          purchaseType: type,
+          successUrl: `${window.location.origin}/payment/success`,
+          cancelUrl: window.location.href
+        })
+      });
 
-      const accessData = {
-        type: paymentType as "buy" | "rent",
-        expiresAt: paymentType === "rent" ? Date.now() + globalRentHours * 60 * 60 * 1000 : null
-      };
-      const getUserKey = () => {
-        const userDataStr = localStorage.getItem("user_data");
-        if (userDataStr) {
-          try {
-            const user = JSON.parse(userDataStr);
-            return `cinema_access_${user._id || user.id || "guest"}_${filmId}`;
-          } catch (e) { }
-        }
-        return `cinema_access_guest_${filmId}`;
-      };
-
-      localStorage.setItem(getUserKey(), JSON.stringify(accessData));
-
-      // Save purchase to backend
-      try {
-        await fetch(`https://movie-backend-drab.vercel.app/api/purchases`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            filmId: film._id,
-            type: paymentType === "buy" ? "Buy" : "Rent",
-            amount: paymentType === "buy" ? film.price : film.rentPrice,
-            user: checkoutName || "Guest User",
-            customExpiresAt: accessData.expiresAt
-          })
-        });
-      } catch (err) {
-        console.error("Failed to save purchase to backend", err);
+      const data = await res.json();
+      if (data.success && data.url) {
+        window.location.href = data.url;
+      } else {
+        toast.error(data.message || "Failed to create checkout session");
       }
-
-      setPaymentStatus("success");
-      setAccessInfo(accessData);
-      setHasAccess(true);
-      setPurchaseStatus(paymentType);
-      setTimeout(() => {
-        setShowPaymentModal(false);
-      }, 2000);
-    }, 2500);
+    } catch (err) {
+      console.error(err);
+      toast.error("Network error. Could not initiate payment.");
+    }
   };
 
   useEffect(() => {
-    fetch(`https://movie-backend-drab.vercel.app/api/films/${filmId}`)
+    fetch(`${API_URL}/api/films/${filmId}`)
       .then(res => res.json())
       .then(data => {
         if (data.success) {
@@ -143,7 +124,7 @@ function IndividualFilmPage() {
     checkAccess();
 
     // Initial load
-    fetch("https://movie-backend-drab.vercel.app/api/settings")
+    fetch(`${API_URL}/api/settings`)
       .then(res => res.json())
       .then(data => {
         if (data.success && data.data.global_rent_duration) {
@@ -210,7 +191,7 @@ function IndividualFilmPage() {
         try { authorName = JSON.parse(userData).name || "Guest User"; } catch (e) { }
       }
 
-      const res = await fetch(`https://movie-backend-drab.vercel.app/api/films/${filmId}/reviews`, {
+      const res = await fetch(`${API_URL}/api/films/${filmId}/reviews`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

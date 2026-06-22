@@ -12,7 +12,7 @@ export const Route = createFileRoute("/admin/kids-series/$seriesId")({
   component: AdminSeriesPage,
 });
 
-const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function AdminSeriesPage() {
   const { seriesId } = Route.useParams();

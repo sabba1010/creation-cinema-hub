@@ -9,6 +9,9 @@ import { Badge } from "../../components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
 import { Progress } from "../../components/ui/progress";
+import { toast } from "sonner";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export const Route = createFileRoute("/support/")({
    component: SupportPage,
@@ -45,8 +48,8 @@ function SupportPage() {
       { quote: "Knowing my monthly gift goes directly toward producing high-quality Gospel media gives me immense joy. The transparency is unmatched.", name: "David L.", title: "Legacy Partner", initials: "D.L" }
    ];
 
-   useEffect(() => {
-      fetch("https://movie-backend-drab.vercel.app/api/campaigns")
+    useEffect(() => {
+      fetch(`${API_URL}/api/campaigns`)
          .then(res => res.json())
          .then(data => {
             if (data.success) {
@@ -65,27 +68,40 @@ function SupportPage() {
       const finalAmount = amount === "Custom" ? customAmount : amount;
 
       try {
-         const res = await fetch("https://movie-backend-drab.vercel.app/api/donations", {
+         const token = localStorage.getItem("user_token");
+         const headers: Record<string, string> = {
+            "Content-Type": "application/json"
+         };
+         if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+         }
+
+         const res = await fetch(`${API_URL}/api/payment/create-checkout-session`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers,
             body: JSON.stringify({
+               type: "donation",
+               amount: finalAmount,
+               donationType: givingType,
+               campaignId: selectedCampaign || null,
                firstName,
                lastName,
                email,
-               amount: finalAmount,
-               type: givingType,
-               campaignId: selectedCampaign || null,
-               isLegacy
+               isLegacy,
+               successUrl: `${window.location.origin}/payment/success`,
+               cancelUrl: window.location.href
             }),
          });
 
-         if (res.ok) {
-            setShowSuccess(true);
+         const data = await res.json();
+         if (data.success && data.url) {
+            window.location.href = data.url;
          } else {
-            console.error("Donation failed");
+            toast.error(data.message || "Failed to initiate donation payment session");
          }
       } catch (error) {
          console.error("Error submitting donation:", error);
+         toast.error("An error occurred during payment setup.");
       } finally {
          setIsProcessing(false);
       }

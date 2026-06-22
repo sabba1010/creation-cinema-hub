@@ -41,6 +41,7 @@ import { Route as ShopProductIdRouteImport } from './routes/shop/$productId'
 import { Route as ResourcesResourceIdRouteImport } from './routes/resources/$resourceId'
 import { Route as PrayerVideoRouteImport } from './routes/prayer/video'
 import { Route as PrayerDashboardRouteImport } from './routes/prayer/dashboard'
+import { Route as PrayerCheckoutRouteImport } from './routes/prayer/checkout'
 import { Route as PaymentSuccessRouteImport } from './routes/payment/success'
 import { Route as NewsletterIdRouteImport } from './routes/newsletter.$id'
 import { Route as KidsTopicsRouteImport } from './routes/kids/topics'
@@ -230,6 +231,11 @@ const PrayerVideoRoute = PrayerVideoRouteImport.update({
 const PrayerDashboardRoute = PrayerDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => PrayerRoute,
+} as any)
+const PrayerCheckoutRoute = PrayerCheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
   getParentRoute: () => PrayerRoute,
 } as any)
 const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
@@ -426,6 +432,7 @@ export interface FileRoutesByFullPath {
   '/kids/topics': typeof KidsTopicsRoute
   '/newsletter/$id': typeof NewsletterIdRoute
   '/payment/success': typeof PaymentSuccessRoute
+  '/prayer/checkout': typeof PrayerCheckoutRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
@@ -482,6 +489,7 @@ export interface FileRoutesByTo {
   '/kids/topics': typeof KidsTopicsRoute
   '/newsletter/$id': typeof NewsletterIdRoute
   '/payment/success': typeof PaymentSuccessRoute
+  '/prayer/checkout': typeof PrayerCheckoutRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
@@ -547,6 +555,7 @@ export interface FileRoutesById {
   '/kids/topics': typeof KidsTopicsRoute
   '/newsletter/$id': typeof NewsletterIdRoute
   '/payment/success': typeof PaymentSuccessRoute
+  '/prayer/checkout': typeof PrayerCheckoutRoute
   '/prayer/dashboard': typeof PrayerDashboardRoute
   '/prayer/video': typeof PrayerVideoRoute
   '/resources/$resourceId': typeof ResourcesResourceIdRoute
@@ -613,6 +622,7 @@ export interface FileRouteTypes {
     | '/kids/topics'
     | '/newsletter/$id'
     | '/payment/success'
+    | '/prayer/checkout'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
@@ -669,6 +679,7 @@ export interface FileRouteTypes {
     | '/kids/topics'
     | '/newsletter/$id'
     | '/payment/success'
+    | '/prayer/checkout'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
@@ -733,6 +744,7 @@ export interface FileRouteTypes {
     | '/kids/topics'
     | '/newsletter/$id'
     | '/payment/success'
+    | '/prayer/checkout'
     | '/prayer/dashboard'
     | '/prayer/video'
     | '/resources/$resourceId'
@@ -1011,6 +1023,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/prayer/dashboard'
       preLoaderRoute: typeof PrayerDashboardRouteImport
+      parentRoute: typeof PrayerRoute
+    }
+    '/prayer/checkout': {
+      id: '/prayer/checkout'
+      path: '/checkout'
+      fullPath: '/prayer/checkout'
+      preLoaderRoute: typeof PrayerCheckoutRouteImport
       parentRoute: typeof PrayerRoute
     }
     '/payment/success': {
@@ -1322,6 +1341,7 @@ const PodcastRouteWithChildren =
   PodcastRoute._addFileChildren(PodcastRouteChildren)
 
 interface PrayerRouteChildren {
+  PrayerCheckoutRoute: typeof PrayerCheckoutRoute
   PrayerDashboardRoute: typeof PrayerDashboardRoute
   PrayerVideoRoute: typeof PrayerVideoRoute
   PrayerIndexRoute: typeof PrayerIndexRoute
@@ -1329,6 +1349,7 @@ interface PrayerRouteChildren {
 }
 
 const PrayerRouteChildren: PrayerRouteChildren = {
+  PrayerCheckoutRoute: PrayerCheckoutRoute,
   PrayerDashboardRoute: PrayerDashboardRoute,
   PrayerVideoRoute: PrayerVideoRoute,
   PrayerIndexRoute: PrayerIndexRoute,

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Calendar, MapPin, Ticket, ArrowRight, Sparkles, Clock, Users } from "lucide-react";
 import { INITIAL_EVENTS } from "../../../data/events-data";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export function Events() {
   const [events, setEvents] = useState<any[]>([]);

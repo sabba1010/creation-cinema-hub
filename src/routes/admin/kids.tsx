@@ -97,7 +97,7 @@ const INITIAL_LIFETIME = [
   { id: 2, name: "Emma Thompson", email: "emma.t@example.com", joined: "Feb 05, 2026", source: "Promo Code" },
 ];
 
-const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function KidsManagement() {
   const [series, setSeries] = useState<any[]>([]);

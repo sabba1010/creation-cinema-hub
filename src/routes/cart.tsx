@@ -69,7 +69,7 @@ function CartPage() {
 
     setIsCheckingOut(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app"}/api/payment/create-checkout-session`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/payment/create-checkout-session`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

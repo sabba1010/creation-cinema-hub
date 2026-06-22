@@ -55,7 +55,7 @@ function KidsLandingPage() {
   useEffect(() => {
     const fetchKidsData = async () => {
       try {
-        const seriesRes = await fetch("https://movie-backend-drab.vercel.app/api/kids/series");
+        const seriesRes = await fetch("http://localhost:5000/api/kids/series");
         const seriesData = await seriesRes.json();
         if (Array.isArray(seriesData)) {
           setSeriesList(seriesData.filter((s: any) => s.status === 'Active'));
@@ -63,7 +63,7 @@ function KidsLandingPage() {
           setSeriesList([]);
         }
 
-        const settingsRes = await fetch("https://movie-backend-drab.vercel.app/api/kids/settings");
+        const settingsRes = await fetch("http://localhost:5000/api/kids/settings");
         const settingsData = await settingsRes.json();
         if (settingsData && settingsData.value) {
           setHeroBanner(settingsData.value);
@@ -601,7 +601,7 @@ function KidsLandingPage() {
                   <button
                     onClick={() => {
                       // Fetch the file from the backend and trigger download
-                      const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
+                      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
                       fetch(`${API_URL}/api/kids/sample-guide`)
                         .then(res => res.blob())
                         .then(blob => {

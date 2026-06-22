@@ -25,7 +25,7 @@ function ShopLandingPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("https://movie-backend-drab.vercel.app/api/products");
+        const res = await fetch("http://localhost:5000/api/products");
         const data = await res.json();
         if (data.success) {
           setProducts(data.data);

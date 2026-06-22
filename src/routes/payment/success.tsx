@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { CheckCircle2, Crown, Ticket, ShoppingBag, ArrowRight } from "lucide-react";
+import { CheckCircle2, Crown, Ticket, ShoppingBag, ArrowRight, Heart, Film } from "lucide-react";
 import { SiteHeader } from "../../components/layout/SiteHeader";
 import { SiteFooter } from "../../components/layout/SiteFooter";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export const Route = createFileRoute("/payment/success")({
   validateSearch: (search: Record<string, unknown>): { session_id?: string } => {
@@ -52,6 +52,20 @@ function PaymentSuccessPage() {
             // Clear local cart
             localStorage.removeItem("oms_cart");
             window.dispatchEvent(new Event("cart_updated"));
+          } else if (data.type === "prayer_access") {
+            localStorage.setItem(`prayer_access_${data.seasonId}`, "true");
+          } else if (data.type === "film_purchase") {
+            const storedUser = localStorage.getItem("user_data");
+            let userId = "guest";
+            if (storedUser) {
+              try { userId = JSON.parse(storedUser)._id || JSON.parse(storedUser).id || "guest"; } catch (e) {}
+            }
+            const userKey = `cinema_access_${userId}_${data.filmId}`;
+            const accessData = {
+              type: data.purchaseType,
+              expiresAt: data.expiresAt ? new Date(data.expiresAt).getTime() : null
+            };
+            localStorage.setItem(userKey, JSON.stringify(accessData));
           }
         } else {
           setError(data.message || "Failed to verify payment session.");
@@ -138,6 +152,54 @@ function PaymentSuccessPage() {
                   </p>
                   <Link to="/shop" className="block w-full py-5 rounded-3xl bg-forest-deep text-cream font-bold text-sm uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-center flex items-center justify-center gap-2">
                     Continue Shopping <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              )}
+
+              {checkoutType === "prayer_access" && (
+                <div className="space-y-6">
+                  <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-full border border-emerald-100">
+                    <Crown className="h-4 w-4" />
+                    <span className="text-xs font-bold uppercase tracking-widest">Access Granted</span>
+                  </div>
+                  <h1 className="font-display text-4xl font-bold text-forest-deep">Registration Successful!</h1>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Your access to <strong>{details?.seasonTitle || 'the Week of Prayer season'}</strong> is now active.
+                  </p>
+                  <Link to="/prayer" className="block w-full py-5 rounded-3xl bg-forest-deep text-cream font-bold text-sm uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-center flex items-center justify-center gap-2">
+                    Start Watching <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              )}
+
+              {checkoutType === "film_purchase" && (
+                <div className="space-y-6">
+                  <div className="inline-flex items-center gap-2 bg-gold/10 text-gold px-4 py-2 rounded-full border border-gold/20">
+                    <Film className="h-4 w-4" />
+                    <span className="text-xs font-bold uppercase tracking-widest">{details?.purchaseType === 'buy' ? 'Purchased' : 'Rented'}</span>
+                  </div>
+                  <h1 className="font-display text-4xl font-bold text-forest-deep">Payment Successful!</h1>
+                  <p className="text-muted-foreground leading-relaxed">
+                    You now have access to watch <strong>{details?.filmTitle || 'the film'}</strong>.
+                  </p>
+                  <Link to={`/films/${details?.filmId}`} className="block w-full py-5 rounded-3xl bg-forest-deep text-cream font-bold text-sm uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-center flex items-center justify-center gap-2">
+                    Watch Film Now <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              )}
+
+              {checkoutType === "donation" && (
+                <div className="space-y-6">
+                  <div className="inline-flex items-center gap-2 bg-rose-50 text-rose-600 px-4 py-2 rounded-full border border-rose-100">
+                    <Heart className="h-4 w-4 fill-current" />
+                    <span className="text-xs font-bold uppercase tracking-widest">Donation Received</span>
+                  </div>
+                  <h1 className="font-display text-4xl font-bold text-forest-deep">Thank You For Your Support!</h1>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Your generous donation of <strong>${details?.amount || '0'}</strong> has been received. Your stewardship fuels the production of faith-building media.
+                  </p>
+                  <Link to="/support" className="block w-full py-5 rounded-3xl bg-forest-deep text-cream font-bold text-sm uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-center flex items-center justify-center gap-2">
+                    Back to Support <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>
               )}
