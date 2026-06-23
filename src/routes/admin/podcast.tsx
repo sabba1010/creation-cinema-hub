@@ -68,7 +68,7 @@ export const Route = createFileRoute("/admin/podcast")({
 });
 
 import { useEffect } from "react";
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 function PodcastManagement() {
   const [seasons, setSeasons] = useState<any[]>([]);

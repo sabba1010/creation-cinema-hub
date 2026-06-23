@@ -14,7 +14,7 @@ export const Route = createFileRoute("/admin/prayer-season/$seasonId")({
   component: AdminPrayerSeasonPage,
 });
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 function AdminPrayerSeasonPage() {
   const { seasonId } = Route.useParams();

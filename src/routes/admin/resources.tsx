@@ -22,7 +22,7 @@ export const Route = createFileRoute("/admin/resources")({
   component: ResourceManagement,
 });
 
-const API = "http://localhost:5000";
+const API = "https://movie-backend-drab.vercel.app";
 
 function ResourceManagement() {
   const [resources, setResources] = useState<any[]>([]);

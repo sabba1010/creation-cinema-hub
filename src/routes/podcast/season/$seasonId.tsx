@@ -13,7 +13,7 @@ export const Route = createFileRoute("/podcast/season/$seasonId")({
   component: SeasonDetailsPage,
 });
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 const RESOURCES = [
   { title: "Study Guide PDF", type: "Document", size: "2.4 MB" },

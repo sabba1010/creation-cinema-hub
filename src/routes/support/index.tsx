@@ -11,7 +11,7 @@ import { Input } from "../../components/ui/input";
 import { Progress } from "../../components/ui/progress";
 import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 export const Route = createFileRoute("/support/")({
    component: SupportPage,
@@ -48,7 +48,7 @@ function SupportPage() {
       { quote: "Knowing my monthly gift goes directly toward producing high-quality Gospel media gives me immense joy. The transparency is unmatched.", name: "David L.", title: "Legacy Partner", initials: "D.L" }
    ];
 
-    useEffect(() => {
+   useEffect(() => {
       fetch(`${API_URL}/api/campaigns`)
          .then(res => res.json())
          .then(data => {

@@ -6,7 +6,7 @@ import { ShieldCheck, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 export const Route = createFileRoute("/prayer/checkout")({
   validateSearch: (search: Record<string, unknown>): { seriesId?: string } => {
@@ -125,12 +125,12 @@ function PrayerCheckoutPage() {
                 <h1 className="font-display text-4xl font-bold mt-4 leading-tight">{series.title}</h1>
                 <p className="text-gold italic text-lg mt-2 font-display">{series.theme}</p>
               </div>
-              
+
               <div className="space-y-4">
                 <p className="text-cream/70 text-sm leading-relaxed line-clamp-4">
                   {series.description || "Unlock all daily episodes, video materials, study guides, and companion resources for this season of prayer."}
                 </p>
-                
+
                 <div className="space-y-2 pt-4 border-t border-white/10">
                   <div className="flex items-center gap-3 text-sm">
                     <CheckCircle2 className="h-4 w-4 text-gold shrink-0" />
@@ -147,7 +147,7 @@ function PrayerCheckoutPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="relative z-10 pt-8 mt-8 border-t border-white/10 flex items-baseline justify-between">
               <span className="text-xs uppercase tracking-widest text-cream/50">One-Time Purchase</span>
               <span className="text-3xl font-bold text-gold">${series.price || 29}</span>
@@ -174,15 +174,15 @@ function PrayerCheckoutPage() {
               </div>
 
               <div className="space-y-4">
-                <Button 
-                  onClick={handleCheckout} 
+                <Button
+                  onClick={handleCheckout}
                   disabled={isProcessing}
                   className="w-full h-14 bg-forest-deep hover:bg-forest text-cream font-bold uppercase tracking-widest text-sm rounded-2xl transition-all shadow-xl flex items-center justify-center gap-2"
                 >
                   {isProcessing ? "Redirecting..." : "Pay via Stripe"}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
-                
+
                 <p className="text-center text-[10px] text-muted-foreground uppercase tracking-widest">
                   Payments are secure & encrypted by Stripe.
                 </p>

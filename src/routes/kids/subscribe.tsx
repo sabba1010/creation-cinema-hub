@@ -1,18 +1,17 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+﻿import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { CheckCircle2, ShieldCheck, Heart, Users, CreditCard, Sparkles, Star, Crown, Calendar, Infinity } from "lucide-react";
+import { CheckCircle2, ShieldCheck, Users, CreditCard, Sparkles, Star, Crown, Infinity } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import Swal from "sweetalert2";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
 export const Route = createFileRoute("/kids/subscribe")({
    component: KidsSubscribePage,
 });
 
 function KidsSubscribePage() {
-   const [billing, setBilling] = useState("monthly");
    const [isLoading, setIsLoading] = useState<string | null>(null);
    const [activeSlide, setActiveSlide] = useState(0);
    const [isAnimating, setIsAnimating] = useState(false);
@@ -198,121 +197,36 @@ function KidsSubscribePage() {
                </div>
             </section>
 
-            {/* Pricing Toggle */}
+            {/* Lifetime Plan — Only Plan */}
             <section className="pb-24">
-               <div className="mx-auto max-w-7xl px-6 flex flex-col items-center">
-                  <div className="bg-white border border-gray-100 p-2 rounded-3xl flex gap-2 mb-16 shadow-sm">
-                     <button
-                        onClick={() => setBilling("monthly")}
-                        className={`px-8 py-4 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all ${billing === "monthly" ? "bg-blue-600 text-white shadow-lg" : "text-gray-400"}`}
-                     >
-                        Monthly
-                     </button>
-                     <button
-                        onClick={() => setBilling("yearly")}
-                        className={`px-8 py-4 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all ${billing === "yearly" ? "bg-blue-600 text-white shadow-lg" : "text-gray-400"}`}
-                     >
-                        Yearly <span className="ml-2 bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded text-[10px] font-black uppercase">Save 20%</span>
-                     </button>
-                  </div>
-
-                  <div className="grid lg:grid-cols-3 gap-8 max-w-6xl w-full">
-                     {/* Monthly / Yearly Plan */}
-                     {planSettings.monthlyEnabled && (
-                        <div className="bg-white rounded-[3rem] p-10 lg:p-12 border-2 border-blue-600 shadow-2xl relative overflow-hidden">
-                           <div className="absolute top-8 right-8 opacity-10">
-                              <Calendar className="h-20 w-20 text-blue-600" />
-                           </div>
+               <div className="mx-auto max-w-lg px-6 flex flex-col items-center">
+                  {planSettings.lifetimeEnabled && (
+                     <div className="bg-gradient-to-br from-forest-deep to-[#1a3827] rounded-[3rem] p-10 lg:p-12 text-white relative overflow-hidden shadow-2xl w-full">
+                        <div className="absolute top-8 right-8 opacity-20">
+                           <Infinity className="h-20 w-20 text-gold" />
+                        </div>
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#D4AF37/10,transparent_60%)]" />
+                        <div className="relative z-10">
+                           <div className="inline-block bg-gold/20 text-gold px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">Best Value</div>
                            <div className="mb-10">
-                              <h3 className="font-display text-2xl font-bold text-gray-900 mb-4">Premium Access</h3>
+                              <h3 className="font-display text-2xl font-bold mb-4">Lifetime Access</h3>
                               <div className="flex items-baseline gap-2">
-                                 <span className="text-4xl font-black text-gray-900">
-                                    {billing === "monthly" ? `$${planSettings.monthlyPrice}` : `$${planSettings.yearlyPrice}`}
-                                 </span>
-                                 <span className="text-gray-400 font-bold uppercase tracking-widest text-xs">
-                                    {billing === "monthly" ? "/ Month" : "/ Year"}
-                                 </span>
+                                 <span className="text-4xl font-black">${planSettings.lifetimePrice}</span>
+                                 <span className="text-white/40 font-bold uppercase tracking-widest text-xs">One-Time</span>
                               </div>
+                              <p className="text-white/50 text-xs mt-2 font-medium">Pay once. Watch forever.</p>
                            </div>
-                           <ul className="space-y-5 mb-10">
-                              {["Unlimited ad-free streaming", "All series & audio stories", "Weekly new releases", "Up to 5 family profiles", "Downloadable connection guides"].map((f) => (
-                                 <li key={f} className="flex items-center gap-3 font-bold text-gray-700 text-sm">
-                                    <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" /> {f}
-                                 </li>
-                              ))}
-                           </ul>
                            <button
-                              onClick={() => handleSubscribe(billing)}
-                              disabled={isLoading === billing}
-                              className="w-full py-5 rounded-3xl bg-blue-600 text-white font-bold text-sm uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                              onClick={() => handleSubscribe("lifetime")}
+                              disabled={isLoading === "lifetime"}
+                              className="w-full py-5 rounded-3xl bg-gold text-forest-deep font-bold text-sm uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                            >
-                              {isLoading === billing ? "Processing..." : `Start ${planSettings.trialDays}-Day Free Trial`}
+                              {isLoading === "lifetime" ? "Processing..." : `Get Lifetime Access — $${planSettings.lifetimePrice}`}
                            </button>
-                           <p className="text-center text-[10px] text-gray-400 mt-4 font-bold uppercase tracking-widest">Cancel anytime. No commitment.</p>
+                           <p className="text-center text-[10px] text-white/40 mt-4 font-bold uppercase tracking-widest">One-time payment. No subscriptions.</p>
                         </div>
-                     )}
-
-                     {/* Lifetime Plan */}
-                     {planSettings.lifetimeEnabled && (
-                        <div className="bg-gradient-to-br from-forest-deep to-[#1a3827] rounded-[3rem] p-10 lg:p-12 text-white relative overflow-hidden shadow-2xl">
-                           <div className="absolute top-8 right-8 opacity-20">
-                              <Infinity className="h-20 w-20 text-gold" />
-                           </div>
-                           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#D4AF37/10,transparent_60%)]" />
-                           <div className="relative z-10">
-                              <div className="inline-block bg-gold/20 text-gold px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">Best Value</div>
-                              <div className="mb-10">
-                                 <h3 className="font-display text-2xl font-bold mb-4">Lifetime Access</h3>
-                                 <div className="flex items-baseline gap-2">
-                                    <span className="text-4xl font-black">${planSettings.lifetimePrice}</span>
-                                    <span className="text-white/40 font-bold uppercase tracking-widest text-xs">One-Time</span>
-                                 </div>
-                                 <p className="text-white/50 text-xs mt-2 font-medium">Pay once. Watch forever.</p>
-                              </div>
-                              <ul className="space-y-5 mb-10">
-                                 {["Everything in Premium", "Never pay again", "Access for the whole family", "All future content included", "Priority support"].map((f) => (
-                                    <li key={f} className="flex items-center gap-3 font-bold text-white/90 text-sm">
-                                       <Crown className="h-5 w-5 text-gold shrink-0" /> {f}
-                                    </li>
-                                 ))}
-                              </ul>
-                              <button
-                                 onClick={() => handleSubscribe("lifetime")}
-                                 disabled={isLoading === "lifetime"}
-                                 className="w-full py-5 rounded-3xl bg-gold text-forest-deep font-bold text-sm uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-                              >
-                                 {isLoading === "lifetime" ? "Processing..." : `Get Lifetime — $${planSettings.lifetimePrice}`}
-                              </button>
-                           </div>
-                        </div>
-                     )}
-
-                     {/* Ministry Partner Plan */}
-                     <div className="bg-gray-900 rounded-[3rem] p-10 lg:p-12 text-white relative">
-                        <div className="mb-10">
-                           <div className="inline-block bg-yellow-400/20 text-yellow-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">Most Impactful</div>
-                           <h3 className="font-display text-2xl font-bold mb-4">Ministry Partner</h3>
-                           <div className="flex items-baseline gap-2">
-                              <span className="text-4xl font-black text-white">$14.99</span>
-                              <span className="text-white/40 font-bold uppercase tracking-widest text-xs">/ Month</span>
-                           </div>
-                        </div>
-                        <ul className="space-y-5 mb-10">
-                           {["All Premium Access features", "Sponsor access for another family", "Early access to new productions", "Digital curriculum guides", "Quarterly mission report"].map((f) => (
-                              <li key={f} className="flex items-center gap-3 font-bold text-white/90 text-sm">
-                                 <Heart className="h-5 w-5 text-rose-500 shrink-0" /> {f}
-                              </li>
-                           ))}
-                        </ul>
-                        <button
-                           onClick={() => handleSubscribe("monthly")}
-                           disabled={isLoading === "ministry"}
-                           className="w-full py-5 rounded-3xl bg-white text-gray-900 font-bold text-sm uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
-                        >
-                           Become a Partner
-                        </button>
                      </div>
-                  </div>
+                  )}
                </div>
             </section>
 
