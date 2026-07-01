@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { Search, User, Menu, X, ShoppingBag, ChevronDown } from "lucide-react";
+import logoImg from "@/assets/one_mustard_seed_logo_transparent_highres.png";
 
 const NAV_GROUPS = [
   {
@@ -77,6 +78,9 @@ export function SiteHeader() {
     >
       <div className="mx-auto flex h-24 max-w-[1440px] items-center justify-between px-6">
         <Link to="/" className="flex items-center gap-3 group">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-cream p-1.5 transition-all duration-300 group-hover:scale-105 shadow-md">
+            <img src={logoImg} alt="ONE MUSTARD SEED Logo" className="h-full w-full object-contain" />
+          </div>
           <span className="font-display text-lg sm:text-xl font-bold tracking-tight text-[#faf7ee] whitespace-nowrap">
             ONE MUSTARD SEED
           </span>

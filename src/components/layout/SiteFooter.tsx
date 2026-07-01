@@ -1,6 +1,7 @@
 import { Facebook, Instagram, Youtube, Mail } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import logoImg from "@/assets/one_mustard_seed_logo_transparent_highres.png";
 
 const COLS = [
   { title: "Watch", items: [{label: "Films", to: "/films"}, {label: "KidsBibleFlix", to: "/kids"}, {label: "Trailers", to: "#"}] },
@@ -27,9 +28,9 @@ export function SiteFooter() {
         <div className="grid gap-12 lg:grid-cols-[1.3fr_2fr_1.2fr]">
           <div>
             <div className="flex items-center gap-3">
-              <span className="grid h-12 w-12 place-items-center rounded-full bg-gold text-forest-deep font-black text-lg">
-                ✦
-              </span>
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-cream p-1.5 shadow-md">
+                <img src={logoImg} alt="One Mustard Seed Logo" className="h-full w-full object-contain" />
+              </div>
               <div className="font-display text-xl">One Mustard Seed</div>
             </div>
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-cream/70">
