@@ -35,7 +35,7 @@ function PrayerSeriesPage() {
   const [series, setSeries] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [activeTab, setActiveTab] = useState<"videos" | "resources" | "downloads">("videos");
+  const [activeTab, setActiveTab] = useState<"videos" | "downloads">("videos");
   const [expandedDay, setExpandedDay] = useState<number | null>(1);
   const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
   const [playingVideo, setPlayingVideo] = useState<any>(null);
@@ -326,7 +326,7 @@ function PrayerSeriesPage() {
               {/* Tabs */}
               <div className="border-b border-border">
                 <div className="flex gap-0">
-                  {(["videos", "resources", "downloads"] as const).map((tab) => (
+                  {(["videos", "downloads"] as const).map((tab) => (
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
@@ -335,7 +335,7 @@ function PrayerSeriesPage() {
                         : "border-transparent text-muted-foreground hover:text-foreground"
                         }`}
                     >
-                      {tab === "videos" ? "Videos" : tab === "resources" ? "Daily Resources" : "Downloads"}
+                      {tab === "videos" ? "Videos" : "Downloads"}
                     </button>
                   ))}
                 </div>
@@ -409,76 +409,6 @@ function PrayerSeriesPage() {
                 </div>
               )}
 
-              {/* Resources Tab */}
-              {activeTab === "resources" && (
-                <div className="space-y-4">
-                  {(!series.resources || series.resources.length === 0) && (
-                    <div className="text-center py-12 text-muted-foreground border border-dashed rounded-2xl">
-                      <p>No daily resources available yet.</p>
-                    </div>
-                  )}
-                  {series.resources?.map((resource: any) => {
-                    const isOpen = expandedDay === resource.day;
-                    const isLocked = resource.day > 2 && !hasAccess;
-                    return (
-                      <div key={resource.day} className={`rounded-2xl border overflow-hidden transition-all ${isLocked ? "border-border/50 opacity-70" : "border-border bg-card"}`}>
-                        <button
-                          onClick={() => {
-                            if (isLocked) {
-                              toast.error("Purchase access to unlock all daily resources");
-                            } else {
-                              setExpandedDay(isOpen ? null : resource.day);
-                            }
-                          }}
-                          className="w-full flex items-center justify-between p-5 text-left hover:bg-muted/30 transition-colors"
-                        >
-                          <div className="flex items-center gap-4">
-                            <div className={`h-10 w-10 rounded-xl flex items-center justify-center text-sm font-black ${isLocked ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"}`}>
-                              {isLocked ? <Lock className="h-4 w-4" /> : resource.day}
-                            </div>
-                            <div>
-                              <div className="font-bold text-sm">{resource.title}</div>
-                              <div className="text-xs text-muted-foreground truncate max-w-xs">{resource.scripture}</div>
-                            </div>
-                          </div>
-                          {!isLocked && (
-                            isOpen ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                          )}
-                        </button>
-                        {isOpen && !isLocked && (
-                          <div className="px-5 pb-6 space-y-5 border-t border-border bg-muted/10">
-                            <div className="pt-5">
-                              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] text-primary mb-2">
-                                <BookOpen className="h-3 w-3" /> Scripture
-                              </div>
-                              <p className="text-sm font-medium italic text-foreground/80">{resource.scripture}</p>
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] text-primary mb-2">
-                                <Star className="h-3 w-3" /> Devotional
-                              </div>
-                              <p className="text-sm text-muted-foreground leading-relaxed">{resource.devotional}</p>
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] text-primary mb-3">
-                                <Zap className="h-3 w-3" /> Prayer Points
-                              </div>
-                              <ul className="space-y-2">
-                                {resource.prayerPoints.map((point, i) => (
-                                  <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
-                                    <CheckCircle className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
-                                    {point}
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
 
               {/* Downloads Tab */}
               {activeTab === "downloads" && (
