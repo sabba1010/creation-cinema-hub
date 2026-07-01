@@ -494,12 +494,11 @@ function PrayerSeriesPage() {
 
                     <ul className="space-y-3 mb-8 text-sm text-cream/80">
                       {[
-                        `All ${series.videos?.length || 0} video sessions`,
-                        "Daily devotionals & prayer guides",
-                        "Full download package",
-                        "Children's curriculum",
-                        "Church facilitator toolkit",
-                        `${series.accessDays}-day access`,
+                        "Five Video Sessions",
+                        "14-day Access",
+                        "Daily Featured Bible Verse",
+                        "Daily Target Prayer Groups",
+                        "Messages Designed for Kids",
                       ].map((item) => (
                         <li key={item} className="flex items-center gap-3">
                           <CheckCircle className="h-4 w-4 text-gold flex-shrink-0" />
