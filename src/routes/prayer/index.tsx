@@ -80,10 +80,10 @@ function PrayerLandingPage() {
             </p>
             <div className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-cream/60">
               {[
-                { icon: Globe, label: "68 Countries" },
-                { icon: Users, label: "40,000+ Viewers" },
-                { icon: Play, label: "4 Series" },
-                { icon: BookOpen, label: "20 Sessions" },
+                { icon: Globe, label: "Available Everywhere" },
+                { icon: Users, label: "Thousands of Viewers" },
+                { icon: Play, label: "Multiple Series Available" },
+                { icon: BookOpen, label: "Bible-Based, Kid Approved" },
               ].map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-2">
                   <Icon className="h-4 w-4 text-gold" />
