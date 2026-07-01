@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Calendar, Play, BookOpen, Download, Globe, ArrowRight, Users, CheckCircle } from "lucide-react";
+import { Calendar, Play, BookOpen, Globe, ArrowRight, Users, CheckCircle } from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
@@ -149,7 +149,6 @@ function PrayerLandingPage() {
                     <div className="space-y-4">
                       <div className="flex items-center gap-6 text-xs text-muted-foreground border-t border-b border-border/60 py-3">
                         <span className="flex items-center gap-1.5"><Play className="h-3.5 w-3.5 text-primary" /> 5 Sessions</span>
-                        <span className="flex items-center gap-1.5"><Download className="h-3.5 w-3.5 text-primary" /> {series.downloads.length} Downloads</span>
                         <span className="flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5 text-primary" /> {series.accessDays} Days Access</span>
                       </div>
                       <div className="flex items-center justify-between">
