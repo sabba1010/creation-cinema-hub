@@ -10,7 +10,6 @@ import {
   BookOpen,
   Calendar,
   Clock,
-  Users,
   CheckCircle,
   ArrowLeft,
   Globe,
@@ -521,29 +520,7 @@ function PrayerSeriesPage() {
                 </div>
               )}
 
-              {/* What You Get */}
-              <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
-                <h3 className="font-bold text-sm uppercase tracking-wider">Series Includes</h3>
-                <div className="space-y-3">
-                  {[
-                    { icon: Play, label: `${series.videos?.length || 0} Video Sessions`, sub: "HD quality, replay anytime" },
-                    { icon: BookOpen, label: "Daily Devotionals", sub: "Scripture, reflection & prayer" },
-                    { icon: Download, label: `${series.downloads?.length || 0} Downloads`, sub: "PDFs, slides & more" },
-                    { icon: Users, label: "For Schools & Churches", sub: "Facilitator tools included" },
-                    { icon: Clock, label: `${series.accessDays}-Day Access`, sub: "Watch at your own pace" },
-                  ].map(({ icon: Icon, label, sub }) => (
-                    <div key={label} className="flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
-                        <Icon className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <div className="text-sm font-bold">{label}</div>
-                        <div className="text-xs text-muted-foreground">{sub}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+
             </div>
           </div>
         </div>
