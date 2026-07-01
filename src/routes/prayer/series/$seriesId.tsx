@@ -585,13 +585,6 @@ function PrayerSeriesPage() {
                       {series.status === "upcoming" ? "Pre-Order Now" : "Get Full Access"}
                     </button>
 
-                    <button
-                      onClick={handleDemoAccess}
-                      className="w-full mt-3 py-3 rounded-2xl bg-white/10 text-cream/80 font-bold text-xs uppercase tracking-wider hover:bg-white/20 transition-all"
-                    >
-                      Try Demo Access
-                    </button>
-
                     <p className="text-center text-cream/40 text-[10px] mt-4">
                       Individual access for personal use available at lower rate. Contact us.
                     </p>
