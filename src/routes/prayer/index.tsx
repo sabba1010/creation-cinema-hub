@@ -174,7 +174,7 @@ function PrayerLandingPage() {
           <section className="py-20 px-6 max-w-7xl mx-auto border-t border-border/60 pb-32">
             <div className="flex items-center gap-3 mb-10">
               <span className="h-px flex-grow bg-border max-w-16" />
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gold">Coming This Summer</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gold">Coming Soon</span>
               <span className="h-px flex-grow bg-border" />
             </div>
             <div className="grid md:grid-cols-2 gap-8">
