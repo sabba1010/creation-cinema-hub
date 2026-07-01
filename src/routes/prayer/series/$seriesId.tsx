@@ -586,7 +586,7 @@ function PrayerSeriesPage() {
                     </button>
 
                     <p className="text-center text-cream/40 text-[10px] mt-4">
-                      Individual access for personal use available at lower rate. Contact us.
+                      Available at lower rate. Contact us.
                     </p>
                   </div>
                 </div>
