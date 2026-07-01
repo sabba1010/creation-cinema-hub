@@ -119,7 +119,7 @@ function PrayerLandingPage() {
                     <img
                       src={series.bannerImage}
                       alt={series.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                     <div className="absolute inset-0 flex flex-col justify-between p-6">
@@ -191,7 +191,7 @@ function PrayerLandingPage() {
                     <img
                       src={series.bannerImage}
                       alt={series.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 sm:from-transparent to-transparent" />
                     <div className="absolute top-4 left-4 bg-gold text-forest-deep text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full">
