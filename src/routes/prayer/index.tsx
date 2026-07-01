@@ -70,7 +70,7 @@ function PrayerLandingPage() {
           <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,var(--gold),transparent_70%)]" />
           <div className="relative mx-auto max-w-7xl px-6 text-center">
             <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-gold/90 mb-8 block">
-              Global Annual Event
+              Global Annual streaming library
             </span>
             <h1 className="font-display text-6xl sm:text-8xl font-medium tracking-tight leading-[0.9] mb-6">
               Week of <span className="italic text-gold">Prayer</span> Online
