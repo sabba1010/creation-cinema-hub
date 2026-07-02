@@ -14,7 +14,8 @@ import {
   LogOut,
   Baby,
   Globe,
-  Settings
+  Settings,
+  Music
 } from "lucide-react";
 import {
   Sidebar,
@@ -39,6 +40,7 @@ const menuItems = [
   { title: "Donations", icon: Heart, path: "/admin/donations" },
   { title: "Resources", icon: FileText, path: "/admin/resources" },
   { title: "Podcast", icon: Mic, path: "/admin/podcast" },
+  { title: "Music", icon: Music, path: "/admin/music" },
   { title: "Shop", icon: ShoppingBag, path: "/admin/shop" },
   { title: "Promo Codes", icon: CreditCard, path: "/admin/promo-codes" },
   { title: "Newsletter", icon: Mail, path: "/admin/newsletter" },

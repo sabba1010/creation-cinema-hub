@@ -12,7 +12,13 @@ const NAV_GROUPS = [
       { label: "Week of Prayer Online", href: "/prayer" },
     ]
   },
-  { label: "PODCAST", href: "/podcast" },
+  {
+    label: "LISTEN",
+    links: [
+      { label: "Podcast", href: "/podcast" },
+      { label: "Music", href: "/music" },
+    ]
+  },
   {
     label: "RESOURCES",
     href: "/resources"

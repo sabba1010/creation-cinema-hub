@@ -16,6 +16,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrayerRouteImport } from './routes/prayer'
 import { Route as PodcastRouteImport } from './routes/podcast'
+import { Route as MusicRouteImport } from './routes/music'
 import { Route as MissionRouteImport } from './routes/mission'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as FilmsRouteImport } from './routes/films'
@@ -31,6 +32,7 @@ import { Route as ResourcesIndexRouteImport } from './routes/resources/index'
 import { Route as PrayerIndexRouteImport } from './routes/prayer/index'
 import { Route as PodcastIndexRouteImport } from './routes/podcast/index'
 import { Route as NewsletterIndexRouteImport } from './routes/newsletter.index'
+import { Route as MusicIndexRouteImport } from './routes/music/index'
 import { Route as KidsIndexRouteImport } from './routes/kids/index'
 import { Route as FilmsIndexRouteImport } from './routes/films/index'
 import { Route as ContactIndexRouteImport } from './routes/contact/index'
@@ -44,6 +46,7 @@ import { Route as PrayerDashboardRouteImport } from './routes/prayer/dashboard'
 import { Route as PrayerCheckoutRouteImport } from './routes/prayer/checkout'
 import { Route as PaymentSuccessRouteImport } from './routes/payment/success'
 import { Route as NewsletterIdRouteImport } from './routes/newsletter.$id'
+import { Route as MusicAlbumIdRouteImport } from './routes/music/$albumId'
 import { Route as KidsTopicsRouteImport } from './routes/kids/topics'
 import { Route as KidsSubscribeRouteImport } from './routes/kids/subscribe'
 import { Route as KidsSeriesRouteImport } from './routes/kids/series'
@@ -61,6 +64,7 @@ import { Route as AdminPrayerRouteImport } from './routes/admin/prayer'
 import { Route as AdminPodcastRouteImport } from './routes/admin/podcast'
 import { Route as AdminPaymentsRouteImport } from './routes/admin/payments'
 import { Route as AdminNewsletterRouteImport } from './routes/admin/newsletter'
+import { Route as AdminMusicRouteImport } from './routes/admin/music'
 import { Route as AdminMarketingRouteImport } from './routes/admin/marketing'
 import { Route as AdminKidsRouteImport } from './routes/admin/kids'
 import { Route as AdminFilmsRouteImport } from './routes/admin/films'
@@ -106,6 +110,11 @@ const PrayerRoute = PrayerRouteImport.update({
 const PodcastRoute = PodcastRouteImport.update({
   id: '/podcast',
   path: '/podcast',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MusicRoute = MusicRouteImport.update({
+  id: '/music',
+  path: '/music',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MissionRoute = MissionRouteImport.update({
@@ -183,6 +192,11 @@ const NewsletterIndexRoute = NewsletterIndexRouteImport.update({
   path: '/newsletter/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MusicIndexRoute = MusicIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MusicRoute,
+} as any)
 const KidsIndexRoute = KidsIndexRouteImport.update({
   id: '/kids/',
   path: '/kids/',
@@ -247,6 +261,11 @@ const NewsletterIdRoute = NewsletterIdRouteImport.update({
   id: '/newsletter/$id',
   path: '/newsletter/$id',
   getParentRoute: () => rootRouteImport,
+} as any)
+const MusicAlbumIdRoute = MusicAlbumIdRouteImport.update({
+  id: '/$albumId',
+  path: '/$albumId',
+  getParentRoute: () => MusicRoute,
 } as any)
 const KidsTopicsRoute = KidsTopicsRouteImport.update({
   id: '/kids/topics',
@@ -333,6 +352,11 @@ const AdminNewsletterRoute = AdminNewsletterRouteImport.update({
   path: '/newsletter',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMusicRoute = AdminMusicRouteImport.update({
+  id: '/music',
+  path: '/music',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminMarketingRoute = AdminMarketingRouteImport.update({
   id: '/marketing',
   path: '/marketing',
@@ -401,6 +425,7 @@ export interface FileRoutesByFullPath {
   '/films': typeof FilmsRouteWithChildren
   '/login': typeof LoginRoute
   '/mission': typeof MissionRoute
+  '/music': typeof MusicRouteWithChildren
   '/podcast': typeof PodcastRouteWithChildren
   '/prayer': typeof PrayerRouteWithChildren
   '/profile': typeof ProfileRoute
@@ -413,6 +438,7 @@ export interface FileRoutesByFullPath {
   '/admin/films': typeof AdminFilmsRoute
   '/admin/kids': typeof AdminKidsRoute
   '/admin/marketing': typeof AdminMarketingRoute
+  '/admin/music': typeof AdminMusicRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/podcast': typeof AdminPodcastRoute
@@ -430,6 +456,7 @@ export interface FileRoutesByFullPath {
   '/kids/series': typeof KidsSeriesRoute
   '/kids/subscribe': typeof KidsSubscribeRoute
   '/kids/topics': typeof KidsTopicsRoute
+  '/music/$albumId': typeof MusicAlbumIdRoute
   '/newsletter/$id': typeof NewsletterIdRoute
   '/payment/success': typeof PaymentSuccessRoute
   '/prayer/checkout': typeof PrayerCheckoutRoute
@@ -443,6 +470,7 @@ export interface FileRoutesByFullPath {
   '/contact/': typeof ContactIndexRoute
   '/films/': typeof FilmsIndexRoute
   '/kids/': typeof KidsIndexRoute
+  '/music/': typeof MusicIndexRoute
   '/newsletter/': typeof NewsletterIndexRoute
   '/podcast/': typeof PodcastIndexRoute
   '/prayer/': typeof PrayerIndexRoute
@@ -470,6 +498,7 @@ export interface FileRoutesByTo {
   '/admin/films': typeof AdminFilmsRoute
   '/admin/kids': typeof AdminKidsRoute
   '/admin/marketing': typeof AdminMarketingRoute
+  '/admin/music': typeof AdminMusicRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/podcast': typeof AdminPodcastRoute
@@ -487,6 +516,7 @@ export interface FileRoutesByTo {
   '/kids/series': typeof KidsSeriesRoute
   '/kids/subscribe': typeof KidsSubscribeRoute
   '/kids/topics': typeof KidsTopicsRoute
+  '/music/$albumId': typeof MusicAlbumIdRoute
   '/newsletter/$id': typeof NewsletterIdRoute
   '/payment/success': typeof PaymentSuccessRoute
   '/prayer/checkout': typeof PrayerCheckoutRoute
@@ -500,6 +530,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactIndexRoute
   '/films': typeof FilmsIndexRoute
   '/kids': typeof KidsIndexRoute
+  '/music': typeof MusicIndexRoute
   '/newsletter': typeof NewsletterIndexRoute
   '/podcast': typeof PodcastIndexRoute
   '/prayer': typeof PrayerIndexRoute
@@ -524,6 +555,7 @@ export interface FileRoutesById {
   '/films': typeof FilmsRouteWithChildren
   '/login': typeof LoginRoute
   '/mission': typeof MissionRoute
+  '/music': typeof MusicRouteWithChildren
   '/podcast': typeof PodcastRouteWithChildren
   '/prayer': typeof PrayerRouteWithChildren
   '/profile': typeof ProfileRoute
@@ -536,6 +568,7 @@ export interface FileRoutesById {
   '/admin/films': typeof AdminFilmsRoute
   '/admin/kids': typeof AdminKidsRoute
   '/admin/marketing': typeof AdminMarketingRoute
+  '/admin/music': typeof AdminMusicRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/podcast': typeof AdminPodcastRoute
@@ -553,6 +586,7 @@ export interface FileRoutesById {
   '/kids/series': typeof KidsSeriesRoute
   '/kids/subscribe': typeof KidsSubscribeRoute
   '/kids/topics': typeof KidsTopicsRoute
+  '/music/$albumId': typeof MusicAlbumIdRoute
   '/newsletter/$id': typeof NewsletterIdRoute
   '/payment/success': typeof PaymentSuccessRoute
   '/prayer/checkout': typeof PrayerCheckoutRoute
@@ -566,6 +600,7 @@ export interface FileRoutesById {
   '/contact/': typeof ContactIndexRoute
   '/films/': typeof FilmsIndexRoute
   '/kids/': typeof KidsIndexRoute
+  '/music/': typeof MusicIndexRoute
   '/newsletter/': typeof NewsletterIndexRoute
   '/podcast/': typeof PodcastIndexRoute
   '/prayer/': typeof PrayerIndexRoute
@@ -591,6 +626,7 @@ export interface FileRouteTypes {
     | '/films'
     | '/login'
     | '/mission'
+    | '/music'
     | '/podcast'
     | '/prayer'
     | '/profile'
@@ -603,6 +639,7 @@ export interface FileRouteTypes {
     | '/admin/films'
     | '/admin/kids'
     | '/admin/marketing'
+    | '/admin/music'
     | '/admin/newsletter'
     | '/admin/payments'
     | '/admin/podcast'
@@ -620,6 +657,7 @@ export interface FileRouteTypes {
     | '/kids/series'
     | '/kids/subscribe'
     | '/kids/topics'
+    | '/music/$albumId'
     | '/newsletter/$id'
     | '/payment/success'
     | '/prayer/checkout'
@@ -633,6 +671,7 @@ export interface FileRouteTypes {
     | '/contact/'
     | '/films/'
     | '/kids/'
+    | '/music/'
     | '/newsletter/'
     | '/podcast/'
     | '/prayer/'
@@ -660,6 +699,7 @@ export interface FileRouteTypes {
     | '/admin/films'
     | '/admin/kids'
     | '/admin/marketing'
+    | '/admin/music'
     | '/admin/newsletter'
     | '/admin/payments'
     | '/admin/podcast'
@@ -677,6 +717,7 @@ export interface FileRouteTypes {
     | '/kids/series'
     | '/kids/subscribe'
     | '/kids/topics'
+    | '/music/$albumId'
     | '/newsletter/$id'
     | '/payment/success'
     | '/prayer/checkout'
@@ -690,6 +731,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/films'
     | '/kids'
+    | '/music'
     | '/newsletter'
     | '/podcast'
     | '/prayer'
@@ -713,6 +755,7 @@ export interface FileRouteTypes {
     | '/films'
     | '/login'
     | '/mission'
+    | '/music'
     | '/podcast'
     | '/prayer'
     | '/profile'
@@ -725,6 +768,7 @@ export interface FileRouteTypes {
     | '/admin/films'
     | '/admin/kids'
     | '/admin/marketing'
+    | '/admin/music'
     | '/admin/newsletter'
     | '/admin/payments'
     | '/admin/podcast'
@@ -742,6 +786,7 @@ export interface FileRouteTypes {
     | '/kids/series'
     | '/kids/subscribe'
     | '/kids/topics'
+    | '/music/$albumId'
     | '/newsletter/$id'
     | '/payment/success'
     | '/prayer/checkout'
@@ -755,6 +800,7 @@ export interface FileRouteTypes {
     | '/contact/'
     | '/films/'
     | '/kids/'
+    | '/music/'
     | '/newsletter/'
     | '/podcast/'
     | '/prayer/'
@@ -779,6 +825,7 @@ export interface RootRouteChildren {
   FilmsRoute: typeof FilmsRouteWithChildren
   LoginRoute: typeof LoginRoute
   MissionRoute: typeof MissionRoute
+  MusicRoute: typeof MusicRouteWithChildren
   PodcastRoute: typeof PodcastRouteWithChildren
   PrayerRoute: typeof PrayerRouteWithChildren
   ProfileRoute: typeof ProfileRoute
@@ -848,6 +895,13 @@ declare module '@tanstack/react-router' {
       path: '/podcast'
       fullPath: '/podcast'
       preLoaderRoute: typeof PodcastRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/music': {
+      id: '/music'
+      path: '/music'
+      fullPath: '/music'
+      preLoaderRoute: typeof MusicRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mission': {
@@ -955,6 +1009,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewsletterIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/music/': {
+      id: '/music/'
+      path: '/'
+      fullPath: '/music/'
+      preLoaderRoute: typeof MusicIndexRouteImport
+      parentRoute: typeof MusicRoute
+    }
     '/kids/': {
       id: '/kids/'
       path: '/kids'
@@ -1045,6 +1106,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/newsletter/$id'
       preLoaderRoute: typeof NewsletterIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/music/$albumId': {
+      id: '/music/$albumId'
+      path: '/$albumId'
+      fullPath: '/music/$albumId'
+      preLoaderRoute: typeof MusicAlbumIdRouteImport
+      parentRoute: typeof MusicRoute
     }
     '/kids/topics': {
       id: '/kids/topics'
@@ -1165,6 +1233,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminNewsletterRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/music': {
+      id: '/admin/music'
+      path: '/music'
+      fullPath: '/admin/music'
+      preLoaderRoute: typeof AdminMusicRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/marketing': {
       id: '/admin/marketing'
       path: '/marketing'
@@ -1261,6 +1336,7 @@ interface AdminRouteChildren {
   AdminFilmsRoute: typeof AdminFilmsRoute
   AdminKidsRoute: typeof AdminKidsRoute
   AdminMarketingRoute: typeof AdminMarketingRoute
+  AdminMusicRoute: typeof AdminMusicRoute
   AdminNewsletterRoute: typeof AdminNewsletterRoute
   AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminPodcastRoute: typeof AdminPodcastRoute
@@ -1282,6 +1358,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminFilmsRoute: AdminFilmsRoute,
   AdminKidsRoute: AdminKidsRoute,
   AdminMarketingRoute: AdminMarketingRoute,
+  AdminMusicRoute: AdminMusicRoute,
   AdminNewsletterRoute: AdminNewsletterRoute,
   AdminPaymentsRoute: AdminPaymentsRoute,
   AdminPodcastRoute: AdminPodcastRoute,
@@ -1326,6 +1403,18 @@ const FilmsRouteChildren: FilmsRouteChildren = {
 }
 
 const FilmsRouteWithChildren = FilmsRoute._addFileChildren(FilmsRouteChildren)
+
+interface MusicRouteChildren {
+  MusicAlbumIdRoute: typeof MusicAlbumIdRoute
+  MusicIndexRoute: typeof MusicIndexRoute
+}
+
+const MusicRouteChildren: MusicRouteChildren = {
+  MusicAlbumIdRoute: MusicAlbumIdRoute,
+  MusicIndexRoute: MusicIndexRoute,
+}
+
+const MusicRouteWithChildren = MusicRoute._addFileChildren(MusicRouteChildren)
 
 interface PodcastRouteChildren {
   PodcastIndexRoute: typeof PodcastIndexRoute
@@ -1395,6 +1484,7 @@ const rootRouteChildren: RootRouteChildren = {
   FilmsRoute: FilmsRouteWithChildren,
   LoginRoute: LoginRoute,
   MissionRoute: MissionRoute,
+  MusicRoute: MusicRouteWithChildren,
   PodcastRoute: PodcastRouteWithChildren,
   PrayerRoute: PrayerRouteWithChildren,
   ProfileRoute: ProfileRoute,
