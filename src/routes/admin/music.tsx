@@ -197,7 +197,7 @@ function AdminMusic() {
         })()}
       </div>
 
-      {/* Charts */}
+      {/* Charts
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-card overflow-hidden transition-all hover:shadow-elevated">
           <CardHeader>
@@ -247,6 +247,8 @@ function AdminMusic() {
           </CardContent>
         </Card>
       </div>
+      */}
+
 
       {/* Albums Grid (Matching Podcast Style) */}
       <div className="space-y-6">
