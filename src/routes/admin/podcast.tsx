@@ -84,9 +84,14 @@ function PodcastManagement() {
     videoSubtitle: "Watch Episode",
     audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
     audioTitle: "The Architecture of Light",
-    audioSeasonTitle: "Season 1, Episode 1"
+    audioSeasonTitle: "Season 1, Episode 1",
+    submissionEmail: "hello@onemustardseed.com"
   });
   const [isBannerSettingsOpen, setIsBannerSettingsOpen] = useState(false);
+
+  const [platforms, setPlatforms] = useState<any[]>([]);
+  const [isPlatformsOpen, setIsPlatformsOpen] = useState(false);
+  const [platformForm, setPlatformForm] = useState({ id: "", name: "", url: "", iconUrl: "", color: "" });
 
   const [isNewSeasonOpen, setIsNewSeasonOpen] = useState(false);
   const [isEditSeasonOpen, setIsEditSeasonOpen] = useState(false);
@@ -116,7 +121,20 @@ function PodcastManagement() {
   useEffect(() => {
     fetchSeasons();
     fetchBannerSettings();
+    fetchPlatforms();
   }, []);
+
+  const fetchPlatforms = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/podcast/platforms`);
+      const data = await res.json();
+      if (data.success) {
+        setPlatforms(data.data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const fetchBannerSettings = async () => {
     try {
@@ -150,6 +168,48 @@ function PodcastManagement() {
       }
     } catch (err) {
       toast.error("Failed to update banner settings");
+    }
+  };
+
+  const handleSavePlatform = async () => {
+    try {
+      const isEditing = !!platformForm.id;
+      const url = isEditing ? `${API_URL}/api/podcast/platforms/${platformForm.id}` : `${API_URL}/api/podcast/platforms`;
+      const method = isEditing ? "PUT" : "POST";
+      
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("user_token")}`
+        },
+        body: JSON.stringify(platformForm)
+      });
+      if (res.ok) {
+        toast.success(isEditing ? "Platform updated!" : "Platform added!");
+        setPlatformForm({ id: "", name: "", url: "", iconUrl: "", color: "" });
+        fetchPlatforms();
+      } else {
+        toast.error("Failed to save platform");
+      }
+    } catch (err) {
+      toast.error("Failed to save platform");
+    }
+  };
+
+  const handleDeletePlatform = async (id: string) => {
+    if (!confirm("Delete this platform?")) return;
+    try {
+      const res = await fetch(`${API_URL}/api/podcast/platforms/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${localStorage.getItem("user_token")}` }
+      });
+      if (res.ok) {
+        toast.success("Platform deleted!");
+        fetchPlatforms();
+      }
+    } catch (err) {
+      toast.error("Failed to delete platform");
     }
   };
 
@@ -273,6 +333,10 @@ function PodcastManagement() {
           <Button variant="outline" className="h-11 rounded-xl border-border/50 gap-2" onClick={() => setIsBannerSettingsOpen(true)}>
             <Settings className="w-4 h-4" />
             Banner Settings
+          </Button>
+          <Button variant="outline" className="h-11 rounded-xl border-border/50 gap-2" onClick={() => setIsPlatformsOpen(true)}>
+            <Headphones className="w-4 h-4" />
+            Platforms
           </Button>
           <Button variant="outline" className="h-11 rounded-xl border-border/50 gap-2" onClick={() => { setSeasonForm({ title: "", description: "", status: "Active", image: "", spotifyUrl: "", applePodcastsUrl: "" }); setIsNewSeasonOpen(true); }}>
             <Plus className="w-4 h-4" />
@@ -621,9 +685,93 @@ function PodcastManagement() {
               </div>
             </div>
 
+            <div className="pt-4 border-t border-border mt-4">
+              <h4 className="font-bold mb-4">Form Settings</h4>
+              <div className="space-y-2">
+                <Label>Submission Recipient Email</Label>
+                <Input type="email" placeholder="e.g. hello@onemustardseed.com" className="h-11 rounded-xl" value={bannerSettings.submissionEmail || ""} onChange={e => setBannerSettings({ ...bannerSettings, submissionEmail: e.target.value })} />
+                <p className="text-[10px] text-muted-foreground">This email will receive all Welcome Clips, Jokes, Brain Teasers, and Shoutouts.</p>
+              </div>
+            </div>
+
             <Button className="w-full bg-forest h-12 rounded-xl shadow-lg font-bold uppercase tracking-widest text-[11px] mt-4" onClick={handleUpdateBannerSettings}>
               Save Banner Settings
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Platforms Dialog */}
+      <Dialog open={isPlatformsOpen} onOpenChange={setIsPlatformsOpen}>
+        <DialogContent className="sm:max-w-[700px] rounded-[2.5rem] border-border/50 bg-card/95 backdrop-blur-xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-display font-bold">Manage Platforms</DialogTitle>
+            <DialogDescription>Add, edit, or remove listening platforms shown on the podcast page.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            
+            <div className="p-4 border border-border rounded-2xl bg-muted/20 space-y-4">
+              <h4 className="font-bold">{platformForm.id ? "Edit Platform" : "Add New Platform"}</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Platform Name</Label>
+                  <Input placeholder="e.g. Spotify" className="h-11 rounded-xl" value={platformForm.name} onChange={e => setPlatformForm({ ...platformForm, name: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Platform URL</Label>
+                  <Input placeholder="https://..." className="h-11 rounded-xl" value={platformForm.url} onChange={e => setPlatformForm({ ...platformForm, url: e.target.value })} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Icon Image</Label>
+                  <Input type="file" accept="image/*" className="h-11 rounded-xl file:text-xs" onChange={e => handleImageUpload(e, setPlatformForm as any, 'iconUrl')} />
+                  {platformForm.iconUrl && <img src={platformForm.iconUrl.startsWith('/') ? `${API_URL}${platformForm.iconUrl}` : platformForm.iconUrl} alt="icon" className="h-6 w-6 mt-2 object-contain" />}
+                </div>
+                <div className="space-y-2">
+                  <Label>Hover Tailwind Color</Label>
+                  <Input placeholder="e.g. hover:bg-[#1ed760] hover:text-black" className="h-11 rounded-xl" value={platformForm.color} onChange={e => setPlatformForm({ ...platformForm, color: e.target.value })} />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button className="flex-1 bg-forest h-11 rounded-xl font-bold uppercase tracking-widest text-[11px]" onClick={handleSavePlatform}>
+                  {platformForm.id ? "Update Platform" : "Add Platform"}
+                </Button>
+                {platformForm.id && (
+                  <Button variant="outline" className="h-11 rounded-xl font-bold uppercase tracking-widest text-[11px]" onClick={() => setPlatformForm({ id: "", name: "", url: "", iconUrl: "", color: "" })}>
+                    Cancel Edit
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="font-bold">Existing Platforms</h4>
+              {platforms.length === 0 && <p className="text-sm text-muted-foreground">No platforms added yet.</p>}
+              <div className="grid gap-3">
+                {platforms.map((p) => (
+                  <div key={p._id} className="flex items-center justify-between p-3 border border-border rounded-xl bg-card">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-white flex items-center justify-center p-1 border border-border">
+                        <img src={p.iconUrl.startsWith('/') ? `${API_URL}${p.iconUrl}` : p.iconUrl} alt={p.name} className="h-full w-full object-contain" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm">{p.name}</p>
+                        <p className="text-[10px] text-muted-foreground">{p.url}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-gold" onClick={() => setPlatformForm({ id: p._id, name: p.name, url: p.url, iconUrl: p.iconUrl, color: p.color })}>
+                        <Edit3 className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleDeletePlatform(p._id)}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
