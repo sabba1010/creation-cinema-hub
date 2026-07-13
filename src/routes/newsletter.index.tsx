@@ -71,7 +71,7 @@ function NewsletterPage() {
               Our Updates
             </Badge>
             <h1 className="text-5xl md:text-7xl font-display font-medium text-cream mb-5 leading-[0.9] tracking-tighter">
-              Monthly <span className="italic text-gold">Newsletter</span>
+              OMS <span className="italic text-gold">Newsletter</span>
             </h1>
             <p className="text-lg text-cream/70 leading-relaxed font-light max-w-xl">
               Immersive storytelling, ministry milestones, and behind-the-scenes glimpses
@@ -172,6 +172,34 @@ function NewsletterPage() {
               <aside className="lg:col-span-4">
                 <div className="sticky top-28 space-y-8">
 
+                  {/* Subscribe (Moved to Top) */}
+                  <div className="bg-forest-deep rounded-[2.5rem] p-9 text-cream relative overflow-hidden shadow-elevated group/sub border border-white/5">
+                    <div className="relative z-10">
+                      <Badge className="mb-5 bg-gold/20 text-gold border-gold/30 px-3 py-1 text-[8px] font-black tracking-[0.3em] uppercase rounded-full">
+                        Subscribe
+                      </Badge>
+                      <h3 className="text-2xl font-display font-medium mb-3 leading-tight">
+                        Don't Miss an <span className="italic text-gold">Update</span>
+                      </h3>
+                      <p className="text-cream/60 text-sm mb-7 leading-relaxed font-light">
+                        Sign up now to stay up to date with our newsletter sent directly into your inbox!
+                      </p>
+                      <div className="space-y-3">
+                        <Input
+                          placeholder="your@email.com"
+                          value={email}
+                          onChange={e => setEmail(e.target.value)}
+                          className="bg-white/5 border-white/10 text-white placeholder:text-white/30 h-12 rounded-2xl focus:border-gold/50 focus:bg-white/10 transition-all"
+                        />
+                        <Button className="w-full bg-gold hover:bg-gold/90 text-forest-deep font-bold h-12 rounded-2xl shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] uppercase tracking-widest text-xs">
+                          Subscribe Now
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="absolute top-[-10%] right-[-10%] w-52 h-52 bg-gold/10 rounded-full blur-[100px] transition-transform duration-1000 group-hover/sub:scale-125" />
+                    <div className="absolute bottom-[-10%] left-[-10%] w-36 h-36 bg-white/5 rounded-full blur-[80px]" />
+                  </div>
+
                   {/* Search */}
                   <div className="relative group">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors group-focus-within:text-forest" />
@@ -232,33 +260,6 @@ function NewsletterPage() {
                     </CardContent>
                   </Card>
 
-                  {/* Subscribe */}
-                  <div className="bg-forest-deep rounded-[2.5rem] p-9 text-cream relative overflow-hidden shadow-elevated group/sub border border-white/5">
-                    <div className="relative z-10">
-                      <Badge className="mb-5 bg-gold/20 text-gold border-gold/30 px-3 py-1 text-[8px] font-black tracking-[0.3em] uppercase rounded-full">
-                        Subscribe
-                      </Badge>
-                      <h3 className="text-2xl font-display font-medium mb-3 leading-tight">
-                        Don't Miss an <span className="italic text-gold">Update</span>
-                      </h3>
-                      <p className="text-cream/60 text-sm mb-7 leading-relaxed font-light">
-                        Join 5,000+ others who receive our monthly newsletter directly in their inbox.
-                      </p>
-                      <div className="space-y-3">
-                        <Input
-                          placeholder="your@email.com"
-                          value={email}
-                          onChange={e => setEmail(e.target.value)}
-                          className="bg-white/5 border-white/10 text-white placeholder:text-white/30 h-12 rounded-2xl focus:border-gold/50 focus:bg-white/10 transition-all"
-                        />
-                        <Button className="w-full bg-gold hover:bg-gold/90 text-forest-deep font-bold h-12 rounded-2xl shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] uppercase tracking-widest text-xs">
-                          Subscribe Now
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="absolute top-[-10%] right-[-10%] w-52 h-52 bg-gold/10 rounded-full blur-[100px] transition-transform duration-1000 group-hover/sub:scale-125" />
-                    <div className="absolute bottom-[-10%] left-[-10%] w-36 h-36 bg-white/5 rounded-full blur-[80px]" />
-                  </div>
 
                 </div>
               </aside>

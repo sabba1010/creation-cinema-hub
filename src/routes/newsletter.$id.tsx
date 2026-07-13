@@ -175,7 +175,7 @@ function NewsletterDetailPage() {
                   {nl.description.split('\n').map((para: string, idx: number) => {
                     if (!para.trim()) return <br key={idx} />;
                     return (
-                      <p key={idx} className={idx === 0 ? "text-2xl md:text-3xl font-display text-gold leading-relaxed font-medium mb-10" : "text-xl md:text-[1.35rem]"}>
+                      <p key={idx} className={idx === 0 ? "text-2xl md:text-3xl font-display text-forest leading-relaxed font-medium mb-10" : "text-xl md:text-[1.35rem]"}>
                         {para}
                       </p>
                     );
