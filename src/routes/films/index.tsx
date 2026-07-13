@@ -129,18 +129,14 @@ function FilmsLandingPage() {
               )) : (
                 <div className="relative flex-[0_0_100%] h-full w-full min-w-0">
                   <div className="absolute inset-0 w-full h-full bg-[#050704] pointer-events-none">
-                    <video
-                      autoPlay
-                      loop
-                      muted={isMuted}
-                      playsInline
-                      className="w-full h-full object-cover opacity-50 transition-opacity duration-1000"
-                    >
-                      <source
-                        src="https://vjs.zencdn.net/v/oceans.mp4"
-                        type="video/mp4"
+                    <div className="absolute inset-0 w-full h-full overflow-hidden opacity-50">
+                      <iframe
+                        src="https://player.vimeo.com/video/1209490802?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1"
+                        className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-[100vh] min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                        frameBorder="0"
+                        allow="autoplay; fullscreen"
                       />
-                    </video>
+                    </div>
                     {/* Gradient Overlays */}
                     <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#050704] to-transparent" />
                     <div className="absolute inset-y-0 left-0 w-full md:w-[60%] bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
