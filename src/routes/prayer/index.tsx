@@ -69,24 +69,21 @@ function PrayerLandingPage() {
         <section className="relative py-32 overflow-hidden bg-forest-deep text-cream">
           <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,var(--gold),transparent_70%)]" />
           <div className="relative mx-auto max-w-7xl px-6 text-center">
-            <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-gold/90 mb-8 block">
-              Global Annual streaming library
-            </span>
             <h1 className="font-display text-6xl sm:text-8xl font-medium tracking-tight leading-[0.9] mb-6">
               Week of <span className="italic text-gold">Prayer</span> Online
             </h1>
             <p className="mt-6 mx-auto max-w-2xl text-xl text-cream/75 leading-relaxed">
-              Five nights of worship, biblical teaching, and guided prayer — streamed live to homes, churches, and schools around the globe.
+              Five keynote sessions. Stream anytime, anywhere.
             </p>
-            <div className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-cream/60">
+            <div className="mt-12 flex flex-wrap justify-center gap-8 md:gap-10 text-base md:text-lg text-cream/90 font-medium tracking-wide">
               {[
                 { icon: Globe, label: "Available Everywhere" },
                 { icon: Users, label: "Thousands of Viewers" },
                 { icon: Play, label: "Multiple Series Available" },
                 { icon: BookOpen, label: "Bible-Based, Kid Approved" },
               ].map(({ icon: Icon, label }) => (
-                <div key={label} className="flex items-center gap-2">
-                  <Icon className="h-4 w-4 text-gold" />
+                <div key={label} className="flex items-center gap-2.5">
+                  <Icon className="h-5 w-5 md:h-6 md:w-6 text-gold" />
                   {label}
                 </div>
               ))}

@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import ReactPlayer from "react-player";
+const Player = ReactPlayer as any;
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import {
@@ -182,7 +183,7 @@ function PrayerSeriesPage() {
                   allowFullScreen
                 ></iframe>
               ) : (
-                <ReactPlayer
+                <Player
                   url={playingVideo.videoUrl}
                   width="100%"
                   height="100%"
@@ -209,7 +210,7 @@ function PrayerSeriesPage() {
 
       <main className="flex-grow">
         {/* Hero Banner */}
-        <div className="relative h-[55vh] min-h-[420px] overflow-hidden bg-black">
+        <div className="relative h-[75vh] min-h-[500px] lg:min-h-[600px] overflow-hidden bg-black">
           {isPreviewPlaying && series.samplePreviewVideo ? (
             <div className="absolute inset-0 z-20">
               {series.samplePreviewVideo.includes('vimeo.com') ? (
@@ -229,7 +230,7 @@ function PrayerSeriesPage() {
                   allowFullScreen
                 ></iframe>
               ) : (
-                <ReactPlayer
+                <Player
                   url={series.samplePreviewVideo}
                   width="100%"
                   height="100%"
@@ -325,7 +326,8 @@ function PrayerSeriesPage() {
               {/* Tabs */}
               <div className="border-b border-border">
                 <div className="flex gap-0">
-                  {(["videos", "downloads"] as const).map((tab) => (
+                  {/* Downloads tab hidden temporarily as requested: (["videos", "downloads"] as const) */}
+                  {(["videos"] as const).map((tab) => (
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
