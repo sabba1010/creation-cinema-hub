@@ -84,7 +84,7 @@ function FilmsLandingPage() {
                       height: "100%",
                       style: { objectFit: 'cover', opacity: 0.5 },
                       playsinline: true,
-                      config: { vimeo: { playerOptions: { background: true, muted: true, autoplay: true, playsinline: true, loop: true } } }
+                      config: { vimeo: { playerOptions: { controls: false, autoplay: true, playsinline: true, loop: true, autopause: false } } }
                     })}
                     {/* Gradient Overlays */}
                     <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#050704] to-transparent" />
@@ -133,7 +133,8 @@ function FilmsLandingPage() {
                   <div className="absolute inset-0 w-full h-full bg-[#050704] pointer-events-none">
                     <div className="absolute inset-0 w-full h-full overflow-hidden opacity-50">
                       <iframe
-                        src="https://player.vimeo.com/video/1209490802?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1"
+                        key={isMuted ? 'muted' : 'unmuted'}
+                        src={`https://player.vimeo.com/video/1209490802?autoplay=1&loop=1&byline=0&title=0&muted=${isMuted ? 1 : 0}&controls=0&autopause=0`}
                         className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-[100vh] min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
                         frameBorder="0"
                         allow="autoplay; fullscreen"
