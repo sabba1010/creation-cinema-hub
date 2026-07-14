@@ -83,12 +83,12 @@ export function SiteHeader() {
         }`}
     >
       <div className="mx-auto flex h-24 max-w-[1440px] items-center justify-between px-6">
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-cream p-1.5 transition-all duration-300 group-hover:scale-105 shadow-md">
-            <img src={logoImg} alt="ONE MUSTARD SEED Logo" className="h-full w-full object-contain" />
+        <Link to="/" className="flex items-center gap-4 group">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-cream p-1.5 transition-all duration-300 group-hover:scale-105 shadow-md">
+            <img src={logoImg} alt="One Mustard Seed Logo" className="h-full w-full object-contain" />
           </div>
-          <span className="font-display text-lg sm:text-xl font-bold tracking-tight text-[#faf7ee] whitespace-nowrap">
-            ONE MUSTARD SEED
+          <span className="font-display text-xl sm:text-2xl font-bold tracking-tight text-[#faf7ee] whitespace-nowrap" style={{ fontFamily: 'Fraunces, Cormorant Garamond, serif' }}>
+            One Mustard Seed
           </span>
         </Link>
 

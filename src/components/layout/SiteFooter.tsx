@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import logoImg from "@/assets/one_mustard_seed_logo_transparent_highres.png";
 
 const COLS = [
-  { title: "Watch", items: [{label: "Films", to: "/films"}, {label: "KidsBibleFlix", to: "/kids"}, {label: "Trailers", to: "#"}] },
-  { title: "Listen", items: [{label: "God's Great Earth Podcast", to: "/podcast"}, {label: "Audio Books", to: "/books"}] },
-  { title: "Engage", items: [{label: "Events", to: "/events"}, {label: "Newsletter", to: "/newsletter"}, {label: "Week of Prayer Online", to: "/prayer"}, {label: "Shop", to: "/shop"}] },
-  { title: "About", items: [{label: "Mission", to: "/mission"}, {label: "Team", to: "/team"}, {label: "Contact", to: "/contact"}, {label: "Support OMS", to: "/support"}] },
+  { title: "Watch", items: [{label: "Movies", to: "/films"}, {label: "Kids Bible Flix", to: "/kids"}, {label: "Week of Prayer Online", to: "/prayer"}] },
+  { title: "Listen", items: [{label: "Podcast", to: "/podcast"}, {label: "Music", to: "/music"}] },
+  { title: "Engage", items: [{label: "Events", to: "/events"}, {label: "Newsletter", to: "/newsletter"}, {label: "Store", to: "/shop"}, {label: "Support", to: "/support"}] },
+  { title: "About", items: [{label: "Mission", to: "/mission"}, {label: "Team", to: "/team"}, {label: "Contact", to: "/contact"}] },
 ];
 
 export function SiteFooter() {
@@ -27,14 +27,14 @@ export function SiteFooter() {
       <div className="relative mx-auto max-w-[1440px] px-6 py-20">
         <div className="grid gap-12 lg:grid-cols-[1.3fr_2fr_1.2fr]">
           <div>
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-cream p-1.5 shadow-md">
+            <div className="flex items-center gap-4">
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-cream p-2 shadow-md">
                 <img src={logoImg} alt="One Mustard Seed Logo" className="h-full w-full object-contain" />
               </div>
-              <div className="font-display text-xl">One Mustard Seed</div>
+              <div className="font-display text-2xl font-bold tracking-tight" style={{ fontFamily: 'Fraunces, Cormorant Garamond, serif' }}>One Mustard Seed</div>
             </div>
-            <p className="mt-5 max-w-xs text-sm leading-relaxed text-cream/70">
-              A faith-centered media ministry creating cinematic stories, resources, and experiences for families, churches, and schools around the world.
+            <p className="mt-6 max-w-xs text-sm leading-relaxed text-cream/70">
+              Helping kids know God through Bible-based media, music, live events, and resources for families, churches, and schools.
             </p>
             <div className="mt-6 flex gap-3">
               {[Facebook, Instagram, Youtube, Mail].map((Icon, i) => (
@@ -83,7 +83,7 @@ export function SiteFooter() {
             <a href="#" className="hover:text-gold">Privacy</a>
             <a href="#" className="hover:text-gold">Terms</a>
             <Link to="/contact" className="px-3 py-1 -my-1 rounded-full bg-white/5 border border-white/10 hover:bg-gold hover:text-forest-deep transition-all font-medium">Contact</Link>
-            <a href="/admin" className="hover:text-gold">Admin</a>
+            {/* <a href="/admin" className="hover:text-gold">Admin</a> */}
           </div>
         </div>
       </div>

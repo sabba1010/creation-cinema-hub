@@ -492,22 +492,47 @@ function SupportPage() {
                </div>
             </section>
 
-            {/* Donor Events & Sponsorships */}
-            <section className="py-20 bg-forest-deep text-cream text-center border-t border-white/10">
-               <div className="mx-auto max-w-3xl px-6 space-y-8">
-                  <Sparkles className="h-12 w-12 text-gold mx-auto" />
-                  <h2 className="text-3xl font-display font-bold">Questions, Sponsorships & <span className="italic text-gold">Special Giving</span></h2>
-                  <p className="text-cream/70 leading-relaxed">
-                     Have a question about giving, want to sponsor a project, or feel led to support One Mustard Seed in a unique way? We’d love to hear from you.
-                  </p>
-                  <p className="text-cream/70 leading-relaxed mt-4">
-                     As our ministry grows, we look forward to hosting vision dinners, partner updates, and special gatherings where supporters can see what is being created, hear what is coming next, and discover meaningful ways to help.
-                  </p>
-                  <a href="mailto:rich@onemustardseed.com">
-                     <Button className="bg-gold text-forest-deep rounded-xl px-8 h-12 font-bold hover:bg-gold/90 mt-8">
-                        CONTACT OUR TEAM
-                     </Button>
-                  </a>
+            {/* Donor Events & Sponsorships CTA */}
+            <section className="py-24 bg-forest-deep relative overflow-hidden">
+               <div className="absolute inset-0">
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/10 blur-[120px] rounded-full pointer-events-none" />
+               </div>
+               <div className="relative mx-auto max-w-5xl px-6">
+                  <div className="bg-[#121c10] border border-gold/20 rounded-[3rem] p-10 md:p-16 text-center shadow-2xl relative overflow-hidden">
+                     {/* decorative element */}
+                     <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+                        <Sparkles className="w-48 h-48 text-gold" />
+                     </div>
+                     <div className="absolute bottom-0 left-0 p-8 opacity-10 pointer-events-none rotate-180">
+                        <Sparkles className="w-32 h-32 text-gold" />
+                     </div>
+                     
+                     <div className="relative z-10 space-y-8 max-w-3xl mx-auto">
+                        <div className="mx-auto w-20 h-20 bg-gold/10 rounded-3xl flex items-center justify-center mb-6 shadow-inner border border-gold/10">
+                           <Sparkles className="h-10 w-10 text-gold" />
+                        </div>
+                        <h2 className="text-4xl md:text-5xl font-display font-bold text-white leading-tight">
+                           Questions, Sponsorships & <br className="hidden sm:block" /><span className="italic text-gold">Special Giving</span>
+                        </h2>
+                        <div className="h-1 w-24 bg-gold/30 mx-auto rounded-full my-8" />
+                        <div className="space-y-6 text-cream/80 text-lg leading-relaxed max-w-2xl mx-auto">
+                           <p>
+                              Have a question about giving, want to sponsor a project, or feel led to support One Mustard Seed in a unique way? We’d love to hear from you.
+                           </p>
+                           <p>
+                              As our ministry grows, we look forward to hosting vision dinners, partner updates, and special gatherings where supporters can see what is being created, hear what is coming next, and discover meaningful ways to help.
+                           </p>
+                        </div>
+                        <div className="pt-8">
+                           <Link 
+                              to="/contact" 
+                              className="inline-flex items-center justify-center gap-3 bg-gold text-forest-deep rounded-2xl px-10 h-16 font-bold text-sm uppercase tracking-[0.15em] hover:bg-gold/90 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-gold/20"
+                           >
+                              Contact Our Team <ArrowRight className="w-5 h-5" />
+                           </Link>
+                        </div>
+                     </div>
+                  </div>
                </div>
             </section>
 
