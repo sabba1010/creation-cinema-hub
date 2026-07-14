@@ -308,7 +308,7 @@ function PodcastLandingPage() {
                       <p>We need kids to do the WELCOME for each episode! Send yours in today!</p>
                       <p>All you have to do is record your child enthusiastically saying this:</p>
                       <p className="font-bold text-foreground italic">"Hello! My name is [FIRST NAME], from [CITY AND STATE/PROVINCE/COUNTRY], welcome to God's Great Earth!"</p>
-                      <p className="text-xs mt-4">INSTRUCTIONS:<br />Record it with any <strong>audio recorder</strong> on your phone, or even a <strong>video recording</strong> if that's easier. Make sure your child is close to the microphone to get a high-quality recording. Pick your one best recording and send it to us using this form.</p>
+                      <p className="text-base mt-4">INSTRUCTIONS:<br />Record it with any <strong>audio recorder</strong> on your phone, or even a <strong>video recording</strong> if that's easier. Make sure your child is close to the microphone to get a high-quality recording. Pick your one best recording and send it to us using this form.</p>
                     </div>
                   </>
                 )}
@@ -369,15 +369,15 @@ function PodcastLandingPage() {
                     setIsSubmitting(false);
                   }
                 }}>
-                  <input type="text" required placeholder="Parent's name" className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50" value={formData.parentName} onChange={e => setFormData({ ...formData, parentName: e.target.value })} />
-                  <input type="email" required placeholder="Parent's email" className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50" value={formData.parentEmail} onChange={e => setFormData({ ...formData, parentEmail: e.target.value })} />
-                  <input type="text" required placeholder="Child's First name and last name initial (ex: Rich A.)" className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50" value={formData.childName} onChange={e => setFormData({ ...formData, childName: e.target.value })} />
-                  <input type="text" required placeholder="City and State/Province/Country" className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50" value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} />
+                  <input type="text" required placeholder="Parent's name" className="w-full px-4 py-3 rounded-xl bg-background border border-border text-base text-foreground focus:outline-none focus:border-primary/50" value={formData.parentName} onChange={e => setFormData({ ...formData, parentName: e.target.value })} />
+                  <input type="email" required placeholder="Parent's email" className="w-full px-4 py-3 rounded-xl bg-background border border-border text-base text-foreground focus:outline-none focus:border-primary/50" value={formData.parentEmail} onChange={e => setFormData({ ...formData, parentEmail: e.target.value })} />
+                  <input type="text" required placeholder="Child's First name and last name initial (ex: Rich A.)" className="w-full px-4 py-3 rounded-xl bg-background border border-border text-base text-foreground focus:outline-none focus:border-primary/50" value={formData.childName} onChange={e => setFormData({ ...formData, childName: e.target.value })} />
+                  <input type="text" required placeholder="City and State/Province/Country" className="w-full px-4 py-3 rounded-xl bg-background border border-border text-base text-foreground focus:outline-none focus:border-primary/50" value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} />
 
                   {activeForm === "welcome" && (
                     <div className="pt-2">
-                      <label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Upload file here!</label>
-                      <input type="file" required className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition-colors" onChange={async (e) => {
+                      <label className="block text-sm font-bold text-muted-foreground uppercase tracking-widest mb-2">Upload file here!</label>
+                      <input type="file" required className="w-full text-base text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition-colors" onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (!file) return;
                         const uploadData = new FormData();
@@ -389,13 +389,13 @@ function PodcastLandingPage() {
                     </div>
                   )}
                   {activeForm === "brainTeaser" && (
-                    <textarea required placeholder="Enter your BRAIN TEASER here!" rows={3} className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50 resize-none" value={formData.content} onChange={e => setFormData({ ...formData, content: e.target.value })}></textarea>
+                    <textarea required placeholder="Enter your BRAIN TEASER here!" rows={3} className="w-full px-4 py-3 rounded-xl bg-background border border-border text-base text-foreground focus:outline-none focus:border-primary/50 resize-none" value={formData.content} onChange={e => setFormData({ ...formData, content: e.target.value })}></textarea>
                   )}
                   {activeForm === "joke" && (
-                    <textarea required placeholder="Enter your JOKE here!" rows={3} className="w-full px-4 py-3 rounded-xl bg-background border border-border text-sm text-foreground focus:outline-none focus:border-primary/50 resize-none" value={formData.content} onChange={e => setFormData({ ...formData, content: e.target.value })}></textarea>
+                    <textarea required placeholder="Enter your JOKE here!" rows={3} className="w-full px-4 py-3 rounded-xl bg-background border border-border text-base text-foreground focus:outline-none focus:border-primary/50 resize-none" value={formData.content} onChange={e => setFormData({ ...formData, content: e.target.value })}></textarea>
                   )}
 
-                  <button type="submit" disabled={isSubmitting} className="w-full py-4 mt-4 rounded-xl bg-primary text-primary-foreground font-bold text-sm uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-md disabled:opacity-50">
+                  <button type="submit" disabled={isSubmitting} className="w-full py-4 mt-4 rounded-xl bg-primary text-primary-foreground font-bold text-base uppercase tracking-widest hover:scale-[1.02] transition-transform shadow-md disabled:opacity-50">
                     {isSubmitting ? "Sending..." : (
                       activeForm === "welcome" ? "Send It In!" :
                       activeForm === "shoutout" ? "Send Your Shout Out!" :

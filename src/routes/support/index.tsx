@@ -120,10 +120,108 @@ function SupportPage() {
                </div>
                <div className="relative mx-auto max-w-3xl px-6 text-center space-y-6">
                   <Badge className="bg-gold text-forest-deep font-bold border-none px-4 py-1.5 uppercase tracking-widest text-[10px]">Your Support Matters</Badge>
-                  <h1 className="font-display text-5xl sm:text-6xl font-bold tracking-tight">Partner with <span className="text-gold italic">OMS</span></h1>
+                  <h1 className="font-display text-5xl sm:text-6xl font-bold tracking-tight">Partner with <span className="text-gold italic">One Mustard Seed</span></h1>
                   <p className="text-cream/70 text-lg leading-relaxed">
-                     Join us in creating cinematic stories that ground faith in the wonder of creation. Every gift directly fuels our production.
+                     Your gift helps us create faith-filled media, live events, music, and resources that point kids to God.
                   </p>
+               </div>
+            </section>
+
+            {/* Partnership Program Flyer Info */}
+            <section className="py-20 bg-cream border-b border-forest/5 relative z-10">
+               <div className="mx-auto max-w-7xl px-6 space-y-12">
+                  <div className="text-center space-y-4 max-w-3xl mx-auto">
+                     <h2 className="text-4xl lg:text-5xl font-display font-bold text-forest-deep">One Mustard Seed <br/><span className="italic text-gold">Partnership Program</span></h2>
+                     <p className="text-forest-deep/70 text-lg leading-relaxed">
+                        Join a special community helping kids and families grow closer to Jesus. When you become a One Mustard Seed Partner, you are not just giving from a distance. You are joining a special group of ministry friends who receive updates, behind-the-scenes stories, project previews, and opportunities to see the impact your support is making.
+                     </p>
+                  </div>
+
+                  <div className="flex flex-col md:flex-row items-center justify-center gap-4 bg-white rounded-full px-8 py-3 max-w-4xl mx-auto shadow-sm border border-forest/10 text-center md:text-left">
+                     <Badge className="bg-forest-deep text-cream hover:bg-forest-deep px-4 py-1.5 border-none"><span className="uppercase text-xs font-bold tracking-widest">Our Mission</span></Badge>
+                     <span className="font-semibold text-forest-deep">Equipping parents with tools to help kids grow in their walk with Jesus.</span>
+                  </div>
+
+                  <div className="grid md:grid-cols-3 gap-8 pt-6">
+                     <Card className="rounded-[2rem] border border-[#819e70]/30 shadow-md bg-[#f8faf6] relative overflow-hidden flex flex-col">
+                        <CardHeader className="text-center pb-2">
+                           <div className="mx-auto bg-[#e5efe0] h-16 w-16 rounded-full flex items-center justify-center mb-2">
+                              <Heart className="h-8 w-8 text-[#547543]" />
+                           </div>
+                           <CardTitle className="text-2xl font-display text-forest-deep">Seed Partners</CardTitle>
+                           <CardDescription className="text-[#547543] font-bold text-sm">$25–$99/month <span className="opacity-50 mx-1">|</span> $300–$1,199/year</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4 flex-grow text-center">
+                           <p className="text-forest-deep/80 text-sm">
+                              As our thank-you gift, Seed Partners receive Rich Aguilera's signed two-volume devotional set.
+                           </p>
+                        </CardContent>
+                        <div className="p-6 pt-0 mt-auto">
+                           <div className="bg-[#547543] text-white text-center py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2">
+                              <Heart className="h-4 w-4" /> faithful support
+                           </div>
+                        </div>
+                     </Card>
+
+                     <Card className="rounded-[2rem] border border-[#dca646]/30 shadow-md bg-[#fffdf8] relative overflow-hidden flex flex-col">
+                        <CardHeader className="text-center pb-2">
+                           <div className="mx-auto bg-[#fbf3e0] h-16 w-16 rounded-full flex items-center justify-center mb-2">
+                              <Sparkles className="h-8 w-8 text-[#dca646]" />
+                           </div>
+                           <CardTitle className="text-2xl font-display text-forest-deep">Growth Partners</CardTitle>
+                           <CardDescription className="text-[#c68f27] font-bold text-sm">$100–$249/month <span className="opacity-50 mx-1">|</span> $1,200–$2,999/year</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4 flex-grow text-center">
+                           <p className="text-forest-deep/80 text-sm">
+                              As our thank-you gifts, Growth Partners receive:
+                           </p>
+                           <ul className="text-forest-deep/80 text-sm space-y-1.5 list-disc list-inside text-left mx-auto max-w-[200px]">
+                              <li>Kids Bible Flix access</li>
+                              <li>Signed two-volume devotional set</li>
+                              <li>Four signed books of choice</li>
+                           </ul>
+                        </CardContent>
+                        <div className="p-6 pt-0 mt-auto">
+                           <div className="bg-[#dca646] text-white text-center py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2">
+                              <Sparkles className="h-4 w-4" /> growing impact
+                           </div>
+                        </div>
+                     </Card>
+
+                     <Card className="rounded-[2rem] border border-[#c26e41]/30 shadow-md bg-[#fffaf8] relative overflow-hidden flex flex-col">
+                        <CardHeader className="text-center pb-2">
+                           <div className="mx-auto bg-[#fbebe3] h-16 w-16 rounded-full flex items-center justify-center mb-2">
+                              <Globe className="h-8 w-8 text-[#c26e41]" />
+                           </div>
+                           <CardTitle className="text-2xl font-display text-forest-deep">Harvest Partners</CardTitle>
+                           <CardDescription className="text-[#a4542a] font-bold text-sm">$250+/month <span className="opacity-50 mx-1">|</span> $3,000+/year</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4 flex-grow text-center">
+                           <p className="text-forest-deep/80 text-sm">
+                              As our thank-you gifts, Harvest Partners receive:
+                           </p>
+                           <ul className="text-forest-deep/80 text-sm space-y-1.5 list-disc list-inside text-left mx-auto max-w-[250px]">
+                              <li>All Seed and Growth Partner gifts</li>
+                              <li>Invitation to an annual OMS weekend retreat</li>
+                              <li>Special connection with the OMS team</li>
+                           </ul>
+                        </CardContent>
+                        <div className="p-6 pt-0 mt-auto">
+                           <div className="bg-[#c26e41] text-white text-center py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2">
+                              <Globe className="h-4 w-4" /> legacy impact
+                           </div>
+                        </div>
+                     </Card>
+                  </div>
+                  
+                  <div className="bg-white rounded-2xl p-5 flex flex-col sm:flex-row items-center gap-6 shadow-sm border border-forest/10 max-w-4xl mx-auto mt-4 text-center sm:text-left">
+                     <div className="bg-forest text-white h-12 w-12 rounded-xl flex items-center justify-center shrink-0">
+                        <Heart className="h-6 w-6" />
+                     </div>
+                     <p className="text-forest-deep/80 text-sm font-medium">
+                        One-time gifts of any amount are also welcome. Ask us how your giving can support books, videos, live events, and family discipleship resources.
+                     </p>
+                  </div>
                </div>
             </section>
 
@@ -135,14 +233,19 @@ function SupportPage() {
                   <div className="lg:col-span-2 space-y-8 lg:pt-10">
                      <div className="space-y-4">
                         <h2 className="text-4xl lg:text-5xl font-display font-bold text-forest-deep">Making an <span className="italic text-gold">Impact</span></h2>
-                        <p className="text-forest-deep/70 leading-relaxed text-base lg:text-lg">Your contribution supports our global mission to reach the next generation through high-fidelity media.</p>
+                        <p className="text-forest-deep/70 leading-relaxed text-base lg:text-lg">
+                           Every gift helps us create faith-filled resources that point kids to God and support parents in growing their children’s faith.
+                        </p>
+                        <p className="text-forest-deep/70 leading-relaxed text-base lg:text-lg">
+                           Every partner will be added to our exclusive mailing list with ministry insights and behind-the-scenes details about how your gifts are making a difference!
+                        </p>
                      </div>
 
                      <div className="space-y-5 mt-6">
                         {[
-                           { icon: Globe, label: "162 Countries reached with gospel media" },
-                           { icon: Users, label: "2.4M+ Lives impacted annually" },
-                           { icon: Heart, label: "Ad-free content for families" },
+                           { icon: Globe, label: "Over 80 countries reached with gospel media every week!" },
+                           { icon: Users, label: "Tens of thousands of lives impacted annually!" },
+                           { icon: Heart, label: "Wholesome, inspirational, exciting content kids and families love!" },
                         ].map((item, i) => (
                            <div key={i} className="flex items-center gap-5 p-5 rounded-2xl bg-white border border-cream/20 shadow-sm">
                               <div className="h-12 w-12 rounded-xl bg-forest/5 text-forest flex items-center justify-center shrink-0">
@@ -328,20 +431,23 @@ function SupportPage() {
                      <Badge className="bg-white/10 text-cream font-bold border-none px-4 py-1.5 uppercase tracking-widest text-[10px]">Transparency</Badge>
                      <h2 className="text-4xl lg:text-5xl font-display font-bold">Financial <span className="italic text-gold">Stewardship</span></h2>
                      <p className="text-cream/70 leading-relaxed text-base lg:text-lg">
-                        We are committed to full financial transparency. Over 85% of all donations go directly to our cinematic productions and gospel distributions. The remaining covers essential operations to keep the mission moving forward.
+                        We work hard to steward every gift with care. At this stage of our ministry, our events help cover the day-to-day operating and support costs of One Mustard Seed, allowing donor gifts to be directed toward creating Bible-based content and sharing it with children and families around the world.
                      </p>
-                     <div className="space-y-6 pt-4">
+                     <p className="text-cream/70 leading-relaxed text-base lg:text-lg mt-4">
+                        The need is growing, and so is the opportunity. The more support we receive, the more stories, songs, shows, and resources we can create and distribute to help kids know God.
+                     </p>
+                     <div className="space-y-6 pt-4 mt-6">
                         <div className="flex justify-between items-center border-b border-white/10 pb-4">
                            <span className="font-bold text-lg">Content Production</span>
-                           <span className="text-gold font-bold text-xl">60%</span>
+                           <span className="text-gold font-bold text-xl">Approx. 80%</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-white/10 pb-4">
                            <span className="font-bold text-lg">Global Distribution</span>
-                           <span className="text-gold font-bold text-xl">25%</span>
+                           <span className="text-gold font-bold text-xl">Approx. 20%</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-white/10 pb-4">
-                           <span className="font-bold text-lg">Operations & Support</span>
-                           <span className="text-gold font-bold text-xl">15%</span>
+                           <span className="font-bold text-lg text-white max-w-[200px]">Operations & Support</span>
+                           <span className="text-gold font-bold text-xl text-right">Funded by Events</span>
                         </div>
                      </div>
                   </div>
@@ -390,15 +496,18 @@ function SupportPage() {
             <section className="py-20 bg-forest-deep text-cream text-center border-t border-white/10">
                <div className="mx-auto max-w-3xl px-6 space-y-8">
                   <Sparkles className="h-12 w-12 text-gold mx-auto" />
-                  <h2 className="text-3xl font-display font-bold">Donor Events & <span className="italic text-gold">Sponsorships</span></h2>
+                  <h2 className="text-3xl font-display font-bold">Questions, Sponsorships & <span className="italic text-gold">Special Giving</span></h2>
                   <p className="text-cream/70 leading-relaxed">
-                     Are you a business owner or major donor looking to sponsor an upcoming premiere or partner with us for a specific event? We host exclusive donor update calls and events to show our appreciation.
+                     Have a question about giving, want to sponsor a project, or feel led to support One Mustard Seed in a unique way? We’d love to hear from you.
                   </p>
-                  <Link to="/contact">
-                     <Button className="bg-gold text-forest-deep rounded-xl px-8 h-12 font-bold hover:bg-gold/90">
-                        Contact Major Giving Team
+                  <p className="text-cream/70 leading-relaxed mt-4">
+                     As our ministry grows, we look forward to hosting vision dinners, partner updates, and special gatherings where supporters can see what is being created, hear what is coming next, and discover meaningful ways to help.
+                  </p>
+                  <a href="mailto:rich@onemustardseed.com">
+                     <Button className="bg-gold text-forest-deep rounded-xl px-8 h-12 font-bold hover:bg-gold/90 mt-8">
+                        CONTACT OUR TEAM
                      </Button>
-                  </Link>
+                  </a>
                </div>
             </section>
 
