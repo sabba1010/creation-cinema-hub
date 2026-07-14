@@ -3,6 +3,7 @@ import { Play, Music } from "lucide-react";
 import applePodcastsLogo from "@/assets/logo/Apple Podcasts.png";
 import spotifyLogo from "@/assets/logo/Spotify.png";
 import youtubeMusicLogo from "@/assets/logo/YouTube Music.png";
+import logoImg from "@/assets/logo2/image1.png";
 
 export const Route = createFileRoute("/music/")({
   component: MusicPage,
@@ -38,58 +39,16 @@ function MusicPage() {
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/20 text-gold text-[10px] font-bold uppercase tracking-widest mb-6">
                 <Music className="h-3 w-3" /> Kids' Bible Beats
               </span>
-              <h1 className="text-5xl sm:text-7xl font-bold tracking-tight leading-none" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
-                {featuredAlbum.title}
+              <h1 className="text-5xl sm:text-6xl font-bold tracking-tight leading-none" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
+                Welcome to Kids’ Bible Beats!
               </h1>
               <p className="mt-8 text-lg text-cream/75 leading-relaxed max-w-xl" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>
-                {featuredAlbum.description}
+                Each album is packed with original music about a Bible character, helping kids learn their story through fresh lyrics, dynamic beats, and uplifting melodies that point hearts to God.
               </p>
-
-              <div className="mt-10 flex flex-wrap items-center gap-6">
-                <Link
-                  to="/music/$albumId"
-                  params={{ albumId: featuredAlbum.id }}
-                  className="rounded-full bg-gold px-8 py-4 text-sm font-bold uppercase tracking-widest text-gold-foreground shadow-lg hover:scale-105 transition cursor-pointer inline-flex items-center gap-2"
-                >
-                  <Play className="w-4 h-4 fill-current" /> Play Album
-                </Link>
-                <div className="flex items-center gap-3">
-                  {PLATFORMS.map((p) => (
-                    <a
-                      key={p.name}
-                      href={p.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="h-10 w-10 grid place-items-center rounded-full bg-cream/10 hover:bg-cream/25 transition cursor-pointer"
-                      title={`Listen on ${p.name}`}
-                    >
-                      <div className="h-6 w-6 rounded-full bg-white flex items-center justify-center p-1 shadow-sm">
-                        <img src={p.icon} alt={p.name} className="h-4 w-4 object-contain" />
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              </div>
             </div>
 
-            <div className="relative hidden lg:block animate-fade-up [animation-delay:200ms]">
-              <div className="relative z-10 overflow-hidden rounded-[2.5rem] shadow-2xl border border-cream/10 aspect-square">
-                <img src={featuredAlbum.cover} alt={featuredAlbum.title} className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
-                <div className="absolute bottom-10 left-10 right-10 flex items-center justify-between">
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gold">{featuredAlbum.songs.length} Tracks</p>
-                    <p className="text-xl font-medium" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>{featuredAlbum.title} Full Album</p>
-                  </div>
-                  <Link
-                    to="/music/$albumId"
-                    params={{ albumId: featuredAlbum.id }}
-                    className="h-14 w-14 rounded-full bg-cream text-forest-deep grid place-items-center shadow-glow hover:scale-105 hover:bg-gold hover:text-gold-foreground transition cursor-pointer"
-                  >
-                    <Play className="h-6 w-6 ml-1 fill-current" />
-                  </Link>
-                </div>
-              </div>
+            <div className="relative hidden lg:flex justify-center items-center animate-fade-up [animation-delay:200ms]">
+              <img src={logoImg} alt="Kids' Bible Beats Logo" className="w-full max-w-md h-auto object-contain drop-shadow-2xl" />
             </div>
           </div>
         </section>
@@ -100,7 +59,7 @@ function MusicPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
               <div>
                 <h2 className="text-4xl font-medium text-foreground" style={{ fontFamily: 'HelveticaNeue, Arial, "Open Sans"' }}>Explore <span className="italic text-primary">Albums</span></h2>
-                <p className="mt-4 text-muted-foreground text-[18px]">Journey through our musical collections of faith and wonder.</p>
+                <p className="mt-4 text-muted-foreground text-[18px]">Music That Gets Kids Singing, Moving, and Loving God!</p>
               </div>
               <div className="flex gap-2">
                 <span className="px-4 py-2 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest">{ALBUMS.length} Albums Total</span>

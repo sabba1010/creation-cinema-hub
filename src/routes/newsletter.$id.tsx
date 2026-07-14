@@ -168,14 +168,13 @@ function NewsletterDetailPage() {
           {/* Centered reading column */}
           <div className="max-w-5xl mx-auto">
 
-            {/* Description Area */}
             {nl.description && (
               <div className="animate-fade-up mb-16">
-                <div className="prose prose-lg md:prose-xl lg:prose-2xl prose-slate max-w-none prose-p:text-foreground/80 prose-p:leading-[2.2]">
+                <div className="prose prose-lg md:prose-xl lg:prose-2xl prose-slate max-w-none prose-p:text-forest-deep prose-p:leading-[2.2]">
                   {nl.description.split('\n').map((para: string, idx: number) => {
                     if (!para.trim()) return <br key={idx} />;
                     return (
-                      <p key={idx} className={idx === 0 ? "text-2xl md:text-3xl font-display text-forest leading-relaxed font-medium mb-10" : "text-xl md:text-[1.35rem]"}>
+                      <p key={idx} className={idx === 0 ? "text-2xl md:text-3xl font-display text-forest-deep leading-relaxed font-medium mb-10" : "text-xl md:text-[1.35rem] text-forest-deep/90"}>
                         {para}
                       </p>
                     );

@@ -26,6 +26,7 @@ import {
   Headphones,
   Video
 } from "lucide-react";
+import logoImg from "@/assets/logo2/image3.png";
 
 export const Route = createFileRoute("/kids/")({
   component: KidsLandingPage,
@@ -231,6 +232,11 @@ function KidsLandingPage() {
           </div>
           <div className="relative mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8 text-center lg:text-left">
+              <img 
+                src={logoImg} 
+                alt="Kids Bible Flix" 
+                className="w-auto h-24 md:h-32 lg:h-48 object-contain mx-auto lg:mx-0 drop-shadow-2xl hover:bg-white/10 rounded-3xl p-4 transition-all duration-300 -ml-4" 
+              />
               <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
                 <Sparkles className="h-4 w-4 text-gold animate-spin-slow" />
                 <span className="text-[10px] font-bold uppercase tracking-widest text-gold">Pure · Wonder · Faith</span>

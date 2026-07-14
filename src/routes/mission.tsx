@@ -30,10 +30,10 @@ function MissionPage() {
               <Sparkles className="w-3 h-3 animate-pulse" /> Our Purpose
             </div>
             <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl font-medium tracking-tighter leading-[1.1]">
-              Faith-Centered <span className="italic text-gold block sm:inline">Storytelling</span>
+              Pointing Kids <span className="italic text-gold block sm:inline">to God</span>
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-cream/70 font-light leading-relaxed mt-6">
-              A faith-centered media ministry creating cinematic stories, resources, and experiences for families, churches, and schools around the world.
+              We create faith-filled media, music, live events, and resources that help kids and families see God’s love, explore His Word, and grow in faith together.
             </p>
           </div>
         </section>
@@ -43,10 +43,10 @@ function MissionPage() {
           <div className="max-w-4xl mx-auto px-6 text-center">
             <Heart className="w-12 h-12 text-gold mx-auto mb-8 opacity-80" />
             <h2 className="font-display text-3xl sm:text-5xl font-medium text-cream mb-8 leading-tight">
-              To plant seeds of faith that grow into a <span className="text-gold italic">global impact</span>.
+              Planting Seeds of <span className="text-gold italic">Faith</span>
             </h2>
             <p className="text-cream/60 text-lg leading-relaxed max-w-3xl mx-auto">
-              We believe that storytelling is a powerful tool to inspire, educate, and transform lives. Through compelling media, we aim to share messages of hope, love, and faith that resonate across generations and cultures. Like a mustard seed, small beginnings can lead to extraordinary growth and impact.
+              We believe small seeds of faith can grow into something far beyond what we could imagine. Through Bible-based media, music, live events, books, and resources, One Mustard Seed helps children and families discover God in ways that are creative, memorable, and meaningful.
             </p>
           </div>
         </section>

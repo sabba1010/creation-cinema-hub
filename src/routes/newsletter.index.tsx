@@ -9,6 +9,7 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Card, CardContent } from "../components/ui/card";
 import { Input } from "../components/ui/input";
+import logoImg from "@/assets/logo2/image9.png";
 
 export const Route = createFileRoute("/newsletter/")({
   component: NewsletterPage,
@@ -57,7 +58,7 @@ function NewsletterPage() {
       <SiteHeader />
 
       {/* Cinematic Hero */}
-      <section className="min-h-[480px] flex flex-col justify-end bg-[#050704] text-cream relative overflow-hidden">
+      <section className="min-h-[650px] flex flex-col justify-end bg-[#050704] text-cream relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <video autoPlay loop muted playsInline
             className="w-full h-full object-cover opacity-50 scale-105">
@@ -67,13 +68,16 @@ function NewsletterPage() {
         </div>
         <div className="container px-6 mx-auto relative z-10 pt-36 pb-24">
           <div className="max-w-2xl animate-fade-up">
-            <Badge className="mb-5 bg-gold/10 text-gold border-gold/20 px-4 py-1.5 rounded-full tracking-[0.2em] uppercase text-[10px] font-black">
-              Our Updates
-            </Badge>
-            <h1 className="text-5xl md:text-7xl font-display font-medium text-cream mb-5 leading-[0.9] tracking-tighter">
-              OMS <span className="italic text-gold">Newsletter</span>
-            </h1>
-            <p className="text-lg text-cream/70 leading-relaxed font-light max-w-xl">
+            <div className="inline-flex items-center gap-2 bg-gold/10 backdrop-blur border border-gold/20 px-3.5 py-1.5 rounded-full animate-fade-in mb-6">
+              <FileText className="h-4 w-4 text-gold" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-gold">Our Updates</span>
+            </div>
+            <img 
+              src={logoImg} 
+              alt="OMS Newsletter" 
+              className="w-auto h-24 md:h-32 lg:h-40 object-contain drop-shadow-2xl hover:bg-white rounded-3xl p-4 transition-all duration-300 mb-6" 
+            />
+            <p className="text-base sm:text-lg text-cream/80 leading-relaxed max-w-xl">
               Immersive storytelling, ministry milestones, and behind-the-scenes glimpses
               from the heart of One Mustard Seed.
             </p>
