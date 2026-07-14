@@ -4,6 +4,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Hero } from "../pages/Home/sections/Hero";
 import { FeaturedProjects } from "../pages/Home/sections/FeaturedProjects";
 import { Films } from "../pages/Home/sections/Films";
+import { BirthdayClub } from "../pages/Home/sections/BirthdayClub";
 import { Support } from "../pages/Home/sections/Support";
 import { Events } from "../pages/Home/sections/Events";
 
@@ -37,6 +38,7 @@ function Index() {
         <FeaturedProjects />
         <Events />
         <Films />
+        <BirthdayClub />
         <Support />
       </main>
       <SiteFooter />
