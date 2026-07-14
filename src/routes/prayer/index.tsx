@@ -10,6 +10,7 @@ export const Route = createFileRoute("/prayer/")({
   component: PrayerLandingPage,
 });
 
+
 function PrayerLandingPage() {
   const [seasons, setSeasons] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
