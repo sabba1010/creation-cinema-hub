@@ -6,6 +6,8 @@ import * as React from "react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import ReactPlayer from "react-player";
+import image5 from "@/assets/logo2/image5.png";
+import { HostScreening } from "@/pages/Films/sections/HostScreening";
 
 export const Route = createFileRoute("/films/")({
   component: FilmsLandingPage,
@@ -144,32 +146,14 @@ function FilmsLandingPage() {
 
                   <div className="relative mx-auto max-w-7xl px-6 w-full h-full flex flex-col justify-center z-10 pt-16">
                     <div className="max-w-2xl space-y-6">
-                      <div className="inline-flex items-center gap-2 bg-gold/10 backdrop-blur border border-gold/20 px-3.5 py-1.5 rounded-full animate-fade-in">
+                      <div className="inline-flex items-center gap-2 bg-gold/10 backdrop-blur border border-gold/20 px-3.5 py-1.5 rounded-full animate-fade-in mb-4">
                         <Film className="h-4 w-4 text-gold" />
                         <span className="text-[10px] font-bold uppercase tracking-widest text-gold">OMS Original Cinema</span>
                       </div>
-                      <h1 className="font-display text-5xl sm:text-7xl font-bold tracking-tight text-cream leading-none">
-                        Cinema <span className="italic text-gold font-medium">Hub</span>
-                      </h1>
-                      <p className="text-base sm:text-lg text-cream/80 leading-relaxed">
+                      <img src={image5} alt="OMS Films Logo" className="w-auto h-24 md:h-32 lg:h-40 object-contain drop-shadow-2xl hover:bg-white rounded-3xl p-4 transition-all duration-300" />
+                      <p className="text-base sm:text-lg text-cream/80 leading-relaxed max-w-xl">
                         Explore the official library of original productions. High-definition documentaries and films exploring the design, majesty, and theological depth of God's great creation.
                       </p>
-
-                      <div className="flex flex-wrap gap-4 pt-4">
-                        <Link
-                          to="/films/$filmId"
-                          params={{ filmId: featuredFilm?.id || "the-seed" }}
-                          className="bg-gold text-forest-deep px-8 py-4 rounded-2xl font-bold text-sm uppercase tracking-widest shadow-xl hover:bg-gold/90 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
-                        >
-                          <Play className="h-4 w-4 fill-current animate-pulse" /> Play Featured
-                        </Link>
-                        <Link
-                          to="/films/trailer"
-                          className="bg-white/10 backdrop-blur border border-white/10 px-8 py-4 rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-white/20 transition-all flex items-center gap-2"
-                        >
-                          <Info className="h-4 w-4" /> Watch Trailer
-                        </Link>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -199,6 +183,8 @@ function FilmsLandingPage() {
             </span>
           </div>
         </section>
+
+        <HostScreening />
 
         {/* Film Catalog */}
         <section className="py-24 relative z-10 min-h-[600px]">
