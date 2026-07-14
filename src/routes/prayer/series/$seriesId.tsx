@@ -144,13 +144,6 @@ function PrayerSeriesPage() {
     navigate({ to: "/prayer/checkout", search: { seriesId: series.id } } as any);
   };
 
-  const handleDemoAccess = () => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem(`prayer_access_${seriesId}`, "true");
-      toast.success("Demo access granted! Refresh to unlock all content.");
-    }
-  };
-
   return (
     <div className="bg-background min-h-screen flex flex-col">
       <SiteHeader />
@@ -210,7 +203,15 @@ function PrayerSeriesPage() {
 
       <main className="flex-grow">
         {/* Hero Banner */}
-        <div className="relative h-[75vh] min-h-[500px] lg:min-h-[600px] overflow-hidden bg-black">
+        <div className="relative h-[60vh] min-h-[400px] overflow-hidden bg-black flex items-center justify-center">
+          <Link
+            to="/prayer"
+            className="absolute top-6 left-6 z-30 inline-flex items-center gap-2 text-cream hover:text-white text-sm font-bold tracking-widest uppercase bg-black/40 px-4 py-2 rounded-lg backdrop-blur-sm transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            All Series
+          </Link>
+          
           {isPreviewPlaying && series.samplePreviewVideo ? (
             <div className="absolute inset-0 z-20">
               {series.samplePreviewVideo.includes('vimeo.com') ? (
@@ -247,52 +248,25 @@ function PrayerSeriesPage() {
               </button>
             </div>
           ) : (
-            <>
+            <div className="w-full h-full max-w-5xl mx-auto p-8 relative flex items-center justify-center">
               <img
                 src={series.bannerImage || "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80"}
                 alt={series.title}
-                className="absolute inset-0 w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-forest-deep via-forest-deep/60 to-forest-deep/20" />
-            </>
-          )}
-          <div className="relative h-full flex flex-col justify-end pb-12 px-6 max-w-7xl mx-auto w-full">
-            <Link
-              to="/prayer"
-              className="inline-flex items-center gap-2 text-cream/70 hover:text-cream text-sm font-bold tracking-widest uppercase mb-6 transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              All Series
-            </Link>
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <span
-                className={`text-[10px] font-black uppercase tracking-[0.3em] px-3 py-1.5 rounded-full ${series.status === "upcoming"
-                  ? "bg-gold text-forest-deep"
-                  : series.status === "active"
-                    ? "bg-emerald-500 text-white"
-                    : "bg-white/20 text-cream"
-                  }`}
-              >
-                {series.status === "upcoming" ? "Coming Soon" : series.status === "active" ? "Available Now" : "Archive"}
-              </span>
-              <span className="text-cream/60 text-sm">{series.year}</span>
+              {series.samplePreviewVideo && !isPreviewPlaying && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <button
+                    onClick={() => setIsPreviewPlaying(true)}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-forest-deep/80 hover:bg-forest-deep text-cream rounded-xl font-bold tracking-widest uppercase transition-all backdrop-blur-sm shadow-xl hover:scale-105 active:scale-95"
+                  >
+                    <Play className="w-4 h-4 fill-current" />
+                    Watch Free Preview
+                  </button>
+                </div>
+              )}
             </div>
-            <h1 className="font-display text-5xl sm:text-6xl font-medium text-cream leading-tight mb-3">
-              {series.theme}
-            </h1>
-            <p className="text-cream/75 text-lg max-w-2xl">{series.tagline || series.description}</p>
-            {series.samplePreviewVideo && !isPreviewPlaying && (
-              <div className="mt-6">
-                <button
-                  onClick={() => setIsPreviewPlaying(true)}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 hover:bg-white/30 text-cream rounded-xl font-bold tracking-widest uppercase transition-all backdrop-blur-sm shadow-xl hover:scale-105 active:scale-95"
-                >
-                  <Play className="w-4 h-4 fill-current" />
-                  Watch Free Preview
-                </button>
-              </div>
-            )}
-          </div>
+          )}
         </div>
 
         <div className="max-w-7xl mx-auto px-6 py-12">
@@ -301,9 +275,25 @@ function PrayerSeriesPage() {
             <div className="lg:col-span-2 space-y-8">
               {/* Series Info */}
               <div className="space-y-4">
-                <h2 className="font-display text-2xl font-medium">{series.title}</h2>
-                <p className="text-muted-foreground leading-relaxed">{series.description}</p>
-                <div className="flex flex-wrap gap-6 text-sm">
+                <div className="flex flex-wrap items-center gap-3 mb-2">
+                  <span
+                    className={`text-[10px] font-black uppercase tracking-[0.3em] px-3 py-1.5 rounded-full ${series.status === "upcoming"
+                      ? "bg-gold text-forest-deep"
+                      : series.status === "active"
+                        ? "bg-emerald-500 text-white"
+                        : "bg-muted text-muted-foreground"
+                      }`}
+                  >
+                    {series.status === "upcoming" ? "Coming Soon" : series.status === "active" ? "Available Now" : "Archive"}
+                  </span>
+                  <span className="text-muted-foreground text-sm font-bold">{series.year}</span>
+                </div>
+                <h1 className="font-display text-4xl sm:text-5xl font-medium text-foreground leading-tight mb-2">
+                  {series.theme}
+                </h1>
+                <h2 className="font-display text-2xl font-medium text-muted-foreground">{series.title}</h2>
+                <p className="text-muted-foreground text-lg leading-relaxed mt-4">{series.description}</p>
+                <div className="flex flex-wrap gap-6 text-sm mt-6 pt-6 border-t border-border/50">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar className="h-4 w-4 text-primary" />
                     {series.startDate} – {series.endDate}
@@ -326,8 +316,7 @@ function PrayerSeriesPage() {
               {/* Tabs */}
               <div className="border-b border-border">
                 <div className="flex gap-0">
-                  {/* Downloads tab hidden temporarily as requested: (["videos", "downloads"] as const) */}
-                  {(["videos"] as const).map((tab) => (
+                  {(["videos", "downloads"] as const).map((tab) => (
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
@@ -495,11 +484,11 @@ function PrayerSeriesPage() {
 
                     <ul className="space-y-3 mb-8 text-sm text-cream/80">
                       {[
-                        "Five Video Sessions",
-                        "14-day Access",
-                        "Daily Featured Bible Verse",
-                        "Daily Target Prayer Groups",
-                        "Messages Designed for Kids",
+                        "Five video sessions",
+                        "14-day access",
+                        "Daily featured Bible verse",
+                        "Daily target prayer groups",
+                        "Messsages designed for kids",
                       ].map((item) => (
                         <li key={item} className="flex items-center gap-3">
                           <CheckCircle className="h-4 w-4 text-gold flex-shrink-0" />
@@ -514,10 +503,6 @@ function PrayerSeriesPage() {
                     >
                       {series.status === "upcoming" ? "Pre-Order Now" : "Get Full Access"}
                     </button>
-
-                    <p className="text-center text-cream/40 text-[10px] mt-4">
-                      Available at lower rate. Contact us.
-                    </p>
                   </div>
                 </div>
               )}

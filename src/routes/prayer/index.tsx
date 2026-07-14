@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Calendar, Play, BookOpen, Globe, ArrowRight, Users, CheckCircle } from "lucide-react";
+import logoImg from "@/assets/logo2/image8.png";
 
 const API_URL = import.meta.env.VITE_API_URL || "https://movie-backend-drab.vercel.app";
 
@@ -70,9 +71,9 @@ function PrayerLandingPage() {
         <section className="relative py-32 overflow-hidden bg-forest-deep text-cream">
           <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,var(--gold),transparent_70%)]" />
           <div className="relative mx-auto max-w-7xl px-6 text-center">
-            <h1 className="font-display text-6xl sm:text-8xl font-medium tracking-tight leading-[0.9] mb-6">
-              Week of <span className="italic text-gold">Prayer</span> Online
-            </h1>
+            <div className="flex justify-center mb-6">
+              <img src={logoImg} alt="Week of Prayer Online" className="w-auto h-24 md:h-32 lg:h-40 object-contain drop-shadow-2xl" />
+            </div>
             <p className="mt-6 mx-auto max-w-2xl text-xl text-cream/75 leading-relaxed">
               Five keynote sessions. Stream anytime, anywhere.
             </p>
