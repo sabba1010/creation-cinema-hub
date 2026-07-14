@@ -5,54 +5,50 @@ import { Mail, Linkedin, Twitter, ArrowRight, Star, Users, Film, BookOpen } from
 
 const LEADERSHIP = [
   {
-    name: "Dr. Elias Thorne",
-    role: "Executive Director",
-    tagline: "Visionary & Theologian",
-    bio: "With 20+ years in media ministry, Dr. Thorne leads OMS with a pastor's heart and a filmmaker's eye.",
+    name: "Rich Aguilera",
+    role: "President/Creative Director",
+    tagline: "Creative & Visionary",
+    bio: "Rich Aguilera is a Christian speaker, producer, writer, and explorer known worldwide as “The Mud Guy.” As founder of One Mustard Seed, he creates live shows, media, books, and resources that help families discover God through nature, science, and adventure.",
     img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=600",
-    quote: "Stories are the vessels God uses to carry truth.",
     color: "from-forest-deep to-forest",
-    socials: { mail: "#", linkedin: "#", twitter: "#" },
+    socials: { mail: "mailto:rich@onemustardseed.com" },
   },
   {
-    name: "Sarah Jenkins",
-    role: "Creative Director",
-    tagline: "Storyteller & Designer",
-    bio: "Sarah shapes the visual identity of every OMS production — ensuring beauty and truth walk hand in hand.",
-    img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=600",
-    quote: "Great design clears the path for the message to land.",
-    color: "from-forest to-sky",
-    socials: { mail: "#", linkedin: "#", twitter: "#" },
-  },
-  {
-    name: "Pastor Mark Chen",
-    role: "Spiritual Oversight",
-    tagline: "Pastor & Theologian",
-    bio: "Pastor Mark ensures every word and frame aligns with Scripture, serving as the spiritual anchor of our team.",
+    name: "Leo Aguilera",
+    role: "Marketing/Operations",
+    tagline: "Leadership & Organization",
+    bio: "Leo Aguilera leads marketing, operations, partnerships, and national tours for One Mustard Seed. With experience in large-scale events and faith-based media projects, he helps organize productions, strengthen outreach, and keep the mission moving forward with creativity and precision.",
     img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600",
-    quote: "We do not just make media — we make disciples.",
-    color: "from-earth to-forest-deep",
-    socials: { mail: "#", linkedin: "#", twitter: "#" },
+    color: "from-forest to-sky",
+    socials: { mail: "mailto:leo@onemustardseed.com" },
   },
   {
-    name: "Elena Rodriguez",
-    role: "Head of Kids Content",
-    tagline: "Educator & Producer",
-    bio: "Elena champions safe, joyful, and scripture-rooted content designed to delight the youngest hearts in our audience.",
-    img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=600",
-    quote: "Children deserve wonder as much as wisdom.",
-    color: "from-gold to-earth",
-    socials: { mail: "#", linkedin: "#", twitter: "#" },
+    name: "Jim Aumack",
+    role: "Sales/Tours",
+    tagline: "Outreach & Relationships",
+    bio: "Jim Aumack leads sales, promotion, and tour management for One Mustard Seed. Drawing on decades of experience from his successful career at Worthington Foods, he helps build outreach, partnerships, and ministry opportunities with professionalism, strategy, and purpose.",
+    img: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?auto=format&fit=crop&q=80&w=600",
+    color: "from-earth to-forest-deep",
+    socials: { mail: "mailto:jim@onemustardseed.com" },
   },
-];
-
-const EXTENDED_TEAM = [
-  { name: "James Whitmore", role: "Lead Cinematographer", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400" },
-  { name: "Amara Osei", role: "Music Composer", img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=400" },
-  { name: "Liam Foster", role: "Post Production Lead", img: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?auto=format&fit=crop&q=80&w=400" },
-  { name: "Priya Anand", role: "Content Strategist", img: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&q=80&w=400" },
-  { name: "Daniel Cruz", role: "Curriculum Developer", img: "https://images.unsplash.com/photo-1504257432389-52343af06ae3?auto=format&fit=crop&q=80&w=400" },
-  { name: "Naomi Shaw", role: "Community Manager", img: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&q=80&w=400" },
+  {
+    name: "Alex Aguilera",
+    role: "Assistant for Operations",
+    tagline: "PR & Communications",
+    bio: "Alex Aguilera supports operations, production, touring, marketing, communications, and social media for One Mustard Seed while completing his university studies. He helps keep projects organized, tours moving, and ministry content connected with families and audiences.",
+    img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=600",
+    color: "from-gold to-earth",
+    socials: { mail: "mailto:alex@onemustardseed.com" },
+  },
+  {
+    name: "Angelisse Villamizar",
+    role: "Production Assistant",
+    tagline: "Production & Organization",
+    bio: "Angelisse Villamizar supports One Mustard Seed through production organization, script management, CRM, customer communication, and back-office coordination while completing her university studies. Her behind-the-scenes work helps keep projects moving and ministry details organized.",
+    img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=600",
+    color: "from-forest to-gold",
+    socials: { mail: "mailto:angelisse@onemustardseed.com" },
+  },
 ];
 
 const STATS = [
@@ -92,7 +88,7 @@ function TeamPage() {
               <span className="italic text-gold">Behind OMS</span>
             </h1>
             <p className="mx-auto max-w-2xl text-xl leading-relaxed text-cream/70 font-light">
-              A small, passionate crew of storytellers, educators, pastors, and producers — united by a single calling to craft faith-forward media families can trust.
+              Our team brings together creativity, organization, production, outreach, and faith to create resources that help children and families grow closer to God.
             </p>
           </div>
 
@@ -146,15 +142,6 @@ function TeamPage() {
                     />
                     {/* Colour gradient overlay on hover */}
                     <div className={`absolute inset-0 bg-gradient-to-r ${member.color} opacity-0 group-hover:opacity-50 transition-opacity duration-500`} />
-
-                    {/* Quote — slides up on hover */}
-                    <div className="absolute inset-0 flex items-end justify-start p-5 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
-                      <blockquote className="text-cream text-sm font-light italic leading-relaxed drop-shadow-lg">
-                        <span className="text-gold text-2xl leading-none font-display">"</span>
-                        {member.quote}
-                        <span className="text-gold text-2xl leading-none font-display">"</span>
-                      </blockquote>
-                    </div>
                   </div>
 
                   {/* Content — right column */}
@@ -173,15 +160,11 @@ function TeamPage() {
 
                     {/* Bottom: socials */}
                     <div className="flex items-center gap-3 pt-2 border-t border-forest/8">
-                      <a href={member.socials.mail} aria-label="Email" className="h-9 w-9 rounded-full bg-forest/8 border border-forest/15 flex items-center justify-center text-forest hover:bg-gold hover:text-forest-deep hover:border-gold transition-all duration-200">
-                        <Mail className="h-4 w-4" />
-                      </a>
-                      <a href={member.socials.linkedin} aria-label="LinkedIn" className="h-9 w-9 rounded-full bg-forest/8 border border-forest/15 flex items-center justify-center text-forest hover:bg-gold hover:text-forest-deep hover:border-gold transition-all duration-200">
-                        <Linkedin className="h-4 w-4" />
-                      </a>
-                      <a href={member.socials.twitter} aria-label="Twitter" className="h-9 w-9 rounded-full bg-forest/8 border border-forest/15 flex items-center justify-center text-forest hover:bg-gold hover:text-forest-deep hover:border-gold transition-all duration-200">
-                        <Twitter className="h-4 w-4" />
-                      </a>
+                      {member.socials.mail && (
+                        <a href={member.socials.mail} aria-label="Email" className="h-9 w-9 rounded-full bg-forest/8 border border-forest/15 flex items-center justify-center text-forest hover:bg-gold hover:text-forest-deep hover:border-gold transition-all duration-200">
+                          <Mail className="h-4 w-4" />
+                        </a>
+                      )}
                       <span className="ml-auto text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50">OMS Team</span>
                     </div>
                   </div>
@@ -192,40 +175,7 @@ function TeamPage() {
           </div>
         </section>
 
-        {/* ── Extended Team Grid ── */}
-        <section className="py-20 border-t border-forest/8 bg-cream/30">
-          <div className="mx-auto max-w-7xl px-6">
-            <div className="text-center mb-16 space-y-3">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-earth">The Crew</span>
-              <h2 className="font-display text-4xl font-bold text-forest-deep">Extended Team</h2>
-              <p className="mx-auto max-w-xl text-muted-foreground font-light leading-relaxed">
-                Talented individuals who pour their gifts into every production, curriculum, and campaign.
-              </p>
-            </div>
 
-            <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
-              {EXTENDED_TEAM.map((member) => (
-                <article
-                  key={member.name}
-                  className="group flex flex-col items-center gap-4 text-center p-5 rounded-[2rem] bg-white border border-forest/5 hover:border-gold/30 hover:shadow-card transition-all duration-300 hover:-translate-y-1"
-                  style={{ boxShadow: "0 2px 12px -4px oklch(0.2 0.05 145 / 0.1)" }}
-                >
-                  <div className="relative h-20 w-20 rounded-2xl overflow-hidden shadow-md ring-2 ring-transparent group-hover:ring-gold/40 transition-all duration-300">
-                    <img
-                      src={member.img}
-                      alt={member.name}
-                      className="h-full w-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-sm text-forest-deep leading-tight">{member.name}</h3>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-gold mt-1">{member.role}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
 
         {/* ── Join the Team CTA ── */}
         <section className="py-20 mx-auto max-w-7xl px-6">
@@ -268,17 +218,17 @@ function TeamPage() {
                 <div className="rounded-[2rem] border border-cream/10 bg-cream/5 backdrop-blur-sm p-10 space-y-6">
                   <Star className="h-8 w-8 text-gold" />
                   <blockquote className="font-display text-2xl font-light italic text-cream leading-snug">
-                    "We are a small crew with a big calling — to plant seeds of wonder in every heart we reach."
+                    "Faith as small as a mustard seed can grow into something bigger than we imagined. We’re trusting God one step at a time."
                   </blockquote>
                   <div className="flex items-center gap-4 pt-2">
                     <img
                       src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=80"
-                      alt="Dr. Elias Thorne"
+                      alt="Rich Aguilera"
                       className="h-12 w-12 rounded-full object-cover border-2 border-gold/40"
                     />
                     <div>
-                      <p className="font-bold text-cream text-sm">Dr. Elias Thorne</p>
-                      <p className="text-[11px] uppercase tracking-widest text-gold font-semibold">Executive Director</p>
+                      <p className="font-bold text-cream text-sm">Rich Aguilera</p>
+                      <p className="text-[11px] uppercase tracking-widest text-gold font-semibold">President/Creative Director</p>
                     </div>
                   </div>
                 </div>

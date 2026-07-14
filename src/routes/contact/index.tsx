@@ -28,45 +28,49 @@ const CATEGORIES = [
 
 const FAQS = [
   {
-    question: "Do you offer physical copies of your resources?",
-    answer: "Currently, all our resources are digital downloads to ensure they remain free and instantly accessible worldwide. You are welcome to print them at home or locally!"
+    question: "What is One Mustard Seed?",
+    answer: "One Mustard Seed is a faith-centered media ministry creating Bible-based videos, music, live events, books, and resources that help kids and families know God."
   },
   {
-    question: "Is there a limit to how many resources I can download?",
-    answer: "No! All our downloadable guides, devotions, and curricula are completely free. Download as many as you need to equip your family or ministry."
+    question: "Who are your resources for?",
+    answer: "Our resources are created for kids, families, churches, schools, and ministries looking for creative, Bible-based content that is engaging, meaningful, and easy to share."
   },
   {
-    question: "How can I support the One Mustard Seed ministry?",
-    answer: "We are deeply grateful for your support. You can visit our Donations page to set up a one-time or recurring gift that helps us continue creating high-quality, free Christian media."
+    question: "Is your content available outside of the US?",
+    answer: "Yes. Our digital resources are available anywhere in the world with an internet connection. Many of our books can also be ordered through Amazon and shipped to addresses in more than 180 countries. Live events are considered case by case, depending on location, scheduling, and travel needs."
   },
   {
-    question: "Are your films available outside the US?",
-    answer: "Yes, our digital screening licenses and online streaming options are available globally."
+    question: "How can I book an OMS live event?",
+    answer: "You can contact our team to ask about bringing one of our live events to your church, school, or community."
   },
   {
-    question: "Can we show your content at our church?",
-    answer: "Yes! We offer specific licensing options for church screenings and events. Please select 'Event/ticket support' or 'School/church questions' in the contact form for more details."
+    question: "How can I support One Mustard Seed, and where do donations go?",
+    answer: "You can support OMS through prayer, giving, monthly partnership, sponsorships, and sharing our resources. Donor gifts help fund Bible-based content creation and global distribution, while our events currently help cover many day-to-day operating and support costs."
+  },
+  {
+    question: "Do you create content in different formats?",
+    answer: "Yes. OMS creates content across several formats, including video, audio, music, live events, books, downloadable resources, and online platforms."
   }
 ];
 
 const TEAM = [
   {
-    name: "Sarah Jenkins",
-    role: "Executive Director",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=400",
-    email: "sarah@onemustardseed.com"
-  },
-  {
-    name: "David Chen",
-    role: "Ministry Coordinator",
+    name: "Rich Aguilera",
+    role: "President/Creative Director",
     image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
-    email: "david@onemustardseed.com"
+    email: "rich@onemustardseed.com"
   },
   {
-    name: "Emily Rodriguez",
-    role: "Media & Partnerships",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=400",
-    email: "emily@onemustardseed.com"
+    name: "Leo Aguilera",
+    role: "Marketing/Operations",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400",
+    email: "leo@onemustardseed.com"
+  },
+  {
+    name: "Jim Aumack",
+    role: "Sales/Tours",
+    image: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?auto=format&fit=crop&q=80&w=400",
+    email: "jim@onemustardseed.com"
   }
 ];
 
