@@ -7,7 +7,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import ReactPlayer from "react-player";
 import image5 from "@/assets/logo2/image5.png";
-import { HostScreening } from "@/pages/Films/sections/HostScreening";
+import { HostMovieNight, PremierePartner } from "@/pages/Films/sections/HostScreening";
 
 export const Route = createFileRoute("/films/")({
   component: FilmsLandingPage,
@@ -185,10 +185,10 @@ function FilmsLandingPage() {
           </div>
         </section>
 
-        <HostScreening />
+        <HostMovieNight />
 
         {/* Film Catalog */}
-        <section className="py-24 relative z-10 min-h-[600px]">
+        <section className="py-12 relative z-10 min-h-[600px]">
           <div className="mx-auto max-w-7xl px-6">
             <div className="flex items-end justify-between mb-16 border-b border-white/10 pb-8">
               <div>
@@ -229,6 +229,8 @@ function FilmsLandingPage() {
             </div>
           </div>
         </section>
+        
+        <PremierePartner />
       </main>
       <SiteFooter />
     </div>
