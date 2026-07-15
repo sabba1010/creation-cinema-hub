@@ -238,6 +238,8 @@ function EventsPage() {
 
   const [reviewForm, setReviewForm] = useState({ name: "", rating: 5, comment: "" });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [eventsHeroVimeo, setEventsHeroVimeo] = useState("");
+  const [eventsHeroTitle, setEventsHeroTitle] = useState("");
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -269,6 +271,19 @@ function EventsPage() {
       }
     };
     fetchEvents();
+  }, []);
+
+  // Load hero settings for Events page
+  useEffect(() => {
+    fetch(`${API_URL}/api/settings`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          if (data.data.events_hero_vimeo) setEventsHeroVimeo(data.data.events_hero_vimeo);
+          if (data.data.events_hero_title) setEventsHeroTitle(data.data.events_hero_title);
+        }
+      })
+      .catch(err => console.error("Failed to load event settings:", err));
   }, []);
 
   const displayedEvents = events.filter(e => eventFilter === "active" ? e.status !== "Past" : e.status === "Past");
@@ -437,18 +452,27 @@ function EventsPage() {
             {/* Hero */}
             <section className="relative min-h-[70vh] flex items-center justify-center pt-24 overflow-hidden">
               <div className="absolute inset-0 z-0 bg-[#050704]">
-                <video
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full h-full object-cover opacity-60 scale-105 transition-opacity duration-1000"
-                >
-                  <source
-                    src="https://vjs.zencdn.net/v/oceans.mp4"
-                    type="video/mp4"
+                {eventsHeroVimeo && eventsHeroVimeo.match(/vimeo\.com\/(\d+)/i) ? (
+                  <iframe
+                    src={`https://player.vimeo.com/video/${eventsHeroVimeo.match(/vimeo\.com\/(\d+)/i)?.[1]}?autoplay=1&loop=1&byline=0&title=0&muted=1&controls=0&autopause=0`}
+                    className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-[100vh] min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-60"
+                    frameBorder="0"
+                    allow="autoplay; fullscreen"
                   />
-                </video>
+                ) : (
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover opacity-60 scale-105 transition-opacity duration-1000"
+                  >
+                    <source
+                      src={eventsHeroVimeo && eventsHeroVimeo.match(/\.(mp4|webm|ogg)$/i) ? eventsHeroVimeo : "https://vjs.zencdn.net/v/oceans.mp4"}
+                      type="video/mp4"
+                    />
+                  </video>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-b from-[#050704]/30 via-transparent to-[#050704]/90" />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#050704]/30 via-transparent to-[#050704]/30" />
               </div>
@@ -458,7 +482,7 @@ function EventsPage() {
                   <Sparkles className={`w-3 h-3 ${eventFilter === "active" ? "animate-pulse" : ""}`} /> {eventFilter === "active" ? "Live Events" : "Past Events"}
                 </div>
                 <h1 className="font-display text-6xl sm:text-8xl lg:text-9xl font-medium tracking-tighter leading-[0.9]">
-                  {eventFilter === "active" ? "Live" : "Past"} <span className="italic text-gold block sm:inline">Events</span>
+                  {eventsHeroTitle || (eventFilter === "active" ? "Live" : "Past")} <span className="italic text-gold block sm:inline">Events</span>
                 </h1>
                 <p className="mx-auto max-w-2xl text-lg text-cream/60 font-light leading-relaxed">
                   {eventFilter === "active" ? "Immersive gatherings in cities around the world — and online for everyone." : "Explore our archive of past gatherings, screenings, and events."}

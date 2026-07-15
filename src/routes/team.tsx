@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Mail, Linkedin, Twitter, ArrowRight, Star, Users, Film, BookOpen } from "lucide-react";
+import { Mail, ArrowRight, Star } from "lucide-react";
 
 const LEADERSHIP = [
   {
@@ -51,12 +51,6 @@ const LEADERSHIP = [
   },
 ];
 
-const STATS = [
-  { icon: Users, value: "50+", label: "Team Members" },
-  { icon: Film, value: "120+", label: "Productions" },
-  { icon: BookOpen, value: "100+", label: "Countries Reached" },
-  { icon: Star, value: "1M+", label: "Lives Touched" },
-];
 
 export const Route = createFileRoute("/team")({
   component: TeamPage,
@@ -100,32 +94,9 @@ function TeamPage() {
           </div>
         </section>
 
-        {/* ── Stats Strip ── */}
-        <section className="py-14 border-b border-forest/10">
-          <div className="mx-auto max-w-5xl px-6 grid grid-cols-2 sm:grid-cols-4 gap-8">
-            {STATS.map(({ icon: Icon, value, label }) => (
-              <div key={label} className="flex flex-col items-center gap-3 text-center group">
-                <div className="h-12 w-12 rounded-2xl bg-forest/10 text-forest flex items-center justify-center group-hover:bg-gold group-hover:text-forest-deep transition-all duration-300">
-                  <Icon className="h-5 w-5" />
-                </div>
-                <p className="font-display text-4xl font-bold text-forest-deep">{value}</p>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-earth">{label}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── Leadership Cards ── */}
+        {/* ── Team Cards ── */}
         <section className="py-24">
           <div className="mx-auto max-w-7xl px-6">
-            <div className="text-center mb-16 space-y-3">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.32em] text-earth">Our Founders</span>
-              <h2 className="font-display text-4xl font-bold text-forest-deep">Leadership</h2>
-              <p className="mx-auto max-w-xl text-muted-foreground font-light leading-relaxed">
-                Visionary leaders who turned a simple dream into a global multimedia ministry.
-              </p>
-            </div>
-
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2">
               {LEADERSHIP.map((member) => (
                 <article

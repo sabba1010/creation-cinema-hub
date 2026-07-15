@@ -140,8 +140,8 @@ function ShopLandingPage() {
           <div className="mx-auto max-w-7xl px-6">
             <div className="flex items-end justify-between mb-16 border-b border-border pb-8">
               <div>
-                <h2 className="font-display text-4xl font-medium text-foreground">Official <span className="italic text-primary">Library</span></h2>
-                <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">Premium Marketplace Listings</p>
+                <h2 className="font-display text-4xl font-medium text-foreground">Our <span className="italic text-primary">Resources</span></h2>
+                <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">Premium Christian Resources</p>
               </div>
               <div className="text-xs font-bold text-muted-foreground">{filteredProducts.length} Results</div>
             </div>
@@ -180,22 +180,20 @@ function ShopLandingPage() {
                           </div>
                         </div>
                         <div className="flex gap-2 w-full">
-                          <button
-                            onClick={(e) => handleAddToCart(e, product)}
-                            className="flex-1 py-4 rounded-2xl bg-gold text-forest-deep text-[10px] font-bold uppercase tracking-[0.2em] text-center shadow-lg transition-transform active:scale-95"
-                          >
-                            Add to Cart
-                          </button>
-                          {product.externalLink && product.externalLink !== "#" && (
+                          {product.externalLink && product.externalLink !== "#" ? (
                             <a
                               href={product.externalLink}
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
-                              className="flex-1 py-4 rounded-2xl bg-white/10 backdrop-blur-sm text-white border border-white/20 text-[10px] font-bold uppercase tracking-[0.2em] text-center shadow-lg transition-transform hover:bg-white/20 flex items-center justify-center active:scale-95"
+                              className="flex-1 py-4 rounded-2xl bg-gold text-forest-deep text-[10px] font-bold uppercase tracking-[0.2em] text-center shadow-lg transition-transform hover:bg-gold/90 flex items-center justify-center gap-2 active:scale-95"
                             >
-                              {product.storeName || "Buy"}
+                              <ExternalLink className="w-3 h-3" /> Buy Now
                             </a>
+                          ) : (
+                            <span className="flex-1 py-4 rounded-2xl bg-white/10 text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] text-center cursor-not-allowed">
+                              Coming Soon
+                            </span>
                           )}
                         </div>
                       </div>

@@ -144,7 +144,7 @@ function NewsletterPage() {
                           </h2>
 
                           {nl.description && (
-                            <p className="text-cream/75 text-sm leading-relaxed line-clamp-2 mb-4 max-w-xl">
+                            <p className="text-cream text-sm leading-relaxed line-clamp-2 mb-4 max-w-xl font-medium drop-shadow">
                               {nl.description}
                             </p>
                           )}
