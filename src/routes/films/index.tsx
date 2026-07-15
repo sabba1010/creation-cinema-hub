@@ -20,6 +20,8 @@ function FilmsLandingPage() {
   const [isMuted, setIsMuted] = useState(true);
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, duration: 30 });
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const [filmsHeroVimeo, setFilmsHeroVimeo] = useState("https://vimeo.com/1209490802");
+  const [filmsHeroTitle, setFilmsHeroTitle] = useState("Explore the official library of original productions. High-definition documentaries and films exploring the design, majesty, and theological depth of God\u2019s great creation.");
 
   const toggleMute = () => {
     setIsMuted(!isMuted);
@@ -48,6 +50,17 @@ function FilmsLandingPage() {
       .then(data => {
         if (data.success) {
           setSliders(data.data.filter((s: any) => s.isActive).sort((a: any, b: any) => a.order - b.order));
+        }
+      })
+      .catch(err => console.error(err));
+
+    // Load page settings
+    fetch("https://movie-backend-drab.vercel.app/api/settings")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          if (data.data.films_hero_vimeo) setFilmsHeroVimeo(data.data.films_hero_vimeo);
+          if (data.data.films_hero_title) setFilmsHeroTitle(data.data.films_hero_title);
         }
       })
       .catch(err => console.error(err));
@@ -132,13 +145,24 @@ function FilmsLandingPage() {
                 <div className="relative flex-[0_0_100%] h-full w-full min-w-0">
                   <div className="absolute inset-0 w-full h-full bg-[#050704] pointer-events-none">
                     <div className="absolute inset-0 w-full h-full overflow-hidden opacity-50">
-                      <iframe
-                        key={isMuted ? 'muted' : 'unmuted'}
-                        src={`https://player.vimeo.com/video/1209490802?autoplay=1&loop=1&byline=0&title=0&muted=${isMuted ? 1 : 0}&controls=0&autopause=0`}
-                        className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-[100vh] min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                        frameBorder="0"
-                        allow="autoplay; fullscreen"
-                      />
+                      {filmsHeroVimeo.match(/\.(mp4|webm|ogg)$/i) ? (
+                        <video
+                          src={filmsHeroVimeo}
+                          autoPlay
+                          loop
+                          muted={isMuted}
+                          playsInline
+                          className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-[100vh] min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2 object-cover pointer-events-none"
+                        />
+                      ) : (
+                        <iframe
+                          key={isMuted ? 'muted' : 'unmuted'}
+                          src={`https://player.vimeo.com/video/${filmsHeroVimeo.match(/vimeo\.com\/(\d+)/i)?.[1] || '1209490802'}?autoplay=1&loop=1&byline=0&title=0&muted=${isMuted ? 1 : 0}&controls=0&autopause=0`}
+                          className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-[100vh] min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                          frameBorder="0"
+                          allow="autoplay; fullscreen"
+                        />
+                      )}
                     </div>
                     {/* Gradient Overlays */}
                     <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#050704] to-transparent" />
@@ -153,7 +177,7 @@ function FilmsLandingPage() {
                       </div>
                       <img src={image5} alt="OMS Films Logo" className="w-auto h-24 md:h-32 lg:h-40 object-contain drop-shadow-2xl hover:bg-white rounded-3xl p-4 transition-all duration-300" />
                       <p className="text-base sm:text-lg text-cream/80 leading-relaxed max-w-xl">
-                        Explore the official library of original productions. High-definition documentaries and films exploring the design, majesty, and theological depth of God's great creation.
+                        {filmsHeroTitle}
                       </p>
                     </div>
                   </div>

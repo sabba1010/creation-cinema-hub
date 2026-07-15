@@ -7,14 +7,18 @@ import heroImg from "@/assets/hero-family.jpg";
 
 export function Hero() {
   const [mediaUrl, setMediaUrl] = useState<string | null>(null);
+  const [heroTitle, setHeroTitle] = useState<string | null>(null);
+  const [heroSubtitle, setHeroSubtitle] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSettings = async () => {
       try {
         const res = await fetch("https://movie-backend-drab.vercel.app/api/settings");
         const data = await res.json();
-        if (data.success && data.data.home_hero_media) {
-          setMediaUrl(data.data.home_hero_media);
+        if (data.success) {
+          if (data.data.home_hero_media) setMediaUrl(data.data.home_hero_media);
+          if (data.data.home_hero_title) setHeroTitle(data.data.home_hero_title);
+          if (data.data.home_hero_subtitle) setHeroSubtitle(data.data.home_hero_subtitle);
         }
       } catch (err) {
         console.error("Failed to fetch settings", err);
@@ -55,11 +59,11 @@ export function Hero() {
       <div className="relative mx-auto w-full max-w-[1440px] px-6 sm:px-8 lg:px-12 text-center">
         <div className="mx-auto max-w-4xl pt-8">
           <span className="inline-block px-4 py-1.5 mb-8 rounded-full border border-cream/20 bg-cream/5 text-[10px] font-bold tracking-[0.3em] text-cream/80 uppercase backdrop-blur-sm animate-fade-up">
-            {HERO_CONTENT.subtitle}
+            {heroSubtitle || HERO_CONTENT.subtitle}
           </span>
 
           <h1 className="font-display text-[clamp(2.5rem,8vw,6.5rem)] font-medium leading-[1] tracking-tight text-cream drop-shadow-xl">
-            <span className="block animate-fade-up [animation-delay:150ms]">{HERO_CONTENT.title}</span>
+            <span className="block animate-fade-up [animation-delay:150ms]">{heroTitle || HERO_CONTENT.title}</span>
           </h1>
 
           <div className="mt-8 mx-auto max-w-xl space-y-8 animate-fade-up [animation-delay:400ms]">
