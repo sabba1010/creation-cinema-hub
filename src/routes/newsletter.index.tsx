@@ -70,7 +70,7 @@ function NewsletterPage() {
           <div className="max-w-2xl animate-fade-up">
             <div className="inline-flex items-center gap-2 bg-gold/10 backdrop-blur border border-gold/20 px-3.5 py-1.5 rounded-full animate-fade-in mb-6">
               <FileText className="h-4 w-4 text-gold" />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-gold">Our Updates</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-gold"> OMS Newsletter</span>
             </div>
             <img 
               src={logoImg} 
