@@ -76,7 +76,7 @@ const PLATFORMS = [
 const DEFAULT_BANNER = {
   tag: "OMS Podcast Network",
   title: "God's Great Earth Podcast",
-  description: "Join us every Tuesday for deep conversations, biblical insights, and stories that celebrate the wonder of our Creator. Available on all major platforms.",
+  description: "Are you looking for a wild and exciting Christian podcast to listen to? God's Great Earth moves pretty quickly so get comfy and sit back and enjoy this adventure ride to know God better! Hosted by Christian kids TV personality and author, Rich Aguilera.",
   buttonText: "Latest Episode",
   image: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&q=80&w=800",
   videoTitle: "The Majesty of the Mountains",

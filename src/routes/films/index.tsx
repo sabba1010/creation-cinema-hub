@@ -217,7 +217,7 @@ function FilmsLandingPage() {
             <div className="flex items-end justify-between mb-16 border-b border-white/10 pb-8">
               <div>
                 <h2 className="font-display text-3xl font-medium text-cream">Official <span className="italic text-gold">Library</span></h2>
-                <p className="mt-2 text-sm text-gold/70 uppercase tracking-widest">Admin Curated Content</p>
+                <p className="mt-2 text-sm text-gold/70 uppercase tracking-widest">Our Exclusive Films</p>
               </div>
             </div>
 
