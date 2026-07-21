@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Mail, ArrowRight, Star } from "lucide-react";
+import angelisseImg from "@/assets/991FA218-18E4-41BB-984E-772B11EF387E.jpeg";
 
 const LEADERSHIP = [
   {
@@ -45,7 +46,7 @@ const LEADERSHIP = [
     role: "Production Assistant",
     tagline: "Production & Organization",
     bio: "Angelisse Villamizar supports One Mustard Seed through production organization, script management, CRM, customer communication, and back-office coordination while completing her university studies. Her behind-the-scenes work helps keep projects moving and ministry details organized.",
-    img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=600",
+    img: angelisseImg,
     color: "from-forest to-gold",
     socials: { mail: "mailto:angelisse@onemustardseed.com" },
   },
@@ -111,8 +112,7 @@ function TeamPage() {
                       alt={member.name}
                       className="h-full w-full object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-105"
                     />
-                    {/* Colour gradient overlay on hover */}
-                    <div className={`absolute inset-0 bg-gradient-to-r ${member.color} opacity-0 group-hover:opacity-50 transition-opacity duration-500`} />
+
                   </div>
 
                   {/* Content — right column */}
