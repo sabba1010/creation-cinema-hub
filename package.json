@@ -4,8 +4,8 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev": "vite dev --force",
-    "build": "vite build",
+    "dev": "node api.js && vite dev --force",
+    "build": "node api.js && vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
